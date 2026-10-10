@@ -10,14 +10,19 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "hono": "^4.6.14",
-    "@passo/shared": "workspace:*",
+    "@hono/node-server": "^2.1.4",
     "@passo/db": "workspace:*",
-    "@passo/engine": "workspace:*"
+    "@passo/engine": "workspace:*",
+    "@passo/shared": "workspace:*",
+    "argon2": "^0.45.1",
+    "drizzle-orm": "^0.36.0",
+    "hono": "^4.6.14",
+    "hono-rate-limiter": "^0.5.4",
+    "resend": "^6.32.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",
-    "typescript": "^5.7.2",
-    "tsx": "^4.19.2"
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   }
 }
