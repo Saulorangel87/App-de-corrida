@@ -86,6 +86,8 @@ export type WorkoutLog = {
   minutes: number; // duração concluída (0 se não concluída)
   targetRpe?: number;
   reportedRpe?: number; // CR-10
+  /** Sessão isenta do teto de 110% (escada caminhada-corrida e contínuas da etapa 12, R-PRG-02). */
+  exempt?: boolean;
 };
 
 export type DayInput = {
@@ -112,6 +114,10 @@ export type DayInput = {
   isRecoveryWeek?: boolean;
   /** Sessão da escada caminhada-corrida (isenta dos tetos de 110%, R-PRG-02/03). */
   inLadder?: boolean;
+  /** Dor ao caminhar no dia a dia, 0–10, do último check-in (R-DOR-10). */
+  dailyPainWalking?: number | null;
+  /** Data da primeira corrida depois de uma pausa de 15 dias ou mais (sem Z3 por 2 semanas). */
+  pauseReturnStartedOn?: string | null;
 };
 
 export type Rank = 0 | 1 | 2 | 3;

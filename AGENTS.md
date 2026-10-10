@@ -49,12 +49,10 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - VPS (banco, papéis, backup): ver `ops/README.md`
 
 ## Estado atual
-Fase atual: 3 — Entrevista e perfil do atleta (backend) concluída em 2026-10-10, aguardando aprovação.
-- Motor (`packages/engine`): CLS-v1 (classificação), TRI-v1 (triagem PAR-Q+), PLN-v1 (escolha do plano), com 56 testes, incluindo os 21 casos da pesquisa.
-- API: `/api/v1/interview` (8 etapas, salvar e continuar, enviar) e `/api/v1/profile` (nível com explicação, triagem, plano, autodeclaração de avaliação). 57 testes de integração, com A-tenta-B.
-- Banco: `health_screenings` com RLS; modelos de plano (13) no seed; migrações aplicadas na VPS.
-- Decisões em `docs/adr/0003-entrevista-e-perfil.md`.
-- PAR-Q+: texto oficial em português transcrito e conferido (65 blocos, `PARQ_TEXT_COMPLETE = true`). Falta o dono ler uma vez o resultado em `docs/parq/parq-plus-pt-br.txt` contra o PDF.
-- Pendente (dono): avisar a PAR-Q+ Collaboration do uso (R-TRI-14, não bloqueia); revisar os textos `razao` do seed.
+Fase atual: 4a — regras da decisão do dia (`packages/engine/src/day/`) concluída em 2026-10-10, aguardando aprovação. A 4b (semanas dos 13 planos) vem depois.
+- `decideDay`: sono e bem-estar (R-SON), dor e alertas (R-DOR), tetos e volta de pausa (R-PRG), precedência R-PRG-11. Config `DIA-v1` com regra e fonte em cada valor. 175 testes no motor (casos da pesquisa e cenários da especificação).
+- Decisões e escolhas a confirmar: `docs/adr/0004-decisao-do-dia.md` (7 itens).
+- Fase 3 (entrevista, triagem, perfil): texto do PAR-Q+ transcrito e conferido; falta o dono ler uma vez contra o PDF.
+- Pendente (dono): avisar a PAR-Q+ Collaboration do uso (R-TRI-14, não bloqueia); revisar os textos `razao` do seed; confirmar os 7 itens do ADR 0004.
 - Pendente (deploy): Dockerfile da API e rota no túnel.
-- Próxima: Fase 4 — motor de recomendação (semanas dos planos, decisão do dia).
+- Próxima: 4b — semanas dos planos (`plan_template_weeks`); depois Fase 5 (check-in, pós-treino e API da decisão do dia).

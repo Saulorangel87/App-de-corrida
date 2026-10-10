@@ -110,7 +110,6 @@ export function evaluateWellbeing(input: {
   const records = [...byDate.values()]
     .filter((c) => !c.acuteIllness)
     .sort((a, b) => a.date.localeCompare(b.date));
-  const rec = new Map(records.map((c) => [c.date, c]));
 
   const nightOf = new Map(records.map((c) => [c.date, classifyNight(c)]));
   const wOf = new Map<string, number>();
