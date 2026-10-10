@@ -89,4 +89,27 @@ describe("rate limiting", () => {
       await limited.close();
     }
   });
+
+  it("redefinir senha: não divide o limite de e-mails nem o do login, e tem teto próprio", async () => {
+    const limited = makeApp({
+      rateLimits: {
+        global: { windowMs: 60_000, limit: 1000 },
+        login: { windowMs: 60_000, limit: 3 },
+        emailSending: { windowMs: 60_000, limit: 1 },
+      },
+    });
+    try {
+      // esgota o balde do login e o de e-mails
+      for (let i = 0; i < 4; i++) await limited.request("POST", "/auth/login", { email: "x@exemplo.com", password: "qualquer-uma" });
+      await limited.request("POST", "/auth/forgot-password", { email: "x@exemplo.com" });
+      expect((await limited.request("POST", "/auth/forgot-password", { email: "x@exemplo.com" })).status).toBe(429);
+
+      const body = { token: "t".repeat(30), password: "Corrida-longa-2026!" };
+      const statuses: number[] = [];
+      for (let i = 0; i < 4; i++) statuses.push((await limited.request("POST", "/auth/reset-password", body)).status);
+      expect(statuses).toEqual([400, 400, 400, 429]);
+    } finally {
+      await limited.close();
+    }
+  });
 });

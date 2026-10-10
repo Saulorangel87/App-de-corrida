@@ -42,3 +42,4 @@ docs/parq/*.pdf
 figma_data.json
 login_full.json
 login_node.json
+*.tmp.mjs

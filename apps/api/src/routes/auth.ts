@@ -30,6 +30,8 @@ export function authRoutes(opts: {
   const r = new Hono<AppEnv>();
   const emailLimit = limit("email_sending", opts.rateLimits.emailSending, opts.production);
   const loginLimit = limit("login", opts.rateLimits.login, opts.production);
+  // Mesmo teto de tentativas do login, mas em balde próprio: errar a senha no login não trava a redefinição.
+  const resetLimit = limit("reset_password", opts.rateLimits.login, opts.production);
   const { session } = opts;
 
   const checkPassword = (password: string, email: string) => {
@@ -77,7 +79,9 @@ export function authRoutes(opts: {
     return c.json(GENERIC_EMAIL_SENT, 202);
   });
 
-  r.post("/reset-password", emailLimit, validate("json", resetPasswordSchema), async (c) => {
+  // Não envia e-mail: usa o limite de tentativas (por IP), não o de envios, para que quem erra a
+  // senha escolhida algumas vezes não fique travado por uma hora.
+  r.post("/reset-password", resetLimit, validate("json", resetPasswordSchema), async (c) => {
     const { token, password } = c.req.valid("json");
     await auth.resetPassword(token, password, (email) => checkPassword(password, email));
     cookie.clear(c);

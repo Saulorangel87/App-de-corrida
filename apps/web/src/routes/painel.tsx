@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { fetchApi } from '../lib/api'
 import { AUTH_KEY, useAuth } from '../lib/queries'
 
-export const Route = createFileRoute('/panel')({
+export const Route = createFileRoute('/painel')({
   component: Panel,
 })
 
@@ -19,12 +19,12 @@ function Panel() {
     mutationFn: () => fetchApi('/auth/logout', { method: 'POST' }),
     onSettled: () => {
       queryClient.setQueryData(AUTH_KEY, null)
-      void navigate({ to: '/login' })
+      void navigate({ to: '/entrar' })
     },
   })
 
   useEffect(() => {
-    if (!isLoading && !user) void navigate({ to: '/login' })
+    if (!isLoading && !user) void navigate({ to: '/entrar' })
   }, [isLoading, user, navigate])
 
   if (isLoading || !user) return <div className="p-8">{t('common.loading')}</div>

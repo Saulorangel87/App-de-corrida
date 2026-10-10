@@ -43,7 +43,7 @@ test("login em português, com rótulos ligados aos campos e sem erro no console
   page.on("pageerror", (e) => errors.push(e.message));
   await mockApi(page);
   await page.goto("/");
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/entrar$/);
   await expect(page.getByRole("heading", { name: /Bom te ver de novo/ })).toBeVisible();
   await expect(page.getByLabel("E-mail", { exact: true })).toBeVisible();
   await expect(page.getByLabel("Senha", { exact: true })).toBeVisible();
@@ -54,7 +54,7 @@ test("login em português, com rótulos ligados aos campos e sem erro no console
 
 test("troca para inglês e lembra a escolha", async ({ page }) => {
   await mockApi(page);
-  await page.goto("/login");
+  await page.goto("/entrar");
   await page.getByRole("button", { name: "EN", exact: true }).click();
   await expect(page.getByRole("heading", { name: /Good to see you again/ })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
@@ -64,7 +64,7 @@ test("troca para inglês e lembra a escolha", async ({ page }) => {
 
 test("campos vazios mostram erro e não chamam a API", async ({ page }) => {
   const calls = await mockApi(page);
-  await page.goto("/login");
+  await page.goto("/entrar");
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page.getByText("Informe um e-mail válido.")).toBeVisible();
   await expect(page.getByText("Informe a senha.")).toBeVisible();
@@ -73,34 +73,34 @@ test("campos vazios mostram erro e não chamam a API", async ({ page }) => {
 
 test("entra e chega ao painel; sair volta ao login", async ({ page }) => {
   const calls = await mockApi(page);
-  await page.goto("/login");
+  await page.goto("/entrar");
   await page.getByLabel("E-mail", { exact: true }).fill("ANA@exemplo.com");
   await page.getByLabel("Senha", { exact: true }).fill("Corrida-longa-2026!");
   await page.getByLabel("Manter conectado neste dispositivo").check();
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
-  await expect(page).toHaveURL(/\/panel$/);
+  await expect(page).toHaveURL(/\/painel$/);
   await expect(page.getByText("Bem-vindo, Ana Corredora!")).toBeVisible();
   expect(calls.find((c) => c.path === "/auth/login")?.body).toMatchObject({ email: "ana@exemplo.com", rememberMe: true });
 
   await page.getByRole("button", { name: "Sair" }).click();
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/entrar$/);
 });
 
 test("credenciais erradas: mensagem traduzida pelo código", async ({ page }) => {
   await mockApi(page, {
     login: { status: 401, body: { error: { code: "INVALID_CREDENTIALS", message: "E-mail ou senha incorretos." } } },
   });
-  await page.goto("/login");
+  await page.goto("/entrar");
   await page.getByLabel("E-mail", { exact: true }).fill("ana@exemplo.com");
   await page.getByLabel("Senha", { exact: true }).fill("errada-errada");
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page.getByRole("alert").filter({ hasText: "E-mail ou senha incorretos." })).toBeVisible();
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page).toHaveURL(/\/entrar$/);
 });
 
 test("cadastro exige os três aceites e envia idioma e declaração de 18 anos", async ({ page }) => {
   const calls = await mockApi(page);
-  await page.goto("/login");
+  await page.goto("/entrar");
   await page.getByRole("tab", { name: "Criar conta" }).click();
   await page.getByLabel("Nome completo").fill("Ana Corredora");
   await page.getByLabel("E-mail", { exact: true }).fill("ana@exemplo.com");
@@ -130,7 +130,7 @@ test("celular: a foto do desktop não é baixada e não há rolagem horizontal",
   const images: string[] = [];
   page.on("request", (r) => /login-\d+.*\.(avif|webp|jpg)/.test(r.url()) && images.push(r.url()));
   await mockApi(page);
-  await page.goto("/login");
+  await page.goto("/entrar");
   await expect(page.getByRole("heading", { name: /Bom te ver de novo/ })).toBeVisible();
   expect(images).toEqual([]);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
@@ -142,14 +142,14 @@ test("desktop: a foto otimizada (AVIF) é a que carrega", async ({ page }) => {
   const images: string[] = [];
   page.on("request", (r) => /login-\d+.*\.(avif|webp|jpg)/.test(r.url()) && images.push(r.url()));
   await mockApi(page);
-  await page.goto("/login");
+  await page.goto("/entrar");
   await expect.poll(() => images.length).toBeGreaterThan(0);
   expect(images.every((u) => u.includes(".avif"))).toBe(true);
 });
 
 test("a página sai com CSP restritiva e cabeçalhos de segurança", async ({ page }) => {
   await mockApi(page);
-  const res = await page.goto("/login");
+  const res = await page.goto("/entrar");
   const h = res!.headers();
   expect(h["content-security-policy"]).toContain("default-src 'self'");
   expect(h["content-security-policy"]).toContain("frame-ancestors 'none'");

@@ -21,7 +21,7 @@ Estado em 2026-10-10: Fases 0 a 5 aprovadas pelo dono. Falta a Fase 6 (telas) e 
 8. Perfil e configurações (exportar e excluir meus dados, declarar pausa e liberação profissional, reavaliação).
 
 ## Telas de autenticação desenhadas no Figma (aguardam aprovação do dono)
-Página "Telas", à direita do login. Nenhuma foi implementada ainda.
+Página "Telas", à direita do login. **Aprovadas pelo dono em 2026-10-10 e implementadas** (rotas `/esqueci-a-senha`, `/redefinir-senha`, `/verificar-email`, as mesmas que os e-mails da API já usam; o login passou a `/entrar` e o painel a `/painel`).
 
 | Tela | Estado | Nó |
 |---|---|---|
@@ -34,9 +34,9 @@ Página "Telas", à direita do login. Nenhuma foi implementada ainda.
 | Confirmar e-mail | link inválido, com reenvio por e-mail | `24:911` |
 
 Pendências do arquivo do Figma (o limite de chamadas do plano Starter do MCP foi atingido nesta sessão):
-- Remover o cartão "4,8 ★ Avaliação dos corredores" do painel visual de **todos** os frames de login e das telas novas (os outros dois números inventados já foram removidos; não existe avaliação real).
+- Remover o cartão "4,8 ★ Avaliação dos corredores" do painel visual de **todos** os frames de login e das telas novas (decisão do dono: não entra; talvez no futuro). Os outros dois números inventados já foram removidos.
 - Conferir visualmente os estados com ícone (e-mail enviado, link inválido, senha alterada, e-mail confirmado): só o formulário de "Esqueci a senha" e o de "Redefinir senha" foram vistos em captura.
-- O frame do Painel (`2:2`) tem um texto "Let's Go Run Pro" (antes "Passo Pro"); não existe plano pago na especificação. Decidir com o dono se sai.
+- O frame do Painel (`2:2`) tem o texto "Let's Go Run Pro" (antes "Passo Pro"). Decisão do dono: fica só "Let's Go Run", sem "Pro" (não há plano pago).
 - Ao implementar: o painel visual da tela real já mostra só "5k → 42k" (sem números inventados); manter assim.
 
 ## Contrato da API (prefixo `/api/v1`, tudo com sessão; erros `{error:{code,message,details?}}`)
