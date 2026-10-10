@@ -20,6 +20,25 @@ Estado em 2026-10-10: Fases 0 a 5 aprovadas pelo dono. Falta a Fase 6 (telas) e 
 7. Histórico e estatísticas (sono, carga semanal, dor, aderência).
 8. Perfil e configurações (exportar e excluir meus dados, declarar pausa e liberação profissional, reavaliação).
 
+## Telas de autenticação desenhadas no Figma (aguardam aprovação do dono)
+Página "Telas", à direita do login. Nenhuma foi implementada ainda.
+
+| Tela | Estado | Nó |
+|---|---|---|
+| Esqueci a senha | formulário | `24:26` |
+| Esqueci a senha | e-mail enviado (mesma mensagem exista ou não a conta) | `24:176` |
+| Redefinir senha | formulário (nova senha + confirmação) | `24:325` |
+| Redefinir senha | link inválido ou expirado | `24:477` |
+| Redefinir senha | senha alterada | `24:623` |
+| Confirmar e-mail | confirmado | `24:767` |
+| Confirmar e-mail | link inválido, com reenvio por e-mail | `24:911` |
+
+Pendências do arquivo do Figma (o limite de chamadas do plano Starter do MCP foi atingido nesta sessão):
+- Remover o cartão "4,8 ★ Avaliação dos corredores" do painel visual de **todos** os frames de login e das telas novas (os outros dois números inventados já foram removidos; não existe avaliação real).
+- Conferir visualmente os estados com ícone (e-mail enviado, link inválido, senha alterada, e-mail confirmado): só o formulário de "Esqueci a senha" e o de "Redefinir senha" foram vistos em captura.
+- O frame do Painel (`2:2`) tem um texto "Let's Go Run Pro" (antes "Passo Pro"); não existe plano pago na especificação. Decidir com o dono se sai.
+- Ao implementar: o painel visual da tela real já mostra só "5k → 42k" (sem números inventados); manter assim.
+
 ## Contrato da API (prefixo `/api/v1`, tudo com sessão; erros `{error:{code,message,details?}}`)
 | Rota | Uso |
 |---|---|
