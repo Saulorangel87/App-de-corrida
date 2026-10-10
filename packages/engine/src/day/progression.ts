@@ -82,8 +82,9 @@ const LEVELS: LevelName[] = ["iniciante", "intermediario", "avancado"];
 
 /** R-CLS-07: nível efetivo para o retorno (29–84 dias rebaixa 1; mais de 84 volta a iniciante). */
 export function levelAfterPause(level: LevelName, days: number): LevelName {
-  if (days > 84) return "iniciante";
-  if (days >= 29) return LEVELS[Math.max(0, LEVELS.indexOf(level) - 1)]!;
+  const r = cfg.returnFromPause;
+  if (days > r.resetToLevel1AfterDays) return "iniciante";
+  if (days > r.reducedMaxDays) return LEVELS[Math.max(0, LEVELS.indexOf(level) - 1)]!;
   return level;
 }
 
@@ -120,7 +121,7 @@ export function returnFromPause(i: {
   const stillInNoZ3Window =
     !!i.pauseReturnStartedOn && age(i.pauseReturnStartedOn, i.today) >= 0 && age(i.pauseReturnStartedOn, i.today) < r.noZ3Weeks * 7;
 
-  if (hasCause || D >= 29) {
+  if (hasCause || D > r.reducedMaxDays) {
     const initialWeekly = r.initialPhaseWeeklyMinutes[effectiveLevel];
     const half = i.lastBuildWeekMinutes > 0 ? pct(i.lastBuildWeekMinutes, r.longPauseVolumePct) : initialWeekly;
     return {
@@ -129,12 +130,12 @@ export function returnFromPause(i: {
       sessionMinutesCap: r.initialPhaseSessionMinutes[effectiveLevel],
       noZ3: true,
       effectiveLevel,
-      reapplyScreening: D >= 29,
+      reapplyScreening: D > r.reducedMaxDays,
       restartWith: effectiveLevel === "iniciante" ? "caminhada-corrida" : "rodagem-leve",
       waitingProfessional,
     };
   }
-  if (D >= 15) {
+  if (D > r.freezeMaxDays) {
     return {
       band: "reduzido",
       weeklyMinutesCap: i.lastBuildWeekMinutes > 0 ? pct(i.lastBuildWeekMinutes, r.reducedPct) : null,
@@ -146,7 +147,7 @@ export function returnFromPause(i: {
       waitingProfessional: false,
     };
   }
-  if (D >= 8) {
+  if (D > r.keepPlanMaxDays) {
     return {
       band: "congela",
       weeklyMinutesCap: i.lastBuildWeekMinutes > 0 ? i.lastBuildWeekMinutes : null,

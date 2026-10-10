@@ -22,6 +22,9 @@ A seção 7 da especificação pede funções puras que recebam perfil, plano, h
 5. **Cortar Z3 (R-DIS-06):** troca a sessão por `rodagem-leve`; a pesquisa não define um degrau intermediário.
 6. **Regenerativo** com 15 a 30 min (limitado ao planejado) e **mobilidade** com 15 min (ponto médio de 10–20).
 7. **"Pontada que persiste" (R-DOR-05):** dor ≥ 3 em 2 dias distintos na mesma região.
+8. **Dor ao caminhar para liberar a corrida (R-DOR-10):** a pesquisa diz "≤ 1–2/10"; o motor usa **2**. Usar 1 seria mais conservador.
+
+Observação de verificação: um agente conferiu os 66 valores numéricos de `config.ts` contra os arquivos 05, 08 e 09 da pesquisa e não achou divergência.
 
 ## Consequências
 - O check-in da Fase 5 precisa perguntar "dor ao caminhar" (0–10) e registrar a data da autodeclaração; sem isso, bloqueios por dor não se encerram.

@@ -60,7 +60,7 @@ export const diaV1 = {
     domsMaxIntensity: 4, // [E/P] R-DOR-08, Hody 2019
     domsMinHoursAfter: 12, // [E/P] R-DOR-08
     domsReferAfterDays: 7, // [P] R-DOR-08
-    returnWalkingMax: 2, // [E] R-DOR-10, Silbernagel 2020 (≤ 1–2/10)
+    returnWalkingMax: 2, // [E] R-DOR-10, Silbernagel 2020 (≤ 1–2/10; usa o limite superior: confirmar com o dono)
     heatRepeatsToRefer: 2, // [P] R-DOR-02, Casa 2015
   },
 
@@ -85,6 +85,7 @@ export const diaV1 = {
     freezeMaxDays: 14, // 8–14 dias: congela
     reducedMaxDays: 28, // 15–28 dias: 70% do volume e da maior sessão
     reducedPct: 70, // [P] R-PRG-08
+    resetToLevel1AfterDays: 84, // R-CLS-07 (12 semanas): volta a iniciante
     longPauseVolumePct: 50, // [P] R-PRG-08 (≥ 29 dias)
     noZ3Weeks: 2, // [P] R-PRG-08 / R-SES-08
     // "Fase inicial do nível" (R-PRG-08/09): interpretação do projeto [P], A CONFIRMAR COM O
