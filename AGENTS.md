@@ -49,11 +49,12 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - VPS (banco, papéis, backup): ver `ops/README.md`
 
 ## Estado atual
-Fase atual: 4 (motor de recomendação) concluída em 2026-10-10, aguardando aprovação (4a regras do dia, 4b semanas dos planos).
-- `decideDay` (4a): sono, dor, tetos, volta de pausa, precedência (ADR 0004, 8 itens a confirmar).
-- Planos (4b): `buildPlanTemplate` gera os 13 modelos (semanas, sessões, volume); `materializeWeek` converte para minutos com os tetos; `scheduleWeek` distribui nos dias; `nextLadderStep` decide avançar ou repetir a escada (ADR 0005, 8 itens a confirmar).
-- Banco: `plan_template_weeks` e `plan_template_sessions`; seed grava os 13 modelos (157 semanas). 283 testes no motor, 62 na API.
+Fase atual: 5 (acompanhamento de recuperação) concluída em 2026-10-10, aguardando aprovação. Fase 4 aprovada pelo dono.
+- API nova (ADR 0006): `GET /day/:date` (decisão e sessões do dia), `GET /plan/week/:date`, `PUT /checkins/:date`, `POST /pain/:date`, `PUT /workouts/:id/log` (devolve a decisão do dia seguinte), `PUT /profile/pause`, `POST /profile/professional-clearance`, `GET /history`, `GET /account/export`.
+- Semana do plano = janela de 7 dias desde `start_date` (`athlete_plan_weeks`); criada na primeira consulta; a anterior fecha (escada avança ou repete). `buildAthleteWeek` já nasce dentro dos tetos.
+- Testes: 345 no motor (inclui "seguir o plano à risca não gera ajuste" nos 13 modelos), 87 na API.
+- Banco: migrações 0008 e 0009 (semanas do plano, sessões agendadas com estrutura, check-in com dor ao caminhar, dor com data e momento, `for_date` na auditoria).
 - Fase 3: texto do PAR-Q+ transcrito e conferido; falta o dono ler uma vez contra o PDF.
-- Pendente (dono): confirmar os itens dos ADRs 0004 e 0005; avisar a PAR-Q+ Collaboration (R-TRI-14, não bloqueia); revisar os textos `razao` do seed.
-- Pendente (deploy): Dockerfile da API e rota no túnel.
-- Próxima: Fase 5 — check-in diário, registro pós-treino, API da decisão do dia e agendamento (`scheduled_workouts`).
+- Pendente (dono): confirmar os itens dos ADRs 0004, 0005 e 0006 (ou manter os padrões); avisar a PAR-Q+ Collaboration (R-TRI-14, não bloqueia); revisar os textos `razao` do seed.
+- Pendente (deploy): Dockerfile da API e rota no túnel; aplicar migrações 0008/0009 na VPS.
+- Próxima: Fase 6 — telas (desenhar no Figma, aprovar, implementar): cadastro, entrevista, resultado, plano, treino, check-in, pós-treino com mapa de dor, histórico, perfil.

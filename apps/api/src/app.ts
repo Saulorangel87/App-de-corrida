@@ -14,8 +14,10 @@ import { apiSecureHeaders, limit, originCheck } from "./middleware/security";
 import { authRepository } from "./repositories/auth-repository";
 import { athleteRoutes } from "./routes/athlete";
 import { authRoutes } from "./routes/auth";
+import { trainingRoutes } from "./routes/training";
 import { athleteService } from "./services/athlete-service";
 import { authService, type BackgroundRunner } from "./services/auth-service";
+import { trainingService } from "./services/training-service";
 import type { AppEnv } from "./types";
 
 export type AppDeps = {
@@ -57,6 +59,7 @@ export function createApp(deps: AppDeps) {
   const cookie = sessionCookie(production);
   const session = requireSession(auth, cookie);
   const athlete = athleteService({ db: deps.db, logger, now: deps.now ?? (() => new Date()) });
+  const training = trainingService({ db: deps.db, logger, now: deps.now ?? (() => new Date()) });
   const rateLimits = deps.rateLimits ?? rateLimitConfig;
 
   const app = new Hono<AppEnv>();
@@ -113,6 +116,7 @@ export function createApp(deps: AppDeps) {
   v1.use("*", limit("global", rateLimits.global, production));
   v1.route("/auth", authRoutes({ auth, cookie, session, production, rateLimits }));
   v1.route("/", athleteRoutes({ athlete, session }));
+  v1.route("/", trainingRoutes({ training, session }));
   app.route("/api/v1", v1);
 
   app.notFound(() => {

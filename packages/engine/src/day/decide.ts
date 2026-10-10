@@ -201,12 +201,17 @@ export function decideDay(i: DayInput): DayDecision {
   const weekly = weeklyCaps(i.lastBuildWeekMinutes, cautela);
   const sessionCap = exempt ? null : sessionCapMinutes(longest30);
   let weeklyCap = exempt ? weekly.absolute : weekly.target;
-  if (i.isRecoveryWeek && i.lastBuildWeekMinutes > 0) weeklyCap = recoveryWeekMinutes(i.lastBuildWeekMinutes);
+  // A escada define a própria semana de recuperação (75% das repetições, R-PLN-08): não se corta no meio.
+  if (i.isRecoveryWeek && !exempt && i.lastBuildWeekMinutes > 0) weeklyCap = recoveryWeekMinutes(i.lastBuildWeekMinutes);
   if (ret.weeklyMinutesCap !== null) weeklyCap = weeklyCap === null ? ret.weeklyMinutesCap : Math.min(weeklyCap, ret.weeklyMinutesCap);
   let effectiveSessionCap = sessionCap;
   if (ret.sessionMinutesCap !== null) effectiveSessionCap = effectiveSessionCap === null ? ret.sessionMinutesCap : Math.min(effectiveSessionCap, ret.sessionMinutesCap);
+  // Semana do plano (janela fixa de 7 dias) quando conhecida; senão, os últimos 7 dias.
   const weekDone = i.logs
-    .filter((l) => l.completed && age(l.date, i.today) >= 0 && age(l.date, i.today) <= 6)
+    .filter((l) => {
+      if (!l.completed || age(l.date, i.today) < 0) return false;
+      return i.weekStartedOn !== undefined ? l.date >= i.weekStartedOn : age(l.date, i.today) <= 6;
+    })
     .reduce((s, l) => s + l.minutes, 0);
 
   // ---- Sessão do dia, sempre do catálogo ----

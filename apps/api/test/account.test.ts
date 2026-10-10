@@ -44,3 +44,22 @@ describe("exclusão da conta (LGPD, seção 10.1)", () => {
     expect((await t.request("DELETE", "/auth/account", { password: PASSWORD })).status).toBe(401);
   });
 });
+
+describe("exportação dos dados (LGPD, seção 10)", () => {
+  it("devolve só os dados do próprio atleta, sem hash de senha nem sessões", async () => {
+    const a = await signUpAndLogin(t);
+    const b = await signUpAndLogin(t);
+    const res = await t.request("GET", "/account/export", undefined, a.cookie);
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-disposition")).toContain("attachment");
+    const text = await res.text();
+    const body = JSON.parse(text) as { account: { id: string; email: string }; consents: unknown[] };
+    expect(body.account).toMatchObject({ id: a.userId, email: a.email });
+    expect(body.consents).toHaveLength(1);
+    expect(text).not.toContain(b.userId);
+    expect(text).not.toContain(b.email);
+    expect(text).not.toMatch(/password|\$argon2/i);
+
+    expect((await t.request("GET", "/account/export")).status).toBe(401);
+  });
+});

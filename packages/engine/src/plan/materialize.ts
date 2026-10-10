@@ -40,6 +40,11 @@ export type MaterializeInput = {
   /** Maior sessão concluída nos últimos 30 dias, em minutos (R-PRG-02, R-SES-31). */
   longest30?: number;
   cautelaLesao?: boolean;
+  /**
+   * Máximo de corridas na semana (dias disponíveis do atleta). Excedente sai primeiro entre as leves
+   * e o volume dele é repartido entre as que ficam, para o atleta não perder carga em silêncio.
+   */
+  maxRuns?: number;
 };
 
 const RPE: Record<string, number | undefined> = {
@@ -162,7 +167,15 @@ export function materializeWeek(input: MaterializeInput): MaterializedWeek {
   const weekly = weeklyMinutesFor(input)[weekNumber - 1]!;
   // R-PLN-10: o −X% do polimento é de treino; a prova em si é extra e não é sessão do catálogo.
   if (week.isRaceWeek) notes.push("O volume da semana de prova é só de treino; o dia da prova é extra e não entra nessa conta.");
-  const runs: TemplateSession[] = week.sessions.filter((s) => s.sharePct > 0);
+  let runs: TemplateSession[] = week.sessions.filter((s) => s.sharePct > 0);
+  if (input.maxRuns !== undefined && runs.length > input.maxRuns) {
+    const rank = (s: TemplateSession) => (s.kind === "longao" ? 0 : s.kind === "qualidade" ? 1 : 2);
+    const total = runs.reduce((a, s) => a + s.sharePct, 0);
+    const kept = [...runs].sort((a, b) => rank(a) - rank(b) || a.slot - b.slot).slice(0, Math.max(1, input.maxRuns));
+    const keptTotal = kept.reduce((a, s) => a + s.sharePct, 0);
+    runs = kept.map((s) => ({ ...s, sharePct: (s.sharePct * total) / keptTotal })).sort((a, b) => a.slot - b.slot);
+    notes.push(`${week.sessions.filter((s) => s.sharePct > 0).length - runs.length} corrida(s) leve(s) a menos: seus dias disponíveis; o volume foi repartido entre as demais.`);
+  }
   const items = runs.map((s) => ({
     t: s, slug: s.slug, minutes: Math.round((weekly * s.sharePct) / 100), note: undefined as string | undefined,
   }));

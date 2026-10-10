@@ -125,6 +125,10 @@ export const athleteProfiles = pgTable(
     flags: jsonb("flags").default([]).notNull(), // CLS-v1: inicio_do_zero, retorno_de_pausa, cautela_lesao
     limitingCriteria: jsonb("limiting_criteria").default([]).notNull(), // R-CLS-14
     bmi: decimal("bmi", { precision: 5, scale: 2 }),
+    // Pausa por dor, lesão ou doença (R-PRG-09) e autodeclaração de liberação profissional (R-DOR-10).
+    pauseCause: varchar("pause_cause", { length: 20 }), // 'dor' | 'lesao' | 'doenca'
+    pauseDeclaredOn: date("pause_declared_on"),
+    clearedByProfessionalOn: date("cleared_by_professional_on"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -326,6 +330,35 @@ export const athletePlans = pgTable(
   (t) => [index("athlete_plans_user_id_idx").on(t.userId)],
 );
 
+/**
+ * Uma linha por semana do plano do atleta (janela de 7 dias a partir de start_date).
+ * `template_week` diz qual semana do modelo vale; na escada, repetir uma etapa mantém a mesma.
+ */
+export const athletePlanWeeks = pgTable(
+  "athlete_plan_weeks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    athletePlanId: uuid("athlete_plan_id")
+      .notNull()
+      .references(() => athletePlans.id, { onDelete: "cascade" }),
+    calendarWeek: integer("calendar_week").notNull(), // 1 = semana do início do plano
+    templateWeek: integer("template_week").notNull(),
+    startDate: date("start_date").notNull(),
+    ladderRepeatedOnce: boolean("ladder_repeated_once").default(false).notNull(), // R-PLN-12
+    status: varchar("status", { length: 20 }).notNull().default("open"), // 'open' | 'closed'
+    ladderAction: varchar("ladder_action", { length: 20 }), // avancar | repetir | concluida (ao fechar)
+    closedAt: ts("closed_at"),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex("athlete_plan_weeks_plan_week_idx").on(t.athletePlanId, t.calendarWeek),
+    index("athlete_plan_weeks_user_id_idx").on(t.userId),
+  ],
+);
+
 export const scheduledWorkouts = pgTable(
   "scheduled_workouts",
   {
@@ -336,15 +369,29 @@ export const scheduledWorkouts = pgTable(
     athletePlanId: uuid("athlete_plan_id")
       .notNull()
       .references(() => athletePlans.id, { onDelete: "cascade" }),
+    athletePlanWeekId: uuid("athlete_plan_week_id")
+      .notNull()
+      .references(() => athletePlanWeeks.id, { onDelete: "cascade" }),
     workoutId: uuid("workout_id")
       .notNull()
       .references(() => workouts.id),
-    scheduledDate: ts("scheduled_date").notNull(),
+    scheduledDate: date("scheduled_date").notNull(),
+    slot: integer("slot").notNull(), // ordem na semana do modelo
+    kind: varchar("kind", { length: 30 }).notNull(), // SessionKind do motor
+    plannedMinutes: integer("planned_minutes").notNull(),
+    maxZone: varchar("max_zone", { length: 2 }).notNull(), // Z1 | Z2 | Z3
+    targetRpe: integer("target_rpe"), // CR-10 do catálogo (R-CRG-07)
+    optional: boolean("optional").default(false).notNull(), // força e mobilidade
+    ladder: jsonb("ladder"), // estrutura da escada caminhada-corrida
+    note: text("note"),
     status: varchar("status", { length: 50 }).notNull().default("pending"), // 'pending' | 'completed' | 'skipped'
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
-  (t) => [index("scheduled_workouts_user_date_idx").on(t.userId, t.scheduledDate)],
+  (t) => [
+    index("scheduled_workouts_user_date_idx").on(t.userId, t.scheduledDate),
+    uniqueIndex("scheduled_workouts_week_slot_idx").on(t.athletePlanWeekId, t.slot),
+  ],
 );
 
 export const workoutLogs = pgTable(
@@ -356,6 +403,7 @@ export const workoutLogs = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     scheduledWorkoutId: uuid("scheduled_workout_id")
       .notNull()
+      .unique()
       .references(() => scheduledWorkouts.id, { onDelete: "cascade" }),
     completed: boolean("completed").notNull(),
     durationMinutes: integer("duration_minutes"),
@@ -375,7 +423,8 @@ export const dailyCheckins = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    date: ts("date").notNull(),
+    date: date("date").notNull(),
+    // Notas de 1 a 5, sempre "5 = melhor" (convenção do motor): estresse 5 = tranquilo, dor muscular 5 = sem dor.
     sleepHours: decimal("sleep_hours", { precision: 4, scale: 1 }),
     sleepQuality: integer("sleep_quality"),
     energy: integer("energy"),
@@ -384,9 +433,11 @@ export const dailyCheckins = pgTable(
     mood: integer("mood"),
     restingHr: integer("resting_hr"),
     acuteIllness: boolean("acute_illness").default(false).notNull(), // R-SON-16
+    dailyPainWalking: integer("daily_pain_walking"), // 0–10, só com bloqueio por dor ativo (R-DOR-10)
     createdAt: createdAt(),
+    updatedAt: updatedAt(),
   },
-  (t) => [index("daily_checkins_user_date_idx").on(t.userId, t.date)],
+  (t) => [uniqueIndex("daily_checkins_user_date_idx").on(t.userId, t.date)],
 );
 
 export const painReports = pgTable(
@@ -397,6 +448,8 @@ export const painReports = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     workoutLogId: uuid("workout_log_id").references(() => workoutLogs.id, { onDelete: "set null" }),
+    reportedOn: date("reported_on").notNull(),
+    moment: varchar("moment", { length: 20 }).notNull().default("treino"), // treino | manha_seguinte | checkin
     bodyPart: varchar("body_part", { length: 100 }).notNull(),
     intensity: integer("intensity").notNull(),
     painType: varchar("pain_type", { length: 100 }), // muscular, articular, pontada
@@ -407,7 +460,7 @@ export const painReports = pgTable(
     createdAt: createdAt(),
   },
   (t) => [
-    index("pain_reports_user_id_idx").on(t.userId),
+    index("pain_reports_user_id_idx").on(t.userId, t.reportedOn),
     check("pain_reports_intensity", sql`${t.intensity} between 0 and 10`),
   ],
 );
@@ -423,9 +476,10 @@ export const engineDecisions = pgTable(
     appliedRule: varchar("applied_rule", { length: 255 }).notNull(),
     outputDecision: varchar("output_decision", { length: 255 }).notNull(),
     engineVersion: varchar("engine_version", { length: 50 }).notNull(),
+    forDate: date("for_date"), // dia a que a decisão se refere (decisão do dia)
     createdAt: createdAt(),
   },
-  (t) => [index("engine_decisions_user_id_idx").on(t.userId)],
+  (t) => [index("engine_decisions_user_id_idx").on(t.userId, t.forDate)],
 );
 
 /** Tabelas com dados do atleta: RLS por user_id (ver 0001_rls.sql). */
@@ -435,6 +489,7 @@ export const athleteTables = [
   "athlete_profiles",
   "interview_responses",
   "athlete_plans",
+  "athlete_plan_weeks",
   "scheduled_workouts",
   "workout_logs",
   "daily_checkins",

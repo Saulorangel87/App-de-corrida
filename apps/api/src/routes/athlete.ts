@@ -55,5 +55,13 @@ export function athleteRoutes(opts: { athlete: AthleteService; session: Middlewa
     async (c) => c.json(await athlete.declareProfessionalConsulted(me(c).id, c.req.valid("json").date)),
   );
 
+  // ----- LGPD: exportar todos os meus dados -----
+
+  r.get("/account/export", session, async (c) => {
+    const data = await athlete.exportData(me(c).id);
+    c.header("Content-Disposition", 'attachment; filename="meus-dados-app-de-corrida.json"');
+    return c.json(data);
+  });
+
   return r;
 }

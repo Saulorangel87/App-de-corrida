@@ -1,6 +1,6 @@
 # ADR 0005 — Semanas e sessões dos 13 modelos de plano (Fase 4b)
 
-Data: 2026-10-10 · Status: aceito, com 8 escolhas do projeto para o dono confirmar
+Data: 2026-10-10 · Status: aceito (fase aprovada pelo dono em 2026-10-10; os 8 itens abaixo seguem como padrão e podem ser revistos)
 
 ## Contexto
 A decisão do dia (ADR 0004) precisa de um "treino de hoje". Os modelos tinham só objetivo, nível e duração. A pesquisa (10-planos-objetivo.md) dá as curvas de volume de 5 modelos, a escada do iniciante, tetos, polimento e regras de frequência, mas não escreve semana por semana os 13 modelos.
@@ -25,5 +25,5 @@ A decisão do dia (ADR 0004) precisa de um "treino de hoje". Os modelos tinham s
 
 ## Consequências
 - Mudar uma curva ou composição exige nova versão do modelo (`PLN-v1`) e reexecutar o seed.
-- A persistência do plano agendado (`scheduled_workouts`) e a recomputação semanal a partir do que foi concluído ficam para a Fase 5.
+- A persistência do plano agendado (`scheduled_workouts`) e a recomputação semanal a partir do que foi concluído entraram na Fase 5 (ADR 0006): a semana nasce dentro dos tetos sobre o volume concluído e, com menos dias que corridas, o volume das leves é repartido entre as que ficam (`maxRuns`).
 - O limite de 300 min/semana com `controle_de_peso` (R-PLN-16) e o corte de 40 min contínuos para o longão do iniciante em plano direto (R-SES-30) não têm gatilho ainda: dependem de dados da Fase 5.

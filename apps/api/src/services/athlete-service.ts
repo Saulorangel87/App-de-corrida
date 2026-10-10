@@ -1,12 +1,19 @@
 import { and, desc, eq, sql } from "drizzle-orm";
 import {
+  athletePlanWeeks,
   athletePlans,
   athleteProfiles,
+  consents,
+  dailyCheckins,
   engineDecisions,
   healthScreenings,
   interviewResponses,
+  painReports,
   planTemplates,
+  scheduledWorkouts,
+  users,
   withAthlete,
+  workoutLogs,
   type Database,
   type Transaction,
 } from "@passo/db";
@@ -63,10 +70,27 @@ const underage = () =>
   new AppError(400, "UNDERAGE", "O App de corrida é só para maiores de 18 anos.", { canDeleteAccount: true });
 
 /** Entradas guardadas no perfil para refazer a escolha do plano depois (ex.: após a avaliação). */
-type StoredInputs = {
+export type StoredInputs = {
   birth: { year: number; month: number };
   classification: ClassificationInput;
   plan: Omit<PlanSelectionInput, "screening" | "today" | "level">;
+};
+
+/** Entradas da triagem recalculadas para `on` a partir da linha guardada (validade, R-TRI-10). */
+export const screeningInputFrom = (row: typeof healthScreenings.$inferSelect, ageMax: number, on: string): ScreeningInput => {
+  const answers = row.answers as Pick<ScreeningInput, "general" | "followUp">;
+  return {
+    general: answers.general,
+    followUp: answers.followUp,
+    pregnant: row.pregnant,
+    ageYears: ageMax,
+    regularExercise3m: row.regularExercise3m,
+    consultedProfessionalAt: row.consultedProfessionalOn ?? undefined,
+    completedAt: row.completedOn,
+    evaluation: (row.evaluation as Evaluation | null) ?? undefined,
+    healthChangedAt: row.healthChangedOn ?? undefined,
+    now: on,
+  };
 };
 
 export function athleteService(d: { db: Database; logger: Logger; now: () => Date }) {
@@ -100,22 +124,6 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
         .limit(1)
     )[0];
 
-  const screeningInputFrom = (row: typeof healthScreenings.$inferSelect, ageMax: number, on: string): ScreeningInput => {
-    const answers = row.answers as Pick<ScreeningInput, "general" | "followUp">;
-    return {
-      general: answers.general,
-      followUp: answers.followUp,
-      pregnant: row.pregnant,
-      ageYears: ageMax,
-      regularExercise3m: row.regularExercise3m,
-      consultedProfessionalAt: row.consultedProfessionalOn ?? undefined,
-      completedAt: row.completedOn,
-      evaluation: (row.evaluation as Evaluation | null) ?? undefined,
-      healthChangedAt: row.healthChangedOn ?? undefined,
-      now: on,
-    };
-  };
-
   /** Atribui o plano se a escolha deu "atribuido"; encerra o plano ativo anterior. */
   async function assignPlan(tx: Transaction, userId: string, selection: PlanSelection) {
     if (selection.status !== "atribuido") return null;
@@ -146,6 +154,53 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
   }
 
   return {
+    /** Exportação de todos os dados do atleta (LGPD, seção 10): JSON, sem segredos de autenticação. */
+    async exportData(userId: string) {
+      return withAthlete(db, userId, async (tx) => {
+        const [account] = await tx
+          .select({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+            language: users.language,
+            emailVerifiedAt: users.emailVerifiedAt,
+            createdAt: users.createdAt,
+          })
+          .from(users)
+          .where(eq(users.id, userId));
+        const [
+          consentRows, profile, interviews, screenings, plans, planWeeks, scheduled, logs, checkins, pain, decisions,
+        ] = await Promise.all([
+          tx.select().from(consents).where(eq(consents.userId, userId)),
+          tx.select().from(athleteProfiles).where(eq(athleteProfiles.userId, userId)),
+          tx.select().from(interviewResponses).where(eq(interviewResponses.userId, userId)),
+          tx.select().from(healthScreenings).where(eq(healthScreenings.userId, userId)),
+          tx.select().from(athletePlans).where(eq(athletePlans.userId, userId)),
+          tx.select().from(athletePlanWeeks).where(eq(athletePlanWeeks.userId, userId)),
+          tx.select().from(scheduledWorkouts).where(eq(scheduledWorkouts.userId, userId)),
+          tx.select().from(workoutLogs).where(eq(workoutLogs.userId, userId)),
+          tx.select().from(dailyCheckins).where(eq(dailyCheckins.userId, userId)),
+          tx.select().from(painReports).where(eq(painReports.userId, userId)),
+          tx.select().from(engineDecisions).where(eq(engineDecisions.userId, userId)),
+        ]);
+        return {
+          exportedAt: d.now().toISOString(),
+          account,
+          consents: consentRows,
+          profile: profile[0] ?? null,
+          interviews,
+          healthScreenings: screenings,
+          plans,
+          planWeeks,
+          scheduledWorkouts: scheduled,
+          workoutLogs: logs,
+          dailyCheckins: checkins,
+          painReports: pain,
+          engineDecisions: decisions,
+        };
+      });
+    },
+
     async getInterview(userId: string) {
       return withAthlete(db, userId, async (tx) => {
         const draft = await draftOf(tx, userId);

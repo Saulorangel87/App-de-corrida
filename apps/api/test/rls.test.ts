@@ -23,8 +23,8 @@ beforeAll(async () => {
   t = makeApp();
   a = await signUpAndLogin(t);
   b = await signUpAndLogin(t);
-  await admin`insert into pain_reports (user_id, body_part, intensity) values
-    (${a.userId}, 'joelho', 2), (${b.userId}, 'tornozelo', 4)`;
+  await admin`insert into pain_reports (user_id, reported_on, body_part, intensity) values
+    (${a.userId}, '2026-10-01', 'joelho', 2), (${b.userId}, '2026-10-01', 'tornozelo', 4)`;
 });
 afterAll(async () => {
   await t.close();
@@ -45,7 +45,7 @@ describe("Row-Level Security nas tabelas do atleta", () => {
   it("A não grava linha em nome de B", async () => {
     const message = await pgError(
       withAthlete(t.db, a.userId, (tx) =>
-        tx.insert(painReports).values({ userId: b.userId, bodyPart: "quadril", intensity: 1 }),
+        tx.insert(painReports).values({ userId: b.userId, reportedOn: "2026-10-01", bodyPart: "quadril", intensity: 1 }),
       ),
     );
     expect(message).toMatch(/row-level security/);

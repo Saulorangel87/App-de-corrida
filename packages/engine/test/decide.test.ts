@@ -250,3 +250,32 @@ describe("auditoria e fontes", () => {
     expect(r.message).toContain("profissional de saúde");
   });
 });
+
+describe("semana do plano como janela do teto semanal", () => {
+  it("com weekStartedOn, só conta o que foi concluído desde o início da semana do plano", () => {
+    // semana de construção de 100 min (teto 110): 3 corridas da semana anterior caem na janela móvel de 7 dias
+    const logs = [done(-6, 45), done(-4, 45), done(-1, 30)];
+    const rolling = decideDay(base({ planned: easy, logs, lastBuildWeekMinutes: 100 }));
+    expect(rolling.reasons.map((x) => x.code)).toContain("teto_semanal");
+
+    const byPlanWeek = decideDay(base({ planned: easy, logs, lastBuildWeekMinutes: 100, weekStartedOn: d(-1) }));
+    expect(byPlanWeek.reasons.map((x) => x.code)).not.toContain("teto_semanal");
+    expect(byPlanWeek.session).toMatchObject({ minutes: 40, changed: false });
+  });
+
+  it("a escada em semana de recuperação não é cortada pelos 75% (o modelo já define a semana)", () => {
+    const r = decideDay(
+      base({
+        level: "iniciante",
+        flags: ["inicio_do_zero"],
+        planned: ladder,
+        inLadder: true,
+        isRecoveryWeek: true,
+        lastBuildWeekMinutes: 90,
+        logs: [done(-3, 30, { exempt: true }), done(-1, 30, { exempt: true })],
+        weekStartedOn: d(-6),
+      }),
+    );
+    expect(r.session).toMatchObject({ slug: "caminhada-corrida", minutes: 30, changed: false });
+  });
+});

@@ -114,6 +114,11 @@ export type DayInput = {
   isRecoveryWeek?: boolean;
   /** Sessão da escada caminhada-corrida (isenta dos tetos de 110%, R-PRG-02/03). */
   inLadder?: boolean;
+  /**
+   * Primeiro dia da semana do plano (janela de 7 dias). O teto semanal conta o que foi concluído
+   * a partir daqui; sem isto, vale a janela móvel dos últimos 7 dias.
+   */
+  weekStartedOn?: string;
   /** Dor ao caminhar no dia a dia, 0–10, do último check-in (R-DOR-10). */
   dailyPainWalking?: number | null;
   /** Data da primeira corrida depois de uma pausa de 15 dias ou mais (sem Z3 por 2 semanas). */

@@ -18,3 +18,5 @@ export * from "./plan/templates";
 export * from "./plan/materialize";
 export * from "./plan/ladder-progress";
 export * from "./plan/schedule";
+export * from "./plan/week";
+export * from "./day/derive";

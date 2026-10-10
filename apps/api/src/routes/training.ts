@@ -1,0 +1,65 @@
+import { Hono, type MiddlewareHandler } from "hono";
+import { checkinSchema, clearanceSchema, historyQuerySchema, isoDate, painReportSchema, pauseSchema, workoutLogSchema } from "@passo/shared";
+import { z } from "zod";
+import { errors } from "../lib/errors";
+import { validate } from "../lib/validate";
+import type { TrainingService } from "../services/training-service";
+import type { AppEnv } from "../types";
+
+// Acompanhamento diário. O dono vem sempre da sessão no servidor; as datas são do calendário
+// do atleta (AAAA-MM-DD) e o servidor só aceita hoje e os dias vizinhos.
+
+export function trainingRoutes(opts: { training: TrainingService; session: MiddlewareHandler<AppEnv> }) {
+  const { training, session } = opts;
+  const r = new Hono<AppEnv>();
+  const me = (c: { var: AppEnv["Variables"] }) => c.var.auth.user.id;
+
+  const dateParam = (c: { req: { param: (k: string) => string } }) => {
+    const parsed = isoDate.safeParse(c.req.param("date"));
+    if (!parsed.success) throw errors.validation([{ path: "date", code: "invalid_date" }]);
+    return parsed.data;
+  };
+  const idParam = (c: { req: { param: (k: string) => string } }) => {
+    const parsed = z.string().uuid().safeParse(c.req.param("id"));
+    if (!parsed.success) throw errors.notFound();
+    return parsed.data;
+  };
+
+  // Decisão e sessões do dia
+  r.get("/day/:date", session, async (c) => c.json(await training.day(me(c), dateParam(c))));
+
+  // Semana do plano que contém a data
+  r.get("/plan/week/:date", session, async (c) => c.json(await training.week(me(c), dateParam(c))));
+
+  // Check-in diário (um por dia; reenviar substitui)
+  r.put("/checkins/:date", session, validate("json", checkinSchema), async (c) =>
+    c.json(await training.saveCheckin(me(c), dateParam(c), c.req.valid("json"))),
+  );
+
+  // Dor ou sintoma fora do registro de treino
+  r.post("/pain/:date", session, validate("json", painReportSchema), async (c) =>
+    c.json(await training.savePain(me(c), dateParam(c), c.req.valid("json")), 201),
+  );
+
+  // Registro pós-treino (reenviar substitui) e decisão do dia seguinte
+  r.put("/workouts/:id/log", session, validate("json", workoutLogSchema), async (c) =>
+    c.json(await training.logWorkout(me(c), idParam(c), c.req.valid("json"))),
+  );
+
+  // Pausa e liberação profissional
+  r.put("/profile/pause", session, validate("json", pauseSchema), async (c) =>
+    c.json(await training.declarePause(me(c), c.req.valid("json").cause)),
+  );
+  r.post("/profile/professional-clearance", session, validate("json", clearanceSchema), async (c) =>
+    c.json(await training.declareClearance(me(c), c.req.valid("json").date)),
+  );
+
+  // Histórico: sono, carga semanal, dor, aderência
+  r.get("/history", session, async (c) => {
+    const parsed = historyQuerySchema.safeParse({ days: c.req.query("days") });
+    if (!parsed.success) throw errors.validation(parsed.error.issues.map((i) => ({ path: i.path.join("."), code: i.code })));
+    return c.json(await training.history(me(c), parsed.data.days));
+  });
+
+  return r;
+}
