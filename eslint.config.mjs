@@ -15,11 +15,18 @@ export default tseslint.config(
       },
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
   {
-    ignores: ['**/dist/**', '**/node_modules/**', '**/.turbo/**', '**/build/**'],
+    ignores: [
+      '**/dist/**',
+      '**/node_modules/**',
+      '**/.turbo/**',
+      '**/build/**',
+      'packages/db/drizzle/**',
+      'docs/**',
+    ],
   }
 );

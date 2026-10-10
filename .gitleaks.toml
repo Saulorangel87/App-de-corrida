@@ -1,0 +1,17 @@
+title = "Passo - gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Falsos positivos conhecidos"
+paths = [
+  '''pnpm-lock\.yaml$''',
+  '''packages/db/drizzle/meta/''',
+  # Senhas fictícias usadas só nos testes de integração.
+  '''apps/api/test/.*\.test\.ts$''',
+]
+# Chaves de citação das referências (ex.: "Balsalobre2016").
+regexes = [
+  '''^[A-Z][A-Za-z]+[0-9]{4}[a-z]?$''',
+]

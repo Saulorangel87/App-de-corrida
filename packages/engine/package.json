@@ -6,5 +6,8 @@
   "types": "src/index.ts",
   "dependencies": {
     "@passo/shared": "workspace:*"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
   }
 }

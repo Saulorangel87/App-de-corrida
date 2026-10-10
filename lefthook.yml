@@ -1,0 +1,4 @@
+pre-commit:
+  commands:
+    gitleaks:
+      run: bash scripts/gitleaks-staged.sh

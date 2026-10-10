@@ -1,0 +1,2 @@
+# Valor falso (re_dummy_key_...) no .env.example antigo; não é segredo.
+48fda8ef92b8dbaa08201f09188211d1a9afbbd0:apps/api/.env.example:generic-api-key:9
