@@ -45,15 +45,15 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - API em desenvolvimento: `cp apps/api/.env.example apps/api/.env` e `pnpm --filter @passo/api dev`
 - Nova migração: editar `packages/db/src/schema.ts` e `pnpm --filter @passo/db db:generate` (SQL manual: `db:generate --custom`)
 - Aplicar migrações / seed: `pnpm --filter @passo/db db:migrate` / `db:seed` (com `MIGRATION_DATABASE_URL` do `passo_migrator`)
+- Texto do PAR-Q+: colar em `docs/parq/parq-plus-pt-br.txt` e rodar `pnpm --filter @passo/shared parq:build`
 - VPS (banco, papéis, backup): ver `ops/README.md`
 
 ## Estado atual
-Fase atual: correção das Fases 1 e 2 (feitas por outro agente) concluída em 2026-10-10, aguardando aprovação.
-- Banco: schema revisado (timestamptz, bloqueio de login, sessões com inatividade/absoluta), RLS nas 9 tabelas do atleta, papéis `passo_migrator` e `passo_api` (ADR 0002). Seed: 11 treinos e 34 referências de `docs/pesquisa/` (textos `razao` a revisar pelo dono).
-- Auth (`/api/v1/auth`): cadastro, verificação, login/logout, bloqueio, esqueci/redefinir senha, sessões ativas; e-mails PT/EN (ADR 0001). 47 testes de integração com Postgres real.
-- CI (lint, typecheck, testes, build, `pnpm audit`, gitleaks), Dependabot, pre-commit com gitleaks.
-- VPS: banco recriado com as migrações novas (rede `internal`, papéis restritos, seed aplicado); backup diário 04:30 UTC via `passo-backup.timer` para o remote `corrida-run:`; restauração testada em 2026-10-10.
-- Retenção de 30 dias ativa no bucket; chaves do crypt guardadas pelo dono fora da VPS.
-- Pendente (dono): revisar os textos `razao` do seed.
+Fase atual: 3 — Entrevista e perfil do atleta (backend) concluída em 2026-10-10, aguardando aprovação.
+- Motor (`packages/engine`): CLS-v1 (classificação), TRI-v1 (triagem PAR-Q+), PLN-v1 (escolha do plano), com 56 testes, incluindo os 21 casos da pesquisa.
+- API: `/api/v1/interview` (8 etapas, salvar e continuar, enviar) e `/api/v1/profile` (nível com explicação, triagem, plano, autodeclaração de avaliação). 57 testes de integração, com A-tenta-B.
+- Banco: `health_screenings` com RLS; modelos de plano (13) no seed; migrações aplicadas na VPS.
+- Decisões em `docs/adr/0003-entrevista-e-perfil.md`.
+- Pendente (dono): colar o texto oficial do PAR-Q+ em `docs/parq/parq-plus-pt-br.txt` e rodar `pnpm --filter @passo/shared parq:build`; avisar a PAR-Q+ Collaboration do uso (R-TRI-14, não bloqueia); revisar os textos `razao` do seed.
 - Pendente (deploy): Dockerfile da API e rota no túnel.
-- Próxima: Fase 3 — entrevista (onboarding) e perfil do atleta.
+- Próxima: Fase 4 — motor de recomendação (semanas dos planos, decisão do dia).
