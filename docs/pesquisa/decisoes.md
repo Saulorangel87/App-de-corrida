@@ -49,7 +49,7 @@ Registro único das decisões do dono do projeto e das decisões de projeto toma
 36. **DEC-36. Pequenas inconsistências.** Em 05 a tabela de evidência fraca passa a falar em teto absoluto de 120% (antes "20%"); Soligard 2016 passa a ser citada no corpo de 05 como leitura de contexto. Arquivo: 05.
 37. **DEC-37. Plano 5 km iniciante do zero com 17 semanas.** As sessões são as da escada (12 etapas da fonte + degrau 10b = 13 degraus) e a recuperação repete a etapa anterior nas semanas 4, 8, 12 e 16, o que dá 17 semanas (antes 12). Consequência das decisões 14, 15 e 16; curva recalculada. Regras: R-PLN-05, R-PLN-12, R-PLN-13. Arquivo: 10.
 
-## C. Decisões menores por arquivo (DEC-38 a DEC-47)
+## C. Decisões menores por arquivo (DEC-38 a DEC-48)
 
 38. **DEC-38 (01).** Limiares de [Honert 2020] como ponto de partida [P]; entrevista aceita minutos por semana (7 min/km), com iniciante automático abaixo de 12 meses; só 5 e 10 km na v1 (meia e maratona fora da entrevista de nível); sem autoclassificação como critério (o atleta pode pedir nível menor); taxonomia por exposição acumulada fora do `CLS-v1`.
 39. **DEC-39 (02).** P2: bloqueio por Q2, Q3 ou Q7 aceito; P3: "liberado com restrições" mantém o bloqueio; P4: `leve_moderada` (Z1) durante os 6 meses de validade; P5: campos livres de condições e medicamentos exibidos mas não armazenados; P6: diretriz brasileira só informativa; P7: autodeclaração com data e fonte, sem anexo; P8: SAMU 192; P9: verificação do ePARmed-X+ em português é tarefa da Fase 3.
@@ -61,6 +61,7 @@ Registro único das decisões do dono do projeto e das decisões de projeto toma
 45. **DEC-45 (08).** Piso de 7 h sem pergunta de necessidade individual; valores de sono e bem-estar [P]; FC de repouso só registro; aviso de 14 de 21 dias aceito; escala 5 = melhor em todos os itens.
 46. **DEC-46 (09).** Faixas 3/5 confirmadas; R-DOR-12 e R-DOR-13 mantidas como regras de prudência [P], com revisão por fisioterapeuta ou médico do esporte recomendada antes do lançamento; R-DOR-14 (analgésico) mantida.
 47. **DEC-47 (10).** Bloqueio simples por IMC < 18,5 enquanto não houver fonte para triagem de transtorno alimentar; recuperação pós-prova, fases e proporções, prazos mínimos e tetos confirmados como [P]; sem modelo próprio para IMC alto ou doenças crônicas; corrida-caminhada em meia e maratona fora do escopo.
+48. **DEC-48. Plano 5 km do zero: 13 semanas sem semanas de recuperação fixas; repetição de etapa por regra de congelamento — decisão do dono [P].** Substitui a duração de DEC-37 (17 semanas; a parte das sessões continua valendo). As 13 etapas da escada de R-SES-10 (etapas 1 a 12 da fonte mais 10b) viram as semanas 1 a 13, uma etapa por semana: semana 11 = etapa 10b, semana 12 = etapa 11, semana 13 = etapa 12. Não há recuperação fixa neste plano; o atleta repete a etapa (não avança) quando R-PRG-06 congelar a progressão ou houver dor ≥ 3/10, então a duração real pode passar de 13 semanas. A regra de recuperação a cada 4ª semana dos outros planos não muda. Regras: R-PLN-05, R-PLN-12, R-PLN-13. Arquivos: 10, pontos-fracos.
 
 ## D. Correções à especificação (`docs/especificacao.md`)
 

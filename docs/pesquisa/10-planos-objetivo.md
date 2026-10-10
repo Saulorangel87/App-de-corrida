@@ -45,7 +45,7 @@ A literatura verificada sustenta bem três coisas: (1) o polimento (taper) funci
 - Programa "Start to Run" de 6 semanas (1.696 adultos de 18 a 65 anos): 10,9% se lesionaram durante o programa; idade maior, IMC maior, queixas musculoesqueléticas prévias não esportivas e **ausência de experiência prévia de corrida** se associaram à lesão [Kluitenberg 2015b]. Em 774 participantes, 29,5% pararam de correr em 26 semanas, e a lesão foi o motivo de 48% das desistências; experiência de corrida recente (<1 ano) e melhor função física reduziram a desistência [Fokkema 2019].
 - Programa "Couch-to-5k" modificado de 9 semanas (110 adultos no Reino Unido, 3 corridas/semana, 1 min correndo e 1,5 min andando na semana 1, 30 min contínuos na semana 9): 19% de lesão e 64,5% de não conclusão no corpo do texto (o resumo traz 27,3% de conclusão, discrepância interna). Os que desistiram apontaram o salto da semana 5 (de 8 para 20 min contínuos) como rápido demais; lesão prévia previu não conclusão (OR 7,56) [Relph 2023].
 - Programa padrão de 8 semanas (3 sessões/semana, corrida-caminhada 1:1 na semana 1, 30 → 95 min de corrida/semana na semana 7) e programa gradual de 13 semanas (30 → 90 min de corrida/semana, sem caminhada na semana 12) tiveram a mesma lesão [Buist 2007; Buist 2008].
-- Nenhum estudo compara durações de 6, 8, 10 e 12 semanas de forma randomizada e adequada. A duração de 17 semanas do plano do zero (13 degraus da escada de R-SES-10 mais 4 semanas de recuperação, R-PLN-12) é [P] com base em: nenhum prazo curto reduz lesão (6–9 semanas = 11–21%), o salto da semana 5 do Couch-to-5k foi criticado, e a maioria das desistências ocorre por lesão. Conservadorismo adicional é plausível, mas não comprovado.
+- Nenhum estudo compara durações de 6, 8, 10 e 12 semanas de forma randomizada e adequada. A duração de 13 semanas do plano do zero (uma etapa da escada de R-SES-10 por semana, sem semanas de recuperação fixas, R-PLN-12; repetições de etapa podem estendê-la) é [P] com base em: nenhum prazo curto reduz lesão (6–9 semanas = 11–21%), o salto da semana 5 do Couch-to-5k foi criticado, e a maioria das desistências ocorre por lesão. Conservadorismo adicional é plausível, mas não comprovado.
 
 ### 6. Saúde e condicionamento
 
@@ -84,7 +84,7 @@ A literatura verificada sustenta bem três coisas: (1) o polimento (taper) funci
 
 **R-PLN-04 [P]** A meia-maratona (21 km) e a maratona (42 km) **não são oferecidas a iniciante** (decisão do dono 7), mesmo que o atleta declare os pré-requisitos de R-PLN-03; os pré-requisitos de R-PLN-03 ficam como condição adicional para intermediário e avançado. A maratona também não é oferecida a quem não cumpre todos os pré-requisitos de 42 km, mesmo que o nível calculado seja intermediário. Mensagem: "Sua base atual indica começar por 10 km" (iniciante) ou "... por 10 km ou 21 km" (intermediário sem os pré-requisitos de 42 km). [Rasmussen 2013; Toresdahl 2022; van Poppel 2021]
 
-**R-PLN-05 [P]** Prazo mínimo até a prova (semanas) sem comprimir a progressão: 5 km 8 (iniciante do zero: 17); 10 km 10; 21 km 12; 42 km 16. Se o prazo for menor, o app **não encurta** a progressão: sugere data posterior ou distância menor. Se for maior, as semanas extras entram como base (R-PLN-07).
+**R-PLN-05 [P]** Prazo mínimo até a prova (semanas) sem comprimir a progressão: 5 km 8 (iniciante do zero: 13); 10 km 10; 21 km 12; 42 km 16. Se o prazo for menor, o app **não encurta** a progressão: sugere data posterior ou distância menor. Se for maior, as semanas extras entram como base (R-PLN-07).
 
 ### B. Estrutura dos modelos
 
@@ -129,8 +129,8 @@ Intensidade preservada = manter alguns blocos curtos em ritmo de prova para quem
 **R-PLN-12 [P]** Modelo 5 km iniciante do zero. As sessões são as da escada `caminhada-corrida` (R-SES-10/11: 12 etapas da fonte [Buist 2007] mais o degrau 10b [P]), 3 por semana, em dias não consecutivos, com a regra de salto de bloco contínuo de R-SES-13 (o salto da semana 5 do Couch-to-5k foi apontado como rápido demais [Relph 2023]; 8 min para 20 min contínuos em uma semana não é permitido, o máximo seria 12 min):
 - primeiras semanas = 1 min correndo : 1 min andando [Buist 2007; Relph 2023];
 - a escada é isenta do teto semanal de 110% (progressão por tolerância) mas respeita o teto absoluto de 120% (R-PRG-03/04);
-- recuperação nas semanas 4, 8, 12 e 16 do plano: repete a etapa anterior com 75% das repetições, sem avançar (R-PRG-07);
-- duração: 13 degraus + 4 recuperações = **17 semanas** (semanas 1 a 3: etapas 1 a 3; 5 a 7: etapas 4 a 6; 9 a 11: etapas 7 a 9; 13: etapa 10; 14: etapa 10b; 15: etapa 11; 17: etapa 12); 30 min contínuos na etapa 11 (semana 15) e 40 min contínuos na etapa 12 (semana 17), semana de teste ou prova de 5 km (ou 40 min, se o objetivo for tempo e não distância), sem polimento formal;
+- sem semanas de recuperação fixas (exceção à regra de R-PRG-07 para este modelo): repetir a etapa, sem avançar, é a única reação ao cansaço (R-PRG-06), por isso a duração real pode passar de 13 semanas;
+- duração: **13 semanas** (semana N = etapa N, até a etapa 10; semana 11: etapa 10b; semana 12: etapa 11; semana 13: etapa 12), sem recuperações fixas (decisão do dono, DEC-48, [P]); 30 min contínuos na etapa 11 (semana 12) e 40 min contínuos na etapa 12 (semana 13), semana de teste ou prova de 5 km (ou 40 min, se o objetivo for tempo e não distância), sem polimento formal;
 - **repetir a etapa** (sem avançar) se houver dor ≥ 3/10 (`limite_dor_progressao`) ou 2 sessões não concluídas na semana. Quem tem `cautela_lesao` (lesão prévia, R-CLS-09) ou IMC ≥30 (se informado) usa a "progressão lenta": cada etapa é repetida uma vez antes de avançar [van Poppel 2021; Kluitenberg 2015b; Relph 2023 para lesão prévia → não conclusão]; o limite do IMC é [P];
 - entrada em etapa avançada: quem já corre 10–20 min contínuos pode começar na etapa cujo maior bloco contínuo não passe da maior corrida contínua recente (teste de capacidade em vez de chute), mas **experiência prévia reduz risco** [Kluitenberg 2015b], então começar do início é o padrão.
 
@@ -138,13 +138,13 @@ Intensidade preservada = manter alguns blocos curtos em ritmo de prova para quem
 
 | Objetivo | Iniciante | Intermediário | Avançado | Recuperação (semanas) | Polimento |
 |---|---|---|---|---|---|
-| 5 km | 17 (do zero) | 8 | 10 | iniciante 4, 8, 12 e 16; intermediário 4; avançado 4 e 8 | 1 sem |
+| 5 km | 13 (do zero) | 8 | 10 | iniciante nenhuma fixa (repete etapa, R-PLN-12); intermediário 4; avançado 4 e 8 | 1 sem |
 | 10 km | 12 | 10 | 12 | 4 e 8 | 2 sem |
 | 21 km | não oferecido | 12 | 12 | 4 e 8 | 2 sem |
 | 42 km | não oferecido | 16 | 16–18 | 4, 8 e 12 (+16 se 18) | 3 sem |
 | Saúde | 12 (ciclo) | 12 (ciclo) | 12 (ciclo) | 4, 8 e 12 | — |
 
-Regra geral: a recuperação ocorre em toda 4ª semana (R-PRG-07); a semana de prova ou de polimento substitui a recuperação quando coincidem na última semana do plano.
+Regra geral: a recuperação ocorre em toda 4ª semana (R-PRG-07), exceto no plano do zero de 5 km, sem semanas fixas (R-PLN-12); a semana de prova ou de polimento substitui a recuperação quando coincidem na última semana do plano.
 
 **R-PLN-14 [P]** Saúde e condicionamento: ciclos de 12 semanas encadeáveis, 3 sessões de corrida ou corrida-caminhada/semana, rumo a **≥150 min/semana de atividade aeróbica** somando corrida, caminhada e outros esportes que o atleta informar, com teto de **300 min/semana** (faixa superior da OMS) [Bull 2020; Garber 2011]; sugerir fortalecimento em 2 ou mais dias/semana (sessões do catálogo de força) [Bull 2020; Garber 2011]; sem polimento; ao fim de cada ciclo, reavaliação (check-in da meta e do nível). Mensagem: qualquer quantidade de corrida já ajuda, mais não é necessariamente melhor [Pedisic 2020]. Progressão inicial: começar com o que o atleta já faz [Bull 2020; Garber 2011].
 
@@ -171,11 +171,11 @@ Regra geral: a recuperação ocorre em toda 4ª semana (R-PRG-07); a semana de p
 
 ### Curvas de volume (índice, pico = 100) — exemplos, todas [P] com tetos de R-PLN-07
 
-Índices construídos para que cada semana de carga fique em +5% a +10% da última semana de construção (no máximo +10% da semana de construção anterior à recuperação) e a semana de recuperação fique em 75% dessa semana, arredondada para baixo (R-PRG-07). A curva do iniciante do zero deriva da escada: minutos de corrida por etapa (30, 34, 36, 40, 44, 48, 54, 56, 64, 72, 72, 80, 90), com pico de 90 min/semana, e recuperação em 75% da etapa anterior.
+Índices construídos para que cada semana de carga fique em +5% a +10% da última semana de construção (no máximo +10% da semana de construção anterior à recuperação) e a semana de recuperação fique em 75% dessa semana, arredondada para baixo (R-PRG-07). A curva do iniciante do zero deriva da escada: minutos de corrida por etapa (30, 34, 36, 40, 44, 48, 54, 56, 64, 72, 72, 80, 90), com pico de 90 min/semana, e, por ser o plano sem semanas de recuperação fixas (R-PLN-12), nenhuma semana é reduzida para 75%.
 
 | Modelo | Semanas e índices |
 |---|---|
-| 5 km iniciante (17) | 33, 38, 40, 30 (R), 44, 49, 53, 40 (R), 60, 62, 71, 53 (R), 80, 80, 89, 67 (R), 100 (teste/prova) |
+| 5 km iniciante (13) | 33, 38, 40, 44, 49, 53, 60, 62, 71, 80, 80, 89, 100 (teste/prova) |
 | 5 km intermediário (8) | 70, 75, 81, 60 (R), 87, 94, 100, 60 (prova) |
 | 10 km intermediário (10) | 68, 73, 79, 59 (R), 86, 93, 100, 75 (R), 75 (T), 55 (T, prova) |
 | 21 km intermediário (12) | 58, 63, 68, 51 (R), 74, 80, 86, 64 (R), 93, 100, 75 (T), 55 (T, prova) |
@@ -191,7 +191,7 @@ R = semana de recuperação, T = polimento. No plano de 10 km a semana 8 é de r
 | Aplicabilidade do taper | Estudos com atletas competitivos jovens (Wang: 17–32 anos, maioria homens); Smyth recreativo mas observacional; nada em iniciantes, 5 km/10 km recreativos | Mesmos percentuais, porém mais moderados em iniciantes; sem sobrecarga pré-taper |
 | "Regra dos 10%" (diverge da especificação) | O ECR não achou vantagem de 13 semanas (10%/semana) sobre 8 semanas; saltos ≥20–30% mostram sinal de risco, mas fraco/exploratório | Não tratar 10% como regra de proteção; alvo +5–10%, teto 110% [P] e **teto absoluto de 120%** (R-PRG-03/04) |
 | Volume e lesão na maratona | Rasmussen: <30 km/semana aumenta lesão; Fokkema: volume não se associou a lesão; ambos são observacionais com autorrelato | Exigir ≥30 km/semana antes de começar o plano de maratona (aceita a hipótese mais conservadora) |
-| Duração do plano de 5 km do zero | 6 a 13 semanas, sem diferença clara de lesão; abandono de ~30% em 6 meses | 17 semanas (escada de 13 degraus + 4 recuperações), com semanas repetíveis |
+| Duração do plano de 5 km do zero | 6 a 13 semanas, sem diferença clara de lesão; abandono de ~30% em 6 meses | 13 semanas (uma etapa da escada por semana, sem recuperações fixas), com repetição de etapa por congelamento (R-PRG-06) |
 | Frequência semanal em maratonistas de primeira viagem | Resumo de Toresdahl ambíguo | Não usar |
 | Deload a cada 4 semanas | Nenhuma evidência em corredores | Convenção 3:1, com redução reativa pelos sinais do atleta |
 | Perda de peso | Swift: ~2 kg; Jayedi: −2,79 kg a 150 min/semana (tendência mais favorável, certeza moderada, heterogeneidade alta); Donnelly: modesta a 150–250 min e significativa >250 min | Tratar como modesta; não prometer números |
@@ -203,7 +203,7 @@ R = semana de recuperação, T = polimento. No plano de 10 km a semana 8 é de r
 3. **Triagem de transtorno alimentar / déficit energético:** sem evidência suficiente; bloqueio simples por IMC < 18,5 e orientação a procurar profissional (R-PLN-17) enquanto não houver fonte (decisão do dono 8).
 4. **Semana de recuperação a cada 4 semanas (75%)** e **tempo de recuperação pós-prova** (R-PLN-08, R-PLN-19): aceitos como [P].
 5. **Fases (base/específica) e proporção** (R-PLN-06): aceitas como [P].
-6. **Prazos mínimos até a prova** (R-PLN-05) e plano de 5 km do zero: o plano do zero passa a 17 semanas (escada de 13 degraus mais 4 recuperações, R-PLN-12) [P].
+6. **Prazos mínimos até a prova** (R-PLN-05) e plano de 5 km do zero: o plano do zero passa a 13 semanas (uma etapa da escada por semana, sem recuperações fixas, R-PLN-12; repetições de etapa podem estendê-la) [P] (DEC-48).
 7. **Tetos de pico semanal e de longão** (R-PLN-11): confirmados e expressos em minutos (6 min/km) com o equivalente em km para GPS; longão de 21/42 km limitado a 120/150 min (divergências D-09 e de unidade) [P].
 8. **Corrida-caminhada em meia e maratona:** fora do escopo da v1 (meia e maratona são bloqueadas para iniciante).
 9. **IMC alto ou doenças crônicas liberadas por médico:** sem modelo próprio na v1; IMC ≥ 30 usa a progressão lenta (R-PLN-12) e restrições individuais mantêm o bloqueio (R-TRI-05) [P].
