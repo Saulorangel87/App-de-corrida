@@ -31,7 +31,7 @@ Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 - Domínios: front `letsgorun.devsaulo.com.br`; API `letsgorun-api.devsaulo.com.br` (um nível só, coberto pelo SSL gratuito do Cloudflare; mesmo site do front para cookie `SameSite=Lax`).
 - VPS (acesso: `ssh vps`): Ubuntu 24.04 **aarch64** (imagens Docker precisam ser arm64). Cada app tem seu próprio Postgres em container.
 - Banco do Passo: container próprio chamado `app-de-corrida` (`postgres:17-alpine`), numa rede Docker `internal` (`app-de-corrida_data`), sem porta publicada. Segurança extra: Row-Level Security (RLS) habilitado nas tabelas do atleta.
-- Backups: retenção de 30 dias, enviados para o Oracle Object Storage usando rclone crypt, gerenciados por timer do systemd.
+- Backups: diários, rclone crypt (remote `corrida-run:` sobre `cadencia-oos:cadencia-backups/corrida-run`), timer do systemd; retenção de 30 dias por regra de ciclo de vida do bucket (a VPS não pode apagar objetos).
 - Exposição da API: rota nova no túnel existente (container `cloudflared-tunnel`, ligado à rede `app-de-corrida_edge`). Nenhuma porta pública nova.
 
 ## Stack
@@ -51,5 +51,7 @@ Fase atual: correção das Fases 1 e 2 (feitas por outro agente) concluída em 2
 - Banco: schema revisado (timestamptz, bloqueio de login, sessões com inatividade/absoluta), RLS nas 9 tabelas do atleta, papéis `passo_migrator` e `passo_api` (ADR 0002). Seed: 11 treinos e 34 referências de `docs/pesquisa/` (textos `razao` a revisar pelo dono).
 - Auth (`/api/v1/auth`): cadastro, verificação, login/logout, bloqueio, esqueci/redefinir senha, sessões ativas; e-mails PT/EN (ADR 0001). 47 testes de integração com Postgres real.
 - CI (lint, typecheck, testes, build, `pnpm audit`, gitleaks), Dependabot, pre-commit com gitleaks.
-- Pendente: aplicar as migrações novas na VPS (banco atual tem o schema antigo, vazio); configurar rclone crypt + timer de backup e fazer o 1º teste de restauração; Dockerfile da API e rota no túnel (deploy).
+- VPS: banco recriado com as migrações novas (rede `internal`, papéis restritos, seed aplicado); backup diário 04:30 UTC via `passo-backup.timer` para o remote `corrida-run:`; restauração testada em 2026-10-10.
+- Pendente (dono): regra de ciclo de vida de 30 dias no bucket `cadencia-backups` (prefixo `corrida-run/`); guardar as chaves do crypt fora da VPS; revisar os textos `razao` do seed.
+- Pendente (deploy): Dockerfile da API e rota no túnel.
 - Próxima: Fase 3 — entrevista (onboarding) e perfil do atleta.
