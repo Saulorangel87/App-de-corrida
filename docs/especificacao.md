@@ -151,6 +151,14 @@ O design já existe no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd
 - **Otimize toda foto:** converta para AVIF e WebP com fallback, gere 2 ou 3 larguras com `srcset`/`sizes` e defina `width` e `height` para não haver salto de layout. A foto do login é o maior elemento da tela: carregue com prioridade alta (`fetchpriority="high"`), sem lazy loading. Esconda a foto no mobile, onde o formulário ocupa a tela toda.
 - **Ícones:** use o pacote `lucide-react`, que tem o mesmo estilo do design. Não exporte ícones do Figma.
 - **Logo:** exporte do Figma como SVG.
+- **Favicon e ícones do PWA:** já estão prontos em `docs/design/icones/` (o frame "Marca e ícones" no Figma mostra o ícone). Copie todos para `apps/web/public/`, sem alterar, e use no `<head>` do `index.html`:
+  - `<link rel="icon" href="/favicon.ico" sizes="32x32">`
+  - `<link rel="icon" href="/favicon.svg" type="image/svg+xml">`
+  - `<link rel="apple-touch-icon" href="/apple-touch-icon.png">`
+  - `<link rel="manifest" href="/manifest.webmanifest">`
+  - `<meta name="theme-color" content="#111827">`
+  - O `manifest.webmanifest` já lista os ícones `any` (192 e 512) e `maskable` (192 e 512). O PWA completo (service worker e offline) continua fora do MVP; o manifest e os ícones entram desde já.
+  - Para mudar o ícone, edite e rode `docs/design/gerar_icones.py` (Python + Pillow) e atualize o frame no Figma.
 - Imagens decorativas usam `alt=""`; imagens com significado têm texto alternativo descritivo.
 
 **Requisitos de todas as telas:**
