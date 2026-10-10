@@ -16,6 +16,7 @@ async function main(): Promise<void> {
     console.log(`Treinos (upsert por slug): ${counts.workouts}.`);
     console.log(`Ligações treino-referência: ${counts.workoutReferences}.`);
     console.log(`Progressões/regressões: ${counts.workoutProgressions}.`);
+    console.log(`Modelos de plano: ${counts.planTemplates}.`);
     console.log("Seed concluído.");
   } finally {
     await close();

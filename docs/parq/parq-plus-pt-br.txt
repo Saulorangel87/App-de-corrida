@@ -1,0 +1,260 @@
+# PAR-Q+ 2023 — texto oficial em português do Brasil
+#
+# COMO PREENCHER
+# 1. Abra o PDF oficial: https://eparmedx.com/wp-content/uploads/2023/07/Brazilian-Portuguese.pdf
+# 2. Para cada bloco [chave], apague a linha "COLE AQUI..." e cole o texto do PDF,
+#    exatamente como está (sem resumir, corrigir ou reescrever: o instrumento não pode
+#    ser alterado). Pode ocupar várias linhas.
+# 3. Rode:  pnpm --filter @passo/shared parq:build
+#    O script avisa se faltar algum bloco e gera packages/shared/src/parq/text.pt-BR.ts.
+#
+# Linhas que começam com # são comentários e são ignoradas.
+# Não altere os nomes entre colchetes.
+
+[pagina1.titulo]
+# Título do questionário no topo da página 1
+COLE AQUI
+
+[pagina1.introducao]
+# Parágrafo de introdução da página 1 (benefícios da atividade física etc.)
+COLE AQUI
+
+[pagina1.cabecalho_perguntas]
+# Título da seção das perguntas gerais de saúde
+COLE AQUI
+
+[geral.1]
+# Pergunta geral 1 (inclua o texto completo, com as observações entre parênteses, se houver)
+COLE AQUI
+
+[geral.2]
+# Pergunta geral 2 (inclua o texto completo, com as observações entre parênteses, se houver)
+COLE AQUI
+
+[geral.3]
+# Pergunta geral 3 (inclua o texto completo, com as observações entre parênteses, se houver)
+COLE AQUI
+
+[geral.4]
+# Pergunta geral 4 (inclua o texto completo, com as observações entre parênteses, se houver)
+COLE AQUI
+
+[geral.5]
+# Pergunta geral 5 (inclua o texto completo, com as observações entre parênteses, se houver)
+COLE AQUI
+
+[geral.6]
+# Pergunta geral 6 (inclua o texto completo, com as observações entre parênteses, se houver)
+COLE AQUI
+
+[geral.7]
+# Pergunta geral 7 (inclua o texto completo, com as observações entre parênteses, se houver)
+COLE AQUI
+
+[pagina1.se_todas_nao]
+# Instrução para quem respondeu NÃO a todas as perguntas
+COLE AQUI
+
+[pagina1.se_algum_sim]
+# Instrução para quem respondeu SIM a uma ou mais perguntas (ir para as páginas 2 e 3)
+COLE AQUI
+
+[pagina1.declaracao]
+# Declaração do participante (assinatura) da página 1
+COLE AQUI
+
+[seguimento.cabecalho]
+# Título das perguntas de seguimento (páginas 2 e 3)
+COLE AQUI
+
+[seguimento.1]
+# Pergunta de entrada da seção 1 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.1a]
+# Pergunta 1a
+COLE AQUI
+
+[seguimento.1b]
+# Pergunta 1b
+COLE AQUI
+
+[seguimento.1c]
+# Pergunta 1c
+COLE AQUI
+
+[seguimento.2]
+# Pergunta de entrada da seção 2 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.2a]
+# Pergunta 2a
+COLE AQUI
+
+[seguimento.2b]
+# Pergunta 2b
+COLE AQUI
+
+[seguimento.3]
+# Pergunta de entrada da seção 3 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.3a]
+# Pergunta 3a
+COLE AQUI
+
+[seguimento.3b]
+# Pergunta 3b
+COLE AQUI
+
+[seguimento.3c]
+# Pergunta 3c
+COLE AQUI
+
+[seguimento.3d]
+# Pergunta 3d
+COLE AQUI
+
+[seguimento.4]
+# Pergunta de entrada da seção 4 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.4a]
+# Pergunta 4a
+COLE AQUI
+
+[seguimento.4b]
+# Pergunta 4b
+COLE AQUI
+
+[seguimento.5]
+# Pergunta de entrada da seção 5 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.5a]
+# Pergunta 5a
+COLE AQUI
+
+[seguimento.5b]
+# Pergunta 5b
+COLE AQUI
+
+[seguimento.5c]
+# Pergunta 5c
+COLE AQUI
+
+[seguimento.5d]
+# Pergunta 5d
+COLE AQUI
+
+[seguimento.5e]
+# Pergunta 5e
+COLE AQUI
+
+[seguimento.6]
+# Pergunta de entrada da seção 6 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.6a]
+# Pergunta 6a
+COLE AQUI
+
+[seguimento.6b]
+# Pergunta 6b
+COLE AQUI
+
+[seguimento.7]
+# Pergunta de entrada da seção 7 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.7a]
+# Pergunta 7a
+COLE AQUI
+
+[seguimento.7b]
+# Pergunta 7b
+COLE AQUI
+
+[seguimento.7c]
+# Pergunta 7c
+COLE AQUI
+
+[seguimento.7d]
+# Pergunta 7d
+COLE AQUI
+
+[seguimento.8]
+# Pergunta de entrada da seção 8 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.8a]
+# Pergunta 8a
+COLE AQUI
+
+[seguimento.8b]
+# Pergunta 8b
+COLE AQUI
+
+[seguimento.8c]
+# Pergunta 8c
+COLE AQUI
+
+[seguimento.9]
+# Pergunta de entrada da seção 9 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.9a]
+# Pergunta 9a
+COLE AQUI
+
+[seguimento.9b]
+# Pergunta 9b
+COLE AQUI
+
+[seguimento.9c]
+# Pergunta 9c
+COLE AQUI
+
+[seguimento.10]
+# Pergunta de entrada da seção 10 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
+COLE AQUI
+
+[seguimento.10a]
+# Pergunta 10a
+COLE AQUI
+
+[seguimento.10b]
+# Pergunta 10b
+COLE AQUI
+
+[seguimento.10c]
+# Pergunta 10c
+COLE AQUI
+
+[pagina4.cabecalho]
+# Título da página 4
+COLE AQUI
+
+[pagina4.todas_nao]
+# Texto para quem respondeu NÃO a todas as perguntas de seguimento (recomendações)
+COLE AQUI
+
+[pagina4.algum_sim]
+# Texto para quem respondeu SIM a uma ou mais perguntas de seguimento
+COLE AQUI
+
+[pagina4.adiar]
+# Texto sobre adiar a atividade (doença temporária, gravidez etc.)
+COLE AQUI
+
+[pagina4.mudanca_saude]
+# Texto sobre mudança na saúde
+COLE AQUI
+
+[pagina4.declaracao]
+# Declaração final do participante
+COLE AQUI
+
+[atribuicao]
+# Linhas de direitos autorais, tradução e referência que aparecem no rodapé
+COLE AQUI

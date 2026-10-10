@@ -11,7 +11,9 @@ import {
   decimal,
   primaryKey,
   index,
+  uniqueIndex,
   check,
+  date,
 } from "drizzle-orm/pg-core";
 
 // Todas as datas com fuso (timestamptz).
@@ -119,6 +121,8 @@ export const athleteProfiles = pgTable(
     rulesVersion: varchar("rules_version", { length: 50 }).notNull(),
     nextEvaluationDate: ts("next_evaluation_date").notNull(),
     cautelaLesao: boolean("cautela_lesao").default(false).notNull(),
+    flags: jsonb("flags").default([]).notNull(), // CLS-v1: inicio_do_zero, retorno_de_pausa, cautela_lesao
+    limitingCriteria: jsonb("limiting_criteria").default([]).notNull(), // R-CLS-14
     bmi: decimal("bmi", { precision: 5, scale: 2 }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
@@ -134,9 +138,43 @@ export const interviewResponses = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     responses: jsonb("responses").notNull(),
     version: varchar("version", { length: 50 }).notNull(),
+    status: varchar("status", { length: 20 }).default("draft").notNull(), // 'draft' | 'submitted'
+    submittedAt: ts("submitted_at"),
     createdAt: createdAt(),
+    updatedAt: updatedAt(),
   },
-  (t) => [index("interview_responses_user_id_idx").on(t.userId)],
+  (t) => [
+    index("interview_responses_user_id_idx").on(t.userId),
+    // Um rascunho por atleta ("salvar e continuar depois").
+    uniqueIndex("interview_responses_one_draft").on(t.userId).where(sql`${t.status} = 'draft'`),
+    check("interview_responses_status", sql`${t.status} in ('draft', 'submitted')`),
+  ],
+);
+
+/** Triagem de saúde (PAR-Q+ + camada TRI-v1). Só respostas SIM/NÃO; sem texto livre (R-TRI-15). */
+export const healthScreenings = pgTable(
+  "health_screenings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    instrumentVersion: varchar("instrument_version", { length: 50 }).notNull(),
+    answers: jsonb("answers").notNull(), // { general, followUp }
+    pregnant: boolean("pregnant").notNull(),
+    regularExercise3m: boolean("regular_exercise_3m").notNull(),
+    completedOn: date("completed_on").notNull(),
+    evaluation: jsonb("evaluation"), // autodeclaração (R-TRI-05)
+    consultedProfessionalOn: date("consulted_professional_on"), // R-TRI-07
+    healthChangedOn: date("health_changed_on"), // R-TRI-11
+    state: varchar("state", { length: 30 }).notNull(),
+    maxIntensity: varchar("max_intensity", { length: 20 }).notNull(),
+    validUntil: date("valid_until"),
+    ruleVersion: varchar("rule_version", { length: 20 }).notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [index("health_screenings_user_id_idx").on(t.userId, t.createdAt)],
 );
 
 // ---------------------------------------------------------------------------
@@ -204,8 +242,11 @@ export const workoutReferences = pgTable(
 
 export const planTemplates = pgTable("plan_templates", {
   id: uuid("id").primaryKey().defaultRandom(),
+  slug: varchar("slug", { length: 50 }).notNull().unique(), // ex.: 10k-intermediario
   objective: varchar("objective", { length: 100 }).notNull(),
   level: varchar("level", { length: 50 }).notNull(),
+  durationWeeks: integer("duration_weeks").notNull(), // R-PLN-13
+  ruleVersion: varchar("rule_version", { length: 20 }).notNull(),
   description: text("description"),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
@@ -238,8 +279,11 @@ export const athletePlans = pgTable(
       .notNull()
       .references(() => planTemplates.id),
     status: varchar("status", { length: 50 }).notNull().default("active"), // 'active' | 'completed' | 'abandoned'
-    startDate: ts("start_date").notNull(),
-    endDate: ts("end_date"),
+    goalTag: varchar("goal_tag", { length: 30 }), // controle_de_peso (R-PLN-01)
+    baseWeeks: integer("base_weeks").default(0).notNull(), // R-PLN-05
+    selection: jsonb("selection").notNull(), // pedido, rebaixamentos e motivos (PLN-v1)
+    startDate: date("start_date").notNull(),
+    endDate: date("end_date").notNull(),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -351,6 +395,7 @@ export const engineDecisions = pgTable(
 /** Tabelas com dados do atleta: RLS por user_id (ver 0001_rls.sql). */
 export const athleteTables = [
   "consents",
+  "health_screenings",
   "athlete_profiles",
   "interview_responses",
   "athlete_plans",

@@ -1,9 +1,10 @@
 // Seed do catálogo de treinos (docs/pesquisa/07-tipos-sessao.md).
 // Idempotente: treinos por `workouts.slug`; referências por DOI ou URL. Tudo em uma única transação.
-// Não cria planos (plan_templates): os planos vêm depois, do motor de regras.
+// Modelos de plano: só objetivo, nível e duração (as semanas vêm na Fase 4).
 import { eq, inArray, or, sql } from "drizzle-orm";
 import type { Database } from "./index";
-import { references, workoutProgressions, workoutReferences, workouts } from "./schema";
+import { planTemplates, references, workoutProgressions, workoutReferences, workouts } from "./schema";
+import { planTemplateSeeds } from "./seed-data/plan-templates";
 import { referenceSeeds } from "./seed-data/references";
 import { workoutSeeds } from "./seed-data/workouts";
 
@@ -12,6 +13,7 @@ export type SeedCounts = {
   workouts: number;
   workoutReferences: number;
   workoutProgressions: number;
+  planTemplates: number;
 };
 
 export async function runSeed(db: Database): Promise<SeedCounts> {
@@ -21,6 +23,7 @@ export async function runSeed(db: Database): Promise<SeedCounts> {
       workouts: 0,
       workoutReferences: 0,
       workoutProgressions: 0,
+      planTemplates: 0,
     };
 
     // 1. Referências: procura por DOI (sem diferenciar maiúsculas) ou URL; atualiza ou insere.
@@ -111,6 +114,16 @@ export async function runSeed(db: Database): Promise<SeedCounts> {
     }
     if (progressionRows.length > 0) await tx.insert(workoutProgressions).values(progressionRows);
     counts.workoutProgressions = progressionRows.length;
+
+    // Modelos de plano (upsert por slug).
+    for (const p of planTemplateSeeds) {
+      const { slug: _slug, ...rest } = p;
+      await tx
+        .insert(planTemplates)
+        .values(p)
+        .onConflictDoUpdate({ target: planTemplates.slug, set: { ...rest, updatedAt: new Date() } });
+      counts.planTemplates += 1;
+    }
 
     return counts;
   });

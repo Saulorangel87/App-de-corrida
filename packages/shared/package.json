@@ -8,10 +8,15 @@
     "zod": "^3.23.8"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "parq:build": "tsx scripts/parq-build.ts"
   },
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "@types/node": "^22.10.1"
   }
 }
