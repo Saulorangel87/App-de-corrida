@@ -4,6 +4,7 @@
 !.env.example
 *.pem
 *.key
+scratch/
 
 # Dependências e builds
 node_modules/
@@ -36,3 +37,8 @@ Thumbs.db
 
 # PDF oficial do PAR-Q+ (cópia local de referência; direitos autorais da PAR-Q+ Collaboration)
 docs/parq/*.pdf
+
+# Cópias locais do Figma (dumps da API, não versionar)
+figma_data.json
+login_full.json
+login_node.json

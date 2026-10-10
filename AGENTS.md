@@ -42,6 +42,7 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - Instalar: `pnpm install` (pnpm 9.15; instala o hook de pre-commit com gitleaks)
 - Tudo antes de entregar: `pnpm verify` (lint, typecheck, testes, build)
 - Testes da API precisam de um Postgres só de teste: `docker run -d --name passo-test-db -p 127.0.0.1:54329:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=passo_test postgres:17-alpine` e `TEST_DATABASE_URL=postgres://postgres:postgres@127.0.0.1:54329/passo_test`
+- Testes de interface: `pnpm --filter @passo/web e2e` (build + preview + Chromium; 1ª vez: `pnpm --filter @passo/web exec playwright install chromium`)
 - API em desenvolvimento: `cp apps/api/.env.example apps/api/.env` e `pnpm --filter @passo/api dev`
 - Nova migração: editar `packages/db/src/schema.ts` e `pnpm --filter @passo/db db:generate` (SQL manual: `db:generate --custom`)
 - Aplicar migrações / seed: `pnpm --filter @passo/db db:migrate` / `db:seed` (com `MIGRATION_DATABASE_URL` do `passo_migrator`)
@@ -49,9 +50,10 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - VPS (banco, papéis, backup): ver `ops/README.md`
 
 ## Estado atual
-Fase atual: 6 (telas), ainda sem código. Fases 0 a 5 aprovadas pelo dono em 2026-10-10. Para continuar: ler `docs/fase-6-passagem.md` (ordem das telas, contrato da API, regras, deploy pendente).
+Fase atual: 6 (telas), em andamento: login e cadastro prontos (`apps/web/src/routes/login.tsx`, i18n pt/en, CSP, testes Playwright); painel é só um esqueleto. Fases 0 a 5 aprovadas pelo dono em 2026-10-10. Para continuar: ler `docs/fase-6-passagem.md` (ordem das telas, contrato da API, regras, deploy pendente).
 - API nova (ADR 0006): `GET /day/:date` (decisão e sessões do dia), `GET /plan/week/:date`, `PUT /checkins/:date`, `POST /pain/:date`, `PUT /workouts/:id/log` (devolve a decisão do dia seguinte), `PUT /profile/pause`, `POST /profile/professional-clearance`, `GET /history`, `GET /account/export`.
 - Semana do plano = janela de 7 dias desde `start_date` (`athlete_plan_weeks`); criada na primeira consulta; a anterior fecha (escada avança ou repete). `buildAthleteWeek` já nasce dentro dos tetos.
+- Front: TanStack Router/Query, React Hook Form + Zod de `@passo/shared`, i18next, Tailwind (ADR 0007). Telas que faltam: verificação de e-mail, esqueci/redefinir senha, entrevista, resultado, painel, plano, treino, check-in, pós-treino, histórico, perfil. Cada uma: Figma, aprovação, código, teste Playwright.
 - Testes: 345 no motor (inclui "seguir o plano à risca não gera ajuste" nos 13 modelos), 87 na API.
 - Banco: migrações 0008 e 0009 (semanas do plano, sessões agendadas com estrutura, check-in com dor ao caminhar, dor com data e momento, `for_date` na auditoria).
 - Fase 3: texto do PAR-Q+ transcrito e conferido; falta o dono ler uma vez contra o PDF.

@@ -22,3 +22,12 @@ As seguintes ferramentas foram adotadas como a base técnica para a aplicação 
 - A equipe precisará definir os arquivos de rotas estritos pelo TanStack Router.
 - Haverá um passo adicional para gerenciar o dicionário (pt-BR e EN) no i18next antes de montar views textuais (especialmente motivos e textos do motor).
 - O projeto mantém alinhamento com a Especificação (Seção 2) e assegura escalabilidade e segurança de tipos de ponta a ponta.
+
+## Complemento (2026-10-10, revisão do primeiro código de tela)
+- **Roteador:** só o TanStack Router (a dependência `react-router-dom` que veio junto foi removida).
+- **i18n:** `apps/web/src/i18n/` (`pt-BR.ts` define as chaves; `en.ts` é tipado contra ela, então chave faltando não compila). Idioma inicial: escolha salva no aparelho (só conveniência, com `try/catch`) ou idioma do navegador. Erros da API são traduzidos pelo **código** (`errors.<CODE>`), nunca pelo texto em português que a API devolve.
+- **Fonte:** Inter variável pelo pacote `@fontsource-variable/inter` (só os subconjuntos latin e latin-ext), servida do próprio domínio. Nenhum pedido a terceiros, o que mantém a CSP em `'self'` e evita expor o IP do atleta a um CDN de fontes.
+- **Foto do login:** gerada por `docs/design/gerar_foto_login.py` (AVIF, WebP e JPEG em 464 e 928 px). `<picture>` com `media="(min-width: 1024px)"`: abaixo disso a foto nem é baixada.
+- **CSP e cabeçalhos:** `apps/web/public/_headers` (Cloudflare Pages). O mesmo bloco `/*` é aplicado no `vite preview`, então os testes de interface rodam sob a CSP real (sem `unsafe-inline`).
+- **Testes de interface:** Playwright em `apps/web/e2e/` (`pnpm --filter @passo/web e2e`), com a API simulada por `page.route`; roda no CI (job `e2e`). Cobre rótulos, idioma, validação, login, cadastro, foto no celular e cabeçalhos.
+- **Cliente HTTP:** `ApiError` com `status`, `code` e `details`; cookie de sessão por `credentials: "include"`; sem token em `localStorage`.

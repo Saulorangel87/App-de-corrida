@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@theme {
+  --color-passo-orange: #FF5A1F;
+  --color-passo-dark: #111827;
+  --color-passo-gray-100: #F5F6F8;
+  --color-passo-gray-200: #E5E7EB;
+  --color-passo-gray-400: #94A3B8;
+  --color-passo-gray-500: #64748B;
+  --color-passo-gray-600: #475569;
+  --color-passo-gray-900: #0F172A;
+  --font-sans: "Inter Variable", "Inter", system-ui, sans-serif;
+}
+
+body {
+  @apply bg-passo-gray-100 text-passo-gray-900 font-sans antialiased;
+}
