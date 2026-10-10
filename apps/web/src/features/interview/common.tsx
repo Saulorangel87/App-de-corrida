@@ -37,7 +37,7 @@ export function useStepForm<F extends FieldValues>(opts: {
 export function StepActions({ onBack, pending, last, error }: Pick<StepProps, "onBack" | "pending" | "last" | "error">) {
   const { t } = useTranslation();
   return (
-    <div className="mt-8 space-y-3">
+    <div className="mt-5 space-y-3">
       {error && (
         <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {error}
@@ -63,12 +63,12 @@ export function StepActions({ onBack, pending, last, error }: Pick<StepProps, "o
 
 /** Corpo de uma etapa: campos empilhados com espaçamento regular. */
 export function StepFields({ children }: { children: ReactNode }) {
-  return <div className="space-y-6">{children}</div>;
+  return <div className="space-y-4">{children}</div>;
 }
 
 /** Dois campos lado a lado a partir de telas médias. */
 export function Row({ children }: { children: ReactNode }) {
-  return <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">{children}</div>;
+  return <div className="grid grid-cols-1 items-end gap-4 min-[480px]:grid-cols-2">{children}</div>;
 }
 
 /** Resposta salva (do rascunho) com tipo solto: os esquemas validam de novo ao enviar. */

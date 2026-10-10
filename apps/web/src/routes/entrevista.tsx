@@ -148,7 +148,7 @@ function InterviewPage() {
 
   return (
     <FlowLayout>
-      <div className="mb-6 space-y-3">
+      <div className="mb-3 space-y-2">
         <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-gray-500">
           <span>{t("interview.stepOf", { current: current + 1, total })}</span>
           <span>{t(`interview.steps.${step}.name`)}</span>
@@ -167,11 +167,11 @@ function InterviewPage() {
         </div>
       </div>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-8">
-        <h1 ref={headingRef} tabIndex={-1} className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#0F172A] outline-none">
+      <section className="rounded-2xl border border-gray-200 bg-white p-5">
+        <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-extrabold tracking-tight text-[#0F172A] outline-none">
           {t(`interview.steps.${step}.title`)}
         </h1>
-        <p className="mt-2 mb-6 text-[15px] leading-relaxed text-gray-600">{t(`interview.steps.${step}.text`)}</p>
+        <p className="mt-1 mb-4 text-[15px] leading-snug text-gray-600">{t(`interview.steps.${step}.text`)}</p>
         {/* A chave refaz o formulário (e seus valores iniciais) a cada etapa. */}
         <View
           key={step}
@@ -187,7 +187,7 @@ function InterviewPage() {
           }}
         />
       </section>
-      <p className="mt-4 text-center text-xs text-gray-500">{t("interview.saveNote")}</p>
+      <p className="mt-2 text-center text-xs text-gray-500">{t("interview.saveNote")}</p>
     </FlowLayout>
   );
 }

@@ -39,6 +39,16 @@ describe("headers e bordas", () => {
     expect(evil.headers.get("access-control-allow-origin")).toBeNull();
   });
 
+  it("CORS libera os métodos que o front usa (inclui PUT: etapas da entrevista, check-in, pós-treino)", async () => {
+    for (const method of ["GET", "POST", "PUT", "PATCH", "DELETE"]) {
+      const res = await t.app.request("/api/v1/interview/basicos", {
+        method: "OPTIONS",
+        headers: { origin: FRONT, "access-control-request-method": method },
+      });
+      expect(res.headers.get("access-control-allow-methods"), method).toContain(method);
+    }
+  });
+
   it("em desenvolvimento, 127.0.0.1 vale como localhost; em produção, só a origem exata", async () => {
     const alias = "http://127.0.0.1:5173";
     const preflight = (app: TestApp["app"]) =>

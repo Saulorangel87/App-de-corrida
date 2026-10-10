@@ -98,7 +98,7 @@ export function createApp(deps: AppDeps) {
     cors({
       origin: allowedOrigins,
       credentials: true,
-      allowMethods: ["GET", "POST", "PATCH", "DELETE"],
+      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
       allowHeaders: ["Content-Type"],
       maxAge: 600,
     }),

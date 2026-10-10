@@ -14,7 +14,7 @@ export function FlowLayout({ children, width = "max-w-[640px]" }: { children: Re
   return (
     <div className="min-h-dvh flex flex-col bg-[#F5F6F8] text-[#111827]">
       <header className="w-full border-b border-gray-200 bg-white">
-        <div className="mx-auto flex max-w-[960px] items-center justify-between gap-4 px-5 py-3 text-sm">
+        <div className="mx-auto flex max-w-[960px] items-center justify-between gap-4 px-5 py-2 text-sm">
           <div className="text-lg font-bold tracking-tight">{t("common.appName")}</div>
           <div className="flex items-center gap-4 sm:gap-6">
             <LanguageSwitch />
@@ -29,7 +29,7 @@ export function FlowLayout({ children, width = "max-w-[640px]" }: { children: Re
           </div>
         </div>
       </header>
-      <main className={`flex-1 w-full ${width} mx-auto px-5 py-6 sm:py-10`}>{children}</main>
+      <main className={`flex-1 w-full ${width} mx-auto px-5 py-3 sm:py-4`}>{children}</main>
       <AppFooter />
     </div>
   );
