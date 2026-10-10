@@ -1,7 +1,7 @@
 // Textos do app em português (idioma padrão). A versão em inglês está em en.ts, com as mesmas chaves.
 export const ptBR = {
   common: {
-    appName: "App de corrida",
+    appName: "Let's Go Run",
     loading: "Carregando...",
     help: "Precisa de ajuda?",
     language: "Idioma",

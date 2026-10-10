@@ -1,5 +1,5 @@
 [Unit]
-Description=Backup diário do banco do App de corrida
+Description=Backup diário do banco do Let's Go Run
 
 [Timer]
 OnCalendar=*-*-* 04:30:00 UTC

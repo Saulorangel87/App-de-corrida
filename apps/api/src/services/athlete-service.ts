@@ -67,7 +67,7 @@ const incomplete = (missing: string[]) =>
 
 // details.canDeleteAccount: o front oferece excluir a conta (DELETE /auth/account).
 const underage = () =>
-  new AppError(400, "UNDERAGE", "O App de corrida é só para maiores de 18 anos.", { canDeleteAccount: true });
+  new AppError(400, "UNDERAGE", "O Let's Go Run é só para maiores de 18 anos.", { canDeleteAccount: true });
 
 /** Entradas guardadas no perfil para refazer a escolha do plano depois (ex.: após a avaliação). */
 export type StoredInputs = {

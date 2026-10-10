@@ -63,7 +63,7 @@ const formatDate = (iso: string, lang: Lang) => {
 export function explainClassification(result: ClassificationResult, lang: Lang = "pt-BR") {
   if (!result.eligible) {
     return {
-      text: lang === "en" ? "App de corrida is only available for people aged 18 or over." : "O App de corrida é só para maiores de 18 anos.",
+      text: lang === "en" ? "Let's Go Run is only available for people aged 18 or over." : "O Let's Go Run é só para maiores de 18 anos.",
       sources: [] as string[],
     };
   }

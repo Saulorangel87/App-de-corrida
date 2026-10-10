@@ -32,7 +32,7 @@ describe("cadastro", () => {
     expect(second.status).toBe(202);
     expect(await second.json()).toEqual(await first.json());
     const subjects = t.mailer.sent.filter((m) => m.to === email).map((m) => m.subject);
-    expect(subjects).toEqual(["Confirme seu e-mail – App de corrida", "Você já tem uma conta no App de corrida"]);
+    expect(subjects).toEqual(["Confirme seu e-mail – Let's Go Run", "Você já tem uma conta no Let's Go Run"]);
   });
 
   it("guarda o e-mail em minúsculas e o consentimento com a versão dos termos", async () => {
@@ -75,7 +75,7 @@ describe("cadastro", () => {
     const email = uniqueEmail();
     await register(email, { language: "en" });
     await t.flush();
-    expect(t.mailer.sent.find((m) => m.to === email)?.subject).toBe("Confirm your email – App de corrida");
+    expect(t.mailer.sent.find((m) => m.to === email)?.subject).toBe("Confirm your email – Let's Go Run");
   });
 });
 

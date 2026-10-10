@@ -2,7 +2,7 @@ import type { Translation } from "./pt-BR";
 
 export const en: Translation = {
   common: {
-    appName: "App de corrida",
+    appName: "Let's Go Run",
     loading: "Loading...",
     help: "Need help?",
     language: "Language",

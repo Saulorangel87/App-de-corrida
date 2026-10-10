@@ -1,5 +1,5 @@
 [Unit]
-Description=Backup criptografado do banco do App de corrida
+Description=Backup criptografado do banco do Let's Go Run
 After=docker.service
 Requires=docker.service
 

@@ -1,4 +1,4 @@
-# Projeto: App de corrida — app web de treino de corrida personalizado
+# Projeto: Let's Go Run — app web de treino de corrida personalizado
 
 Você é um engenheiro fullstack sênior com conhecimento em ciência do esporte. Vai construir do zero um app web que gera planos de treino de corrida personalizados para corredores iniciantes, intermediários e avançados. Os treinos vêm de um catálogo com base científica e são acompanhados por check-ins de sono, recuperação e dor.
 

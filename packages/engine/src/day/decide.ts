@@ -95,7 +95,7 @@ function painGate(p: ReturnType<typeof evaluatePain>): Gate | null {
   if (p.urgent)
     return {
       rank: 4,
-      text: `Pare agora. Dor no peito, falta de ar fora do normal, tontura forte, desmaio ou confusão exigem avaliação médica. Procure atendimento imediatamente; ${SAMU}. O App de corrida não faz diagnóstico.`,
+      text: `Pare agora. Dor no peito, falta de ar fora do normal, tontura forte, desmaio ou confusão exigem avaliação médica. Procure atendimento imediatamente; ${SAMU}. O Let's Go Run não faz diagnóstico.`,
       sources, reasons,
     };
   if (p.blockRunning && p.refer)
