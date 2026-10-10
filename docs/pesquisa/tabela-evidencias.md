@@ -1,6 +1,6 @@
 # Tabela de evidências consolidada
 
-Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém só as afirmações que viram regra (a coluna "Regra (ID)" tem ao menos um ID). Linhas cuja coluna "Como vira regra" diz só "contexto", "sem regra", "não adotado", "nenhuma" ou aponta apenas para perguntas ficaram de fora; as lacunas ("sem evidência suficiente") estão em `pontos-fracos.md`. Níveis: ver `README.md`.
+Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Atualizada em 2026-10-10 com as decisões do dono e de projeto registradas em `decisoes.md` (a marcação [P] indica valor sem evidência, aceito como ponto de partida e recalibrável). Mantém só as afirmações que viram regra (a coluna "Regra (ID)" tem ao menos um ID). Linhas cuja coluna "Como vira regra" diz só "contexto", "sem regra", "não adotado", "nenhuma" ou aponta apenas para perguntas ficaram de fora; as lacunas ("sem evidência suficiente") estão em `pontos-fracos.md`. Níveis: ver `README.md`.
 
 ## 1. Classificação do corredor (`01-classificacao.md`)
 
@@ -14,16 +14,16 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 | Classes recreacional/amador: 35 km/sem e 3 sessões/sem separam grupos | [Thuany 2020] | 3 | Apoio ao uso de volume e frequência | R-CLS-04, R-CLS-05 |
 | Perfis com iniciantes ~18 km/sem e menos de 1 ano (resumo de congresso) | [Besomi 2017] | 3 | Apoio fraco aos limiares de volume | R-CLS-04 |
 | Distância semanal auto-relatada é confiável (CCI 0,88); pace menos (0,72) | [Bullock 2024] | 3 | Volume do auto-relato aceito; tempos preferencialmente de prova (R-CLS-06) | R-CLS-06 |
-| Mediana de 5 km: 20:35 (M) e 26:01 (F); 10 km: 44:51 e 54:58 em amostra recreacional | [Vickers 2016] | 3 | Fator feminino ×1,25 (decisão de projeto) | R-CLS-06 |
+| Mediana de 5 km: 20:35 (M) e 26:01 (F); 10 km: 44:51 e 54:58 em amostra recreacional | [Vickers 2016] | 3 | Só contexto; os cortes femininos (5 km ≤ 22:00, 10 km ≤ 46:00, fator 1,1) são decisão do dono [P], sem fonte | R-CLS-06 |
 | Elite mundial: 130 a 220 km/sem, 11 a 14 sessões/sem | [Haugen 2022] | 5 | Escopo do app (R-CLS-13) | R-CLS-13 |
-| Lesão nos 12 meses anteriores é o principal fator de risco | [Saragiotto 2014] | 1 | `cautela_lesao` (R-CLS-09) | R-CLS-09 |
+| Lesão nos 12 meses anteriores é o principal fator de risco | [Saragiotto 2014] | 1 | `cautela_lesao`: alerta, não nível; teto semanal 105% (R-CLS-09) | R-CLS-09 |
 | Lesão prévia eleva o risco de lesão por corrida | [Hulme 2017] | 1 | `cautela_lesao` (R-CLS-09) | R-CLS-09 |
 | Em novatos, lesão prévia não relacionada à corrida teve associação limítrofe; idade, IMC e sexo sem associação significativa | [Nielsen 2013] | 3 | Idade, IMC e sexo fora do nível (R-CLS-10) | R-CLS-10 |
 | Novatos: 17,8 lesões/1.000 h vs 7,7 em recreacionais | [Videbæk 2015] | 1 | Iniciante com cautela maior (R-CLS-12) | R-CLS-12 |
 | Sem experiência prévia é o maior risco em coorte de 4 milhas | [Buist 2010] | 3 | Iniciante com cautela (R-CLS-12) | R-CLS-12 |
-| Mais de 4 semanas de estímulo insuficiente causam perdas maiores (VO2máx, limiar de lactato) | [Mujika 2000a; Mujika 2000b] | 5 | Limite de 4 semanas na pausa (R-CLS-07) | R-CLS-07 |
-| Exercício regular = 30 min moderado, 3 dias/semana, 3 meses | [Riebe 2015; Whitfield 2017] | 4 | `inicio_do_zero` e pausa > 12 semanas (R-CLS-07, R-CLS-08) | R-CLS-07, R-CLS-08 |
-| Intervalo de reavaliação | sem evidência suficiente | — | 12 semanas por decisão de projeto (R-CLS-11) | R-CLS-11 |
+| Mais de 4 semanas de estímulo insuficiente causam perdas maiores (VO2máx, limiar de lactato) | [Mujika 2000a; Mujika 2000b] | 5 | Limite de 28 dias na pausa (R-CLS-07, R-PRG-08) | R-CLS-07 |
+| Exercício regular = 30 min moderado, 3 dias/semana, 3 meses | [Riebe 2015; Whitfield 2017] | 4 | `inicio_do_zero` e pausa > 84 dias (R-CLS-07, R-CLS-08) | R-CLS-07, R-CLS-08 |
+| Intervalo de reavaliação | sem evidência suficiente | — | 12 semanas ou fim do ciclo, [P] (R-CLS-11) | R-CLS-11 |
 
 ## 2. Triagem pré-participação (`02-triagem.md`)
 
@@ -31,7 +31,7 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 |---|---|---|---|---|
 | PAR-Q+ tem 7 perguntas gerais; SIM abre seguimento; SIM no seguimento leva ao ePARmed-X+ e/ou profissional qualificado | [PARQ+ 2025] [Schwartz 2021] | 4 | R-TRI-02, 03, 05 | R-TRI-02, R-TRI-03, R-TRI-05 |
 | Existe tradução oficial pt-BR aprovada pela Collaboration | [PARQ+ Idiomas] [Schwartz 2021] | 3/4 | R-TRI-02 | R-TRI-02 |
-| Questionário não pode ser alterado; uso comercial exige licença; atribuição obrigatória | [PARQ+ Termos] [PARQ+ 2025] | 4 | R-TRI-02, 14 | R-TRI-02, R-TRI-14 |
+| Questionário não pode ser alterado; uso comercial exige licença; atribuição obrigatória | [PARQ+ Termos] [PARQ+ 2025] | 4 | R-TRI-02, 14 (app sempre gratuito; licença só se houver cobrança) | R-TRI-02, R-TRI-14 |
 | Validade: PAR-Q+ 12 meses; ePARmed-X+ 6 meses; inválido se a saúde mudar | [PARQ+ 2025] [Bredin 2013] [Warburton 2011a] | 4/5 | R-TRI-10, 11 | R-TRI-10, R-TRI-11 |
 | ePARmed-X+ pode liberar sem restrição, com restrição ou encaminhar ao médico | [Bredin 2013] | 5 | R-TRI-05 | R-TRI-05 |
 | Mais de 45 anos sem hábito de esforço vigoroso: consultar profissional qualificado antes dessa intensidade | [PARQ+ 2025] | 4 | R-TRI-07 | R-TRI-07 |
@@ -49,10 +49,10 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 | POL não difere de outras distribuições em prova contra-relógio, tempo até exaustão e velocidade no limiar; vantagem pequena no VO2pico só em < 12 semanas e atletas muito treinados | Oliveira 2024 | 1 | R-DIS-05, R-DIS-07: não vender POL como superior; PYR como padrão | R-DIS-05, R-DIS-07 |
 | POL foi melhor que THR em contra-relógio, com base de 3 estudos de qualidade baixa | Rosenblat 2019 | 1 | R-DIS-03: bloquear THR (Z2 > 35%) como padrão | R-DIS-03 |
 | Mais volume em baixa intensidade (PYR/POL) supera THR em corredores; sugestão de ≥ 70% de baixa intensidade | Campos 2022; Kenneally 2018 | 1 | R-DIS-02: mínimos de Z1; R-DIS-03 | R-DIS-02, R-DIS-03 |
-| Corredores de elite: ≥ 80% do volume em baixa intensidade; 1 a 2 sessões de intervalo por semana; padrão predominantemente piramidal | Haugen 2022; Casado 2022; Seiler 2010 | 5 / 1 / 5 | R-DIS-02 (Z1 alvo 80%), R-DIS-04 | R-DIS-02, R-DIS-04 |
+| Corredores de elite: ≥ 80% do volume em baixa intensidade; 1 a 2 sessões de intervalo por semana; padrão predominantemente piramidal | Haugen 2022; Casado 2022; Seiler 2010 | 5 / 1 / 5 | R-DIS-02 (Z1 alvo 80%), R-DIS-04 (iniciante 0 até R-SES-40, depois 1; demais 2) | R-DIS-02, R-DIS-04 |
 | Em recreacionais, POL (77/3/20) vs entre-limiares: diferença não significativa no desfecho principal | Muñoz 2014 | 2 | R-DIS-05: sem superioridade; evidência fraca | R-DIS-05 |
 | Em recreacionais, ênfase em baixa intensidade teve mais respondedores que alta ou polarizada (bloco de 3 semanas com carga aumentada) | Zinner 2018 | 2 | R-DIS-06: preservar Z1; limitar Z3 | R-DIS-06 |
-| PYR→POL deu os maiores ganhos em 16 semanas em corredores bem treinados | Filipas 2022 | 2 | R-DIS-05: bloco POL só depois de base PYR | R-DIS-05 |
+| PYR→POL deu os maiores ganhos em 16 semanas em corredores bem treinados | Filipas 2022 | 2 | R-DIS-05: bloco POL não oferecido na v1 (só piramidal) | R-DIS-05 |
 | Mais tempo em Z1 se associa a melhor tempo de 10 km em sub-elite | Esteve-Lanao 2005 | 3 | R-DIS-08 (monitorar Z1) | R-DIS-08 |
 | FC e sRPE dão distribuições semelhantes em esquiadores juniores | Seiler 2006 | 3 | R-DIS-01: usar sRPE/fala quando não há FC | R-DIS-01 |
 | Prazer cai no limiar ou acima dele; intensidade autoescolhida em ex-sedentárias ≈ limiar ventilatório | Ekkekakis 2011; Ekkekakis 2008; Lind 2005 | 5 / 3 / 3 | R-DIS-02: iniciante sem Z3 | R-DIS-02 |
@@ -66,7 +66,7 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 | Escala de elite: Z1 60 a 72% FCmáx e Z2 73 a 82% (baixa intensidade); Z3 83 a 87; Z4 88 a 92; RPE correspondente | Haugen 2022 | 5 | R-INT-01 (Z3 ≥ 88%) | R-INT-01 |
 | RPE 6-20: mediana 13 a 2 mmol/L, 15 a 3 mmol/L e no LT2; categorias ≤ 11, 12 a 14, 15 a 17 | Grummt 2024 | 3 | R-INT-01 (RPE 6-20) | R-INT-01 |
 | Validade do RPE com FC, lactato, VO2: r ≈ 0,6 | Chen 2002 | 1 | R-INT-02: RPE não é critério único | R-INT-02 |
-| CR-10 ≈ 5 ("forte") no limiar ventilatório em ciclo, jovens mulheres | Zamunér 2011 | 3 | R-INT-06: prudência no mapeamento CR-10 | R-INT-06 |
+| CR-10 ≈ 5 ("forte") no limiar ventilatório em ciclo, jovens mulheres | Zamunér 2011 | 3 | R-INT-06: prudência no mapeamento CR-10 (escala única = CR-10 de Foster) | R-INT-06 |
 | FCmáx = 208 − 0,7 × idade (meta-análise de 18.712 pessoas) | Tanaka 2001 | 1 | R-INT-03 | R-INT-03 |
 | FCmáx = 211 − 0,64 × idade, erro padrão 10,8 bpm | Nes 2013 | 3 | R-INT-01 (−5 pontos para FC estimada), R-INT-03 | R-INT-01, R-INT-03 |
 | Equações de FCmáx têm limites de concordância de ±18 a 24 bpm; RMSE de 9 a 10,5 bpm em corredores | Martin 2025; Kasiak 2023 | 3 | R-INT-03: informar erro; margem | R-INT-03 |
@@ -84,16 +84,16 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 
 | Afirmação | Fonte | Nível | Como vira regra no app | Regra (ID) |
 |---|---|---|---|---|
-| Programa gradual (~10%/semana) não reduziu lesões frente a programa padrão (~24%/semana) em iniciantes | Buist 2008; Damsted 2018 | 2 e 1 | R-PRG-03: 10% é teto de projeto, não prova de segurança | R-PRG-03 |
+| Programa gradual (~10%/semana) não reduziu lesões frente a programa padrão (~24%/semana) em iniciantes | Buist 2008; Damsted 2018 | 2 e 1 | R-PRG-03: 110% é teto semanal de projeto [P], não prova de segurança | R-PRG-03 |
 | Não há evidência para a regra dos 10% nem limiar definido de aumento perigoso | Damsted 2018; Nielsen 2012 | 1 | R-PRG-01/03: não apresentar como regra científica | R-PRG-01, R-PRG-03 |
-| Aumento semanal >30% associou-se (não significativamente) a lesões relacionadas à distância em iniciantes | Nielsen 2014b | 3 | R-PRG-04: teto absoluto de 20% | R-PRG-04 |
+| Aumento semanal >30% associou-se (não significativamente) a lesões relacionadas à distância em iniciantes | Nielsen 2014b | 3 | R-PRG-04: teto absoluto de 120% | R-PRG-04 |
 | Aumento semanal de 20–60% teve mais lesões que <20% aos 21 dias | Damsted 2019 | 3 | R-PRG-04 | R-PRG-04 |
 | Corrida >10% maior que a maior dos 30 dias anteriores aumenta a taxa de lesão por sobrecarga (HRR 1,64; 1,52; 2,28) | Frandsen 2025 | 3 | R-PRG-02 | R-PRG-02 |
-| Razão semana-a-semana não se relaciona com lesão; ACWR relaciona-se inversamente | Frandsen 2025; Nakaoka 2021 | 3 | R-PRG-01 | R-PRG-01 |
-| ACWR não tem evidência causal e tem falhas estatísticas | Impellizzeri 2020a; Wang 2020; Kalkhoven 2021 | 5 | R-PRG-01 | R-PRG-01 |
-| Equilíbrio sobrecarga–recuperação é necessário | Meeusen 2013 | 4 | R-PRG-07 (existência de recuperação, não o número) | R-PRG-07 |
+| Razão semana-a-semana não se relaciona com lesão; a razão aguda:crônica (ACWR) relaciona-se inversamente | Frandsen 2025; Nakaoka 2021 | 3 | R-PRG-01 (ACWR descartado) | R-PRG-01 |
+| ACWR não tem evidência causal e tem falhas estatísticas | Impellizzeri 2020a; Wang 2020; Kalkhoven 2021 | 5 | R-PRG-01 (ACWR descartado) | R-PRG-01 |
+| Equilíbrio sobrecarga–recuperação é necessário | Meeusen 2013 | 4 | R-PRG-07 (existência de recuperação, não o número 75% [P]) | R-PRG-07 |
 | Volume pode ser reduzido mantendo intensidade e frequência moderadamente reduzida, preservando adaptações | Mujika 2000b | 5 | R-PRG-07 | R-PRG-07 |
-| Pausa >4 semanas: grandes perdas de VO2máx; ganhos recentes perdidos | Mujika 2000a; Mujika 2000b | 5 | R-PRG-08 (corte de 28 dias) | R-PRG-08 |
+| Pausa >4 semanas: grandes perdas de VO2máx; ganhos recentes perdidos | Mujika 2000a; Mujika 2000b | 5 | R-PRG-08 (tabela única; corte de 28 dias) | R-PRG-08 |
 | Iniciantes têm mais lesões por hora de corrida | Videbæk 2015 | 1 | R-PRG-10 | R-PRG-10 |
 | Progressão gradual de volume e intensidade reduz riscos do exercício | Garber 2011 | 4 | Princípio geral das regras | R-PRG-03 |
 
@@ -101,7 +101,7 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 
 | Afirmação | Fonte | Nível | Como vira regra no app | Regra (ID) |
 |---|---|---|---|---|
-| sRPE = nota CR-10 × minutos; nota informada após a sessão sobre toda a sessão | Foster 2001; Haddad 2017 | 3 e 5 | R-CRG-01 | R-CRG-01 |
+| sRPE = nota CR-10 × minutos; nota informada após a sessão sobre toda a sessão | Foster 2001; Haddad 2017 | 3 e 5 | R-CRG-01 (escala única da interface, R-INT-06) | R-CRG-01 |
 | sRPE correlaciona com FC em ciclismo e basquete; válido para vários tipos de exercício | Foster 2001 | 3 | R-CRG-01 | R-CRG-01 |
 | 36 estudos confirmaram validade e confiabilidade em vários esportes | Haddad 2017 | 5 | R-CRG-01 | R-CRG-01 |
 | Em adolescentes corredores, sRPE r = 0,74 a 0,89 vs FC; nota cai ~26% se relatada 30 min depois | Mann 2019 | 3 | R-CRG-01 (registrar logo ao fim) | R-CRG-01 |
@@ -110,7 +110,7 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 | Monotonia > 2,0 e strain explicaram 77% e 89% das doenças em um estudo (n = 25), com falsos alarmes | Foster 1998 (via Jones 2017) | 3 | R-CRG-06 (alerta fraco) | R-CRG-06 |
 | Monotonia e strain não são apoiados como preditores de lesão/doença na literatura | Jones 2017 | 1 | R-CRG-05, R-CRG-06 (sem bloqueio) | R-CRG-05, R-CRG-06 |
 | Carga interna distante da causa da lesão | Kalkhoven 2021 | 5 | R-CRG-08 | R-CRG-08 |
-| Prescrito e percebido podem divergir | Haddad 2017 | 5 | R-CRG-07 (convenção) | R-CRG-07 |
+| Prescrito e percebido podem divergir | Haddad 2017 | 5 | R-CRG-07 ([P]; congela a progressão, R-PRG-06 e) | R-CRG-07 |
 
 ## 7. Tipos de sessão (`07-tipos-sessao.md`)
 
@@ -119,8 +119,8 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 | ACSM: >= 150 min/semana moderado ou >= 75 min vigoroso; força 2-3 d/semana; flexibilidade >= 2 d/semana; progressão gradual reduz risco | Garber 2011 | 4 | R-SES-04, R-SES-80, volume por nível | R-SES-04, R-SES-80 |
 | Correr < 51 min/semana, 1-2 vezes/semana já reduz mortalidade | Lee 2014; Pedisic 2020 | 3; 1 | Mínimo viável de 2 corridas/semana para "saúde" | R-SES-04 |
 | Iniciantes têm 17,8 lesões/1000 h; recreacionais 7,7 | Videbæk 2015 | 1 | R-SES-06, R-SES-12 | R-SES-06, R-SES-12 |
-| Programas de 8 e 13 semanas de caminhada-corrida (3x/semana) com mesma taxa de lesão (~20%) | Buist 2007; Buist 2008 | 2 | R-SES-10, R-SES-11, tabela de etapas | R-SES-10, R-SES-11 |
-| Início de corrida > 3 km na semana 1 aumenta lesão em IMC > 30; 3 km/semana tende a lesionar menos que 6 | Nielsen 2014c; Bertelsen 2018 | 3; 2 | R-SES-06 | R-SES-06 |
+| Programas de 8 e 13 semanas de caminhada-corrida (3x/semana) com mesma taxa de lesão (~20%) | Buist 2007; Buist 2008 | 2 | R-SES-10, R-SES-11, tabela de etapas (ajustes [P]: etapas 2 e 11 pelo total impresso; degrau 10b; R-SES-13) | R-SES-10, R-SES-11 |
+| Início de corrida > 3 km na semana 1 aumenta lesão em IMC > 30; 3 km/semana tende a lesionar menos que 6 | Nielsen 2014c; Bertelsen 2018 | 3; 2 | R-SES-06 (app usa IMC ≥ 30) | R-SES-06 |
 | Pico de distância de sessão > 10% da maior corrida de 30 dias: mais lesão (HRR 1,64 a 2,28) | Frandsen 2025 | 3 | R-SES-05, R-SES-31, R-SES-32 | R-SES-05, R-SES-31, R-SES-32 |
 | Treino de base a ~70% FCmáx; limiar a 85%; intervalado a 90-95% | Helgerud 2007 | 2 | Âncoras de %FCmáx de R-SES-20, 41, 50, 55 | R-SES-20, R-SES-41, R-SES-50, R-SES-55 |
 | 4 x 4 min (3 min recuperação ativa) e 15/15 aumentam VO2max mais que limiar e base | Helgerud 2007 | 2 | R-SES-50, R-SES-55 | R-SES-50, R-SES-55 |
@@ -176,7 +176,7 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 | Afirmação | Fonte | Nível | Como vira regra no app | Regra (ID) |
 |---|---|---|---|---|
 | Continuar atividade guiada por monitoramento de dor não foi pior que repouso ativo em tendinopatia de Aquiles | Silbernagel 2007 | 2 | Base de R-DOR-04 (permite continuar na faixa baixa) | R-DOR-04 |
-| Teto de 5/10 durante a atividade e retorno ao basal até a manhã seguinte | Smith 2017; Sprague 2021 | 1 (texto da metanálise) e 2 | R-DOR-04 (teto 5), R-DOR-06 (dia seguinte) | R-DOR-04, R-DOR-06 |
+| Teto de 5/10 durante a atividade e retorno ao basal até a manhã seguinte | Smith 2017; Sprague 2021 | 1 (texto da metanálise) e 2 | R-DOR-04 (teto 5; `limite_dor_progressao` = 3/10 [P]), R-DOR-06 (dia seguinte) | R-DOR-04, R-DOR-06 |
 | Faixas de dor por nível de carga (durante 1–2/2–3/4–5; depois 1–2/3–4/5–6) e retorno a correr com dor ao caminhar 1–2/10 | Silbernagel 2020 | 5 | R-DOR-04, R-DOR-06, R-DOR-10, R-DOR-11 | R-DOR-04, R-DOR-06, R-DOR-10, R-DOR-11 |
 | Diretriz holandesa: usar escala de dor e pausar temporariamente o que provoca dor | de Vos 2021 | 4 | Justifica atividade sem dor no lugar de correr (R-DOR-04, R-DOR-11) | R-DOR-04, R-DOR-11 |
 | Cortes de intensidade variam entre pessoas (≤5, 6–7, ≥8 ou ≤3, 4–6, ≥7) | Boonstra 2016 | 3 | Justifica comparar com o basal do atleta (R-DOR-06) | R-DOR-06 |
@@ -191,17 +191,17 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 | Dor no peito e tontura/perda de consciência levam a avaliação antes de ficar mais ativo | Warburton 2023 (PAR-Q+) | 4 | R-DOR-01 | R-DOR-01 |
 | Sintomas de alerta cardiovascular fazem parte da triagem ACSM; sintomas novos em exercício levam a reavaliar | Riebe 2015 (resumo); Pelliccia 2021 | 4 | R-DOR-01 | R-DOR-01 |
 | Sinais de calor/SNC (confusão, perda de equilíbrio, colapso) são emergência | Casa 2015 | 4 | R-DOR-02 | R-DOR-02 |
-| Dor muscular + fraqueza + urina escura sugerem rabdomiólise | Chavez 2016 | 1 | R-DOR-13 (parte muscular) | R-DOR-13 |
+| Dor muscular + fraqueza + urina escura sugerem rabdomiólise | Chavez 2016 | 1 | R-DOR-13 (parte muscular); campos em R-DOR-15 | R-DOR-13 |
 
 ## 10. Planos por objetivo (`10-planos-objetivo.md`)
 
 | Afirmação | Fonte | Nível | Como vira regra no app | Regra (ID) |
 |---|---|---|---|---|
 | Taper de 2 semanas com −41–60% de volume, mantendo intensidade e frequência, é o mais eficiente em atletas competitivos | Bosquet 2007 | 1 | R-PLN-10 | R-PLN-10 |
-| Taper de ≤21 dias, volume −41–60% progressivo, sem mudar intensidade ou frequência melhora contrarrelógio; 8–14 dias com maior efeito | Wang 2023 | 1 | R-PLN-10 | R-PLN-10 |
+| Taper de ≤21 dias, volume −41–60% progressivo, sem mudar intensidade ou frequência melhora contrarrelógio; 8–14 dias com maior efeito | Wang 2023 | 1 | R-PLN-10 (curvas de R-PLN-13 recalculadas com recuperação em 75%) | R-PLN-10 |
 | Em 158.117 maratonistas, taper estrito de 3 semanas = −5 min 32 s (2,6%) vs taper mínimo | Smyth 2021 | 3 | R-PLN-10 (maratona) | R-PLN-10 |
 | Periodização compatível se zonas são % do ritmo de prova; piramidal e polarizado ≥ limiar | Kenneally 2018 | 1 | R-PLN-06 (não define duração de fases) | R-PLN-06 |
-| Meia: >32 km/sem e longão >21 km → tempo melhor; maratona: <40 km/sem e longão <25 km → pior; treino não associado a lesão | Fokkema 2020 | 3 | R-PLN-03, R-PLN-11 | R-PLN-03, R-PLN-11 |
+| Meia: >32 km/sem e longão >21 km → tempo melhor; maratona: <40 km/sem e longão <25 km → pior; treino não associado a lesão | Fokkema 2020 | 3 | R-PLN-03, R-PLN-11 (tetos em minutos a 6 min/km; longão 21/42 km limitado a 120/150 min) | R-PLN-03, R-PLN-11 |
 | Maratona: <30 km/sem antes da prova → RR de lesão 2,02; lesão prévia RR 2,23 | Rasmussen 2013 | 3 | R-PLN-03, R-PLN-04 | R-PLN-03, R-PLN-04 |
 | Maratonistas de primeira viagem que já correram uma meia → OR de lesão 0,40; longão maior → menos lesão no dia da prova | Toresdahl 2022 | 3 | R-PLN-03, R-PLN-04 | R-PLN-03, R-PLN-04 |
 | Lesão prévia é o maior fator de risco em corredores de longa distância; falta de experiência e baixo volume em curtas | van Poppel 2021 | 1 | R-PLN-03, R-PLN-12 | R-PLN-03, R-PLN-12 |
@@ -220,4 +220,4 @@ Junção das tabelas de evidências dos 10 arquivos, agrupada por tema. Mantém 
 | Aeróbico isolado 6–12 meses → −1,6 a −1,7 kg | Thorogood 2011 | 1 | R-PLN-15 | R-PLN-15 |
 | Dose-resposta: −0,52 kg por 30 min/semana; −2,79 kg a 150 min; −4,19 kg a 300 min | Jayedi 2024 | 1 | R-PLN-15, R-PLN-16 | R-PLN-15, R-PLN-16 |
 | HIIT ≈ contínuo moderado em composição corporal (18–45 anos) | Wewege 2017 | 1 | R-PLN-16 | R-PLN-16 |
-| Duração de ciclo, fases, deload, tetos superiores, recuperação pós-prova | **sem evidência suficiente** | — | R-PLN-05, 06, 08, 11, 19 (todas [DECISÃO]) | R-PLN-05, R-PLN-06, R-PLN-08, R-PLN-11, R-PLN-19 |
+| Duração de ciclo, fases, deload, tetos superiores, recuperação pós-prova | **sem evidência suficiente** | — | R-PLN-05, 06, 08, 11, 19 (todas [P]) | R-PLN-05, R-PLN-06, R-PLN-08, R-PLN-11, R-PLN-19 |

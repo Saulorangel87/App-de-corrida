@@ -2,7 +2,7 @@
 
 Prefixo das regras: **R-SON**. Legenda usada em todo o arquivo:
 - **[E]** = a regra tem apoio direto em evidência citada.
-- **[P]** = decisão de projeto conservadora. Os números não vêm de estudo; devem ser revistos com dados reais.
+- **[P]** = decisão de projeto conservadora. Os números não vêm de estudo; foram aceitos pelo dono em 2026-10-10 como ponto de partida e devem ser recalibrados com dados reais. Onde há apoio indireto em evidência, ele está citado no texto da regra.
 
 ## Resumo
 
@@ -57,40 +57,42 @@ Há evidência consistente de que dormir menos de 7 h por noite de forma habitua
 
 ## Regras propostas para o app
 
-Convenção do check-in: sono em horas (passos de 0,5 h) e cinco notas de 1 a 5 (qualidade do sono, energia, humor, estresse, dor muscular geral). Na tela, estresse e dor muscular podem ser perguntados de forma natural; o motor normaliza todas para "5 = melhor" (estresse: 5 = tranquilo; dor muscular: 5 = sem dor muscular).
+Convenção do check-in: sono em horas (passos de 0,5 h) e cinco notas de 1 a 5 (qualidade do sono, energia, humor, estresse, dor muscular geral). Na tela, todos os itens usam "5 = melhor" (estresse: 5 = tranquilo; dor muscular: 5 = sem dor muscular), sem inversão no motor [P]. Além disso há o item de doença aguda de R-SON-16.
 
 **R-SON-01 [E] Faixas de horas de sono por noite (adultos 18+).** Adequado: ≥ 7,0 h. Limítrofe: 6,5 h (entre 6 e 7 h, sem consenso). Ruim: ≤ 6,0 h. Muito ruim: < 5,0 h **[P]** (corte de 5 h escolhido por ser onde os ensaios mostram prejuízo claro: [Belenky 2003], [Roberts 2019], [Van Dongen 2003]). O limiar de 8 h dos estudos de adolescentes **não** se aplica a adultos. Fontes: [Watson 2015a], [Watson 2015b].
 
 **R-SON-02 [P] Definição de "noite ruim".** Noite ruim = horas ≤ 6,0 **ou** qualidade do sono ≤ 2. Noite muito ruim = horas < 5,0. Noite limítrofe = 6,5 h (não conta como ruim, mas a mensagem do app a menciona). Fontes de apoio: [Watson 2015b], [Saw 2016].
 
-**R-SON-03 [P, construto em [E]] Pontuação de bem-estar (W).** W = soma de qualidade do sono, energia, humor, estresse (invertido) e dor muscular geral (invertida), cada um de 1 a 5; W varia de 5 a 25. As horas de sono ficam fora de W e são tratadas por R-SON-01/02, para que a regra de duração continue explícita. Os cinco construtos são os usados e associados a carga e a lesão em [Lathlean 2019], [Lathlean 2023], [Matos 2019], [Hooper 1995]; a soma simples segue o índice de Hooper. O ponto de corte numérico é decisão de projeto.
+**R-SON-03 [P] Pontuação de bem-estar (W).** W = soma de qualidade do sono, energia, humor, estresse (invertido) e dor muscular geral (invertida), cada um de 1 a 5; W varia de 5 a 25. As horas de sono ficam fora de W e são tratadas por R-SON-01/02, para que a regra de duração continue explícita. Os cinco construtos são os usados e associados a carga e a lesão em [Lathlean 2019], [Lathlean 2023], [Matos 2019], [Hooper 1995]; a soma simples segue o índice de Hooper. O ponto de corte numérico é [P].
 
 **R-SON-04 [P] Faixas absolutas de W.** Verde: W ≥ 15 (nota média ≥ 3, "regular" ou melhor). Amarelo: 12 a 14. Vermelho: ≤ 11. Itens críticos: qualquer item = 1 leva a no mínimo amarelo; dois ou mais itens = 1 levam a vermelho.
 
-**R-SON-05 [P, princípio em [E]] Desvio em relação à média individual.** Linha de base B = mediana de W dos últimos 14 dias, excluindo hoje, usada só com ≥ 7 check-ins válidos no período (antes disso valem apenas as faixas absolutas). Desvio Δ = W − B. Δ ≤ −3 = amarelo; Δ ≤ −5 = vermelho. Vale o pior entre a faixa absoluta e a do desvio. Fontes do princípio (interpretar mudança individual contra a própria referência e juntar com questionários): [Buchheit 2014], [Saw 2016], [Kellmann 2018].
+**R-SON-05 [P] Desvio em relação à média individual.** Linha de base B = mediana de W dos últimos 14 dias, excluindo hoje, usada só com ≥ 7 check-ins válidos no período (antes disso valem apenas as faixas absolutas). Desvio Δ = W − B. Δ ≤ −3 = amarelo; Δ ≤ −5 = vermelho. Vale o pior entre a faixa absoluta e a do desvio. Fontes do princípio (interpretar mudança individual contra a própria referência e juntar com questionários): [Buchheit 2014], [Saw 2016], [Kellmann 2018].
 
-**R-SON-06 [P, base em [E]] Nível de ação por sono (S), olhando as noites já registradas.** Dias sem check-in não contam como bons nem como ruins; "seguidas" exige dias de calendário consecutivos com registro.
+**R-SON-06 [P] Nível de ação por sono (S), olhando as noites já registradas.** Dias sem check-in não contam como bons nem como ruins; "seguidas" exige dias de calendário consecutivos com registro.
 - S0 (manter): noite adequada, ou **uma** noite ruim isolada (a evidência de lesão é para sono ruim crônico; para perda aguda é inconclusiva [Gao 2019]; o efeito de 1 a 3 noites de restrição parcial no desempenho é incerto [Walsh 2021]).
 - S1 (reduzir): uma noite muito ruim (< 5 h) quando o treino do dia é de qualidade (intervalado, tempo ou longo), **ou** 2 noites ruins nas últimas 3.
 - S2 (regenerativo): 3 noites ruins seguidas, **ou** ≥ 4 noites ruins nos últimos 7 dias.
 - S3 (descanso ou mobilidade): ≥ 5 noites ruins nos últimos 7 dias, **ou** ≥ 3 noites muito ruins nos últimos 7 dias.
-- Base: o prejuízo cresce com a restrição repetida e o atleta não percebe [Van Dongen 2003]; a adaptação ao sono curto se estabiliza num nível pior [Belenky 2003]; a restrição prolongada piora humor e dor [Haack 2005]; sono ruim crônico se associa a lesão [Milewski 2014], [Gao 2019], [Wang 2017], [Mousavi 2021], [Hayes 2019]. As contagens de noites são decisão de projeto.
+- Base: o prejuízo cresce com a restrição repetida e o atleta não percebe [Van Dongen 2003]; a adaptação ao sono curto se estabiliza num nível pior [Belenky 2003]; a restrição prolongada piora humor e dor [Haack 2005]; sono ruim crônico se associa a lesão [Milewski 2014], [Gao 2019], [Wang 2017], [Mousavi 2021], [Hayes 2019]. As contagens de noites são [P].
 
-**R-SON-07 [P, base em [E]] Nível de ação por bem-estar (Bn).** Verde = B0; amarelo (absoluto ou desvio) = B1; vermelho = B2; vermelho em 2 dias seguidos = B3. Persistência: se W foi amarelo ou vermelho em ≥ 3 dos últimos 5 dias com registro, sobe um nível (máx. 3). Base: [Saw 2016], [Lathlean 2023], [Hooper 1995].
+**R-SON-07 [P] Nível de ação por bem-estar (Bn).** Verde = B0; amarelo (absoluto ou desvio) = B1; vermelho = B2; vermelho em 2 dias seguidos = B3. Persistência: se W foi amarelo ou vermelho em ≥ 3 dos últimos 5 dias com registro, sobe um nível (máx. 3). Base: [Saw 2016], [Lathlean 2023], [Hooper 1995].
 
-**R-SON-08 [P, base em [E]] Decisão final do dia (L).** L = máx(S, Bn). Se **dois sinais independentes** estiverem acesos (S ≥ 1 e Bn ≥ 1), sobe um nível (máx. 3). Se o módulo de carga indicar semana de carga alta ou acima do limite, sobe um nível adicional apenas quando Bn ≥ 1 (o bem-estar baixo amplifica o risco da carga alta [Lathlean 2023]; o limite de carga vem do arquivo de carga, não daqui). Tradução para as decisões da especificação: L0 = manter; L1 = reduzir (trocar o bloco de intensidade por rodagem fácil do catálogo, ou encurtar a sessão; o percentual vem do arquivo de carga, valor inicial sugerido 20% de redução de volume **[P]**); L2 = trocar por regenerativo do catálogo; L3 = descanso ou mobilidade do catálogo.
+**R-SON-08 [P] Decisão final do dia (L).** L = máx(S, Bn). Se **dois sinais independentes** estiverem acesos (S ≥ 1 e Bn ≥ 1), sobe um nível (máx. 3). Se a semana for de **carga alta**, sobe um nível adicional apenas quando Bn ≥ 1 (o bem-estar baixo amplifica o risco da carga alta [Lathlean 2023]). "Semana de carga alta" = semana cujo volume planejado atingiu o teto semanal de R-PRG-03 (110% da última semana de construção, com a tolerância de arredondamento dessa regra) **[P]**; nenhum módulo de carga produz esse sinal de outra forma, e sRPE não é usado para isso (R-CRG-08). Tradução para as decisões da especificação: L0 = manter; L1 = reduzir (trocar o bloco de intensidade por rodagem fácil do catálogo **e** reduzir o volume da sessão em `reducao_reativa_volume` = 20%, R-PRG-12 **[P]**); L2 = trocar por regenerativo do catálogo; L3 = descanso ou mobilidade do catálogo. A decisão final do dia combina este módulo com o de dor tomando a **mais restritiva, sem somar percentuais** (R-PRG-11).
 
 **R-SON-09 [P] O check-in só mantém ou reduz.** Sono e bem-estar bons nunca aumentam a carga prescrita acima do plano. A evidência de benefício de estender o sono é preliminar [Walsh 2021], [Roberts 2019].
 
-**R-SON-10 [P, base em [E]] Saída do estado de alerta.** O nível desce no máximo um degrau por dia, e o retorno a L0 exige 2 dias seguidos sem sinal (sono ≥ 7 h, W verde e Δ > −3). Base: recuperação lenta e incompleta após restrição [Belenky 2003]. Para evitar abandono do plano, S3 isolado dura no máximo 2 dias seguidos; se o sono continuar ruim, o nível por sono fica em S2 e a mensagem passa a recomendar atenção ao sono.
+**R-SON-10 [P] Saída do estado de alerta.** O nível desce no máximo um degrau por dia, e o retorno a L0 exige 2 dias seguidos sem sinal (sono ≥ 7 h, W verde e Δ > −3). Base: recuperação lenta e incompleta após restrição [Belenky 2003]. Para evitar abandono do plano, S3 isolado dura no máximo 2 dias seguidos; se o sono continuar ruim, o nível por sono fica em S2 e a mensagem passa a recomendar atenção ao sono.
 
-**R-SON-11 [P] Sono e check-in nunca disparam "interromper".** O nível máximo deste módulo é L3 (descanso). Dor localizada, dor que muda a passada e sinais de alerta de saúde seguem as regras de dor e triagem (R-DOR), que têm precedência sobre estas. A dor muscular geral do check-in é percepção de cansaço muscular, não relato de dor localizada.
+**R-SON-11 [P] Sono e check-in nunca disparam "interromper".** O nível máximo deste módulo é L3 (descanso). Dor localizada, dor que muda a passada e sinais de alerta de saúde seguem as regras de dor e triagem (R-DOR, R-TRI), que têm precedência sobre estas (ordem completa em R-PRG-11). A dor muscular geral do check-in é percepção de cansaço muscular, não relato de dor localizada.
 
-**R-SON-12 [P] Mensagem de orientação por sono persistente.** Se o nível por sono ficar em S2 ou pior em ≥ 14 dos últimos 21 dias, ou o atleta relatar noites ruins na maior parte do mês, o app mostra aviso de que o sono insuficiente persistente merece conversa com um profissional de saúde (sem diagnóstico). Apoio: o consenso do BJSM recomenda encaminhar a um especialista de sono atletas com problema moderado a grave, identificado por triagem validada (ASSQ) [Walsh 2021]; como o app **não** usa essa triagem, os 14 de 21 dias são decisão de projeto.
+**R-SON-12 [P] Mensagem de orientação por sono persistente.** Se o nível por sono ficar em S2 ou pior em ≥ 14 dos últimos 21 dias, ou o atleta relatar noites ruins na maior parte do mês, o app mostra aviso de que o sono insuficiente persistente merece conversa com um profissional de saúde (sem diagnóstico). Apoio: o consenso do BJSM recomenda encaminhar a um especialista de sono atletas com problema moderado a grave, identificado por triagem validada (ASSQ) [Walsh 2021]; como o app **não** usa essa triagem, os 14 de 21 dias são [P].
 
 **R-SON-13 [P] Dados faltantes.** Sem check-in no dia: o motor usa o plano e as últimas decisões, não trata ausência como sinal e pede o check-in. Check-in com horas de sono não informadas: calcula só com qualidade do sono e W. Fora do intervalo plausível (horas < 2 ou > 14): pede confirmação, não grava como válido.
 
 **R-SON-14 [E] FC de repouso: só registro.** Campo opcional (bpm), guardado e mostrado em gráfico com a média móvel individual de 14 dias. **Não entra em W nem em L.** Base: sem limiar validado e com respostas inconsistentes em corredores [Achten 2003], [Nuuttila 2024], [Bellenger 2016], [Buchheit 2014].
+
+**R-SON-16 [P] Doença aguda hoje.** O check-in diário inclui o item "doença aguda hoje (febre, resfriado)" (sim/não). Sim → estado `ADIADO` (R-TRI-09) nesse dia: nenhum treino até a recuperação; não conta como noite ruim nem como sinal de bem-estar. Doença leve de até 7 dias volta pelo plano segundo a tabela de R-PRG-08; doença que exija atendimento ou dure mais de 7 dias é pausa por doença (R-PRG-09). Apoio: o PAR-Q+ manda adiar a prática em doença aguda temporária [PARQ+ 2025].
 
 **R-SON-15 [P] Texto da decisão (obrigatório na saída).** Cada decisão deste módulo grava em `engine_decisions` o motivo e as chaves de fonte. Exemplos:
 - "Você dormiu 4,5 h. Uma noite curta não costuma exigir mudança, mas hoje o treino é de qualidade; reduzimos a intensidade. [Walsh 2021] [Van Dongen 2003]"
@@ -130,6 +132,11 @@ retorno:
 orientacao_profissional:
   dias_s2_ou_pior: 14            # [P]
   janela_dias: 21                # [P]
+carga:
+  reducao_reativa_volume_pct: 20 # [P] R-PRG-12 (L1; também dor 3-4 em R-DOR-04)
+  carga_alta_def: teto_semanal   # [P] semana que atingiu o teto de R-PRG-03 (110%)
+checkin:
+  doenca_aguda_item: true        # [P] R-SON-16 -> ADIADO
 fc_repouso:
   afeta_decisao: false           # [E] sem limiar validado
 ```
@@ -143,11 +150,13 @@ fc_repouso:
 6. Após L2, um dia bom: continua L1 (desce um degrau); dois dias bons: L0.
 7. 6 dias sem check-in: sem decisão de alerta; pede check-in.
 8. Qualquer relato de dor localizada: a regra de dor prevalece sobre qualquer L deste módulo.
+9. "Doença aguda hoje" = sim: `ADIADO`, sem treino, independentemente de S e Bn.
+10. L1 (sono) e dor 3-4 no mesmo dia: vale uma única redução de 20% e a troca da sessão de qualidade (não soma, R-PRG-11).
 
 ## Evidência fraca ou conflitante
 
 1. **Lesão e sono em adultos.** A maior parte do suporte é de adolescentes (Milewski, Gao, Wang) e de atletas de outros esportes; o IC de Milewski toca 1,0; Mousavi é transversal com escala de sono não descrita no resumo; Hayes é análise univariada (P = 0,04). Todos usam sono autorrelatado. Decisão: usar o dado só para justificar uma postura conservadora com sono ruim repetido, nunca para prometer redução de lesão.
-2. **Limiar de 8 h (adolescentes) versus 7 h (adultos).** Não aplicar 8 h a adultos. O consenso do BJSM defende meta individualizada [Walsh 2021]. Decisão: 7 h como piso para o app; deixar a necessidade individual como pergunta ao dono do projeto.
+2. **Limiar de 8 h (adolescentes) versus 7 h (adultos).** Não aplicar 8 h a adultos. O consenso do BJSM defende meta individualizada [Walsh 2021]. Decisão: 7 h como piso para o app; a necessidade individual não é perguntada na v1 [P].
 3. **Desempenho com restrição parcial.** O consenso diz que o efeito de 1 a 3 noites é incerto; a meta-análise mostra efeito só com privação e restrição tardia, com I² de 98%; Fullagar fala em resultados mistos. Decisão: não prometer ganho de desempenho nem vincular a decisão a "perda de desempenho"; a regra é de segurança.
 4. **Roberts 2019.** O resumo lido traz tempos de prova que não condizem com o texto (a condição restrita aparece com tempo menor que a normal na terceira noite, o que contradiz a conclusão). Só a conclusão dos autores foi usada, e só como apoio qualitativo (n = 9). Para qualquer número, abrir o artigo completo antes de adotar.
 5. **Limiares de noites seguidas e de pontos de bem-estar.** Nenhum estudo define "3 noites" ou "−3 pontos". O suporte é indireto (efeito cumulativo em laboratório, [Van Dongen 2003]; bem-estar sensível à carga, [Saw 2016]). Decisão: valores conservadores de projeto, em arquivo de configuração, para recalibrar com dados reais dos usuários após o lançamento.
@@ -157,21 +166,23 @@ fc_repouso:
 9. **Sono como causa ou sintoma de overreaching.** A direção é incerta [Walsh 2021]. Decisão: tratar sono e bem-estar como alertas para reduzir carga, nunca como diagnóstico [Meeusen 2013].
 10. **Fullagar 2015.** Revisão (tipo "Review" no registro, aparentemente não sistemática); só o resumo foi lido.
 
-## Perguntas para o dono do projeto
+## Decisões do dono e de projeto (2026-10-10)
 
-1. **Necessidade individual de sono (sem evidência suficiente para um número):** incluir na entrevista a pergunta "quantas horas você precisa para acordar descansado?" e elevar o limiar de "limítrofe" quando a resposta for maior que 7 h? O consenso do BJSM recomenda individualizar, mas não dá fórmula.
-2. **Valores dos limiares de projeto:** aceitar os valores de R-SON-02 a R-SON-08 como ponto de partida, sabendo que não têm estudo por trás, e revisá-los após os primeiros usuários?
-3. **Redução do nível L1:** o percentual de redução de volume (sugerido 20%) deve vir do arquivo de carga; alinhar com o tema de carga.
-4. **FC de repouso:** sem limiar validado. Manter só como registro, ou incluir um aviso informativo (sem mudar o treino) quando ficar bem acima da média individual junto com sintomas de doença? Não há fonte para o valor do desvio.
-5. **Orientação por sono persistente (R-SON-12):** aceitar "14 de 21 dias" como critério, ou prefere remover o aviso até haver triagem validada de sono (o ASSQ é validado para atletas, mas não foi avaliado para este app)?
-6. **Escala de estresse e dor muscular na tela:** manter "5 = melhor" para todos, ou a tela perguntar com polos naturais (estresse alto, dor alta) e o motor inverter por trás?
+1. **Necessidade individual de sono** (sem evidência suficiente para um número): a v1 não pergunta; o piso de 7 h vale para todos [P]. O consenso do BJSM recomenda individualizar, mas não dá fórmula.
+2. **Valores dos limiares de projeto** (R-SON-02 a R-SON-08): aceitos como ponto de partida [P], sem estudo por trás, para recalibrar com dados reais dos primeiros usuários.
+3. **Redução do nível L1:** 20% do volume da sessão, junto com a troca do bloco de qualidade por rodagem fácil (`reducao_reativa_volume`, R-PRG-12) [P].
+4. **FC de repouso:** só registro, sem aviso nem mudança de treino (sem limiar validado).
+5. **Orientação por sono persistente (R-SON-12):** aceito o critério de 14 de 21 dias [P], sem sugerir triagem validada (ASSQ) na v1.
+6. **Escala de estresse e dor muscular na tela:** manter "5 = melhor" para todos os itens [P] (opção mais simples, sem inversão no motor).
+7. **Semana de carga alta** (usada em R-SON-08): definida como a semana que atingiu o teto de R-PRG-03 (divergência D-15) [P].
+8. **Doença aguda e febre:** item novo no check-in, com saída `ADIADO` (R-SON-16, seção C do relatório de consistência) [P].
 
 ## Tabela de evidências
 
 | Afirmação | Fonte | Nível | Como vira regra no app |
 |---|---|---|---|
 | Adultos devem dormir ≥ 7 h por noite de forma regular; ≤ 6 h é inapropriado | Watson 2015a; Watson 2015b | 4 | R-SON-01 |
-| Meta de sono deve ser individualizada em atletas | Walsh 2021 | 4 | Pergunta 1 ao dono do projeto |
+| Meta de sono deve ser individualizada em atletas | Walsh 2021 | 4 | Decisão 1: sem pergunta de necessidade individual na v1 ([P]) |
 | Efeito de 1 a 3 noites de restrição parcial no desempenho é incerto | Walsh 2021; Craven 2022 | 4; 1 | R-SON-06 (noite isolada = manter) |
 | Perda aguda de sono prejudica desempenho só com privação ou restrição tardia | Craven 2022 | 1 | Não prometer ganho de desempenho |
 | Restrição crônica de sono causa déficit cumulativo e não percebido | Van Dongen 2003 | 2 | R-SON-06 (contar noites seguidas) |

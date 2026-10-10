@@ -40,4 +40,6 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 (preencher quando o projeto estiver configurado)
 
 ## Estado atual
-Fase atual: 0 — Pesquisa científica (ainda não iniciada)
+Fase atual: 0 — Pesquisa científica (concluída em 2026-10-10, aguardando aprovação do dono)
+- Resultado em `docs/pesquisa/` (índice no `README.md`). Decisões e correções à especificação em `docs/pesquisa/decisoes.md` (seção D): elas prevalecem sobre `docs/especificacao.md`.
+- Próxima: Fase 1 — modelagem do banco (Drizzle), estrutura do monorepo e container `corrida` na VPS.

@@ -4,7 +4,7 @@ Prefixo de regras: **R-DIS**. Modelo de zonas compartilhado com `04-controle-int
 
 ## Resumo
 
-Os estudos de intervenção e as revisões são consistentes em um ponto: distribuições com muito volume em baixa intensidade (polarizada ou piramidal) funcionam igual ou melhor do que treino concentrado na zona de limiar. A meta-análise mais recente (Oliveira 2024, 17 estudos, 437 atletas) não achou diferença entre polarizado e os demais modelos em prova contra-relógio, tempo até a exaustão e velocidade/potência no limiar; só houve vantagem pequena para o VO2pico (SMD 0,24), restrita a intervenções com menos de 12 semanas e a atletas muito treinados. Polarizado versus piramidal não se distingue na evidência atual. Em corredores de elite o padrão observado é "pelo menos 80% do volume em baixa intensidade"; entre corredores recreacionais há poucos ensaios pequenos (8 a 10 semanas) e eles não mostram superioridade clara de nenhum modelo. Para iniciantes **não há estudo de distribuição de intensidade**; a proposta de proporção é uma extrapolação conservadora, marcada como tal. Para o motor: Z1 como base dominante em todos os níveis, Z2 limitada (evitar a "zona cinzenta" como padrão), Z3 crescente com o nível, e modelo piramidal como padrão com polarizado opcional.
+Os estudos de intervenção e as revisões são consistentes em um ponto: distribuições com muito volume em baixa intensidade (polarizada ou piramidal) funcionam igual ou melhor do que treino concentrado na zona de limiar. A meta-análise mais recente (Oliveira 2024, 17 estudos, 437 atletas) não achou diferença entre polarizado e os demais modelos em prova contra-relógio, tempo até a exaustão e velocidade/potência no limiar; só houve vantagem pequena para o VO2pico (SMD 0,24), restrita a intervenções com menos de 12 semanas e a atletas muito treinados. Polarizado versus piramidal não se distingue na evidência atual. Em corredores de elite o padrão observado é "pelo menos 80% do volume em baixa intensidade"; entre corredores recreacionais há poucos ensaios pequenos (8 a 10 semanas) e eles não mostram superioridade clara de nenhum modelo. Para iniciantes **não há estudo de distribuição de intensidade**; a proposta de proporção é uma extrapolação conservadora, marcada como tal. Para o motor: Z1 como base dominante em todos os níveis, Z2 limitada (evitar a "zona cinzenta" como padrão), Z3 crescente com o nível, e modelo piramidal como único modelo da v1 (o bloco polarizado não é oferecido, decisão [P] de 2026-10-10).
 
 ## Achados
 
@@ -52,17 +52,17 @@ Todas as proporções são **percentual do tempo de corrida em cada zona**, soma
 |---|---|---|---|---|
 | Iniciante | 90% / 85% | 10% / 15% | 0% / 0% | Base fácil (Z1 dominante), sem Z3 |
 | Intermediário | 80% / 75% | 10% / 15% | 10% / 12% | Piramidal |
-| Avançado recreacional | 80% / 75% | 8% / 15% | 12% / 15% | Piramidal (padrão) ou polarizado (R-DIS-05) |
+| Avançado recreacional | 80% / 75% | 8% / 15% | 12% / 15% | Piramidal (R-DIS-05) |
 
-Base das faixas: Z1 ≥ 70% é o mínimo sugerido pelas revisões em corredores [Campos 2022]; cerca de 75 a 80% é o que ensaios em corredores recreacionais usaram no grupo polarizado (77/3/20) [Muñoz 2014; Festa 2019] e ≥ 80% o que se observa em elite [Haugen 2022; Seiler 2010]. Os máximos de Z3 ficam abaixo dos 20% usados nos ensaios (decisão conservadora, ver "Evidência fraca"). Para iniciantes **não há evidência direta**: os valores são extrapolação conservadora e são tratados como política do app, não como fato científico (pergunta 1).
+Base das faixas: Z1 ≥ 70% é o mínimo sugerido pelas revisões em corredores [Campos 2022]; cerca de 75 a 80% é o que ensaios em corredores recreacionais usaram no grupo polarizado (77/3/20) [Muñoz 2014; Festa 2019] e ≥ 80% o que se observa em elite [Haugen 2022; Seiler 2010]. Os máximos de Z3 ficam abaixo dos 20% usados nos ensaios (decisão conservadora, ver "Evidência fraca"). Para iniciantes **não há evidência direta**: os valores são extrapolação conservadora, [P] (aceita pelo dono em 2026-10-10 como ponto de partida, recalibrável), tratados como política do app, não como fato científico.
 
 **R-DIS-03 (teto da zona cinzenta)**: Z2 nunca passa de 15% do tempo semanal (iniciante e demais), e a regra "limiar" (Z2 > 35%) é bloqueada como padrão em qualquer nível [Oliveira 2024; Rosenblat 2019; Campos 2022; Kenneally 2018]. Se a média de 4 semanas ultrapassar o teto, o motor converte a próxima sessão de Z2 em Z1 e mostra o motivo ao atleta.
 
-**R-DIS-04 (limite de sessões de qualidade)**: no máximo 1 sessão com Z2 ou Z3 por semana para iniciante (apenas Z2 contínuo e curto, sem intervalos em Z3), e no máximo 2 para intermediário e avançado; nunca em dias consecutivos. É convenção conservadora; a evidência direta é só de elite (1 a 2 sessões de intervalo por semana) [Haugen 2022; Casado 2022] e não há estudo que fixe o limite para recreacionais (pergunta 2).
+**R-DIS-04 (limite de sessões de qualidade)**: iniciante: **0 sessões com Z2 ou Z3 durante a escada de caminhada-corrida** e até cumprir R-SES-40 (etapa 12 mais 8 semanas de corrida regular); depois, no máximo 1 por semana (um único bloco contínuo curto de Z2, sem intervalos e sem Z3). Intermediário e avançado: no máximo 2 por semana (no máximo 1 de HIIT no intermediário); nunca em dias consecutivos. É convenção conservadora [P]; a evidência direta é só de elite (1 a 2 sessões de intervalo por semana) [Haugen 2022; Casado 2022] e não há estudo que fixe o limite para recreacionais. Com `intensidade_maxima = leve_moderada` (R-TRI-06) o limite é 0 em todos os níveis (somente Z1).
 
-**R-DIS-05 (piramidal como padrão; polarizado opcional)**: o plano padrão de intermediário e avançado é piramidal (Z1 > Z2 > Z3), porque polarizado e piramidal não diferem em desempenho [Oliveira 2024] e porque o piramidal é o padrão observado em corredores de fundo de elite [Casado 2022; Stöggl 2015]. O bloco polarizado (Z2 ≤ 5% e Z3 até o máximo da tabela) pode ser oferecido só a avançados, por no máximo 8 semanas e depois de pelo menos 8 semanas de base piramidal. Base: o melhor resultado de Filipas 2022 foi PYR seguido de POL, e a vantagem do POL no VO2pico concentra-se em blocos curtos [Oliveira 2024]. Evidência fraca; ver abaixo.
+**R-DIS-05 (piramidal como padrão; polarizado opcional)**: o plano padrão de intermediário e avançado é piramidal (Z1 > Z2 > Z3), porque polarizado e piramidal não diferem em desempenho [Oliveira 2024] e porque o piramidal é o padrão observado em corredores de fundo de elite [Casado 2022; Stöggl 2015]. Decisão [P] (2026-10-10): na v1 o app **não oferece** o bloco polarizado; fica só o piramidal (opção mais simples e conservadora). Se for oferecido numa versão futura, a proposta seria só para avançados, por no máximo 8 semanas e depois de pelo menos 8 semanas de base piramidal (o melhor resultado de Filipas 2022 foi PYR seguido de POL, e a vantagem do POL no VO2pico concentra-se em blocos curtos [Oliveira 2024]). Evidência fraca; ver abaixo.
 
-**R-DIS-06 (ordem de corte por check-in)**: quando sono ruim, dor ou fadiga reduzirem a carga, o motor corta primeiro Z3, depois Z2, e preserva Z1 (substituindo o treino por Z1 de menor duração ou por descanso se houver dor ou bloqueio). É política de segurança do app; a evidência apenas mostra que ênfase em baixa intensidade teve mais respondedores em recreacionais [Zinner 2018].
+**R-DIS-06 (ordem de corte por check-in)**: quando sono ruim, dor ou fadiga reduzirem a carga, o motor corta primeiro Z3, depois Z2, e preserva Z1 (substituindo o treino por Z1 de menor duração ou por descanso se houver dor ou bloqueio). É política de segurança do app, [P] (confirmada pelo dono: Z3 antes de Z2, preservando Z1); a evidência apenas mostra que ênfase em baixa intensidade teve mais respondedores em recreacionais [Zinner 2018]. A precedência entre módulos e a regra "decisão do dia = a mais restritiva, sem somar percentuais" estão em R-PRG-11.
 
 **R-DIS-07 (apresentação ao atleta)**: o app não afirma "polarizado é melhor". O texto explica que "a maior parte dos treinos deve ser fácil" citando [Oliveira 2024; Campos 2022] e que a evidência não distingue polarizado de piramidal.
 
@@ -78,12 +78,12 @@ Base das faixas: Z1 ≥ 70% é o mínimo sugerido pelas revisões em corredores 
 - **Duração dos ensaios**: 8 a 16 semanas; a evidência de longo prazo em recreacionais não existe.
 - Não foi revisada nesta pesquisa a relação entre porcentagem de alta intensidade e lesão em corredores; isso deve estar em outro arquivo da Fase 0. Não afirmo nada sobre ela aqui.
 
-## Perguntas para o dono do projeto
+## Decisões do dono e de projeto (2026-10-10)
 
-1. **Iniciantes, proporção por zona**: sem evidência suficiente. Aprova a política conservadora Z1 90% / Z2 10% / Z3 0% (e sem intervalos em Z3 até o motor de progressão liberar)? Alternativa: permitir 5% de Z3 após um período de base, mas isso exigiria uma fonte que não encontrei.
-2. **Limite de sessões de qualidade por semana** para recreacionais (1 para iniciante, 2 para os demais): sem evidência suficiente além de práticas de elite. Aprova como regra de segurança?
-3. **Bloco polarizado opcional** para avançados (R-DIS-05): vale oferecer, ou o app fica só com piramidal? A evidência não obriga a oferecer.
-4. **Ordem de corte** (R-DIS-06): confirmar que cortar Z3 antes de Z2 é o comportamento desejado quando há sono ruim ou dor leve.
+1. **Iniciantes, proporção por zona**: sem evidência suficiente. Decisão [P] (valores sem evidência aceitos como ponto de partida): Z1 90% / Z2 10% / Z3 0% (e sem intervalos em Z3).
+2. **Limite de sessões de qualidade por semana**: iniciante 0 até R-SES-40 e depois 1; intermediário e avançado 2 [P]; unificado com 07 e 10 (divergência D-07).
+3. **Bloco polarizado opcional** para avançados (R-DIS-05): não oferecido na v1 [P].
+4. **Ordem de corte** (R-DIS-06): confirmada: Z3 antes de Z2, preservando Z1 [P].
 
 ## Tabela de evidências
 
@@ -102,7 +102,7 @@ Base das faixas: Z1 ≥ 70% é o mínimo sugerido pelas revisões em corredores 
 | FC e sRPE dão distribuições semelhantes em esquiadores juniores | Seiler 2006 | 3 | R-DIS-01: usar sRPE/fala quando não há FC |
 | Prazer cai no limiar ou acima dele; intensidade autoescolhida em ex-sedentárias ≈ limiar ventilatório | Ekkekakis 2011; Ekkekakis 2008; Lind 2005 | 5 / 3 / 3 | R-DIS-02: iniciante sem Z3 |
 | HIIT melhora VO2max em adultos não atletas | Wen 2019 | 1 | Nota: ausência de Z3 em iniciantes é política, não necessidade |
-| Não há ensaio de TID em iniciantes | (busca sem resultado) | sem evidência suficiente | Pergunta 1 |
+| Não há ensaio de TID em iniciantes | (busca sem resultado) | sem evidência suficiente | Decisão 1 ([P]) |
 
 ## Referências
 

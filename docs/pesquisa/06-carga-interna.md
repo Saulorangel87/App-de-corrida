@@ -22,15 +22,15 @@ O método session-RPE (sRPE) multiplica a nota de esforço da sessão (escala CR
 
 ## Regras propostas para o app
 
-1. **R-CRG-01 (sRPE da sessão):** após cada treino concluído, o app pede a nota CR-10 modificada de Foster (inteiro de 0 a 10; mínimo 1 se o treino foi concluído), na tela pós-treino, **imediatamente** após o fim da sessão e sempre no mesmo momento, mostrando os rótulos da escala. Carga da sessão (UA) = nota × duração real total em minutos (aquecimento, trechos de caminhada e intervalos incluídos). [Foster 2001; Haddad 2017; Mann 2019 para o momento do registro]. A tradução em português dos rótulos não tem validação encontrada (ver perguntas).
+1. **R-CRG-01 (sRPE da sessão):** após cada treino concluído, o app pede a nota CR-10 modificada de Foster (inteiro de 0 a 10; mínimo 1 se o treino foi concluído), na tela pós-treino, **imediatamente** após o fim da sessão e sempre no mesmo momento, mostrando os rótulos da escala. Carga da sessão (UA) = nota × duração real total em minutos (aquecimento, trechos de caminhada e intervalos incluídos). [Foster 2001; Haddad 2017; Mann 2019 para o momento do registro]. A tradução em português dos rótulos é própria e não validada [P] (decisão de 2026-10-10); é a escala única da interface (R-INT-06). Só notas inteiras de 0 a 10 (sem meio ponto) [P].
 2. **R-CRG-02 (carga planejada):** o catálogo traz RPE-alvo para cada treino; carga estimada do treino = RPE-alvo × duração planejada, para comparar com o realizado [Haddad 2017 para a lógica de usar a mesma escala para prescrever e relatar].
 3. **R-CRG-03 (carga semanal):** carga semanal = soma das cargas (UA) de todas as sessões concluídas na semana civil (segunda a domingo, fuso do atleta). Duas sessões no mesmo dia somam. Sessão não concluída = 0. Gráfico de carga semanal no histórico, sem faixa de risco. Se o atleta registrar atividade fora da corrida (opcional), entra com sRPE da mesma forma [Foster 2001].
-4. **R-CRG-04 (monotonia):** calculada só para semana civil **fechada** (7 dias), com carga diária = soma das UA do dia (dias sem treino = 0; dia sem registro e sem marcação conta como 0 após 48 h). Monotonia = média das 7 cargas diárias / desvio padrão **populacional** das 7 cargas (escolha conservadora: dá valor maior que o amostral; a fonte não especifica). Se o desvio padrão for 0 (ex.: sem treino na semana, ou carga idêntica nos 7 dias), monotonia = indefinida; não calcular nem alertar [Foster 1998; Haddad 2017].
+4. **R-CRG-04 (monotonia):** calculada só para semana civil **fechada** (7 dias), com carga diária = soma das UA do dia (dias sem treino = 0; dia sem registro e sem marcação conta como 0 após 48 h). Monotonia = média das 7 cargas diárias / desvio padrão **populacional** das 7 cargas (escolha conservadora [P]: dá valor maior que o amostral; a fonte não especifica). Se o desvio padrão for 0 (ex.: sem treino na semana, ou carga idêntica nos 7 dias), monotonia = indefinida; não calcular nem alertar [Foster 1998; Haddad 2017].
 5. **R-CRG-05 (strain):** strain = carga semanal × monotonia, só para semanas com monotonia definida. Mostrar como número de acompanhamento junto à carga semanal. **Sem limiar absoluto**: Foster descreveu limiares individuais, e a revisão sistemática não sustenta o uso [Foster 1998; Jones 2017]. Não há alerta baseado em strain.
 6. **R-CRG-06 (alerta fraco de monotonia):** se a monotonia de uma semana fechada for **> 2,0**, o app mostra um aviso informativo, sem bloquear nem alterar carga automaticamente: "Seus treinos desta semana tiveram carga muito parecida e poucos dias de descanso. Alterne dias leves, mais fortes e descanso." E o motor garante pelo menos 1 dia completo de descanso e variação de intensidade na semana seguinte (regra de estrutura do plano nos arquivos de treino). Valor de 2,0: limiar relatado em estudo único, de doença, em nadadores [Jones 2017, citando Foster 1998]; **evidência fraca**. O aviso não afirma risco de lesão nem faz diagnóstico.
-7. **R-CRG-07 (prescrito vs percebido, convenção):** se em 2 das últimas 3 sessões o RPE relatado superar o RPE-alvo em **2 ou mais pontos** (em sessões com alvo ≤ 4), o motor congela a progressão da semana seguinte e sugere revisar sono e recuperação; se vier junto de dor, aplica as regras de dor (outro arquivo) e orienta procurar profissional. Os pontos de corte (2 pontos; 2 de 3 sessões) são **[convenção; sem evidência suficiente]**; só o fato de prescrito e percebido poderem divergir vem da literatura [Haddad 2017].
+7. **R-CRG-07 (prescrito vs percebido, convenção):** se em 2 das últimas 3 sessões o RPE relatado superar o RPE-alvo em **2 ou mais pontos** (em sessões com alvo ≤ 4), o motor congela a progressão da semana seguinte (gatilho (e) da lista de R-PRG-06) e sugere revisar sono e recuperação; se vier junto de dor, aplica as regras de dor (outro arquivo) e orienta procurar profissional. Os pontos de corte (2 pontos; 2 de 3 sessões) são **[P] (sem evidência suficiente)**; só o fato de prescrito e percebido poderem divergir vem da literatura [Haddad 2017].
 8. **R-CRG-08 (uso e comunicação):** sRPE, carga semanal, monotonia e strain são indicadores do próprio atleta; nunca comparar com outros usuários nem tratar como diagnóstico. Os limites de progressão do volume e da corrida individual ficam em R-PRG (arquivo 05), que não depende de sRPE.
-9. **R-CRG-09 (dados insuficientes):** não calcular monotonia/strain na primeira semana do atleta (semana parcial) nem em semana com menos de 3 dias com registro de sessão ou de descanso confirmado **[convenção]**.
+9. **R-CRG-09 (dados insuficientes):** não calcular monotonia/strain na primeira semana do atleta (semana parcial) nem em semana com menos de 3 dias com registro de sessão ou de descanso confirmado **[P]**.
 
 ## Evidência fraca ou conflitante
 
@@ -44,12 +44,13 @@ O método session-RPE (sRPE) multiplica a nota de esforço da sessão (escala CR
 | Cálculo do desvio padrão | Fontes lidas não especificam populacional ou amostral | Populacional (mais conservador) |
 | Momento do registro | Nota dada 30 min depois é ~26% menor em adolescentes corredores [Mann 2019]; não li a fonte que fixa o momento original de Foster | Registrar logo ao fim, sempre igual |
 
-## Perguntas para o dono do projeto
-1. Aprova usar monotonia > 2,0 apenas como alerta informativo (e não como regra de bloqueio), sabendo que a evidência é fraca e que, com até 5 corridas por semana, o alerta quase nunca dispara?
-2. Aprova strain apenas como número de acompanhamento, sem limiar? (sem evidência suficiente para limiar)
-3. A escala CR-10 em português: sem evidência suficiente de uma tradução validada encontrada nesta pesquisa; aceita usar uma tradução própria dos rótulos de Foster, marcada como não validada, ou prefere buscar a validação?
-4. Aprova a regra de convenção R-CRG-07 (2 pontos acima do alvo em 2 de 3 sessões congela a progressão)? Sem evidência suficiente para esses valores.
-5. O app deve aceitar RPE com meio ponto (ex.: 4,5)? Não verifiquei se há base na literatura; a proposta usa inteiros.
+## Decisões do dono e de projeto (2026-10-10)
+1. Monotonia > 2,0 apenas como alerta informativo, sem bloqueio [P], sabendo que a evidência é fraca e que, com até 5 corridas por semana, o alerta quase nunca dispara.
+2. Strain apenas como número de acompanhamento, sem limiar [P] (sem evidência suficiente para limiar).
+3. Escala CR-10 em português: tradução própria dos rótulos de Foster, marcada como não validada [P]; também é a escala da interface (divergência D-17, R-INT-06).
+4. Regra R-CRG-07 (2 pontos acima do alvo em 2 de 3 sessões congela a progressão): aceita [P] e incluída na lista de congelamentos de R-PRG-06 (e).
+5. Meio ponto no RPE (ex.: 4,5): não; só inteiros [P] (opção mais simples).
+6. Tipo de desvio padrão da monotonia: populacional [P] (mais conservador).
 
 ## Tabela de evidências
 

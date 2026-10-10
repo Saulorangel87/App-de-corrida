@@ -2,13 +2,12 @@
 
 Prefixo das regras: **R-PLN**. Legenda usada nas regras e tabelas:
 
-- **[EVID]** o valor ou a lógica vem diretamente de estudo verificado.
-- **[MISTA]** a direção vem de evidência, mas o número exato é escolha de projeto.
-- **[DECISÃO]** convenção de treinamento ou escolha conservadora do projeto, **sem evidência direta**. Deve ser aprovada pelo dono do projeto.
+- **[E]** o valor ou a lógica vem diretamente de estudo verificado.
+- **[P]** convenção de treinamento ou escolha conservadora do projeto, sem evidência direta, ou número escolhido sobre uma direção apoiada em evidência (antes marcados [P] ou [P]). Foi aceita pelo dono do projeto em 2026-10-10 como ponto de partida e deve ser recalibrada com dados reais.
 
 ## Resumo
 
-A literatura verificada sustenta bem três coisas: (1) o polimento (taper) funciona, com redução de volume de 41–60% mantendo intensidade e frequência, por até 21 dias, e para maratona de recreativos a redução progressiva em 3 semanas se associa ao melhor resultado [Bosquet 2007; Wang 2023; Smyth 2021]; (2) para saúde, a meta é 150–300 min/semana moderados ou 75–150 vigorosos, com progressão gradual, e correr qualquer quantidade já se associa a menor mortalidade [Bull 2020; Garber 2011; Pedisic 2020]; (3) exercício aeróbico isolado produz perda de peso modesta (cerca de 2 a 3 kg com 150 min/semana), então "emagrecimento" não justifica um tipo de treino diferente [Donnelly 2009; Swift 2014; Thorogood 2011; Jayedi 2024]. **Não encontrei evidência verificável** para a duração ideal do ciclo por nível, a duração de cada fase (base, específica), a frequência de semanas de recuperação, nem para a duração de plano de 5 km para iniciantes (os programas testados variam de 6 a 13 semanas, com 11% a 21% de lesão). Por isso a estrutura dos modelos é majoritariamente **decisão de projeto conservadora**, com guarda-corpos de evidência: pré-requisitos de base antes de meia e maratona (volume semanal e experiência prévia), tetos de aumento semanal, e tetos de volume e de longão.
+A literatura verificada sustenta bem três coisas: (1) o polimento (taper) funciona, com redução de volume de 41–60% mantendo intensidade e frequência, por até 21 dias, e para maratona de recreativos a redução progressiva em 3 semanas se associa ao melhor resultado [Bosquet 2007; Wang 2023; Smyth 2021]; (2) para saúde, a meta é 150–300 min/semana moderados ou 75–150 vigorosos, com progressão gradual, e correr qualquer quantidade já se associa a menor mortalidade [Bull 2020; Garber 2011; Pedisic 2020]; (3) exercício aeróbico isolado produz perda de peso modesta (cerca de 2 a 3 kg com 150 min/semana), então "emagrecimento" não justifica um tipo de treino diferente [Donnelly 2009; Swift 2014; Thorogood 2011; Jayedi 2024]. **Não encontrei evidência verificável** para a duração ideal do ciclo por nível, a duração de cada fase (base, específica), a frequência de semanas de recuperação, nem para a duração de plano de 5 km para iniciantes (os programas testados variam de 6 a 13 semanas, com 11% a 21% de lesão). Por isso a estrutura dos modelos é majoritariamente **[P] conservadora**, com guarda-corpos de evidência: pré-requisitos de base antes de meia e maratona (volume semanal e experiência prévia), tetos de aumento semanal, e tetos de volume e de longão.
 
 ## Achados
 
@@ -23,7 +22,7 @@ A literatura verificada sustenta bem três coisas: (1) o polimento (taper) funci
 ### 2. Estrutura de ciclo, fases e periodização
 
 - Revisão sistemática (16 estudos) sobre periodização e distribuição de intensidade em corredores de meio-fundo e fundo: modelos piramidal e polarizado pareceram mais eficazes que o modelo de limiar; os autores propõem organizar zonas como porcentagem do ritmo da prova-alvo, o que torna diferentes modelos de periodização compatíveis. Não define duração de fases [Kenneally 2018]. A distribuição de intensidade por nível é tema de outro arquivo.
-- **Sem evidência suficiente** para: duração ideal total do ciclo por distância e nível; proporção entre fases de base, específica e polimento; frequência ideal de semanas de recuperação (deload) em corredores. Não encontrei revisão sistemática nem ensaio sobre deload em corredores (as buscas retornaram apenas literatura de força e opinião de treinadores, que não usei). Tudo isso entra como [DECISÃO].
+- **Sem evidência suficiente** para: duração ideal total do ciclo por distância e nível; proporção entre fases de base, específica e polimento; frequência ideal de semanas de recuperação (deload) em corredores. Não encontrei revisão sistemática nem ensaio sobre deload em corredores (as buscas retornaram apenas literatura de força e opinião de treinadores, que não usei). Tudo isso entra como [P].
 - Os estudos observacionais de preparação para meia e maratona monitoraram janelas de 12 a 16 semanas (ex.: 14 semanas em [Damsted 2019], 12 semanas em [Toresdahl 2022]), mas isso descreve o desenho do estudo, não recomenda duração.
 
 ### 3. Volume de treino, longão, lesão e desempenho (meia e maratona)
@@ -38,7 +37,7 @@ A literatura verificada sustenta bem três coisas: (1) o polimento (taper) funci
 - Em 532 iniciantes preparando uma prova de 6,7 km, um plano "gradual" de 13 semanas (aumento ~10%/semana) não reduziu lesão contra um plano padrão de 8 semanas: 20,8% vs 20,3% [Buist 2008]. Ou seja, a "regra dos 10%" **não demonstrou proteção**; também não demonstrou dano. Detalhes dos dois planos em [Buist 2007].
 - Em 874 iniciantes com GPS, aumento de distância semanal >30% em 2 semanas não mudou a lesão geral e teve taxa maior de lesões "relacionadas a distância" (HR 1,59; IC95% 0,96–2,66, não significativo, estudo exploratório) [Nielsen 2014b].
 - Em 261 corredores preparando uma meia-maratona (14 semanas), aumento semanal de 20–60% teve mais lesões que <20% aos 21 dias (diferença de risco 22,6%; IC95% 0,9–44,3), sem diferença aos 56 e 98 dias [Damsted 2019].
-- Conclusão para os modelos: aumentos grandes e súbitos (≥20–30%) têm sinal de risco em corredores novos e em preparação de meia; aumentos de ~10% não são comprovadamente superiores a ritmos mais rápidos (como no plano padrão de 8 semanas). O detalhamento da progressão e da razão aguda/crônica fica no arquivo de progressão de carga.
+- Conclusão para os modelos: aumentos grandes e súbitos (≥20–30%) têm sinal de risco em corredores novos e em preparação de meia; aumentos de ~10% não são comprovadamente superiores a ritmos mais rápidos (como no plano padrão de 8 semanas). O detalhamento da progressão fica no arquivo de progressão de carga (`05-progressao-carga.md`).
 
 ### 5. Iniciantes: tempo de preparação para 5 km
 
@@ -46,7 +45,7 @@ A literatura verificada sustenta bem três coisas: (1) o polimento (taper) funci
 - Programa "Start to Run" de 6 semanas (1.696 adultos de 18 a 65 anos): 10,9% se lesionaram durante o programa; idade maior, IMC maior, queixas musculoesqueléticas prévias não esportivas e **ausência de experiência prévia de corrida** se associaram à lesão [Kluitenberg 2015b]. Em 774 participantes, 29,5% pararam de correr em 26 semanas, e a lesão foi o motivo de 48% das desistências; experiência de corrida recente (<1 ano) e melhor função física reduziram a desistência [Fokkema 2019].
 - Programa "Couch-to-5k" modificado de 9 semanas (110 adultos no Reino Unido, 3 corridas/semana, 1 min correndo e 1,5 min andando na semana 1, 30 min contínuos na semana 9): 19% de lesão e 64,5% de não conclusão no corpo do texto (o resumo traz 27,3% de conclusão, discrepância interna). Os que desistiram apontaram o salto da semana 5 (de 8 para 20 min contínuos) como rápido demais; lesão prévia previu não conclusão (OR 7,56) [Relph 2023].
 - Programa padrão de 8 semanas (3 sessões/semana, corrida-caminhada 1:1 na semana 1, 30 → 95 min de corrida/semana na semana 7) e programa gradual de 13 semanas (30 → 90 min de corrida/semana, sem caminhada na semana 12) tiveram a mesma lesão [Buist 2007; Buist 2008].
-- Nenhum estudo compara durações de 6, 8, 10 e 12 semanas de forma randomizada e adequada. A escolha de 12 semanas abaixo é [DECISÃO] com base em: nenhum prazo curto reduz lesão (6–9 semanas = 11–21%), o salto da semana 5 do Couch-to-5k foi criticado, e a maioria das desistências ocorre por lesão. Conservadorismo adicional é plausível, mas não comprovado.
+- Nenhum estudo compara durações de 6, 8, 10 e 12 semanas de forma randomizada e adequada. A duração de 17 semanas do plano do zero (13 degraus da escada de R-SES-10 mais 4 semanas de recuperação, R-PLN-12) é [P] com base em: nenhum prazo curto reduz lesão (6–9 semanas = 11–21%), o salto da semana 5 do Couch-to-5k foi criticado, e a maioria das desistências ocorre por lesão. Conservadorismo adicional é plausível, mas não comprovado.
 
 ### 6. Saúde e condicionamento
 
@@ -64,44 +63,45 @@ A literatura verificada sustenta bem três coisas: (1) o polimento (taper) funci
 - Em jovens de 18–45 anos com sobrepeso, intervalado de alta intensidade e contínuo moderado reduziram igualmente a gordura (para corrida, efeito grande em ambos), o intervalado exigiu ~40% menos tempo [Wewege 2017]. Ou seja, **intensidade extra não é necessária** para o objetivo de composição corporal.
 - Risco: IMC maior e idade maior aparecem como fatores de risco de lesão em iniciantes [Kluitenberg 2015b; van Poppel 2021]. Um plano de emagrecimento que force volume rápido em quem tem IMC alto é, portanto, um risco de lesão e abandono.
 
-**Resposta à pergunta de projeto:** não há evidência de que "emagrecimento" exija um treino diferente de "saúde e condicionamento". O que muda é a **expectativa comunicada** (realista e centrada na saúde), o **teto de volume** (>250 min/semana só depois de meses de adaptação) e **o que o app não faz** (não prescreve dieta, meta de peso nem déficit calórico). Recomendo tratar como o mesmo modelo "saúde e condicionamento" com uma **etiqueta** `goal_tag = controle_de_peso`.
+**Resposta à questão de projeto:** não há evidência de que "emagrecimento" exija um treino diferente de "saúde e condicionamento". O que muda é a **expectativa comunicada** (realista e centrada na saúde), o **teto de volume** (>250 min/semana só depois de meses de adaptação) e **o que o app não faz** (não prescreve dieta, meta de peso nem déficit calórico). Recomendo tratar como o mesmo modelo "saúde e condicionamento" com uma **etiqueta** `goal_tag = controle_de_peso`.
 
 ## Regras propostas para o app
 
 ### A. Objetivos, pré-requisitos e elegibilidade
 
-**R-PLN-01 [DECISÃO]** O catálogo de modelos tem 5 objetivos: `5k`, `10k`, `21k`, `42k`, `saude`. O objetivo "emagrecimento" da entrevista é mapeado para `saude` com `goal_tag = controle_de_peso`. "Primeira prova" e "melhorar o tempo" mapeiam para a distância da prova alvo. [Donnelly 2009; Swift 2014; Thorogood 2011; Jayedi 2024]
+**R-PLN-01 [P]** O catálogo de modelos tem 5 objetivos: `5k`, `10k`, `21k`, `42k`, `saude`. O objetivo "emagrecimento" da entrevista é mapeado para `saude` com `goal_tag = controle_de_peso`. "Primeira prova" e "melhorar o tempo" mapeiam para a distância da prova alvo. [Donnelly 2009; Swift 2014; Thorogood 2011; Jayedi 2024]
 
-**R-PLN-02 [DECISÃO]** Nenhum plano é gerado antes da triagem (PAR-Q+) liberada e sem dor atual acima do limite definido no arquivo de dor. Idade mínima 18 anos. (Ver arquivos de triagem e dor.)
+**R-PLN-02 [P]** Nenhum plano é gerado antes da triagem (PAR-Q+) liberada e sem dor atual ≥ 3/10 (`limite_dor_progressao`, R-DOR-04). Idade mínima 18 anos. (Ver arquivos de triagem e dor.)
 
-**R-PLN-03 [MISTA]** Pré-requisitos de entrada, medidos pelos dados da entrevista (média das últimas 4 semanas, maior distância recente, tempo de prática). Se não cumprir, o app oferece o objetivo imediatamente abaixo (ex.: quem quer 21 km sem base recebe um plano de 10 km) e explica o porquê. Sempre mostrar o caminho ("depois desse plano você poderá…").
+**R-PLN-03 [P]** Pré-requisitos de entrada, medidos pelos dados da entrevista (média das últimas 4 semanas, maior distância recente, tempo de prática). Os pré-requisitos de volume em km são convertidos em minutos a 7 min/km (a mesma conversão da classificação, R-CLS-04, que exige mais tempo e portanto é a mais conservadora para um piso); com GPS vale o mais restritivo [P]. Se não cumprir, o app oferece o objetivo imediatamente abaixo (ex.: quem quer 21 km sem base recebe um plano de 10 km) e explica o porquê. Sempre mostrar o caminho ("depois desse plano você poderá…").
 
 | Objetivo | Pré-requisitos mínimos | Origem |
 |---|---|---|
-| 5 km | Nenhum além da triagem. Pode começar do zero (corrida-caminhada). | [DECISÃO]; iniciantes sem experiência têm mais lesão [Kluitenberg 2015b], então o modelo é mais lento (R-PLN-12) |
-| 10 km | Corre 30 min contínuos (ou 5 km) e correu ≥2×/semana nas últimas 4 semanas, sem dor. | [DECISÃO] |
-| 21 km | ≥12 semanas de corrida regular (≥2×/semana); média ≥15 km/semana nas últimas 4 semanas (≥20 km/semana recomendado); maior distância recente ≥10 km; sem lesão ou dor persistente nas últimas 6 semanas. | Valores [DECISÃO]; volume <20 km/semana não foi significativamente pior em tempo nem em lesão [Fokkema 2020]; lesão prévia é o maior fator de risco [van Poppel 2021] |
-| 42 km | ≥12 meses de corrida regular; já completou uma meia-maratona (prova ou longão de 21 km nos últimos 3 meses); média **≥30 km/semana** nas últimas 4 semanas; maior distância recente ≥16 km; **sem lesão relacionada à corrida nos últimos 3 meses**; prazo até a prova ≥16 semanas. | 30 km/semana [Rasmussen 2013]; meia prévia [Toresdahl 2022]; lesão prévia [Rasmussen 2013; van Poppel 2021]. Demais valores [DECISÃO] |
+| 5 km | Nenhum além da triagem. Pode começar do zero (corrida-caminhada). | [P]; iniciantes sem experiência têm mais lesão [Kluitenberg 2015b], então o modelo é mais lento (R-PLN-12) |
+| 10 km | Corre 30 min contínuos (ou 5 km) e correu ≥2×/semana nas últimas 4 semanas, sem dor. | [P] |
+| 21 km | **Nível intermediário ou avançado (R-PLN-04)**; ≥12 semanas de corrida regular (≥2×/semana); média ≥15 km/semana nas últimas 4 semanas (≥20 km/semana recomendado); maior distância recente ≥10 km; sem lesão ou dor persistente nas últimas 6 semanas. | Valores [P]; volume <20 km/semana não foi significativamente pior em tempo nem em lesão [Fokkema 2020]; lesão prévia é o maior fator de risco [van Poppel 2021] |
+| 42 km | **Nível intermediário ou avançado (R-PLN-04)**; ≥12 meses de corrida regular; já completou uma meia-maratona (prova ou longão de 21 km nos últimos 3 meses); média **≥30 km/semana** nas últimas 4 semanas; maior distância recente ≥16 km; **sem lesão relacionada à corrida nos últimos 3 meses**; prazo até a prova ≥16 semanas. | 30 km/semana [Rasmussen 2013]; meia prévia [Toresdahl 2022]; lesão prévia [Rasmussen 2013; van Poppel 2021]. Demais valores [P] |
 
-**R-PLN-04 [DECISÃO]** A maratona **não é oferecida** a quem não cumpre todos os pré-requisitos de 42 km, mesmo que o nível calculado seja intermediário. Não há maratona para iniciante. Mensagem: "Sua base atual indica começar por 10 km ou 21 km". [Rasmussen 2013; Toresdahl 2022; van Poppel 2021]
+**R-PLN-04 [P]** A meia-maratona (21 km) e a maratona (42 km) **não são oferecidas a iniciante** (decisão do dono 7), mesmo que o atleta declare os pré-requisitos de R-PLN-03; os pré-requisitos de R-PLN-03 ficam como condição adicional para intermediário e avançado. A maratona também não é oferecida a quem não cumpre todos os pré-requisitos de 42 km, mesmo que o nível calculado seja intermediário. Mensagem: "Sua base atual indica começar por 10 km" (iniciante) ou "... por 10 km ou 21 km" (intermediário sem os pré-requisitos de 42 km). [Rasmussen 2013; Toresdahl 2022; van Poppel 2021]
 
-**R-PLN-05 [DECISÃO]** Prazo mínimo até a prova (semanas) sem comprimir a progressão: 5 km 8 (iniciante do zero: 12); 10 km 10; 21 km 12; 42 km 16. Se o prazo for menor, o app **não encurta** a progressão: sugere data posterior ou distância menor. Se for maior, as semanas extras entram como base (R-PLN-07).
+**R-PLN-05 [P]** Prazo mínimo até a prova (semanas) sem comprimir a progressão: 5 km 8 (iniciante do zero: 17); 10 km 10; 21 km 12; 42 km 16. Se o prazo for menor, o app **não encurta** a progressão: sugere data posterior ou distância menor. Se for maior, as semanas extras entram como base (R-PLN-07).
 
 ### B. Estrutura dos modelos
 
-**R-PLN-06 [DECISÃO]** Fases de cada modelo: `base` (volume e frequência em construção, quase tudo leve), `construcao`/`especifica` (acrescenta sessões de qualidade e longão progressivo, ritmo de prova nos blocos finais), `polimento` (taper), e `prova`. Proporção sugerida: base ~35–40% das semanas, específica ~45–50%, polimento 1–3 semanas conforme R-PLN-10. **Sem evidência** para essas proporções [Kenneally 2018 só mostra que modelos de periodização são compatíveis se as zonas forem relativas ao ritmo de prova].
+**R-PLN-06 [P]** Fases de cada modelo: `base` (volume e frequência em construção, quase tudo leve), `construcao`/`especifica` (acrescenta sessões de qualidade e longão progressivo, ritmo de prova nos blocos finais; o iniciante só tem sessão de qualidade depois de R-SES-40 e longão depois da etapa 12), `polimento` (taper), e `prova`. Proporção sugerida: base ~35–40% das semanas, específica ~45–50%, polimento 1–3 semanas conforme R-PLN-10. **Sem evidência** para essas proporções [Kenneally 2018 só mostra que modelos de periodização são compatíveis se as zonas forem relativas ao ritmo de prova].
 
-**R-PLN-07 [MISTA]** Tetos de aumento de volume semanal, valendo para qualquer semana do plano (comparar com a última semana **não recuperativa**):
-- alvo de projeto: +5% a +10%;
-- teto duro: **+20%** (aumentos ≥20–30% têm sinal de lesão em novatos e na preparação de meia, mas sem prova de causa);
+**R-PLN-07 [P]** Tetos de aumento de volume semanal, valendo para qualquer semana do plano e idênticos aos de R-PRG-02 a R-PRG-04 (comparar com a última semana de construção, isto é, não recuperativa):
+- alvo de projeto: +5% a +10% (105% a 110% da última semana de construção);
+- teto: **+10%** (110%), convenção conservadora de projeto, não regra científica; com `cautela_lesao` o teto é 105%;
+- teto absoluto: **+20%** (120%), nunca excedido em nenhum modelo (aumentos ≥20–30% têm sinal de lesão em novatos e na preparação de meia, mas sem prova de causa); com `cautela_lesao`, 110%;
 - nunca aumentar volume e introduzir intensidade nova na mesma semana.
-O 10% não é obrigatório nem comprovadamente protetor [Buist 2008; Nielsen 2014b; Damsted 2019]. O retorno após semana recuperativa deve ser validado pelos limites de razão aguda/crônica do arquivo de progressão.
+O 10% não é obrigatório nem comprovadamente protetor [Buist 2008; Nielsen 2014b; Damsted 2019]. O retorno após semana recuperativa segue R-PRG-07: no máximo 110% da semana de construção anterior à recuperação. A escada do iniciante do zero é isenta do teto de 110% (progressão por tolerância, R-PRG-03), mas não do teto absoluto de 120%.
 
-**R-PLN-08 [DECISÃO, sem evidência]** Semana de recuperação (deload) programada: **a cada 4ª semana** (padrão 3 semanas de carga + 1 de recuperação), com redução de 20–25% do volume (quanto menor a experiência, mais cedo e mais frequente: iniciantes em corrida-caminhada podem ter a recuperação na semana 4 e 8). Mantém a frequência e retira um estímulo de qualidade. Além da programada, o motor pode inserir uma recuperação reativa por dor ou sono ruim (regras de outros arquivos).
+**R-PLN-08 [P] (sem evidência)** Semana de recuperação (deload) programada: **a cada 4ª semana** (padrão 3 semanas de carga + 1 de recuperação), com volume em **75%** da última semana de construção (R-PRG-07). Mantém a frequência e retira a sessão de qualidade (Z2/Z3 viram Z1) e encurta o longão. Na escada de iniciantes, a recuperação repete a etapa anterior com 75% das repetições, sem avançar. Além da programada, o motor pode inserir uma recuperação reativa por dor ou sono ruim (regras de outros arquivos, R-PRG-11/12).
 
-**R-PLN-09 [DECISÃO]** Frequência semanal de sessões de corrida: iniciante 3 (nunca em dias consecutivos nas primeiras 8 semanas); intermediário 3–4; avançado 4–5; no máximo 1–2 sessões de qualidade por semana, nunca em dias consecutivos; um longão por semana a partir da fase de construção. A única evidência é indireta: todos os programas de iniciantes estudados usaram 3 sessões/semana [Buist 2007; Relph 2023] e o achado de frequência de [Toresdahl 2022] está ambíguo.
+**R-PLN-09 [P]** Frequência semanal de sessões de corrida: iniciante 2–3 (3 na escada; nunca em dias consecutivos nas primeiras 8 semanas); intermediário 3–4; avançado 5–6 (coerente com R-CLS-05). Sessões de qualidade por semana: iniciante 0 até R-SES-40 e depois no máximo 1; intermediário no máximo 2 (no máximo 1 de HIIT); avançado no máximo 2; nunca em dias consecutivos. Um longão por semana a partir da fase de construção, exceto o iniciante antes da etapa 12 (R-SES-30). A única evidência é indireta: todos os programas de iniciantes estudados usaram 3 sessões/semana [Buist 2007; Relph 2023] e o achado de frequência de [Toresdahl 2022] está ambíguo.
 
-**R-PLN-10 [MISTA]** Polimento por distância (queda de volume em relação à semana de pico; **frequência e intensidade mantidas**; cada semana menor que a anterior, "estrito"):
+**R-PLN-10 [P]** Polimento por distância (queda de volume em relação à semana de pico; **frequência e intensidade mantidas**; cada semana de polimento menor que a anterior de polimento, "estrito"; uma semana de recuperação programada que preceda o polimento, como a semana 8 do plano de 10 km, não conta como polimento):
 
 | Objetivo | Duração | Volume vs. pico | Observação |
 |---|---|---|---|
@@ -111,73 +111,77 @@ O 10% não é obrigatório nem comprovadamente protetor [Buist 2008; Nielsen 201
 | 42 km | 3 semanas | −20%, −38%, −60% | Taper estrito de 3 semanas se associou ao melhor resultado em recreativos [Smyth 2021]; faixa 41–60% [Bosquet 2007; Wang 2023] |
 | Saúde | Não se aplica | — | Sem prova |
 
-Intensidade preservada = manter alguns blocos curtos em ritmo de prova para quem já faz sessões de qualidade; iniciantes só reduzem volume. Não usar sobrecarga pré-taper ("pre-taper overload"): apesar do efeito maior na meta-análise [Wang 2023], foi estudada em atletas jovens, com intensidade de 85–95% da FCmáx, e não há dado em recreativos [DECISÃO conservadora].
+Intensidade preservada = manter alguns blocos curtos em ritmo de prova para quem já faz sessões de qualidade; iniciantes só reduzem volume. Não usar sobrecarga pré-taper ("pre-taper overload"): apesar do efeito maior na meta-análise [Wang 2023], foi estudada em atletas jovens, com intensidade de 85–95% da FCmáx, e não há dado em recreativos [P].
 
-**R-PLN-11 [DECISÃO]** Tetos por modelo (volume semanal de pico e longão de pico). São limites de segurança, não metas; o pico real é `min(teto, base_atual × razão_do_modelo)`.
+**R-PLN-11 [P]** Tetos por modelo (volume semanal de pico e longão de pico). São limites de segurança, não metas; o pico real é `min(teto, base_atual × razão_do_modelo)`.
 
 | Objetivo | Iniciante | Intermediário | Avançado |
 |---|---|---|---|
-| 5 km | 90 min de corrida/semana; longão ≤40 min contínuos | 25 km/sem; longão ≤10 km | 40 km/sem; longão ≤14 km |
-| 10 km | 22 km/sem; longão ≤10 km (≤75 min) | 35 km/sem; longão ≤14 km | 55 km/sem; longão ≤18 km |
-| 21 km | 32 km/sem; longão ≤16 km | 45 km/sem; longão ≤19 km | 65 km/sem; longão ≤21 km |
-| 42 km | não oferecido | 55 km/sem; longão ≤32 km e ≤3 h | 80 km/sem; longão ≤32 km e ≤3 h |
+| 5 km | 90 min de corrida/semana; longão ≤40 min contínuos | 150 min/sem (≈ 25 km); longão ≤60 min (≈ 10 km) | 240 min/sem (≈ 40 km); longão ≤84 min (≈ 14 km) |
+| 10 km | 132 min/sem (≈ 22 km); longão ≤60 min (≈ 10 km) | 210 min/sem (≈ 35 km); longão ≤84 min (≈ 14 km) | 330 min/sem (≈ 55 km); longão ≤108 min (≈ 18 km) |
+| 21 km | não oferecido (decisão do dono 7) | 270 min/sem (≈ 45 km); longão ≤114 min (≈ 19 km) | 390 min/sem (≈ 65 km); longão ≤126 min (≈ 21 km) |
+| 42 km | não oferecido | 330 min/sem (≈ 55 km); longão ≤120 min | 480 min/sem (≈ 80 km); longão ≤150 min |
 
-Âncoras: na meia, >32 km/sem e longão >21 km se associaram a tempo melhor sem mais lesão [Fokkema 2020]; na maratona, 40–65 km/sem é a faixa de referência e longão <25 km se associou a tempo pior [Fokkema 2020], e <30 km/sem a mais lesão [Rasmussen 2013]. Os tetos superiores (por que parar em 32 km no longão, 80 km/semana) são **escolhas conservadoras sem evidência**: nenhum dos estudos mostrou prejuízo acima deles, mas os grupos extremos eram pequenos (n=38 e n=43 [Fokkema 2020]).
+**Unidade.** O motor trabalha em minutos; km só quando há GPS. Os tetos em km das fontes e da primeira versão desta tabela são convertidos a 6 min/km (1 km = 6 min), escolha conservadora que gera tetos em minutos menores do que o ritmo real de um corredor lento produziria **[P]**; com GPS vale o menor entre o teto em minutos e o teto em km. O longão respeita também o teto de duração por nível de R-SES-30 e, nos planos de 21 e 42 km, 120 min (intermediário) e 150 min (avançado), mesmo que a distância admitisse mais (divergência D-09), até haver aprovação futura de ampliação. O longão do iniciante só existe depois da etapa 12 (R-SES-30).
 
-**R-PLN-12 [MISTA]** Modelo 5 km iniciante do zero, 12 semanas, corrida-caminhada, 3 sessões/semana, em dias não consecutivos:
-- sem salto brusco: nunca passar de 8 min para 20 min contínuos em uma semana (o salto da semana 5 foi apontado como rápido demais [Relph 2023]); alvo de +10% por semana no total de minutos correndo (como no plano gradual de [Buist 2007], que não foi pior que o padrão);
-- primeiras semanas ≈ 1 min correndo : 1–1,5 min andando [Buist 2007; Relph 2023];
-- 30 min contínuos na semana 10 ou depois, 5 km na semana 12 (ou 40 min contínuos, se o objetivo for tempo e não distância);
-- recuperação na semana 4 e 8; a semana 12 é a semana de teste ou prova, sem polimento formal;
-- **repetir a semana** (sem avançar) se houver dor acima do limite do arquivo de dor ou 2 sessões não concluídas na semana. Quem teve lesão prévia ou IMC ≥30 (se informado) usa a "progressão lenta": cada semana de carga é repetida uma vez (16–20 semanas) [van Poppel 2021; Kluitenberg 2015b; Relph 2023 para lesão prévia → não conclusão], limite do IMC é [DECISÃO];
-- entrada em semana avançada: quem já corre 10–20 min contínuos pode começar na semana 5–7 do modelo (checagem por teste de capacidade em vez de chute), mas **experiência prévia reduz risco** [Kluitenberg 2015b], então começar do início é o padrão.
+Âncoras: na meia, >32 km/sem e longão >21 km se associaram a tempo melhor sem mais lesão [Fokkema 2020]; na maratona, 40–65 km/sem é a faixa de referência e longão <25 km se associou a tempo pior [Fokkema 2020], e <30 km/sem a mais lesão [Rasmussen 2013]. Os tetos superiores (80 km/semana e o longão de 120 a 150 min na maratona) são **escolhas conservadoras sem evidência [P]**: nenhum dos estudos mostrou prejuízo acima deles, mas os grupos extremos eram pequenos (n=38 e n=43 [Fokkema 2020]). Com 120 a 150 min o longão da maratona fica perto de 20–25 km (a 6 min/km), faixa em que longão <25 km se associou a tempo pior [Fokkema 2020]: a escolha prioriza segurança sobre desempenho e pode ser ampliada no futuro.
 
-**R-PLN-13 [DECISÃO]** Duração dos modelos e semanas de recuperação (a "cadência" detalhada está nas curvas da seção seguinte):
+**R-PLN-12 [P]** Modelo 5 km iniciante do zero. As sessões são as da escada `caminhada-corrida` (R-SES-10/11: 12 etapas da fonte [Buist 2007] mais o degrau 10b [P]), 3 por semana, em dias não consecutivos, com a regra de salto de bloco contínuo de R-SES-13 (o salto da semana 5 do Couch-to-5k foi apontado como rápido demais [Relph 2023]; 8 min para 20 min contínuos em uma semana não é permitido, o máximo seria 12 min):
+- primeiras semanas = 1 min correndo : 1 min andando [Buist 2007; Relph 2023];
+- a escada é isenta do teto semanal de 110% (progressão por tolerância) mas respeita o teto absoluto de 120% (R-PRG-03/04);
+- recuperação nas semanas 4, 8, 12 e 16 do plano: repete a etapa anterior com 75% das repetições, sem avançar (R-PRG-07);
+- duração: 13 degraus + 4 recuperações = **17 semanas** (semanas 1 a 3: etapas 1 a 3; 5 a 7: etapas 4 a 6; 9 a 11: etapas 7 a 9; 13: etapa 10; 14: etapa 10b; 15: etapa 11; 17: etapa 12); 30 min contínuos na etapa 11 (semana 15) e 40 min contínuos na etapa 12 (semana 17), semana de teste ou prova de 5 km (ou 40 min, se o objetivo for tempo e não distância), sem polimento formal;
+- **repetir a etapa** (sem avançar) se houver dor ≥ 3/10 (`limite_dor_progressao`) ou 2 sessões não concluídas na semana. Quem tem `cautela_lesao` (lesão prévia, R-CLS-09) ou IMC ≥30 (se informado) usa a "progressão lenta": cada etapa é repetida uma vez antes de avançar [van Poppel 2021; Kluitenberg 2015b; Relph 2023 para lesão prévia → não conclusão]; o limite do IMC é [P];
+- entrada em etapa avançada: quem já corre 10–20 min contínuos pode começar na etapa cujo maior bloco contínuo não passe da maior corrida contínua recente (teste de capacidade em vez de chute), mas **experiência prévia reduz risco** [Kluitenberg 2015b], então começar do início é o padrão.
+
+**R-PLN-13 [P]** Duração dos modelos e semanas de recuperação (a "cadência" detalhada está nas curvas da seção seguinte):
 
 | Objetivo | Iniciante | Intermediário | Avançado | Recuperação (semanas) | Polimento |
 |---|---|---|---|---|---|
-| 5 km | 12 (do zero) | 8 | 10 | 4 (e 8) | 1 sem |
+| 5 km | 17 (do zero) | 8 | 10 | iniciante 4, 8, 12 e 16; intermediário 4; avançado 4 e 8 | 1 sem |
 | 10 km | 12 | 10 | 12 | 4 e 8 | 2 sem |
-| 21 km | 14 | 12 | 12 | 4 e 8 | 2 sem |
-| 42 km | — | 16 | 16–18 | 4, 8 e 12 (+16 se 18) | 3 sem |
+| 21 km | não oferecido | 12 | 12 | 4 e 8 | 2 sem |
+| 42 km | não oferecido | 16 | 16–18 | 4, 8 e 12 (+16 se 18) | 3 sem |
 | Saúde | 12 (ciclo) | 12 (ciclo) | 12 (ciclo) | 4, 8 e 12 | — |
 
-**R-PLN-14 [DECISÃO]** Saúde e condicionamento: ciclos de 12 semanas encadeáveis, 3 sessões de corrida ou corrida-caminhada/semana, rumo a **≥150 min/semana de atividade aeróbica** somando corrida, caminhada e outros esportes que o atleta informar, com teto de **300 min/semana** (faixa superior da OMS) [Bull 2020; Garber 2011]; sugerir fortalecimento em 2 ou mais dias/semana (sessões do catálogo de força) [Bull 2020; Garber 2011]; sem polimento; ao fim de cada ciclo, reavaliação (check-in da meta e do nível). Mensagem: qualquer quantidade de corrida já ajuda, mais não é necessariamente melhor [Pedisic 2020]. Progressão inicial: começar com o que o atleta já faz [Bull 2020; Garber 2011].
+Regra geral: a recuperação ocorre em toda 4ª semana (R-PRG-07); a semana de prova ou de polimento substitui a recuperação quando coincidem na última semana do plano.
+
+**R-PLN-14 [P]** Saúde e condicionamento: ciclos de 12 semanas encadeáveis, 3 sessões de corrida ou corrida-caminhada/semana, rumo a **≥150 min/semana de atividade aeróbica** somando corrida, caminhada e outros esportes que o atleta informar, com teto de **300 min/semana** (faixa superior da OMS) [Bull 2020; Garber 2011]; sugerir fortalecimento em 2 ou mais dias/semana (sessões do catálogo de força) [Bull 2020; Garber 2011]; sem polimento; ao fim de cada ciclo, reavaliação (check-in da meta e do nível). Mensagem: qualquer quantidade de corrida já ajuda, mais não é necessariamente melhor [Pedisic 2020]. Progressão inicial: começar com o que o atleta já faz [Bull 2020; Garber 2011].
 
 ### C. Emagrecimento (etiqueta sobre o modelo de saúde)
 
-**R-PLN-15 [EVID/DECISÃO]** O app **não prescreve dieta, déficit calórico, meta de peso nem prazo de perda de peso**. Texto padrão para quem escolhe emagrecimento: perda esperada é modesta (~2–3 kg com 150 min/semana em ensaios supervisionados, com grande variação), os benefícios de saúde existem mesmo sem perda de peso, e resultado maior depende de alimentação e de maior volume ao longo de meses [Donnelly 2009; Swift 2014; Thorogood 2011; Jayedi 2024].
+**R-PLN-15 [P]** O app **não prescreve dieta, déficit calórico, meta de peso nem prazo de perda de peso**. Texto padrão para quem escolhe emagrecimento: perda esperada é modesta (~2–3 kg com 150 min/semana em ensaios supervisionados, com grande variação), os benefícios de saúde existem mesmo sem perda de peso, e resultado maior depende de alimentação e de maior volume ao longo de meses [Donnelly 2009; Swift 2014; Thorogood 2011; Jayedi 2024].
 
-**R-PLN-16 [MISTA]** Com `controle_de_peso`: mesma progressão e tetos da saúde; chegar a 150 min/semana primeiro; só depois de **≥12 semanas** cumprindo isso sem dor acima do limite, permitir subir até 250–300 min/semana, **aumento ≤10%/semana** [Donnelly 2009 (>250 min/semana → perda clinicamente significativa); Jayedi 2024 (dose-resposta até 300 min/semana)]. Não acrescentar intensidade extra: a gordura corporal cai igualmente com intensidade moderada [Wewege 2017]. Priorizar volume leve e andar. IMC alto e idade maior aumentam o risco de lesão em iniciantes: preferir corrida-caminhada e a "progressão lenta" do R-PLN-12 [Kluitenberg 2015b; van Poppel 2021].
+**R-PLN-16 [P]** Com `controle_de_peso`: mesma progressão e tetos da saúde; chegar a 150 min/semana primeiro; só depois de **≥12 semanas** cumprindo isso sem dor ≥ 3/10 (`limite_dor_progressao`), permitir subir até 250–300 min/semana, **aumento ≤10%/semana** [Donnelly 2009 (>250 min/semana → perda clinicamente significativa); Jayedi 2024 (dose-resposta até 300 min/semana)]. Não acrescentar intensidade extra: a gordura corporal cai igualmente com intensidade moderada [Wewege 2017]. Priorizar volume leve e andar. IMC alto e idade maior aumentam o risco de lesão em iniciantes: preferir corrida-caminhada e a "progressão lenta" do R-PLN-12 [Kluitenberg 2015b; van Poppel 2021].
 
-**R-PLN-17 [DECISÃO]** Se o IMC informado estiver abaixo de 18,5, ou o relato indicar restrição alimentar importante, bloquear a etiqueta `controle_de_peso` e orientar procurar profissional de saúde. **Não encontrei fonte verificada** para um critério de triagem de transtorno alimentar (ver Perguntas); o critério de IMC é decisão conservadora.
+**R-PLN-17 [P]** Se o IMC informado estiver abaixo de 18,5, ou o relato indicar restrição alimentar importante, bloquear a etiqueta `controle_de_peso` e orientar procurar profissional de saúde. **Não encontrei fonte verificada** para um critério de triagem de transtorno alimentar (ver Decisões do dono e de projeto, item 3); o critério de IMC é decisão conservadora [P].
 
 ### D. Execução, adaptação e fim de ciclo
 
-**R-PLN-18 [DECISÃO]** O plano é um molde; o motor diário (Fase 4) pode manter, reduzir, trocar ou repetir semana, mas **nunca aumentar** o volume acima do molde, nem pular semana de recuperação, nem remover polimento sem aviso. Semana repetida desloca o calendário; se o prazo até a prova não permitir, aplicar R-PLN-05.
+**R-PLN-18 [P]** O plano é um molde; o motor diário (Fase 4) pode manter, reduzir, trocar ou repetir semana, mas **nunca aumentar** o volume acima do molde, nem pular semana de recuperação, nem remover polimento sem aviso. Semana repetida desloca o calendário; se o prazo até a prova não permitir, aplicar R-PLN-05. Se a reclassificação de R-CLS-11 **rebaixar** o atleta no meio do ciclo (evento), o plano passa para o molde do nível menor, na semana desse molde mais próxima do volume já executado e nunca acima dele; **promoção** só vale a partir do próximo ciclo.
 
-**R-PLN-19 [DECISÃO, sem evidência]** Pós-prova: semana seguinte só leve e regenerativo (5 km e 10 km: 1 semana; meia: 2 semanas; maratona: 3 semanas, retomando com ~50% do volume). Reavaliação de nível ao fim de cada ciclo (e a cada 12 semanas nos planos de saúde). Não achei fonte verificada para o tempo de recuperação pós-prova.
+**R-PLN-19 [P] (sem evidência)** Pós-prova: semana seguinte só leve e regenerativo (5 km e 10 km: 1 semana; meia: 2 semanas; maratona: 3 semanas, retomando com ~50% do volume). Reavaliação de nível a cada 12 semanas e ao fim de cada ciclo, o que vier antes (R-CLS-11). Não achei fonte verificada para o tempo de recuperação pós-prova.
 
-**R-PLN-20 [DECISÃO]** Expectativa transparente para iniciantes: informar na entrada que cerca de 1 em cada 5 novatos relata lesão em programas de 8–13 semanas e que ~30% param de correr em 6 meses, e como o app reage a dor [Buist 2008; Relph 2023; Fokkema 2019].
+**R-PLN-20 [P]** Expectativa transparente para iniciantes: informar na entrada que cerca de 1 em cada 5 novatos relata lesão em programas de 8–13 semanas e que ~30% param de correr em 6 meses, e como o app reage a dor [Buist 2008; Relph 2023; Fokkema 2019].
 
 ### Esboço do modelo de dados (para a Fase 1)
 
 `plan_templates`: `goal` (5k/10k/21k/42k/saude), `level`, `total_weeks`, `sessions_per_week_min/max`, `prerequisites` (JSONB com os campos de R-PLN-03), `peak_weekly_cap`, `peak_long_run_cap`, `deload_weeks` (int[]), `taper` (JSONB: semanas e % por semana), `slow_mode_multiplier`, `status`, `version`, referências.
 `plan_template_weeks`: `week_number`, `phase`, `volume_index` (0–100, relativo ao pico), `is_deload`, `is_taper`, `sessions` (lista de slots do catálogo por tipo de treino), `long_run_index`.
 
-### Curvas de volume (índice, pico = 100) — exemplos, todas [DECISÃO] com tetos de R-PLN-07
+### Curvas de volume (índice, pico = 100) — exemplos, todas [P] com tetos de R-PLN-07
 
-Índices construídos para que cada semana de carga fique em +6% a +10% da última semana de carga e a semana recuperativa fique ~20% abaixo.
+Índices construídos para que cada semana de carga fique em +5% a +10% da última semana de construção (no máximo +10% da semana de construção anterior à recuperação) e a semana de recuperação fique em 75% dessa semana, arredondada para baixo (R-PRG-07). A curva do iniciante do zero deriva da escada: minutos de corrida por etapa (30, 34, 36, 40, 44, 48, 54, 56, 64, 72, 72, 80, 90), com pico de 90 min/semana, e recuperação em 75% da etapa anterior.
 
 | Modelo | Semanas e índices |
 |---|---|
-| 5 km iniciante (12) | 47, 52, 57, 46 (R), 63, 69, 76, 61 (R), 83, 91, 100, 75 (teste/prova) |
-| 5 km intermediário (8) | 70, 75, 81, 66 (R), 87, 94, 100, 60 (prova) |
-| 10 km intermediário (10) | 63, 68, 74, 59 (R), 80, 86, 93, 100, 75 (T), 55 (T, prova) |
-| 21 km intermediário (12) | 58, 63, 68, 54 (R), 74, 80, 86, 69 (R), 93, 100, 75 (T), 55 (T, prova) |
-| 42 km intermediário (16) | 55, 59, 63, 50 (R), 67, 72, 77, 62 (R), 82, 88, 94, 75 (R), 100, 80 (T), 62 (T), 40 (T, prova) |
+| 5 km iniciante (17) | 33, 38, 40, 30 (R), 44, 49, 53, 40 (R), 60, 62, 71, 53 (R), 80, 80, 89, 67 (R), 100 (teste/prova) |
+| 5 km intermediário (8) | 70, 75, 81, 60 (R), 87, 94, 100, 60 (prova) |
+| 10 km intermediário (10) | 68, 73, 79, 59 (R), 86, 93, 100, 75 (R), 75 (T), 55 (T, prova) |
+| 21 km intermediário (12) | 58, 63, 68, 51 (R), 74, 80, 86, 64 (R), 93, 100, 75 (T), 55 (T, prova) |
+| 42 km intermediário (16) | 55, 59, 63, 47 (R), 67, 72, 77, 57 (R), 82, 88, 94, 70 (R), 100, 80 (T), 62 (T), 40 (T, prova) |
 
-R = semana de recuperação, T = polimento. As curvas dos demais modelos seguem o mesmo gerador: ×1,06–1,10 por semana de carga, ×0,80 na recuperação, e taper de R-PLN-10. O motor normaliza: semana 1 ≈ média atual do atleta (últimas 4 semanas), pico = `min(teto do nível, base ÷ índice_da_semana_1)`; se a base já excede o teto, usar o teto e não reduzir a semana 1 abaixo de ~90% da base atual (detalhe a fechar na Fase 4).
+R = semana de recuperação, T = polimento. No plano de 10 km a semana 8 é de recuperação (conforme R-PLN-13), o pico é na semana 7 e a primeira semana de polimento (9) tem o mesmo volume da recuperação; o pico menor é a escolha mais conservadora. As curvas dos demais modelos seguem o mesmo gerador: ×1,05–1,10 por semana de carga, ×0,75 na recuperação, e polimento de R-PLN-10. O motor normaliza: semana 1 ≈ média atual do atleta (últimas 4 semanas), pico = `min(teto do nível, base ÷ índice_da_semana_1)`; se a base já excede o teto, usar o teto e não reduzir a semana 1 abaixo de ~90% da base atual (detalhe a fechar na Fase 4).
 
 ## Evidência fraca ou conflitante
 
@@ -185,24 +189,24 @@ R = semana de recuperação, T = polimento. As curvas dos demais modelos seguem 
 |---|---|---|
 | Duração do taper | Bosquet: 2 semanas; Wang: maior efeito em 8–14 dias, mas conclui "≤21 dias" (inconsistência interna entre a conclusão e o subgrupo de maior efeito); Smyth: 3 semanas estritas = 2 semanas na prática (diferença ~0,5 min); Mujika: 4 a >28 dias | 5 km: 7 dias; 10 km e 21 km: 2 semanas; maratona: 3 semanas estritas, que cobre o intervalo de 14 a 21 dias |
 | Aplicabilidade do taper | Estudos com atletas competitivos jovens (Wang: 17–32 anos, maioria homens); Smyth recreativo mas observacional; nada em iniciantes, 5 km/10 km recreativos | Mesmos percentuais, porém mais moderados em iniciantes; sem sobrecarga pré-taper |
-| "Regra dos 10%" (diverge da especificação) | O ECR não achou vantagem de 13 semanas (10%/semana) sobre 8 semanas; saltos ≥20–30% mostram sinal de risco, mas fraco/exploratório | Não tratar 10% como regra de proteção; usar meta de +5–10% e **teto duro de +20%** |
+| "Regra dos 10%" (diverge da especificação) | O ECR não achou vantagem de 13 semanas (10%/semana) sobre 8 semanas; saltos ≥20–30% mostram sinal de risco, mas fraco/exploratório | Não tratar 10% como regra de proteção; alvo +5–10%, teto 110% [P] e **teto absoluto de 120%** (R-PRG-03/04) |
 | Volume e lesão na maratona | Rasmussen: <30 km/semana aumenta lesão; Fokkema: volume não se associou a lesão; ambos são observacionais com autorrelato | Exigir ≥30 km/semana antes de começar o plano de maratona (aceita a hipótese mais conservadora) |
-| Duração do plano de 5 km do zero | 6 a 13 semanas, sem diferença clara de lesão; abandono de ~30% em 6 meses | 12 semanas, com semanas repetíveis |
+| Duração do plano de 5 km do zero | 6 a 13 semanas, sem diferença clara de lesão; abandono de ~30% em 6 meses | 17 semanas (escada de 13 degraus + 4 recuperações), com semanas repetíveis |
 | Frequência semanal em maratonistas de primeira viagem | Resumo de Toresdahl ambíguo | Não usar |
 | Deload a cada 4 semanas | Nenhuma evidência em corredores | Convenção 3:1, com redução reativa pelos sinais do atleta |
 | Perda de peso | Swift: ~2 kg; Jayedi: −2,79 kg a 150 min/semana (tendência mais favorável, certeza moderada, heterogeneidade alta); Donnelly: modesta a 150–250 min e significativa >250 min | Tratar como modesta; não prometer números |
 
-## Perguntas para o dono do projeto
+## Decisões do dono e de projeto (2026-10-10)
 
-1. **Maratona para iniciante:** concordo em não oferecer (R-PLN-04)? Sem evidência direta sobre o mínimo seguro; o conjunto de pré-requisitos (12 meses, meia prévia, 30 km/semana, sem lesão em 3 meses) é decisão de projeto.
-2. **Emagrecimento** como etiqueta de "saúde e condicionamento" (R-PLN-01/15/16), sem plano próprio e sem meta de peso. Aprova?
-3. **Triagem de transtorno alimentar / déficit energético:** não encontrei fonte com resumo ou texto que eu pudesse verificar (o consenso do COI sobre RED-S 2018 existe, mas só pude confirmar título, autores e DOI; o resumo não estava acessível). **Sem evidência suficiente** para a regra. Pergunta: aceita o bloqueio simples por IMC <18,5 e a orientação a procurar profissional (R-PLN-17) enquanto não houver fonte?
-4. **Semana de recuperação a cada 4 semanas** e **tempo de recuperação pós-prova** (R-PLN-08, R-PLN-19): sem evidência; aceita como convenção?
-5. **Fases (base/específica) e proporção** (R-PLN-06): sem evidência; aceita como convenção?
-6. **Prazos mínimos até a prova** (R-PLN-05) e o plano de 5 km do zero em **12 semanas** (mais longo que o Couch-to-5k de 9 semanas): confirma?
-7. **Tetos de pico semanal e de longão** (R-PLN-11): confirmar os números ou ajustar.
-8. **Corrida-caminhada em meia e maratona** (opção para iniciantes ou para quem quer só completar a prova): não pesquisei; quer uma rodada específica?
-9. Plano para **pessoas com IMC alto** ou doenças crônicas liberadas por médico: o app deve ter modelo próprio? A OMS orienta fazer conforme a capacidade [Bull 2020], sem números.
+1. **Maratona e meia para iniciante:** não oferecidas (decisão do dono 7; R-PLN-03/04 mantidos, com os pré-requisitos adicionais para intermediário e avançado). O conjunto de pré-requisitos de 42 km (12 meses, meia prévia, 30 km/semana, sem lesão em 3 meses) é [P].
+2. **Emagrecimento** como etiqueta `controle_de_peso` sobre "saúde e condicionamento" (R-PLN-01/15/16), sem plano próprio, sem dieta e sem meta de peso (decisão do dono 8).
+3. **Triagem de transtorno alimentar / déficit energético:** sem evidência suficiente; bloqueio simples por IMC < 18,5 e orientação a procurar profissional (R-PLN-17) enquanto não houver fonte (decisão do dono 8).
+4. **Semana de recuperação a cada 4 semanas (75%)** e **tempo de recuperação pós-prova** (R-PLN-08, R-PLN-19): aceitos como [P].
+5. **Fases (base/específica) e proporção** (R-PLN-06): aceitas como [P].
+6. **Prazos mínimos até a prova** (R-PLN-05) e plano de 5 km do zero: o plano do zero passa a 17 semanas (escada de 13 degraus mais 4 recuperações, R-PLN-12) [P].
+7. **Tetos de pico semanal e de longão** (R-PLN-11): confirmados e expressos em minutos (6 min/km) com o equivalente em km para GPS; longão de 21/42 km limitado a 120/150 min (divergências D-09 e de unidade) [P].
+8. **Corrida-caminhada em meia e maratona:** fora do escopo da v1 (meia e maratona são bloqueadas para iniciante).
+9. **IMC alto ou doenças crônicas liberadas por médico:** sem modelo próprio na v1; IMC ≥ 30 usa a progressão lenta (R-PLN-12) e restrições individuais mantêm o bloqueio (R-TRI-05) [P].
 
 ## Tabela de evidências
 
@@ -232,7 +236,7 @@ R = semana de recuperação, T = polimento. As curvas dos demais modelos seguem 
 | Aeróbico isolado 6–12 meses → −1,6 a −1,7 kg | Thorogood 2011 | 1 | R-PLN-15 |
 | Dose-resposta: −0,52 kg por 30 min/semana; −2,79 kg a 150 min; −4,19 kg a 300 min | Jayedi 2024 | 1 | R-PLN-15, R-PLN-16 |
 | HIIT ≈ contínuo moderado em composição corporal (18–45 anos) | Wewege 2017 | 1 | R-PLN-16 |
-| Duração de ciclo, fases, deload, tetos superiores, recuperação pós-prova | **sem evidência suficiente** | — | R-PLN-05, 06, 08, 11, 19 (todas [DECISÃO]) |
+| Duração de ciclo, fases, deload, tetos superiores, recuperação pós-prova | **sem evidência suficiente** | — | R-PLN-05, 06, 08, 11, 19 (todas [P]) |
 
 ## Referências
 
@@ -264,6 +268,6 @@ R = semana de recuperação, T = polimento. As curvas dos demais modelos seguem 
 | Jayedi 2024 | Jayedi A, Soltani S, Emadi A, Zargar MS, Najafi A | 2024 | Aerobic Exercise and Weight Loss in Adults: A Systematic Review and Dose-Response Meta-Analysis | JAMA Netw Open 7(12):e2452185 | 10.1001/jamanetworkopen.2024.52185 (PMC11672165) | Revisão sistemática e meta-análise dose-resposta de ECR (116 estudos) | 1 | texto completo (parcial: 100 mil de 175 mil caracteres) |
 | Wewege 2017 | Wewege M, van den Berg R, Ward RE, Keech A | 2017 | The effects of high-intensity interval training vs. moderate-intensity continuous training on body composition in overweight and obese adults: a systematic review and meta-analysis | Obes Rev 18(6):635–646 | 10.1111/obr.12532 | Revisão sistemática e meta-análise (13 estudos) | 1 | resumo (Europe PMC) |
 
-**Fontes consultadas mas não usadas:** consenso do COI sobre RED-S (Mountjoy 2018, Br J Sports Med 52(11):687–697, DOI 10.1136/bjsports-2018-099193; título, autores e DOI confirmados, resumo inacessível); estudos sobre deload em força (não aplicáveis a corredores); resultados de buscas sobre ACWR e salto de longão (não abertos nas fontes primárias).
+**Fontes consultadas mas não usadas:** consenso do COI sobre RED-S (Mountjoy 2018, Br J Sports Med 52(11):687–697, DOI 10.1136/bjsports-2018-099193; título, autores e DOI confirmados, resumo inacessível); estudos sobre deload em força (não aplicáveis a corredores); resultados de buscas sobre razões de carga e salto de longão (não abertos nas fontes primárias).
 
 **Nota sobre citação:** o trabalho de taper em maratona de Smyth & Lawlor é de **2021** (Frontiers in Sports and Active Living), não de 2016 como poderia constar de listas informais.
