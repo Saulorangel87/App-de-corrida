@@ -1,11 +1,11 @@
-import { Hono } from "hono";
+import { Hono, type MiddlewareHandler } from "hono";
 import { z } from "zod";
 import { emailOnlySchema, loginSchema, registerSchema, resetPasswordSchema, tokenSchema } from "@passo/shared";
 import type { rateLimitConfig } from "../config";
 import { errors } from "../lib/errors";
 import { passwordProblem } from "../lib/password";
 import { validate } from "../lib/validate";
-import { requireSession, type SessionCookie } from "../middleware/session";
+import type { SessionCookie } from "../middleware/session";
 import { limit } from "../middleware/security";
 import { toPublicUser, type AuthService } from "../services/auth-service";
 import type { AppEnv } from "../types";
@@ -15,6 +15,7 @@ const GENERIC_EMAIL_SENT = { message: "Se o e-mail puder receber, enviaremos as 
 export function authRoutes(opts: {
   auth: AuthService;
   cookie: SessionCookie;
+  session: MiddlewareHandler<AppEnv>;
   production: boolean;
   rateLimits: typeof rateLimitConfig;
 }) {
@@ -22,7 +23,7 @@ export function authRoutes(opts: {
   const r = new Hono<AppEnv>();
   const emailLimit = limit("email_sending", opts.rateLimits.emailSending, opts.production);
   const loginLimit = limit("login", opts.rateLimits.login, opts.production);
-  const session = requireSession(auth, cookie);
+  const { session } = opts;
 
   const checkPassword = (password: string, email: string) => {
     const problem = passwordProblem(password, email);

@@ -9,10 +9,12 @@ import { rateLimitConfig } from "./config";
 import { AppError, errors } from "./lib/errors";
 import type { Logger } from "./lib/logger";
 import type { Mailer } from "./lib/mailer";
-import { sessionCookie } from "./middleware/session";
+import { requireSession, sessionCookie } from "./middleware/session";
 import { apiSecureHeaders, limit, originCheck } from "./middleware/security";
 import { authRepository } from "./repositories/auth-repository";
+import { athleteRoutes } from "./routes/athlete";
 import { authRoutes } from "./routes/auth";
+import { athleteService } from "./services/athlete-service";
 import { authService, type BackgroundRunner } from "./services/auth-service";
 import type { AppEnv } from "./types";
 
@@ -53,6 +55,8 @@ export function createApp(deps: AppDeps) {
     background,
   });
   const cookie = sessionCookie(production);
+  const session = requireSession(auth, cookie);
+  const athlete = athleteService({ db: deps.db, logger, now: deps.now ?? (() => new Date()) });
   const rateLimits = deps.rateLimits ?? rateLimitConfig;
 
   const app = new Hono<AppEnv>();
@@ -107,7 +111,8 @@ export function createApp(deps: AppDeps) {
 
   const v1 = new Hono<AppEnv>();
   v1.use("*", limit("global", rateLimits.global, production));
-  v1.route("/auth", authRoutes({ auth, cookie, production, rateLimits }));
+  v1.route("/auth", authRoutes({ auth, cookie, session, production, rateLimits }));
+  v1.route("/", athleteRoutes({ athlete, session }));
   app.route("/api/v1", v1);
 
   app.notFound(() => {

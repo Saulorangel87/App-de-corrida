@@ -1,5 +1,7 @@
 import postgres from "postgres";
+import { createDb } from "@passo/db";
 import { runMigrations } from "@passo/db/migrate";
+import { runSeed } from "@passo/db/seed";
 
 // Banco de teste do zero a cada execução: apaga o schema, cria o papel
 // restrito passo_api e aplica todas as migrações (testa a migração do zero).
@@ -29,4 +31,11 @@ export default async function setup() {
     await sql.end();
   }
   await runMigrations(url);
+  // Catálogo e modelos de plano, como em produção (seed roda como dono do schema).
+  const { db, close } = createDb(url, { max: 1 });
+  try {
+    await runSeed(db);
+  } finally {
+    await close();
+  }
 }
