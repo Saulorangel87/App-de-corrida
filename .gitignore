@@ -33,3 +33,6 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# PDF oficial do PAR-Q+ (cópia local de referência; direitos autorais da PAR-Q+ Collaboration)
+docs/parq/*.pdf

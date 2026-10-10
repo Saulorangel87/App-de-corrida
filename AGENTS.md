@@ -45,7 +45,7 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - API em desenvolvimento: `cp apps/api/.env.example apps/api/.env` e `pnpm --filter @passo/api dev`
 - Nova migração: editar `packages/db/src/schema.ts` e `pnpm --filter @passo/db db:generate` (SQL manual: `db:generate --custom`)
 - Aplicar migrações / seed: `pnpm --filter @passo/db db:migrate` / `db:seed` (com `MIGRATION_DATABASE_URL` do `passo_migrator`)
-- Texto do PAR-Q+: colar em `docs/parq/parq-plus-pt-br.txt` e rodar `pnpm --filter @passo/shared parq:build`
+- Texto do PAR-Q+: editar `docs/parq/parq-plus-pt-br.txt` e rodar `pnpm --filter @passo/shared parq:build` (o PDF oficial fica só local em `docs/parq/`, fora do Git)
 - VPS (banco, papéis, backup): ver `ops/README.md`
 
 ## Estado atual
@@ -54,6 +54,7 @@ Fase atual: 3 — Entrevista e perfil do atleta (backend) concluída em 2026-10-
 - API: `/api/v1/interview` (8 etapas, salvar e continuar, enviar) e `/api/v1/profile` (nível com explicação, triagem, plano, autodeclaração de avaliação). 57 testes de integração, com A-tenta-B.
 - Banco: `health_screenings` com RLS; modelos de plano (13) no seed; migrações aplicadas na VPS.
 - Decisões em `docs/adr/0003-entrevista-e-perfil.md`.
-- Pendente (dono): colar o texto oficial do PAR-Q+ em `docs/parq/parq-plus-pt-br.txt` e rodar `pnpm --filter @passo/shared parq:build`; avisar a PAR-Q+ Collaboration do uso (R-TRI-14, não bloqueia); revisar os textos `razao` do seed.
+- PAR-Q+: texto oficial em português transcrito e conferido (65 blocos, `PARQ_TEXT_COMPLETE = true`). Falta o dono ler uma vez o resultado em `docs/parq/parq-plus-pt-br.txt` contra o PDF.
+- Pendente (dono): avisar a PAR-Q+ Collaboration do uso (R-TRI-14, não bloqueia); revisar os textos `razao` do seed.
 - Pendente (deploy): Dockerfile da API e rota no túnel.
 - Próxima: Fase 4 — motor de recomendação (semanas dos planos, decisão do dia).

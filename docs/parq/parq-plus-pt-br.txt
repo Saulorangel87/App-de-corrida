@@ -1,260 +1,266 @@
 # PAR-Q+ 2023 — texto oficial em português do Brasil
+# Fonte: https://eparmedx.com/wp-content/uploads/2023/07/Brazilian-Portuguese.pdf
+# (Traduzido por Bianca Bold e Juliano Schwartz; Copyright © PAR-Q+ Collaboration.)
 #
-# COMO PREENCHER
-# 1. Abra o PDF oficial: https://eparmedx.com/wp-content/uploads/2023/07/Brazilian-Portuguese.pdf
-# 2. Para cada bloco [chave], apague a linha "COLE AQUI..." e cole o texto do PDF,
-#    exatamente como está (sem resumir, corrigir ou reescrever: o instrumento não pode
-#    ser alterado). Pode ocupar várias linhas.
-# 3. Rode:  pnpm --filter @passo/shared parq:build
-#    O script avisa se faltar algum bloco e gera packages/shared/src/parq/text.pt-BR.ts.
+# Transcrito do PDF oficial, sem resumir nem reescrever (o instrumento não pode ser
+# alterado). Diferenças só de diagramação: sem a numeração impressa (1), 1a. etc., que
+# vem da estrutura em structure.ts; caixas de seleção e linhas de assinatura omitidas
+# (o aceite no app é eletrônico); marcadores de lista viram "- ".
 #
+# Depois de editar, rode:  pnpm --filter @passo/shared parq:build
 # Linhas que começam com # são comentários e são ignoradas.
 # Não altere os nomes entre colchetes.
 
 [pagina1.titulo]
-# Título do questionário no topo da página 1
-COLE AQUI
+PAR-Q+ em português
+Questionário de Prontidão para Atividade Física para Todos
 
 [pagina1.introducao]
-# Parágrafo de introdução da página 1 (benefícios da atividade física etc.)
-COLE AQUI
+Os benefícios da atividade física regular para a saúde são evidentes. Mais pessoas deveriam praticar atividade física todos os dias da semana. Fazer atividade física é muito seguro para a MAIORIA das pessoas. Este questionário indicará se você precisa de orientação adicional de um médico OU profissional de saúde qualificado para atuar com exercício físico, antes de se tornar mais ativo fisicamente.
 
 [pagina1.cabecalho_perguntas]
-# Título da seção das perguntas gerais de saúde
-COLE AQUI
+PERGUNTAS GERAIS SOBRE A SAÚDE
+Leia as 7 perguntas abaixo cuidadosamente e responda com sinceridade, assinalando SIM ou NÃO.
 
 [geral.1]
-# Pergunta geral 1 (inclua o texto completo, com as observações entre parênteses, se houver)
-COLE AQUI
+O médico alguma vez disse que você tem problema de coração OU pressão alta?
 
 [geral.2]
-# Pergunta geral 2 (inclua o texto completo, com as observações entre parênteses, se houver)
-COLE AQUI
+Você sente dor no peito em repouso, ao fazer suas atividades cotidianas comuns OU ao praticar atividade física?
 
 [geral.3]
-# Pergunta geral 3 (inclua o texto completo, com as observações entre parênteses, se houver)
-COLE AQUI
+Você perde o equilíbrio devido a tontura OU ficou inconsciente nos últimos 12 meses?
+Responda NÃO se sua tontura estiver associada a respiração rápida e/ou profunda (inclusive durante exercícios intensos).
 
 [geral.4]
-# Pergunta geral 4 (inclua o texto completo, com as observações entre parênteses, se houver)
-COLE AQUI
+Você foi diagnosticado com alguma outra condição crônica de saúde (que não seja pressão alta ou doença cardíaca)? LISTE AS CONDIÇÕES AQUI:
 
 [geral.5]
-# Pergunta geral 5 (inclua o texto completo, com as observações entre parênteses, se houver)
-COLE AQUI
+Você está tomando medicamentos prescritos pelo médico para uma condição crônica de saúde?
+LISTE AS CONDIÇÕES E OS MEDICAMENTOS AQUI:
 
 [geral.6]
-# Pergunta geral 6 (inclua o texto completo, com as observações entre parênteses, se houver)
-COLE AQUI
+Você atualmente tem (ou teve nos últimos 12 meses) um problema ósseo, articular ou de tecido mole (músculo, ligamento ou tendão) que poderia se agravar se você se tornasse mais ativo fisicamente? Responda NÃO se você tiver tido um problema que hoje não limita mais a sua capacidade de fazer atividade física. LISTE AS CONDIÇÕES AQUI:
 
 [geral.7]
-# Pergunta geral 7 (inclua o texto completo, com as observações entre parênteses, se houver)
-COLE AQUI
+O médico alguma vez disse que você só deveria fazer atividade física sob supervisão médica?
 
 [pagina1.se_todas_nao]
-# Instrução para quem respondeu NÃO a todas as perguntas
-COLE AQUI
+Se você respondeu NÃO a todas as perguntas acima, você está liberado para fazer atividade física. Por favor assine a DECLARAÇÃO DO PARTICIPANTE. Você não precisa preencher as páginas 2 e 3.
+- Comece a ser muito mais ativo fisicamente – comece devagar e aumente o ritmo aos poucos
+- Siga as recomendações da Organização Mundial de Saúde para a sua idade contidas em International Physical Activity Guidelines (https://www.who.int/publications/i/item/9789240015128).
+- Você está liberado para participar de avaliações de saúde e condicionamento físico.
+- Se você tiver acima de 45 anos e NÃO estiver acostumado a fazer exercícios intensos ou de esforço máximo, consulte um profissional de saúde qualificado para atuar com exercício físico, antes de participar de exercícios dessa intensidade.
+- Caso tenha alguma dúvida adicional, entre em contato com um profissional de saúde qualificado para atuar com exercício físico.
 
 [pagina1.se_algum_sim]
-# Instrução para quem respondeu SIM a uma ou mais perguntas (ir para as páginas 2 e 3)
-COLE AQUI
+Se você respondeu SIM a uma ou mais perguntas, PREENCHA AS PÁGINAS 2 E 3.
+
+[pagina1.adiar]
+Deixe para ficar mais ativo mais tarde se:
+- Você tiver uma infecção aguda, como resfriado ou febre – é melhor esperar até se sentir bem.
+- Você estiver grávida – fale com um profissional de saúde, um médico, um profissional de saúde qualificado para atuar com exercício físico, e/ou preencha o formulário ePARmed-X+ (www.eparmedx.com) antes de se tornar mais ativa fisicamente.
+- Sua saúde mudar – responda às perguntas das páginas 2 e 3 deste documento e/ou fale com um médico ou um profissional de saúde qualificado para atuar com exercício físico, antes de continuar com qualquer programa de atividade física.
 
 [pagina1.declaracao]
-# Declaração do participante (assinatura) da página 1
-COLE AQUI
+DECLARAÇÃO DO PARTICIPANTE
+Se você for menor de idade ou precisar do consentimento de um responsável, seu pai, mãe, responsável legal ou cuidador também precisa assinar este formulário.
+Eu, abaixo-assinado, li, compreendi satisfatoriamente e preenchi este questionário. Reconheço que esta liberação para a prática de atividade física é válida por no máximo 12 meses a partir da data do preenchimento, e será invalidada caso minha condição de saúde mude. Reconheço também que o estabelecimento onde irei praticar atividade física pode guardar uma cópia deste formulário para registro. Neste caso, ele manterá a confidencialidade do mesmo, respondendo às leis e regulamentações aplicáveis.
 
 [seguimento.cabecalho]
-# Título das perguntas de seguimento (páginas 2 e 3)
-COLE AQUI
+PERGUNTAS ADICIONAIS SOBRE PROBLEMA(S) DE SAÚDE
 
 [seguimento.1]
-# Pergunta de entrada da seção 1 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você tem artrite, osteoporose ou problemas de coluna?
+Se a resposta for positiva, responda às perguntas 1a–1c
+Se NÃO pule para a pergunta 2
 
 [seguimento.1a]
-# Pergunta 1a
-COLE AQUI
+Você tem dificuldade em controlar sua condição com medicamentos ou outros tratamentos prescritos por médicos? (Responda NÃO se não estiver tomando medicamentos ou fazendo outros tratamentos no momento)
 
 [seguimento.1b]
-# Pergunta 1b
-COLE AQUI
+Você tem problemas articulares que causam dor, uma fratura recente ou fratura causada por osteoporose ou câncer, vértebra deslocada (como espondilolistese) e/ou espondilólise/defeito da pars interarticularis (fratura no anel ósseo na parte posterior da coluna vertebral)?
 
 [seguimento.1c]
-# Pergunta 1c
-COLE AQUI
+Você recebeu injeções de esteroides ou tomou comprimidos de esteroides regularmente por mais de 3 meses?
 
 [seguimento.2]
-# Pergunta de entrada da seção 2 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você tem algum tipo de câncer?
+Se a resposta for positiva, responda às perguntas 2a–2b
+Se NÃO pule para a pergunta 3
 
 [seguimento.2a]
-# Pergunta 2a
-COLE AQUI
+O seu diagnóstico de câncer inclui algum destes tipos: pulmão/broncogênico, mieloma múltiplo (câncer de células plasmáticas), cabeça e/ou pescoço?
 
 [seguimento.2b]
-# Pergunta 2b
-COLE AQUI
+Você está recebendo tratamento para o câncer (como quimioterapia ou radioterapia)?
 
 [seguimento.3]
-# Pergunta de entrada da seção 3 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você tem algum problema cardíaco ou cardiovascular? Isto inclui doença arterial coronariana, insuficiência cardíaca, anormalidade do ritmo cardíaco
+Se a resposta for positiva, responda às perguntas 3a–3d
+Se NÃO pule para a pergunta 4
 
 [seguimento.3a]
-# Pergunta 3a
-COLE AQUI
+Você tem dificuldade em controlar sua condição com medicamentos ou outros tratamentos prescritos por médicos? (Responda NÃO se não estiver tomando medicamentos ou fazendo outros tratamentos no momento)
 
 [seguimento.3b]
-# Pergunta 3b
-COLE AQUI
+Você tem batimentos cardíacos irregulares que requerem acompanhamento médico (como fibrilação atrial, contração ventricular prematura)?
 
 [seguimento.3c]
-# Pergunta 3c
-COLE AQUI
+Você tem insuficiência cardíaca crônica?
 
 [seguimento.3d]
-# Pergunta 3d
-COLE AQUI
+Você foi diagnosticado com doença arterial coronariana (cardiovascular) e não praticou atividades físicas regulares nos últimos 2 meses?
 
 [seguimento.4]
-# Pergunta de entrada da seção 4 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você tem pressão alta?
+Se a resposta for positiva, responda às perguntas 4a–4b
+Se NÃO pule para a pergunta 5
 
 [seguimento.4a]
-# Pergunta 4a
-COLE AQUI
+Você tem dificuldade em controlar sua condição com medicamentos ou outros tratamentos prescritos por médicos? (Responda NÃO se não estiver tomando medicamentos ou fazendo outros tratamentos no momento)
 
 [seguimento.4b]
-# Pergunta 4b
-COLE AQUI
+Você tem pressão arterial em repouso igual ou superior a 160/90 mmHg com ou sem medicação?
+(Responda SIM se você não souber sua pressão arterial em repouso)
 
 [seguimento.5]
-# Pergunta de entrada da seção 5 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você tem algum problema metabólico? Isto inclui diabetes tipo 1, diabetes tipo 2, pré-diabetes
+Se a resposta for positiva, responda às perguntas 5a–5e
+Se NÃO pule para a pergunta 6
 
 [seguimento.5a]
-# Pergunta 5a
-COLE AQUI
+Você costuma ter dificuldade em controlar seus níveis de açúcar no sangue com a alimentação, com medicamentos, ou com outros tratamentos prescritos por médicos?
 
 [seguimento.5b]
-# Pergunta 5b
-COLE AQUI
+Você costuma ter sinais e sintomas de pouco açúcar no sangue (hipoglicemia) após exercícios e/ou durante suas atividades cotidianas? Sinais de hipoglicemia podem incluir tremores, nervosismo, irritabilidade fora do comum, transpiração excessiva, tontura, confusão mental, dificuldade para falar, fraqueza ou sonolência.
 
 [seguimento.5c]
-# Pergunta 5c
-COLE AQUI
+Você tem algum sinal ou sintoma de complicações do diabetes, como doença cardíaca ou vascular e/ou complicações que afetam seus olhos, os rins OU perda de sensibilidade nos pés e dedos dos pés?
 
 [seguimento.5d]
-# Pergunta 5d
-COLE AQUI
+Você tem outros problemas metabólicos (como diabetes gestacional, doença renal crônica ou problemas no fígado)?
 
 [seguimento.5e]
-# Pergunta 5e
-COLE AQUI
+Você planeja fazer, num futuro próximo, exercícios que para você são mais intensos/vigorosos que o normal?
 
 [seguimento.6]
-# Pergunta de entrada da seção 6 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você tem problemas de saúde mental ou dificuldades de aprendizagem? Isto inclui Alzheimer, transtorno de ansiedade, depressão, demência, transtorno alimentar, transtorno psicótico, disfunção intelectual, síndrome de Down
+Se a resposta for positiva, responda às perguntas 6a-6b
+Se NÃO pule para a pergunta 7
 
 [seguimento.6a]
-# Pergunta 6a
-COLE AQUI
+Você tem dificuldade em controlar sua condição com medicamentos ou outros tratamentos prescritos por médicos? (Responda NÃO se não estiver tomando medicamentos ou fazendo outros tratamentos no momento)
 
 [seguimento.6b]
-# Pergunta 6b
-COLE AQUI
+Você tem síndrome de Down E problemas na coluna que afetam nervos ou músculos?
 
 [seguimento.7]
-# Pergunta de entrada da seção 7 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você tem alguma doença respiratória? Isto inclui doença pulmonar obstrutiva crônica, asma, hipertensão arterial pulmonar
+Se a resposta for positiva, responda às perguntas 7a–7d
+Se NÃO pule para a pergunta 8
 
 [seguimento.7a]
-# Pergunta 7a
-COLE AQUI
+Você tem dificuldade em controlar sua condição com medicamentos ou outros tratamentos prescritos por médicos? (Responda NÃO se não estiver tomando medicamentos ou fazendo outros tratamentos no momento)
 
 [seguimento.7b]
-# Pergunta 7b
-COLE AQUI
+O médico alguma vez disse que você tem baixos níveis de oxigênio no sangue em repouso ou durante exercícios e/ou que você precisa de terapia de oxigênio suplementar?
 
 [seguimento.7c]
-# Pergunta 7c
-COLE AQUI
+Se asmático, você atualmente apresenta sintomas como sensação de aperto no peito, respiração sibilante, dificuldade em respirar, tosse constante (mais de 2 dias/semana) ou você usou sua medicação de resgate mais de 2 vezes na última semana?
 
 [seguimento.7d]
-# Pergunta 7d
-COLE AQUI
+O médico alguma vez disse que você tem pressão alta nos vasos sanguíneos dos pulmões?
 
 [seguimento.8]
-# Pergunta de entrada da seção 8 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você tem alguma lesão na medula espinhal? Isto inclui tetraplegia e paraplegia
+Se a resposta for positiva, responda às perguntas 8a–8c
+Se NÃO pule para a pergunta 9
 
 [seguimento.8a]
-# Pergunta 8a
-COLE AQUI
+Você tem dificuldade em controlar sua condição com medicamentos ou outros tratamentos prescritos por médicos? (Responda NÃO se não estiver tomando medicamentos ou fazendo outros tratamentos no momento)
 
 [seguimento.8b]
-# Pergunta 8b
-COLE AQUI
+Você costuma apresentar pressão arterial baixa em repouso a ponto de causar tonturas e/ou desmaios?
 
 [seguimento.8c]
-# Pergunta 8c
-COLE AQUI
+O médico alguma vez mencionou que você apresenta surtos repentinos de pressão arterial alta (conhecidos como disreflexia autonômica)?
 
 [seguimento.9]
-# Pergunta de entrada da seção 9 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você já teve derrame cerebral alguma vez? Isto inclui ataque isquêmico transitório ou acidente vascular cerebral
+Se a resposta for positiva, responda às perguntas 9a–9c
+Se NÃO pule para a pergunta 10
 
 [seguimento.9a]
-# Pergunta 9a
-COLE AQUI
+Você tem dificuldade em controlar sua condição com medicamentos ou outros tratamentos prescritos por médicos? (Responda NÃO se não estiver tomando medicamentos ou fazendo outros tratamentos no momento)
 
 [seguimento.9b]
-# Pergunta 9b
-COLE AQUI
+Você tem dificuldade para caminhar ou mobilidade comprometida?
 
 [seguimento.9c]
-# Pergunta 9c
-COLE AQUI
+Você sofreu um derrame ou teve comprometimento nos nervos ou músculos nos últimos 6 meses?
 
 [seguimento.10]
-# Pergunta de entrada da seção 10 (ex.: 'Você tem ...?') com a instrução de SIM/NÃO
-COLE AQUI
+Você tem qualquer outro problema de saúde não listado acima, ou você tem dois ou mais problemas de saúde?
+Se tiver outras condições, responda às perguntas 10a–10c
+Se NÃO leia as recomendações da página 4
 
 [seguimento.10a]
-# Pergunta 10a
-COLE AQUI
+Você sofreu de escurecimento da visão, desmaio ou perda de consciência como resultado de lesão na cabeça nos últimos 12 meses OU você teve uma concussão cerebral diagnosticada nos últimos 12 meses?
 
 [seguimento.10b]
-# Pergunta 10b
-COLE AQUI
+Você tem um problema de saúde que não está listado (como epilepsia, problemas neurológicos, problemas renais)?
 
 [seguimento.10c]
-# Pergunta 10c
-COLE AQUI
+Você tem atualmente dois ou mais problemas de saúde?
+LISTE OS SEU(S) PROBLEMA(S) DE SAÚDE E RESPECTIVO(S) MEDICAMENTO(S) AQUI:
+
+[seguimento.rodape]
+Vá até a página 4 para obter recomendações sobre sua condição atual de saúde e assine a DECLARAÇÃO DO PARTICIPANTE.
 
 [pagina4.cabecalho]
-# Título da página 4
-COLE AQUI
+PAR-Q+ em português
 
 [pagina4.todas_nao]
-# Texto para quem respondeu NÃO a todas as perguntas de seguimento (recomendações)
-COLE AQUI
+Se você respondeu NÃO a todas as perguntas ADICIONAIS (páginas 2-3) sobre problemas de saúde, você está apto a se tornar mais ativo fisicamente - Assine a DECLARAÇÃO DO PARTICIPANTE abaixo.
+- É aconselhável que você consulte um profissional de saúde qualificado para atuar com exercício físico, para ajudá-lo a desenvolver um plano de atividades físicas seguro e eficaz para atender às suas necessidades de saúde.
+- É recomendável que você comece devagar e aumente o ritmo aos poucos – 20–60 minutos de exercícios de intensidade baixa a moderada, 3–5 dias por semana, incluindo exercícios aeróbios e de fortalecimento muscular.
+- Ao progredir, tente acumular 150 minutos ou mais de atividades físicas de intensidade moderada por semana.
+- Se você tiver mais de 45 anos e NÃO estiver acostumado a fazer exercícios intensos ou de esforço máximo, consulte um profissional de saúde qualificado para atuar com exercício físico, antes de participar de exercícios dessa intensidade.
 
 [pagina4.algum_sim]
-# Texto para quem respondeu SIM a uma ou mais perguntas de seguimento
-COLE AQUI
+Se você respondeu SIM a uma ou mais das perguntas adicionais sobre sua condição de saúde:
+Você deve se informar melhor antes de se tornar mais ativo fisicamente e de fazer uma avaliação física. Complete o programa on-line de recomendações para triagem e exercícios, especialmente projetado para esses casos, o ePARmed-X+ (www.eparmedx.com) e/ou consulte um profissional de saúde qualificado para atuar com exercício físico, para trabalhar com você usando o ePARmed-X+ e para obter mais informações.
 
 [pagina4.adiar]
-# Texto sobre adiar a atividade (doença temporária, gravidez etc.)
-COLE AQUI
+Deixe para ficar mais ativo depois se:
+- Você tiver uma infecção aguda, como resfriado ou febre – é melhor esperar até se sentir bem.
+- Você estiver grávida – fale com um profissional de saúde, um médico, um profissional de saúde qualificado para atuar com exercício físico, e/ou preencha o ePARmed-X+ (www.eparmedx.com) antes de se tornar mais ativa fisicamente.
 
 [pagina4.mudanca_saude]
-# Texto sobre mudança na saúde
-COLE AQUI
+- Sua saúde mudar – fale com um médico ou um profissional de saúde qualificado para atuar com exercício físico, antes de continuar com qualquer programa de atividade física.
+
+[pagina4.avisos]
+- Incentivamos que você faça uma cópia do PAR-Q+. Você deve usar todo o questionário, e alterações NÃO são permitidas.
+- Os autores, a PAR-Q+ Collaboration, as organizações parceiras e seus agentes, não assumem qualquer responsabilidade por pessoas que fazem atividades físicas e/ou utilizam o PAR-Q+ ou o ePARmed-X+. Em caso de dúvida após preencher o questionário, consulte um médico antes de fazer alguma atividade física.
 
 [pagina4.declaracao]
-# Declaração final do participante
-COLE AQUI
+DECLARAÇÃO DO PARTICIPANTE
+- Pedimos a todos os que preencheram o PAR-Q+ que leiam e assinem a declaração abaixo.
+- Se você for menor de idade ou precisar do consentimento de um responsável, seu pai, mãe, responsável legal ou cuidador também precisa assinar este formulário.
+Eu, abaixo-assinado, li, compreendi satisfatoriamente e preenchi este questionário. Reconheço que esta liberação para a prática de atividade física é válida por no máximo 12 meses a partir da data do preenchimento, e será invalidada caso minha condição de saúde mude. Reconheço também que o estabelecimento onde irei praticar atividade física pode guardar uma cópia deste formulário para registro. Neste caso, ele manterá a confidencialidade do mesmo, respondendo às leis e regulamentações aplicáveis.
 
 [atribuicao]
-# Linhas de direitos autorais, tradução e referência que aparecem no rodapé
-COLE AQUI
+Traduzido por Bianca Bold (tradutora profissional) e Juliano Schwartz (CAPES/UBC), com apoio financeiro da University Health Network
+Copyright © PAR-Q+ Collaboration
+Para mais informações, entre em contato com www.eparmedx.com
+E-mail: eparmedx@gmail.com
+Citação para o PAR-Q+ em português:
+Schwartz J, Oh P, Takito MY, Saunders B, Dolan E, Franchini E, Rhodes RE, Bredin SDD, Coelho JP, Santos P, Mazzuco M, and Warburton DER. Translation, cultural adaptation, and reproducibility of the Physical Activity Readiness Questionnaire for Everyone (PAR-Q+): the Brazilian Portuguese version. Front. Cardiovasc. Med. doi: 10.3389/fcvm.2021.712696. 2021
+O PAR-Q+ foi criado usando o processo AGREE baseado em evidências (1) pela PAR-Q+ Collaboration, presidida pelo Dr. Darren E. R. Warburton com o Dr. Norman Gledhill, a Dra. Veronica Jamnik e o Dr. Donald C. McKenzie (2). A produção deste documento tornou-se possível graças a contribuições financeiras da Public Health Agency of Canada e do BC Ministry of Health Services. As opiniões aqui expressas não representam necessariamente os pontos de vista da Public Health Agency of Canada ou do BC Ministry of Health Services.
+Principais referências:
+1 Warburton DER, Jamnik VK, Bredin SSD, and Gledhill N on behalf of the PAR-Q+ Collaboration. The Physical Activity Readiness Questionnaire for Everyone (PAR-Q+) and Electronic Physical Activity Readiness Medical Examination (ePARmed-X+). Health & Fitness Journal of Canada 4(2):3-23, 2011.
+2 Jamnik VK, Warburton DER, Makarski J, McKenzie DC, Shephard RJ, Stone J, and Gledhill N. Enhancing the effectiveness of clearance for physical activity participation; background and overall process. APNM 36(S1):S3-S13, 2011.
+3 Warburton DER, Gledhill N, Jamnik VK, Bredin SSD, McKenzie DC, Stone J, Charlesworth S, and Shephard RJ. Evidence-based risk assessment and recommendations for physical activity clearance; Consensus Document. APNM 36(S1):S266-s298, 2011.
+4 Chisholm DM, Collis ML, Kulak LL, Davenport W, and Gruber N. Physical activity readiness. British Columbia Medical Journal. 1975;17:375-378.
+5 Thomas S, Reading J, and Shephard RJ. Revision of the Physical Activity Readiness Questionnaire (PAR-Q). Canadian Journal of Sport Science 1992;17:4 338-345.

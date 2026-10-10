@@ -81,7 +81,7 @@ describe("entrevista", () => {
     const draft = await (await t.request("GET", "/interview", undefined, a.cookie)).json();
     expect(draft.completed).toEqual(["basicos", "historico"]);
     expect(draft.responses.basicos.heightCm).toBe(165);
-    expect(draft.parq).toMatchObject({ name: "PAR-Q+", textAvailable: false });
+    expect(draft.parq).toMatchObject({ name: "PAR-Q+", textAvailable: true });
 
     // Reenviar uma etapa substitui só ela.
     await fill(a.cookie, { basicos: { ...iv.basicos, heightCm: 170 } });
