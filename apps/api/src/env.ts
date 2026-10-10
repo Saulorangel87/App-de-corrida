@@ -8,7 +8,7 @@ const schema = z
     FRONTEND_URL: z.string().url(),
     SESSION_SECRET: z.string().min(32, "use pelo menos 32 caracteres aleatórios"),
     RESEND_API_KEY: z.string().optional(),
-    EMAIL_FROM: z.string().default("Passo <no-reply@letsgorun.devsaulo.com.br>"),
+    EMAIL_FROM: z.string().default("App de corrida <no-reply@letsgorun.devsaulo.com.br>"),
   })
   .superRefine((env, ctx) => {
     if (env.NODE_ENV === "production") {

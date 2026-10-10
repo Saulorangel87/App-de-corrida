@@ -1,6 +1,6 @@
 # Pesquisa científica da Fase 0
 
-Esta pasta é a fonte da verdade para treinos, limites e classificação do Passo. Nenhum treino, limite ou critério do app pode ser inventado: tudo vem daqui, com referência aberta e conferida. Onde não há evidência, o texto diz **"sem evidência suficiente"** e o valor adotado é marcado **[P]**, aceito pelo dono em 2026-10-10 como ponto de partida e recalibrável com dados reais (ver `decisoes.md`).
+Esta pasta é a fonte da verdade para treinos, limites e classificação do App de corrida. Nenhum treino, limite ou critério do app pode ser inventado: tudo vem daqui, com referência aberta e conferida. Onde não há evidência, o texto diz **"sem evidência suficiente"** e o valor adotado é marcado **[P]**, aceito pelo dono em 2026-10-10 como ponto de partida e recalibrável com dados reais (ver `decisoes.md`).
 
 ## Índice
 

@@ -1,4 +1,4 @@
-"""Gera favicon e ícones PWA do Passo a partir da mesma geometria (grade 24x24)."""
+"""Gera favicon e ícones PWA do App de corrida a partir da mesma geometria (grade 24x24)."""
 import json
 import sys
 from pathlib import Path
@@ -93,8 +93,8 @@ for s in (192, 512):
     render(s, scale_div=42, stroke=2.3, radius_ratio=0, ss=4).convert("RGB").save(OUT / f"icon-maskable-{s}.png", optimize=True)
 
 manifest = {
-    "name": "Passo — Treino de corrida",
-    "short_name": "Passo",
+    "name": "App de corrida — Treino de corrida",
+    "short_name": "App de corrida",
     "description": "Planos de corrida personalizados, com base científica.",
     "lang": "pt-BR",
     "start_url": "/",

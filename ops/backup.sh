@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Backup diário do banco do Passo (systemd: ops/systemd/passo-backup.timer).
+# Backup diário do banco do App de corrida (systemd: ops/systemd/passo-backup.timer).
 # O dump é enviado para o Oracle Object Storage por um remote "crypt" do
 # rclone: o conteúdo e os nomes saem da VPS já criptografados.
 # Retenção de 30 dias: regra de ciclo de vida do bucket no Oracle (prefixo

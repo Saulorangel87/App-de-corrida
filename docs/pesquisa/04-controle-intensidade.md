@@ -9,7 +9,7 @@ Nenhum método isolado define bem a intensidade de um corredor recreacional. A F
 ## Achados
 
 ### Modelo de 3 zonas
-- A distribuição de intensidade em atletas é analisada em 3 zonas delimitadas pelo primeiro e segundo limiares ventilatório/lactato [Seiler 2006]; as revisões em corredores concordam que o limiar é o que mais importa para organizar o treino e que definições de zonas variam entre estudos [Campos 2022]. O modelo do Passo adota essa lógica.
+- A distribuição de intensidade em atletas é analisada em 3 zonas delimitadas pelo primeiro e segundo limiares ventilatório/lactato [Seiler 2006]; as revisões em corredores concordam que o limiar é o que mais importa para organizar o treino e que definições de zonas variam entre estudos [Campos 2022]. O modelo do App de corrida adota essa lógica.
 - Corredores de classe mundial usam uma escala de 7 zonas; as zonas 1 e 2 (baixa intensidade) cobrem 60 a 72% e 73 a 82% da FCmáx, lactato < 1,0 e 1,0 a 2,0 mmol/L, RPE 9 a 12 e 12 a 14 (6-20); a zona 3 (83 a 87% FCmáx, 2,0 a 3,5 mmol/L, RPE 14 a 16) fica em torno do ritmo de meia maratona; zonas 4 e 5 (88 a 92% e > 93% FCmáx) em torno de 10.000 m e 1500 a 5000 m [Haugen 2022]. Os próprios autores apresentam a escala como sua e sem fonte citada na tabela, e os valores são "diretrizes", não limites fixos.
 
 ### Esforço percebido (Borg)

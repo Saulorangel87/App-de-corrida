@@ -1,4 +1,4 @@
-# Passo — app de treino de corrida
+# App de corrida — treino de corrida personalizado
 
 Especificação completa: `docs/especificacao.md`. Leia antes de iniciar ou revisar qualquer fase.
 Pesquisa científica: `docs/pesquisa/`. É a fonte da verdade para treinos, limites e classificação.
@@ -18,6 +18,7 @@ Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 - Parar e pedir aprovação ao fim de cada fase.
 
 ## Decisões tomadas
+- Nome do app: **App de corrida** (decisão do dono, 2026-10-10). "Passo" ficou só em nomes internos (`@passo/*`, cookie `passo_session`, banco `passo`, papéis `passo_api`/`passo_migrator`, timer `passo-backup`), que o atleta não vê.
 - Fontes pagas: vale usar quando título, autores, ano, DOI e resumo foram confirmados; marcar "verificado pelo resumo". Preferir texto completo.
 - Nível de evidência: hierarquia Oxford CEBM simplificada (meta-análise/revisão sistemática > ensaio clínico > coorte > consenso/posicionamento > opinião de especialista).
 - Triagem: PAR-Q+ com o texto oficial em português e atribuição.
@@ -30,7 +31,7 @@ Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 - Repositório: https://github.com/Saulorangel87/App-de-corrida (remote `origin`, branch `main`). Push para `main` liberado após cada commit.
 - Domínios: front `letsgorun.devsaulo.com.br`; API `letsgorun-api.devsaulo.com.br` (um nível só, coberto pelo SSL gratuito do Cloudflare; mesmo site do front para cookie `SameSite=Lax`).
 - VPS (acesso: `ssh vps`): Ubuntu 24.04 **aarch64** (imagens Docker precisam ser arm64). Cada app tem seu próprio Postgres em container.
-- Banco do Passo: container próprio chamado `app-de-corrida` (`postgres:17-alpine`), numa rede Docker `internal` (`app-de-corrida_data`), sem porta publicada. Segurança extra: Row-Level Security (RLS) habilitado nas tabelas do atleta.
+- Banco do App de corrida: container próprio chamado `app-de-corrida` (`postgres:17-alpine`), numa rede Docker `internal` (`app-de-corrida_data`), sem porta publicada. Segurança extra: Row-Level Security (RLS) habilitado nas tabelas do atleta.
 - Backups: diários, rclone crypt (remote `corrida-run:` sobre `cadencia-oos:cadencia-backups/corrida-run`), timer do systemd; retenção de 30 dias por regra de ciclo de vida do bucket (a VPS não pode apagar objetos).
 - Exposição da API: rota nova no túnel existente (container `cloudflared-tunnel`, ligado à rede `app-de-corrida_edge`). Nenhuma porta pública nova.
 

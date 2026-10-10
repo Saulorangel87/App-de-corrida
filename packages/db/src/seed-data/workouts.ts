@@ -1,4 +1,4 @@
-// Catálogo de treinos do Passo: 11 sessões de docs/pesquisa/07-tipos-sessao.md.
+// Catálogo de treinos do App de corrida: 11 sessões de docs/pesquisa/07-tipos-sessao.md.
 // Regras de ouro: nada aqui é inventado. Cada valor vem de 07-tipos-sessao.md (regras R-SES-*, tabela
 // do catálogo e escada GRONORUN) e, em caso de conflito, prevalece docs/pesquisa/decisoes.md.
 // Valores marcados "P" na pesquisa não têm evidência direta: foram aceitos pelo dono em 2026-10-10

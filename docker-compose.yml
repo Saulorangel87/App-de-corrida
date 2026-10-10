@@ -1,4 +1,4 @@
-# Banco do Passo na VPS (~/apps/app-de-corrida). Segredos no .env ao lado
+# Banco do App de corrida na VPS (~/apps/app-de-corrida). Segredos no .env ao lado
 # (chmod 600, fora do Git); ver ops/README.md.
 services:
   db:

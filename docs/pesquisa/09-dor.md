@@ -103,7 +103,7 @@ Convenções: NRS = escala numérica 0–10. "Basal" = média da dor informada p
 
 **Mensagens (modelo; o app não diagnostica)**
 
-- Alerta urgente: "Pare agora. Dor no peito, falta de ar fora do normal, tontura forte ou desmaio exigem avaliação médica. Procure atendimento imediatamente; em emergência, ligue 192 (SAMU). O Passo não faz diagnóstico."
+- Alerta urgente: "Pare agora. Dor no peito, falta de ar fora do normal, tontura forte ou desmaio exigem avaliação médica. Procure atendimento imediatamente; em emergência, ligue 192 (SAMU). O App de corrida não faz diagnóstico."
 - Reduzir: "Sua dor ficou acima do que consideramos seguro para treinar forte. Por isso o próximo treino ficou mais leve. Se a dor continuar ou piorar, procure um fisioterapeuta ou médico do esporte."
 - Interromper/encaminhar: "A dor [local] com essas características precisa de avaliação profissional antes de você voltar a correr. Não podemos dizer o que é; só um profissional pode examinar. Treinos de corrida estão pausados."
 - DOMS: "Dor muscular dos dois lados, que apareceu um ou dois dias depois de um treino mais forte, costuma ser dor muscular tardia e melhora em até uma semana. Mantenha leve. Se for num ponto só, aparecer durante o treino, piorar ou passar de 7 dias, procure um profissional."
