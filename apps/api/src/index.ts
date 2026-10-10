@@ -1,47 +1,31 @@
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { csrf } from "hono/csrf";
-import { rateLimiter } from "hono-rate-limiter";
-import auth from "./routes/auth";
-
-const app = new Hono();
-
-const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
-
-app.use("*", cors({
-    origin: allowedOrigin,
-    credentials: true,
-}));
-
-app.use("*", csrf({
-    origin: allowedOrigin,
-}));
-
-
-app.use(
-  "*",
-  rateLimiter({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 100, 
-    standardHeaders: "draft-6",
-    keyGenerator: (c) => {
-      return c.req.header("cf-connecting-ip") || c.req.header("x-forwarded-for") || "global";
-    },
-  })
-);
-
-app.route("/auth", auth);
-
-app.get("/", (c) => c.text("Passo API"));
-
 import { serve } from "@hono/node-server";
+import { createDb } from "@passo/db";
+import { createApp } from "./app";
+import { loadEnv } from "./env";
+import { createLogger } from "./lib/logger";
+import { consoleMailer, resendMailer } from "./lib/mailer";
 
-const port = parseInt(process.env.PORT || "3000", 10);
-console.log(`Server is running on port ${port}`);
+const env = loadEnv();
+const logger = createLogger();
+const production = env.NODE_ENV === "production";
+const { db, close } = createDb(env.DATABASE_URL);
 
-serve({
-  fetch: app.fetch,
-  port
+const app = createApp({
+  db,
+  logger,
+  production,
+  frontendUrl: env.FRONTEND_URL,
+  sessionSecret: env.SESSION_SECRET,
+  mailer: env.RESEND_API_KEY ? resendMailer(env.RESEND_API_KEY, env.EMAIL_FROM) : consoleMailer(logger),
 });
 
-export default app;
+const server = serve({ fetch: app.fetch, port: env.PORT }, (info) =>
+  logger.info("server_started", { port: info.port, env: env.NODE_ENV }),
+);
+
+const shutdown = () => {
+  logger.info("server_stopping");
+  server.close(() => void close().then(() => process.exit(0)));
+};
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);

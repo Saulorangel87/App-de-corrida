@@ -1,1 +1,1 @@
-export const helloShared = "Hello from Shared";
+export * from "./auth";
