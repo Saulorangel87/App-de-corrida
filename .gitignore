@@ -5,6 +5,7 @@
 *.pem
 *.key
 scratch/
+dev-emails.log
 
 # Dependências e builds
 node_modules/

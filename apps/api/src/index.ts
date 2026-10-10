@@ -1,3 +1,4 @@
+import path from "node:path";
 import { serve } from "@hono/node-server";
 import { createDb } from "@passo/db";
 import { createApp } from "./app";
@@ -16,7 +17,7 @@ const app = createApp({
   production,
   frontendUrl: env.FRONTEND_URL,
   sessionSecret: env.SESSION_SECRET,
-  mailer: env.RESEND_API_KEY ? resendMailer(env.RESEND_API_KEY, env.EMAIL_FROM) : consoleMailer(logger),
+  mailer: env.RESEND_API_KEY ? resendMailer(env.RESEND_API_KEY, env.EMAIL_FROM) : consoleMailer(logger, path.resolve(process.cwd(), "dev-emails.log")),
 });
 
 const server = serve({ fetch: app.fetch, port: env.PORT }, (info) =>

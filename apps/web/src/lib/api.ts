@@ -1,4 +1,7 @@
-export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
+// Em desenvolvimento a API fica no mesmo host que o front (localhost ou 127.0.0.1): o cookie de sessão
+// só vale quando os dois estão no mesmo "site".
+const devApi = `http://${window.location.hostname}:3000/api/v1`;
+export const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? devApi : "http://localhost:3000/api/v1");
 
 /** Erro devolvido pela API no formato `{ error: { code, message, details? } }`. */
 export class ApiError extends Error {

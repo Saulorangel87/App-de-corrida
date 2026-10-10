@@ -27,7 +27,7 @@ const relaxed = {
   emailSending: { windowMs: 60_000, limit: 10_000 },
 } satisfies typeof rateLimitConfig;
 
-export function makeApp(options: { rateLimits?: typeof rateLimitConfig } = {}) {
+export function makeApp(options: { rateLimits?: typeof rateLimitConfig; production?: boolean } = {}) {
   const { db, close } = createDb(apiUrl(), { max: 5 });
   const mailer = memoryMailer();
   const pending: Promise<void>[] = [];
@@ -36,7 +36,7 @@ export function makeApp(options: { rateLimits?: typeof rateLimitConfig } = {}) {
     db,
     mailer,
     logger: createLogger({ silent: true }),
-    production: false,
+    production: options.production ?? false,
     frontendUrl: FRONT,
     sessionSecret: "test-secret-test-secret-test-secret-123",
     now: () => clock ?? new Date(),

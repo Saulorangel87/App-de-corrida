@@ -1,3 +1,4 @@
+import { appendFile } from "node:fs/promises";
 import { Resend } from "resend";
 import type { Logger } from "./logger";
 
@@ -17,12 +18,18 @@ export function resendMailer(apiKey: string, from: string): Mailer {
   };
 }
 
-/** Só em desenvolvimento: mostra o e-mail no console em vez de enviar. */
-export function consoleMailer(logger: Logger): Mailer {
+/**
+ * Só em desenvolvimento (em produção a chave do Resend é obrigatória): em vez de enviar, mostra o
+ * e-mail no console e, se `file` for informado, também o acrescenta nesse arquivo (fora do Git),
+ * para quem não vê o console da API conseguir abrir o link de confirmação.
+ */
+export function consoleMailer(logger: Logger, file?: string): Mailer {
   return {
-    async send({ subject, text }) {
+    async send({ to, subject, text }) {
       logger.info("dev_email", { subject });
-      console.log(`\n----- e-mail (dev) -----\n${subject}\n\n${text}\n------------------------\n`);
+      const body = `\n----- e-mail (dev) -----\nPara: ${to}\nAssunto: ${subject}\n\n${text}\n------------------------\n`;
+      console.log(body);
+      if (file) await appendFile(file, `${new Date().toISOString()}${body}`, "utf8");
     },
   };
 }

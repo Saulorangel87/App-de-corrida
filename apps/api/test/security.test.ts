@@ -39,6 +39,24 @@ describe("headers e bordas", () => {
     expect(evil.headers.get("access-control-allow-origin")).toBeNull();
   });
 
+  it("em desenvolvimento, 127.0.0.1 vale como localhost; em produção, só a origem exata", async () => {
+    const alias = "http://127.0.0.1:5173";
+    const preflight = (app: TestApp["app"]) =>
+      app.request("/api/v1/auth/login", { method: "OPTIONS", headers: { origin: alias, "access-control-request-method": "POST" } });
+    expect((await preflight(t.app)).headers.get("access-control-allow-origin")).toBe(alias);
+    const ok = await t.request("POST", "/auth/logout", {}, undefined, { origin: alias });
+    expect(ok.status).not.toBe(403);
+
+    const prod = makeApp({ production: true });
+    try {
+      expect((await preflight(prod.app)).headers.get("access-control-allow-origin")).toBeNull();
+      const blocked = await prod.request("POST", "/auth/logout", {}, undefined, { origin: alias });
+      expect(blocked.status).toBe(403);
+    } finally {
+      await prod.close();
+    }
+  });
+
   it("CSRF: POST de outra origem é recusado", async () => {
     const res = await t.request("POST", "/auth/logout", {}, undefined, { origin: "https://malicioso.example" });
     expect(res.status).toBe(403);

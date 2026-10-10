@@ -32,9 +32,21 @@ export type AppDeps = {
   rateLimits?: typeof rateLimitConfig;
 };
 
+/** `http://localhost:5173` também vale como `http://127.0.0.1:5173` (e o inverso). */
+function withLoopbackAlias(origin: string): string[] {
+  const url = new URL(origin);
+  const alias = url.hostname === "localhost" ? "127.0.0.1" : url.hostname === "127.0.0.1" ? "localhost" : null;
+  if (!alias) return [origin];
+  url.hostname = alias;
+  return [origin, url.origin];
+}
+
 export function createApp(deps: AppDeps) {
   const { logger, production } = deps;
   const frontendOrigin = new URL(deps.frontendUrl).origin;
+  // Só em desenvolvimento: localhost e 127.0.0.1 são o mesmo computador; aceita os dois para o mesmo
+  // porto (quem abre o front por um deles não fica bloqueado pelo CORS). Em produção, só a origem exata.
+  const allowedOrigins = production ? [frontendOrigin] : withLoopbackAlias(frontendOrigin);
 
   const background: BackgroundRunner =
     deps.background ??
@@ -84,14 +96,14 @@ export function createApp(deps: AppDeps) {
   app.use(
     "*",
     cors({
-      origin: frontendOrigin,
+      origin: allowedOrigins,
       credentials: true,
       allowMethods: ["GET", "POST", "PATCH", "DELETE"],
       allowHeaders: ["Content-Type"],
       maxAge: 600,
     }),
   );
-  app.use("*", originCheck(frontendOrigin));
+  app.use("*", originCheck(allowedOrigins));
   app.use(
     "*",
     bodyLimit({

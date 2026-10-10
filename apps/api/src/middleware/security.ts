@@ -23,11 +23,12 @@ export const apiSecureHeaders = (production: boolean) =>
  * Navegadores sempre mandam Origin em POST/PUT/PATCH/DELETE; com cookie
  * SameSite=Lax e CORS restrito, isto fecha a terceira camada.
  */
-export function originCheck(allowedOrigin: string): MiddlewareHandler<AppEnv> {
+export function originCheck(allowed: string | string[]): MiddlewareHandler<AppEnv> {
+  const allowedOrigins = Array.isArray(allowed) ? allowed : [allowed];
   return async (c, next) => {
     if (!["GET", "HEAD", "OPTIONS"].includes(c.req.method)) {
       const origin = c.req.header("origin");
-      if (origin !== undefined && origin !== allowedOrigin) throw errors.csrf();
+      if (origin !== undefined && !allowedOrigins.includes(origin)) throw errors.csrf();
       if (origin === undefined && c.req.header("sec-fetch-site") === "cross-site") throw errors.csrf();
     }
     await next();

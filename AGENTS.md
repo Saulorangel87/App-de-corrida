@@ -43,7 +43,7 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - Tudo antes de entregar: `pnpm verify` (lint, typecheck, testes, build)
 - Testes da API precisam de um Postgres só de teste: `docker run -d --name passo-test-db -p 127.0.0.1:54329:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=passo_test postgres:17-alpine` e `TEST_DATABASE_URL=postgres://postgres:postgres@127.0.0.1:54329/passo_test`
 - Testes de interface: `pnpm --filter @passo/web e2e` (build + preview + Chromium; 1ª vez: `pnpm --filter @passo/web exec playwright install chromium`)
-- API em desenvolvimento: `cp apps/api/.env.example apps/api/.env` e `pnpm --filter @passo/api dev`
+- API em desenvolvimento: `cp apps/api/.env.example apps/api/.env` e `pnpm --filter @passo/api dev`. Sem `RESEND_API_KEY`, os e-mails (confirmação, senha) não são enviados: o link aparece no console da API e em `apps/api/dev-emails.log` (fora do Git). Abra o front em `localhost:5173` ou `127.0.0.1:5173`: a API aceita os dois em desenvolvimento
 - Nova migração: editar `packages/db/src/schema.ts` e `pnpm --filter @passo/db db:generate` (SQL manual: `db:generate --custom`)
 - Aplicar migrações / seed: `pnpm --filter @passo/db db:migrate` / `db:seed` (com `MIGRATION_DATABASE_URL` do `passo_migrator`)
 - Texto do PAR-Q+: editar `docs/parq/parq-plus-pt-br.txt` e rodar `pnpm --filter @passo/shared parq:build` (o PDF oficial fica só local em `docs/parq/`, fora do Git)
