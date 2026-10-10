@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: app-de-corrida
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-passo}
+    volumes:
+      - app-de-corrida_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-de-corrida_internal
+    # No ports exposed to host. The API will connect via the same internal network.
+
+networks:
+  app-de-corrida_internal:
+    name: app-de-corrida_internal
+    driver: bridge
+
+volumes:
+  app-de-corrida_data:
+    name: app-de-corrida_data

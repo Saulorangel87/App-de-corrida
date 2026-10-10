@@ -30,8 +30,9 @@ Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 - Repositório: https://github.com/Saulorangel87/App-de-corrida (remote `origin`, branch `main`). Push para `main` liberado após cada commit.
 - Domínios: front `letsgorun.devsaulo.com.br`; API `letsgorun-api.devsaulo.com.br` (um nível só, coberto pelo SSL gratuito do Cloudflare; mesmo site do front para cookie `SameSite=Lax`).
 - VPS (acesso: `ssh vps`): Ubuntu 24.04 **aarch64** (imagens Docker precisam ser arm64). Cada app tem seu próprio Postgres em container.
-- Banco do Passo: container próprio chamado `corrida` (`postgres:17-alpine`), numa rede Docker interna, sem porta publicada. Criar na Fase 1.
-- Exposição da API: rota nova no túnel existente (container `cloudflared-tunnel`, hoje só na rede `bridge`). Nenhuma porta pública nova.
+- Banco do Passo: container próprio chamado `app-de-corrida` (`postgres:17-alpine`), numa rede Docker interna (`app-de-corrida_data`), sem porta publicada. Segurança extra: Row-Level Security (RLS) habilitado nas tabelas do atleta.
+- Backups: retenção de 30 dias, enviados para o Oracle Object Storage usando rclone crypt, gerenciados por timer do systemd.
+- Exposição da API: rota nova no túnel existente (container `cloudflared-tunnel`, ligado à rede `app-de-corrida_edge`). Nenhuma porta pública nova.
 
 ## Stack
 pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · PostgreSQL da VPS + Drizzle · Resend (e-mails de auth) · Vitest + Playwright · Front no Cloudflare Pages
@@ -40,6 +41,6 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 (preencher quando o projeto estiver configurado)
 
 ## Estado atual
-Fase atual: 0 — Pesquisa científica (concluída em 2026-10-10, aguardando aprovação do dono)
-- Resultado em `docs/pesquisa/` (índice no `README.md`). Decisões e correções à especificação em `docs/pesquisa/decisoes.md` (seção D): elas prevalecem sobre `docs/especificacao.md`.
-- Próxima: Fase 1 — modelagem do banco (Drizzle), estrutura do monorepo e container `corrida` na VPS.
+Fase atual: 1 — Modelagem do banco (Drizzle), estrutura do monorepo e container na VPS.
+- A Fase 0 (Pesquisa) e a Revisão de Segurança foram aprovadas.
+- Próximos passos: criar o monorepo pnpm, configurar ESLint/TS/Vitest, e escrever o schema do Drizzle.
