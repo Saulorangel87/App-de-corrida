@@ -38,9 +38,18 @@ Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · PostgreSQL da VPS + Drizzle · Resend (e-mails de auth) · Vitest + Playwright · Front no Cloudflare Pages
 
 ## Comandos
-(preencher quando o projeto estiver configurado)
+- Instalar dependências: `pnpm install` (versão 9 requerida)
+- Gerar migrações Drizzle: `pnpm --filter @passo/db db:generate`
+- Subir banco na VPS (interno): `cd ~/apps/app-de-corrida && docker compose up -d`
 
 ## Estado atual
-Fase atual: 1 — Modelagem do banco (Drizzle), estrutura do monorepo e container na VPS.
-- A Fase 0 (Pesquisa) e a Revisão de Segurança foram aprovadas.
-- Próximos passos: criar o monorepo pnpm, configurar ESLint/TS/Vitest, e escrever o schema do Drizzle.
+Fase atual: Fase 1 CONCLUÍDA.
+- Monorepo `pnpm` criado (apps web e api; pacotes db, engine e shared).
+- Configurações base de TypeScript, Vite e ESLint aplicadas.
+- Drizzle ORM modelado em `packages/db/src/schema.ts` refletindo fielmente a Fase 0 (incluindo segurança com RLS, campos de dor avançados e UUIDs para usuários).
+- Migrations geradas e aplicadas no container PostgreSQL recém-criado na VPS, dentro de `~/apps/app-de-corrida/`.
+- Regras de Row-Level Security (RLS) devidamente aplicadas no banco da VPS.
+- Script de seeds base populado e pronto (`packages/db/src/seed.ts`).
+- Backup draft salvo em `ops/backup.sh`.
+
+Próximo passo (aguardando liberação): Iniciar a **Fase 2 — Autenticação (e-mail e senha + Resend)**, que focará na API (Hono) para lidar com registro e login seguros.
