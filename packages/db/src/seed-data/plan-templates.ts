@@ -1,7 +1,7 @@
 // Modelos de plano: só objetivo, nível e duração (R-PLN-13, docs/pesquisa/10-planos-objetivo.md).
 // As semanas (plan_template_weeks) entram na Fase 4, com o motor de progressão.
 // 21 e 42 km não existem para iniciante (R-PLN-04). Durações lidas do motor (fonte única).
-import { PLN_VERSION, plnV1 } from "@passo/engine";
+import { PLN_VERSION, allPlanTemplates, plnV1, type PlanTemplate } from "@passo/engine";
 
 type Seed = { slug: string; objective: string; level: string; durationWeeks: number; description: string };
 
@@ -27,3 +27,6 @@ export const planTemplateSeeds: (Seed & { ruleVersion: string })[] = Object.entr
     return [{ slug: `${objective}-${level}`, objective, level, durationWeeks, description, ruleVersion: PLN_VERSION }];
   }),
 );
+
+/** Semanas e sessões dos 13 modelos, geradas pelo motor (fonte única; docs/pesquisa/10). */
+export const planTemplateStructures: PlanTemplate[] = allPlanTemplates();

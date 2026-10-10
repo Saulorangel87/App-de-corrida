@@ -21,4 +21,23 @@ describe("seed do catálogo", () => {
          (select 1 from workout_references wr where wr.workout_id = w.id)) as without_ref`;
     expect(counts).toMatchObject({ workouts: 11, unpublished: 0, refs: 34, without_ref: 0 });
   });
+
+  it("os 13 modelos têm todas as semanas, e toda sessão aponta para um treino publicado do catálogo", async () => {
+    await runSeed(db);
+    const templates = await admin`select t.slug, t.duration_weeks as expected,
+        (select count(*)::int from plan_template_weeks w where w.plan_template_id = t.id) as weeks
+      from plan_templates t order by t.slug`;
+    expect(templates).toHaveLength(13);
+    for (const t of templates) expect(t.weeks).toBe(t.expected);
+
+    const [bad] = await admin`select count(*)::int as n from plan_template_sessions s
+      join workouts w on w.id = s.workout_id where w.status <> 'published'`;
+    expect(bad!.n).toBe(0);
+
+    // idempotente: rodar de novo não duplica semanas nem sessões
+    const [before] = await admin`select (select count(*)::int from plan_template_weeks) as weeks, (select count(*)::int from plan_template_sessions) as sessions`;
+    await runSeed(db);
+    const [after] = await admin`select (select count(*)::int from plan_template_weeks) as weeks, (select count(*)::int from plan_template_sessions) as sessions`;
+    expect(after).toEqual(before);
+  });
 });

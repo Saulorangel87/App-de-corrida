@@ -253,17 +253,52 @@ export const planTemplates = pgTable("plan_templates", {
   updatedAt: updatedAt(),
 });
 
-export const planTemplateWeeks = pgTable("plan_template_weeks", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  planTemplateId: uuid("plan_template_id")
-    .notNull()
-    .references(() => planTemplates.id, { onDelete: "cascade" }),
-  weekNumber: integer("week_number").notNull(),
-  workoutId: uuid("workout_id")
-    .notNull()
-    .references(() => workouts.id, { onDelete: "cascade" }),
-  dayOfWeek: integer("day_of_week").notNull(), // 1-7
-});
+/** Semana de um modelo: fase, índice de volume (pico = 100) e marcas de recuperação e polimento. */
+export const planTemplateWeeks = pgTable(
+  "plan_template_weeks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    planTemplateId: uuid("plan_template_id")
+      .notNull()
+      .references(() => planTemplates.id, { onDelete: "cascade" }),
+    weekNumber: integer("week_number").notNull(),
+    phase: varchar("phase", { length: 20 }).notNull(), // base | construcao | especifica | polimento | prova
+    volumeIndex: integer("volume_index").notNull(), // 0–100, pico = 100 (R-PLN-10)
+    isRecovery: boolean("is_recovery").default(false).notNull(),
+    isTaper: boolean("is_taper").default(false).notNull(),
+    isRaceWeek: boolean("is_race_week").default(false).notNull(),
+    ladderStage: varchar("ladder_stage", { length: 5 }), // etapa da escada (5 km do zero, saúde iniciante)
+    ladderRecoveryPct: integer("ladder_recovery_pct"), // repete a etapa com este % das repetições
+  },
+  (t) => [
+    uniqueIndex("plan_template_weeks_unique").on(t.planTemplateId, t.weekNumber),
+    check("plan_template_weeks_phase", sql`${t.phase} in ('base', 'construcao', 'especifica', 'polimento', 'prova')`),
+    check("plan_template_weeks_index", sql`${t.volumeIndex} between 0 and 100`),
+  ],
+);
+
+/** Sessão de uma semana do modelo: sempre um treino do catálogo e a parte do volume semanal. */
+export const planTemplateSessions = pgTable(
+  "plan_template_sessions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    weekId: uuid("week_id")
+      .notNull()
+      .references(() => planTemplateWeeks.id, { onDelete: "cascade" }),
+    slot: integer("slot").notNull(), // ordem na semana; o dia vem da disponibilidade do atleta
+    workoutId: uuid("workout_id")
+      .notNull()
+      .references(() => workouts.id),
+    sharePct: integer("share_pct").notNull(), // % do volume semanal de corrida (0 se duração fixa)
+    fixedMinutes: integer("fixed_minutes"), // força e mobilidade
+    optional: boolean("optional").default(false).notNull(),
+    ladderSession: integer("ladder_session"), // 1 a 3 (sessão da etapa)
+  },
+  (t) => [
+    uniqueIndex("plan_template_sessions_unique").on(t.weekId, t.slot),
+    check("plan_template_sessions_share", sql`${t.sharePct} between 0 and 100`),
+  ],
+);
 
 // ---------------------------------------------------------------------------
 // Plano e execução do atleta (RLS).

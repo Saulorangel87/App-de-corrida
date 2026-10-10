@@ -3,8 +3,10 @@
 // Modelos de plano: só objetivo, nível e duração (as semanas vêm na Fase 4).
 import { eq, inArray, or, sql } from "drizzle-orm";
 import type { Database } from "./index";
-import { planTemplates, references, workoutProgressions, workoutReferences, workouts } from "./schema";
-import { planTemplateSeeds } from "./seed-data/plan-templates";
+import {
+  planTemplateSessions, planTemplateWeeks, planTemplates, references, workoutProgressions, workoutReferences, workouts,
+} from "./schema";
+import { planTemplateSeeds, planTemplateStructures } from "./seed-data/plan-templates";
 import { referenceSeeds } from "./seed-data/references";
 import { workoutSeeds } from "./seed-data/workouts";
 
@@ -14,6 +16,8 @@ export type SeedCounts = {
   workoutReferences: number;
   workoutProgressions: number;
   planTemplates: number;
+  planWeeks: number;
+  planSessions: number;
 };
 
 export async function runSeed(db: Database): Promise<SeedCounts> {
@@ -24,6 +28,8 @@ export async function runSeed(db: Database): Promise<SeedCounts> {
       workoutReferences: 0,
       workoutProgressions: 0,
       planTemplates: 0,
+      planWeeks: 0,
+      planSessions: 0,
     };
 
     // 1. Referências: procura por DOI (sem diferenciar maiúsculas) ou URL; atualiza ou insere.
@@ -123,6 +129,47 @@ export async function runSeed(db: Database): Promise<SeedCounts> {
         .values(p)
         .onConflictDoUpdate({ target: planTemplates.slug, set: { ...rest, updatedAt: new Date() } });
       counts.planTemplates += 1;
+    }
+
+    // Semanas e sessões dos modelos: apaga e recria (cascade), numa só transação.
+    const templateRows = await tx.select({ id: planTemplates.id, slug: planTemplates.slug }).from(planTemplates);
+    const templateIdBySlug = new Map(templateRows.map((t) => [t.slug, t.id]));
+    for (const t of planTemplateStructures) {
+      const planId = templateIdBySlug.get(t.slug);
+      if (!planId) throw new Error(`modelo ausente: ${t.slug}`);
+      await tx.delete(planTemplateWeeks).where(eq(planTemplateWeeks.planTemplateId, planId));
+      for (const w of t.weeks) {
+        const [week] = await tx
+          .insert(planTemplateWeeks)
+          .values({
+            planTemplateId: planId,
+            weekNumber: w.weekNumber,
+            phase: w.phase,
+            volumeIndex: w.volumeIndex,
+            isRecovery: w.isRecovery,
+            isTaper: w.isTaper,
+            isRaceWeek: w.isRaceWeek,
+            ladderStage: w.ladderStage ?? null,
+            ladderRecoveryPct: w.ladderRecoveryPct ?? null,
+          })
+          .returning({ id: planTemplateWeeks.id });
+        counts.planWeeks += 1;
+        const rows = w.sessions.map((s) => {
+          const workoutId = workoutIdBySlug.get(s.slug);
+          if (!workoutId) throw new Error(`treino do catálogo ausente: ${s.slug}`);
+          return {
+            weekId: week!.id,
+            slot: s.slot,
+            workoutId,
+            sharePct: s.sharePct,
+            fixedMinutes: s.fixedMinutes ?? null,
+            optional: !!s.optional,
+            ladderSession: s.ladderSession ?? null,
+          };
+        });
+        await tx.insert(planTemplateSessions).values(rows);
+        counts.planSessions += rows.length;
+      }
     }
 
     return counts;

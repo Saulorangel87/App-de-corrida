@@ -1,0 +1,1 @@
+DROP TABLE "plan_template_weeks" CASCADE;
