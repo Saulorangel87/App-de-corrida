@@ -30,7 +30,7 @@ Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 - Repositório: https://github.com/Saulorangel87/App-de-corrida (remote `origin`, branch `main`). Push para `main` liberado após cada commit.
 - Domínios: front `letsgorun.devsaulo.com.br`; API `letsgorun-api.devsaulo.com.br` (um nível só, coberto pelo SSL gratuito do Cloudflare; mesmo site do front para cookie `SameSite=Lax`).
 - VPS (acesso: `ssh vps`): Ubuntu 24.04 **aarch64** (imagens Docker precisam ser arm64). Cada app tem seu próprio Postgres em container.
-- Banco do Passo: container próprio chamado `app-de-corrida` (`postgres:17-alpine`), numa rede Docker interna (`app-de-corrida_data`), sem porta publicada. Segurança extra: Row-Level Security (RLS) habilitado nas tabelas do atleta.
+- Banco do Passo: container próprio chamado `app-de-corrida` (`postgres:17-alpine`), numa rede Docker `internal` (`app-de-corrida_data`), sem porta publicada. Segurança extra: Row-Level Security (RLS) habilitado nas tabelas do atleta.
 - Backups: retenção de 30 dias, enviados para o Oracle Object Storage usando rclone crypt, gerenciados por timer do systemd.
 - Exposição da API: rota nova no túnel existente (container `cloudflared-tunnel`, ligado à rede `app-de-corrida_edge`). Nenhuma porta pública nova.
 
@@ -38,19 +38,18 @@ Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · PostgreSQL da VPS + Drizzle · Resend (e-mails de auth) · Vitest + Playwright · Front no Cloudflare Pages
 
 ## Comandos
-- Instalar dependências: `pnpm install` (versão 9 requerida)
-- Gerar migrações Drizzle: `pnpm --filter @passo/db db:generate`
-- Subir banco na VPS (interno): `cd ~/apps/app-de-corrida && docker compose up -d`
+- Instalar: `pnpm install` (pnpm 9.15; instala o hook de pre-commit com gitleaks)
+- Tudo antes de entregar: `pnpm verify` (lint, typecheck, testes, build)
+- Testes da API precisam de um Postgres só de teste: `docker run -d --name passo-test-db -p 127.0.0.1:54329:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=passo_test postgres:17-alpine` e `TEST_DATABASE_URL=postgres://postgres:postgres@127.0.0.1:54329/passo_test`
+- API em desenvolvimento: `cp apps/api/.env.example apps/api/.env` e `pnpm --filter @passo/api dev`
+- Nova migração: editar `packages/db/src/schema.ts` e `pnpm --filter @passo/db db:generate` (SQL manual: `db:generate --custom`)
+- Aplicar migrações / seed: `pnpm --filter @passo/db db:migrate` / `db:seed` (com `MIGRATION_DATABASE_URL` do `passo_migrator`)
+- VPS (banco, papéis, backup): ver `ops/README.md`
 
 ## Estado atual
-Fase atual: Fase 2 CONCLUÍDA (aguardando aprovação).
-- API estruturada com rotas de registro, login, logout, verificação de e-mail e redefinição de senha.
-- Segurança de anti-enumeração estritamente implementada em endpoints de cadastro e login.
-- Gerenciamento de sessão customizado para armazenar apenas hashes (sha256) dos tokens gerados via `crypto`.
-- Integrou-se o `argon2` para o hash das senhas.
-- `resend` implementado para disparar e-mails, com mock no console para desenvolvimento.
-- Rate limiter (`hono-rate-limiter`) ativado utilizando `cf-connecting-ip`.
-- Tudo no `@passo/api` está tipado, compilando corretamente via Drizzle ORM do `@passo/db`.
-
-Próximo passo (aguardando liberação): Iniciar a **Fase 3 — Frontend (Autenticação)** ou realizar testes da API com uma instância Postgres local/mock antes de avançar.
-
+Fase atual: correção das Fases 1 e 2 (feitas por outro agente) concluída em 2026-10-10, aguardando aprovação.
+- Banco: schema revisado (timestamptz, bloqueio de login, sessões com inatividade/absoluta), RLS nas 9 tabelas do atleta, papéis `passo_migrator` e `passo_api` (ADR 0002). Seed: 11 treinos e 34 referências de `docs/pesquisa/` (textos `razao` a revisar pelo dono).
+- Auth (`/api/v1/auth`): cadastro, verificação, login/logout, bloqueio, esqueci/redefinir senha, sessões ativas; e-mails PT/EN (ADR 0001). 47 testes de integração com Postgres real.
+- CI (lint, typecheck, testes, build, `pnpm audit`, gitleaks), Dependabot, pre-commit com gitleaks.
+- Pendente: aplicar as migrações novas na VPS (banco atual tem o schema antigo, vazio); configurar rclone crypt + timer de backup e fazer o 1º teste de restauração; Dockerfile da API e rota no túnel (deploy).
+- Próxima: Fase 3 — entrevista (onboarding) e perfil do atleta.
