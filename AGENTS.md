@@ -49,7 +49,7 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - VPS (banco, papéis, backup): ver `ops/README.md`
 
 ## Estado atual
-Fase atual: 5 (acompanhamento de recuperação) concluída em 2026-10-10, aguardando aprovação. Fase 4 aprovada pelo dono.
+Fase atual: 6 (telas), ainda sem código. Fases 0 a 5 aprovadas pelo dono em 2026-10-10. Para continuar: ler `docs/fase-6-passagem.md` (ordem das telas, contrato da API, regras, deploy pendente).
 - API nova (ADR 0006): `GET /day/:date` (decisão e sessões do dia), `GET /plan/week/:date`, `PUT /checkins/:date`, `POST /pain/:date`, `PUT /workouts/:id/log` (devolve a decisão do dia seguinte), `PUT /profile/pause`, `POST /profile/professional-clearance`, `GET /history`, `GET /account/export`.
 - Semana do plano = janela de 7 dias desde `start_date` (`athlete_plan_weeks`); criada na primeira consulta; a anterior fecha (escada avança ou repete). `buildAthleteWeek` já nasce dentro dos tetos.
 - Testes: 345 no motor (inclui "seguir o plano à risca não gera ajuste" nos 13 modelos), 87 na API.
@@ -57,4 +57,4 @@ Fase atual: 5 (acompanhamento de recuperação) concluída em 2026-10-10, aguard
 - Fase 3: texto do PAR-Q+ transcrito e conferido; falta o dono ler uma vez contra o PDF.
 - Pendente (dono): confirmar os itens dos ADRs 0004, 0005 e 0006 (ou manter os padrões); avisar a PAR-Q+ Collaboration (R-TRI-14, não bloqueia); revisar os textos `razao` do seed.
 - Pendente (deploy): Dockerfile da API e rota no túnel; aplicar migrações 0008/0009 na VPS.
-- Próxima: Fase 6 — telas (desenhar no Figma, aprovar, implementar): cadastro, entrevista, resultado, plano, treino, check-in, pós-treino com mapa de dor, histórico, perfil.
+- Próxima: Fase 6 — telas (Figma primeiro, aprovar, implementar), na ordem de `docs/fase-6-passagem.md`.

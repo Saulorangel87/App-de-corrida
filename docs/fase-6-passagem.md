@@ -1,0 +1,60 @@
+# Fase 6 — Telas: passagem de contexto
+
+Estado em 2026-10-10: Fases 0 a 5 aprovadas pelo dono. Falta a Fase 6 (telas) e o deploy. Quem continuar (Claude, agy ou outro agente) deve ler, nesta ordem: `AGENTS.md`, `docs/especificacao.md` (seções 9 e 10), `docs/adr/0006-acompanhamento-diario.md` e este arquivo.
+
+## Regras que valem para toda tela
+1. **Figma primeiro.** Toda tela nova é desenhada no Figma (MCP), mostrada ao dono e **aprovada** antes de qualquer código. Arquivo: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0 (frames existentes: Painel `2:2`, Login `6:2`). O arquivo não tem variáveis; os tokens estão na seção 9 da especificação.
+2. **Mobile:** o Figma só tem desktop; o layout mobile é definido pelo agente, na mesma identidade visual.
+3. **Idiomas:** pt-BR e en. As mensagens do motor vêm em português com códigos de motivo estáveis (`decision.reasons[].code`); o front traduz pelos códigos.
+4. **Requisitos:** responsiva (mobile first), WCAG AA, teclado, labels, estados de carregamento/vazio/erro. Fonte Inter; ícones `lucide-react`; sem imagens do Figma por link (salvar em `apps/web/src/assets/`).
+5. **Segurança do front:** sessão por cookie (`__Host-passo_session` em produção), sem token em `localStorage`; requisições com `credentials: "include"` para `/api/v1`; CSP restritiva; nada de segredo no bundle. E-mail e senha nunca em URL. Token de e-mail vem no fragmento `#token=`.
+6. **Nunca** o front calcula treino, limite ou classificação: só exibe o que a API devolve.
+
+## Ordem sugerida das telas (fluxo do atleta)
+1. Cadastro (com "tenho 18 anos ou mais" e consentimento de dados de saúde), verificação de e-mail, login (já desenhado), esqueci/redefinir senha.
+2. Entrevista em 8 etapas (salva e continua depois; a etapa de triagem usa o texto oficial do PAR-Q+ de `@passo/shared`, com atribuição).
+3. Resultado do perfil: nível, explicação, triagem (liberado, avaliação necessária etc.) e plano escolhido.
+4. Painel (já desenhado): treino de hoje, semana, volume, próxima prova.
+5. Plano completo (calendário) e detalhe do treino (estrutura, intensidade, motivo, fontes).
+6. Check-in diário (< 30 s) e registro pós-treino com mapa de dor clicável.
+7. Histórico e estatísticas (sono, carga semanal, dor, aderência).
+8. Perfil e configurações (exportar e excluir meus dados, declarar pausa e liberação profissional, reavaliação).
+
+## Contrato da API (prefixo `/api/v1`, tudo com sessão; erros `{error:{code,message,details?}}`)
+| Rota | Uso |
+|---|---|
+| `POST /auth/register`, `/auth/verify-email`, `/auth/login`, `/auth/logout`, `/auth/forgot-password`, `/auth/reset-password`, `GET /auth/me`, `DELETE /auth/account` | conta (ver `packages/shared/src/auth.ts`) |
+| `GET /interview`, `PUT /interview/:step`, `POST /interview/submit` | entrevista (`packages/shared/src/interview.ts`; `GET` inclui `parq` com o texto) |
+| `GET /profile`, `POST /profile/screening/evaluation`, `POST /profile/screening/professional-consulted` | perfil e triagem |
+| `GET /day/:date` | sessões do dia, `decision`, `checkin` e `questions` |
+| `GET /plan/week/:date` | semana do plano que contém a data |
+| `PUT /checkins/:date` | check-in (substitui); devolve o dia recalculado |
+| `POST /pain/:date` | dor ou sintoma avulso |
+| `PUT /workouts/:id/log` | pós-treino; devolve `day` e `nextDay` (decisão do dia seguinte) |
+| `PUT /profile/pause`, `POST /profile/professional-clearance` | pausa e liberação profissional |
+| `GET /history?days=7..180` | sono, dor, carga semanal, aderência |
+| `GET /account/export` | exportação LGPD (JSON) |
+
+`:date` é a data **local** do atleta (`AAAA-MM-DD`); o servidor só aceita hoje ±1 dia. Esquemas de entrada: `packages/shared/src/{auth,interview,training}.ts` (Zod, reutilizáveis no front).
+Erros a tratar com tela própria: `409 INTERVIEW_REQUIRED`, `400 UNDERAGE` (`details.canDeleteAccount`), `429 RATE_LIMITED`, `401`.
+
+## Estado do front
+`apps/web` é só o esqueleto do Vite (React + TypeScript, `src/main.tsx`). Ainda não há roteador, cliente de API, i18n nem componentes. Decisões a tomar e registrar em ADR curto no início da Fase 6: roteador, biblioteca de formulários, i18n, gerência de estado do servidor.
+
+## Deploy pendente (fora da Fase 6, mas bloqueia o uso real)
+- Dockerfile da API (multi-stage, usuário não root, arm64) e serviço no `docker-compose.yml` da VPS.
+- Rota nova no túnel Cloudflare (`letsgorun-api.devsaulo.com.br` → container da API; nenhuma porta pública nova).
+- Aplicar na VPS as migrações 0008 e 0009 (ver `ops/README.md`; procedimento: `git archive` para a VPS e `tsx src/migrate-cli.ts` dentro de `node:22-alpine` na rede `app-de-corrida_data`). **Pedir OK do dono antes de mexer no banco de produção.**
+- Front no Cloudflare Pages (`letsgorun.devsaulo.com.br`).
+- Secrets do Resend (e-mails de auth) ainda não testados em produção.
+
+## Pendências do dono
+- Confirmar (ou manter os padrões) dos itens dos ADRs 0004, 0005 e 0006.
+- Ler uma vez a transcrição do PAR-Q+ contra o PDF (números e pontuação).
+- Avisar a PAR-Q+ Collaboration (R-TRI-14, não bloqueia).
+- Revisar os textos `razao` do catálogo no seed.
+
+## Dicas de ambiente (Windows)
+- Testes da API: subir o Postgres de teste do `AGENTS.md` e exportar `TEST_DATABASE_URL`; `pnpm verify` roda lint, tipos, testes e build.
+- No terminal do Windows, heredocs com muitas aspas quebram: crie arquivos com a ferramenta de escrita e use `python -I` para edições em lote.
+- Migração nova: editar `packages/db/src/schema.ts` e `pnpm --filter @passo/db db:generate`; SQL manual com `--custom` (RLS e permissões de tabela nova vão numa migração própria, como a 0009).
