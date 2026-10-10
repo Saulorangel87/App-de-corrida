@@ -27,10 +27,11 @@ Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 - Mobile: layout definido pelo agente, na mesma identidade visual (o Figma só tem desktop).
 - Figma: arquivo sem variáveis; tokens vêm da seção 9 da especificação. Frames: Painel `2:2`, Login `6:2`.
 
-## Pendências
-- Link do repositório no GitHub (para remote, CI e Dependabot).
-- Domínios do front e da API (CSP, CORS, remetente do Resend).
-- Postgres da VPS: versão, se roda em Docker, e Cloudflare Tunnel ou proxy.
+- Repositório: https://github.com/Saulorangel87/App-de-corrida (remote `origin`, branch `main`). Push para `main` liberado após cada commit.
+- Domínios: front `letsgorun.devsaulo.com.br`; API `letsgorun-api.devsaulo.com.br` (um nível só, coberto pelo SSL gratuito do Cloudflare; mesmo site do front para cookie `SameSite=Lax`).
+- VPS (acesso: `ssh vps`): Ubuntu 24.04 **aarch64** (imagens Docker precisam ser arm64). Cada app tem seu próprio Postgres em container.
+- Banco do Passo: container próprio chamado `corrida` (`postgres:17-alpine`), numa rede Docker interna, sem porta publicada. Criar na Fase 1.
+- Exposição da API: rota nova no túnel existente (container `cloudflared-tunnel`, hoje só na rede `bridge`). Nenhuma porta pública nova.
 
 ## Stack
 pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · PostgreSQL da VPS + Drizzle · Resend (e-mails de auth) · Vitest + Playwright · Front no Cloudflare Pages
