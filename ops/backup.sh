@@ -1,41 +1,17 @@
-#!/bin/bash
-# Backup script for app-de-corrida database
-# This script will be run daily via systemd timer.
+#!/usr/bin/env bash
+# Backup diário do banco do Passo (systemd: ops/systemd/passo-backup.timer).
+# O dump é enviado para o Oracle Object Storage por um remote "crypt" do
+# rclone: o conteúdo e os nomes saem da VPS já criptografados.
+# Retenção: 30 dias no remoto. Nada fica guardado em disco local.
+set -euo pipefail
+cd "$(dirname "$0")"
+set -a; . ./.env; set +a
+REMOTE="${BACKUP_RCLONE_REMOTE:?defina no .env (ex.: passo-crypt:)}"
+NAME="passo_$(date -u +%Y%m%dT%H%M%SZ).dump"
 
-set -e
+# Formato custom (-Fc): compactado e restaurável com pg_restore.
+docker exec app-de-corrida pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc \
+  | rclone rcat "${REMOTE}${NAME}"
 
-# Configuration
-BACKUP_DIR="/var/backups/app-de-corrida"
-DB_CONTAINER="app-de-corrida"
-DB_USER="postgres"
-DB_NAME="passo"
-DATE=$(date +"%Y%m%d_%H%M%S")
-FILENAME="passo_db_$DATE.sql.gz"
-ENCRYPTED_FILENAME="${FILENAME}.age"
-RCLONE_REMOTE="oracle-rclone:app-de-corrida-backups" # Replace with actual rclone remote
-AGE_RECIPIENT_KEY="age1..." # Replace with actual public key
-
-mkdir -p "$BACKUP_DIR"
-
-# 1. Dump and compress
-echo "Dumping database..."
-docker exec "$DB_CONTAINER" pg_dump -U "$DB_USER" -d "$DB_NAME" | gzip > "$BACKUP_DIR/$FILENAME"
-
-# 2. Encrypt
-echo "Encrypting backup..."
-# Assuming 'age' is installed
-age -r "$AGE_RECIPIENT_KEY" -o "$BACKUP_DIR/$ENCRYPTED_FILENAME" "$BACKUP_DIR/$FILENAME"
-rm "$BACKUP_DIR/$FILENAME"
-
-# 3. Upload to Oracle Object Storage (OOS) via rclone
-echo "Uploading to Oracle..."
-rclone copy "$BACKUP_DIR/$ENCRYPTED_FILENAME" "$RCLONE_REMOTE"
-
-# 4. Cleanup local backups older than 7 days
-find "$BACKUP_DIR" -type f -name "*.age" -mtime +7 -delete
-
-# 5. Cleanup remote backups older than 30 days (User requested 30 days retention)
-# Note: rclone delete --min-age 30d
-rclone delete "$RCLONE_REMOTE" --min-age 30d
-
-echo "Backup complete: $ENCRYPTED_FILENAME"
+rclone delete "$REMOTE" --min-age 30d
+echo "Backup enviado: ${NAME}"

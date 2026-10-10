@@ -1,25 +1,32 @@
-version: "3.8"
-
+# Banco do Passo na VPS (~/apps/app-de-corrida). Segredos no .env ao lado
+# (chmod 600, fora do Git); ver ops/README.md.
 services:
   db:
     image: postgres:17-alpine
     container_name: app-de-corrida
-    restart: always
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-passo}
+      POSTGRES_USER: ${POSTGRES_USER:?defina no .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina no .env}
+      POSTGRES_DB: ${POSTGRES_DB:?defina no .env}
     volumes:
       - app-de-corrida_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - app-de-corrida_internal
-    # No ports exposed to host. The API will connect via the same internal network.
+      - app-de-corrida_data
+    # Sem "ports": nada publicado no host.
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
-  app-de-corrida_internal:
-    name: app-de-corrida_internal
-    driver: bridge
+  # internal: sem rota para fora; só a API (na mesma rede) alcança o banco.
+  app-de-corrida_data:
+    name: app-de-corrida_data
+    internal: true
 
 volumes:
   app-de-corrida_data:

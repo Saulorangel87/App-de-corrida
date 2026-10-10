@@ -1,108 +1,117 @@
-import { db } from "./index"; // Assuming index exports db instance, wait, we need an actual db instance
-import { workouts, planTemplates, references, workoutReferences } from "./schema";
+// Seed do catálogo de treinos (docs/pesquisa/07-tipos-sessao.md).
+// Idempotente: treinos por `workouts.slug`; referências por DOI ou URL. Tudo em uma única transação.
+// Não cria planos (plan_templates): os planos vêm depois, do motor de regras.
+import { eq, inArray, or, sql } from "drizzle-orm";
+import type { Database } from "./index";
+import { references, workoutProgressions, workoutReferences, workouts } from "./schema";
+import { referenceSeeds } from "./seed-data/references";
+import { workoutSeeds } from "./seed-data/workouts";
 
-// This is a placeholder for the actual seed script.
-// It will insert the data validated in Phase 0 into the DB.
-// You would run this via `pnpm run db:seed`.
+export type SeedCounts = {
+  references: { inserted: number; updated: number };
+  workouts: number;
+  workoutReferences: number;
+  workoutProgressions: number;
+};
 
-async function seed() {
-  console.log("Seeding database...");
-  
-  // 1. Insert References
-  const insertedRefs = await db.insert(references).values([
-    {
-      doi: "10.1186/1471-2474-8-24",
-      citation: "Buist I, et al. The GRONORUN study... BMC Musculoskelet Disord 2007;8:24.",
-      studyType: "Protocolo de ECR"
-    },
-    {
-      doi: "10.1177/0363546507307505",
-      citation: "Buist I, et al. No effect of a graded training program... Am J Sports Med 2008.",
-      studyType: "ECR"
-    },
-    {
-      doi: "10.1249/mss.0b013e31806010e0",
-      citation: "Bosquet L, et al. Effects of tapering on performance: a meta-analysis. Med Sci Sports Exerc 2007.",
-      studyType: "Meta-análise"
+export async function runSeed(db: Database): Promise<SeedCounts> {
+  return db.transaction(async (tx) => {
+    const counts: SeedCounts = {
+      references: { inserted: 0, updated: 0 },
+      workouts: 0,
+      workoutReferences: 0,
+      workoutProgressions: 0,
+    };
+
+    // 1. Referências: procura por DOI (sem diferenciar maiúsculas) ou URL; atualiza ou insere.
+    const referenceIdByKey = new Map<string, string>();
+    for (const ref of referenceSeeds) {
+      const conditions = [];
+      if (ref.doi) conditions.push(sql`lower(${references.doi}) = ${ref.doi.toLowerCase()}`);
+      if (ref.url) conditions.push(eq(references.url, ref.url));
+      const [found] = await tx
+        .select({ id: references.id })
+        .from(references)
+        .where(or(...conditions))
+        .limit(1);
+
+      const values = {
+        doi: ref.doi ?? null,
+        url: ref.url ?? null,
+        citation: ref.citation,
+        studyType: ref.studyType ?? null,
+      };
+      if (found) {
+        await tx.update(references).set(values).where(eq(references.id, found.id));
+        referenceIdByKey.set(ref.key, found.id);
+        counts.references.updated += 1;
+      } else {
+        const [created] = await tx.insert(references).values(values).returning({ id: references.id });
+        referenceIdByKey.set(ref.key, created!.id);
+        counts.references.inserted += 1;
+      }
     }
-  ]).returning();
 
-  // 2. Insert Workouts (Catálogo)
-  const insertedWorkouts = await db.insert(workouts).values([
-    {
-      slug: "caminhada-corrida",
-      namePt: "Caminhada e Corrida",
-      nameEn: "Walk and Run",
-      type: "caminhada-corrida",
-      objective: "iniciacao",
-      allowedLevels: ["iniciante"],
-      structure: {
-        warmup: "5 min caminhada rápida",
-        cooldown: "5 min caminhada rápida",
-        description: "Repetições de caminhada e corrida baseadas na etapa atual (1 a 12 + 10b). Ritmo Z1 (frases completas)."
-      },
-      targetRpe: 3, // CR-10 1-3
-      targetHrZone: "Z1",
-      status: "published",
-      version: "1.0.0"
-    },
-    {
-      slug: "rodagem-leve",
-      namePt: "Rodagem Leve",
-      nameEn: "Easy Run",
-      type: "rodagem",
-      allowedLevels: ["iniciante", "intermediario", "avancado"],
-      structure: {
-        warmup: "5 min trote leve",
-        cooldown: "5 min trote leve",
-        description: "Corrida contínua em Z1. Duração varia por nível."
-      },
-      targetRpe: 3,
-      targetHrZone: "Z1",
-      status: "published",
-      version: "1.0.0"
-    },
-    {
-      slug: "longao",
-      namePt: "Longão",
-      nameEn: "Long Run",
-      type: "longao",
-      allowedLevels: ["iniciante", "intermediario", "avancado"],
-      structure: {
-        description: "Corrida contínua em Z1, maior sessão da semana."
-      },
-      targetRpe: 3,
-      targetHrZone: "Z1",
-      status: "published",
-      version: "1.0.0"
+    // 2. Treinos: upsert por slug.
+    const workoutIdBySlug = new Map<string, string>();
+    for (const w of workoutSeeds) {
+      const values = {
+        slug: w.slug,
+        namePt: w.namePt,
+        nameEn: w.nameEn,
+        type: w.type,
+        objective: w.objective ?? null,
+        allowedLevels: w.allowedLevels,
+        structure: w.structure,
+        targetRpe: w.targetRpe ?? null,
+        targetHrZone: w.targetHrZone ?? null,
+        targetPaceRelative: w.targetPaceRelative ?? null,
+        durationMinutes: w.durationMinutes ?? null,
+        distanceKm: w.distanceKm ?? null,
+        estimatedLoad: w.estimatedLoad ?? null,
+        contraindications: w.contraindications ?? null,
+        status: w.status ?? "published",
+        version: w.version,
+      };
+      const { slug: _slug, ...updatable } = values;
+      const [row] = await tx
+        .insert(workouts)
+        .values(values)
+        .onConflictDoUpdate({ target: workouts.slug, set: { ...updatable, updatedAt: new Date() } })
+        .returning({ id: workouts.id });
+      workoutIdBySlug.set(w.slug, row!.id);
+      counts.workouts += 1;
     }
-  ]).returning();
 
-  // 3. Insert Workout References
-  await db.insert(workoutReferences).values([
-    {
-      workoutId: insertedWorkouts.find(w => w.slug === "caminhada-corrida")!.id,
-      referenceId: insertedRefs[0].id // Buist 2007
-    },
-    {
-      workoutId: insertedWorkouts.find(w => w.slug === "caminhada-corrida")!.id,
-      referenceId: insertedRefs[1].id // Buist 2008
+    const seededWorkoutIds = [...workoutIdBySlug.values()];
+
+    // 3. Ligações treino-referência: recria as dos treinos do catálogo (reflete remoções).
+    await tx.delete(workoutReferences).where(inArray(workoutReferences.workoutId, seededWorkoutIds));
+    const referenceRows: { workoutId: string; referenceId: string }[] = [];
+    for (const w of workoutSeeds) {
+      const workoutId = workoutIdBySlug.get(w.slug)!;
+      for (const key of new Set(w.referenceKeys)) {
+        const referenceId = referenceIdByKey.get(key);
+        if (!referenceId) throw new Error(`Treino ${w.slug}: referência ${key} não encontrada.`);
+        referenceRows.push({ workoutId, referenceId });
+      }
     }
-  ]);
+    if (referenceRows.length > 0) await tx.insert(workoutReferences).values(referenceRows);
+    counts.workoutReferences = referenceRows.length;
 
-  // 4. Insert Plan Templates
-  await db.insert(planTemplates).values([
-    {
-      objective: "5k",
-      level: "iniciante",
-      description: "Plano de 13 semanas começando do zero, baseado no método de caminhada-corrida."
-    },
-    {
-      objective: "10k",
-      level: "intermediario",
-      description: "Plano de 10 semanas com foco em aumentar volume progressivamente com qualidade."
+    // 4. Progressões e regressões: recria as dos treinos do catálogo.
+    await tx.delete(workoutProgressions).where(inArray(workoutProgressions.fromWorkoutId, seededWorkoutIds));
+    const progressionRows: { fromWorkoutId: string; toWorkoutId: string; type: string }[] = [];
+    for (const w of workoutSeeds) {
+      for (const link of w.links) {
+        const to = workoutIdBySlug.get(link.toSlug);
+        if (!to) throw new Error(`Treino ${w.slug}: slug ${link.toSlug} não encontrado.`);
+        progressionRows.push({ fromWorkoutId: workoutIdBySlug.get(w.slug)!, toWorkoutId: to, type: link.type });
+      }
     }
-  ]);
+    if (progressionRows.length > 0) await tx.insert(workoutProgressions).values(progressionRows);
+    counts.workoutProgressions = progressionRows.length;
 
-  console.log("Seeding complete.");
+    return counts;
+  });
 }
