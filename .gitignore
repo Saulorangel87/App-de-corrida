@@ -1,0 +1,32 @@
+# Segredos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Dependências e builds
+node_modules/
+dist/
+build/
+.turbo/
+coverage/
+
+# Testes
+playwright-report/
+test-results/
+
+# Backups do banco (migrations .sql do Drizzle continuam versionadas)
+backups/
+*.sql.gz
+*.dump
+*.age
+*.gpg
+
+# Sistema e editores
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.log
