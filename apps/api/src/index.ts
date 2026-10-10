@@ -1,14 +1,22 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { csrf } from "hono/csrf";
 import { rateLimiter } from "hono-rate-limiter";
 import auth from "./routes/auth";
 
 const app = new Hono();
 
+const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
+
 app.use("*", cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: allowedOrigin,
     credentials: true,
 }));
+
+app.use("*", csrf({
+    origin: allowedOrigin,
+}));
+
 
 app.use(
   "*",

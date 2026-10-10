@@ -11,14 +11,16 @@
   },
   "dependencies": {
     "@hono/node-server": "^2.1.4",
+    "@hono/zod-validator": "^0.9.1",
     "@passo/db": "workspace:*",
     "@passo/engine": "workspace:*",
     "@passo/shared": "workspace:*",
     "argon2": "^0.45.1",
-    "drizzle-orm": "^0.36.0",
+    "drizzle-orm": "^0.45.4",
     "hono": "^4.6.14",
     "hono-rate-limiter": "^0.5.4",
-    "resend": "^6.32.1"
+    "resend": "^6.32.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

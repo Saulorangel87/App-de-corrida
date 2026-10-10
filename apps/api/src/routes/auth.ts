@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { db, users, authTokens, sessions } from "@passo/db";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { zValidator } from "@hono/zod-validator";
 import {
   createSession,
   setSessionCookie,
@@ -13,6 +15,9 @@ import {
 } from "../lib/session";
 import { hashPassword, verifyPassword } from "../lib/auth";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../lib/email";
+
+// Valid argon2 hash of the string "dummy" to prevent timing attacks
+const DUMMY_HASH = "$argon2id$v=19$m=65536,p=4,t=3$TxPaOjdogYZjDSqkl+sbrQ$FE6UbkmSM2uJp+73iywZwK2f9UiSXKk0hIcKqVgu2fM";
 
 const auth = new Hono<{
   Variables: {
@@ -35,19 +40,17 @@ export const authMiddleware = async (c: any, next: any) => {
   await next();
 };
 
-auth.post("/register", async (c) => {
-  const body = await c.req.json().catch(() => ({}));
-  const { email, password } = body;
+const registerSchema = z.object({
+  email: z.string().email().max(255),
+  password: z.string().min(8).max(100),
+});
 
-  if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
-    return c.json({ error: "Invalid input" }, 400);
-  }
+auth.post("/register", zValidator("json", registerSchema), async (c) => {
+  const { email, password } = c.req.valid("json");
 
-  // Check if user already exists
   const existingUsers = await db.select().from(users).where(eq(users.email, email));
   
   if (existingUsers.length > 0) {
-    // SECURITY: Return generic response to prevent email enumeration
     return c.json({ message: "Registration successful. Please check your email to verify your account." });
   }
 
@@ -64,21 +67,20 @@ auth.post("/register", async (c) => {
   return c.json({ message: "Registration successful. Please check your email to verify your account." });
 });
 
-auth.post("/login", async (c) => {
-  const body = await c.req.json().catch(() => ({}));
-  const { email, password } = body;
+const loginSchema = z.object({
+  email: z.string().email().max(255),
+  password: z.string().max(100), // Max 100 to prevent DoS via massive strings
+});
 
-  if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
-    return c.json({ error: "Invalid credentials" }, 401); // Generic
-  }
+auth.post("/login", zValidator("json", loginSchema), async (c) => {
+  const { email, password } = c.req.valid("json");
 
   const result = await db.select().from(users).where(eq(users.email, email));
   const user = result[0];
 
   if (!user) {
-    // Hash dummy password to prevent timing attacks
-    await hashPassword("dummy_password_to_prevent_timing_attacks");
-    // SECURITY: Return generic response
+    // Math-identical timing attack prevention
+    await verifyPassword(DUMMY_HASH, password);
     return c.json({ error: "Invalid credentials" }, 401);
   }
 
@@ -106,13 +108,12 @@ auth.post("/logout", async (c) => {
   return c.json({ message: "Logged out successfully" });
 });
 
-auth.post("/forgot-password", async (c) => {
-  const body = await c.req.json().catch(() => ({}));
-  const { email } = body;
+const forgotPasswordSchema = z.object({
+  email: z.string().email().max(255),
+});
 
-  if (!email || typeof email !== 'string') {
-    return c.json({ error: "Invalid input" }, 400);
-  }
+auth.post("/forgot-password", zValidator("json", forgotPasswordSchema), async (c) => {
+  const { email } = c.req.valid("json");
 
   const result = await db.select().from(users).where(eq(users.email, email));
   const user = result[0];
@@ -122,17 +123,16 @@ auth.post("/forgot-password", async (c) => {
     await sendPasswordResetEmail(user.email, token);
   }
 
-  // SECURITY: Return generic response
   return c.json({ message: "If that email is in our system, we've sent a password reset link." });
 });
 
-auth.post("/reset-password", async (c) => {
-  const body = await c.req.json().catch(() => ({}));
-  const { token, password } = body;
+const resetPasswordSchema = z.object({
+  token: z.string().min(1).max(255),
+  password: z.string().min(8).max(100),
+});
 
-  if (!token || !password || typeof token !== 'string' || typeof password !== 'string') {
-    return c.json({ error: "Invalid input" }, 400);
-  }
+auth.post("/reset-password", zValidator("json", resetPasswordSchema), async (c) => {
+  const { token, password } = c.req.valid("json");
 
   const hashedToken = hashToken(token);
   const result = await db.select().from(authTokens).where(eq(authTokens.tokenHash, hashedToken));
@@ -153,11 +153,13 @@ auth.post("/reset-password", async (c) => {
   return c.json({ message: "Password reset successfully" });
 });
 
-auth.get("/verify-email", async (c) => {
-    const token = c.req.query("token");
-    if (!token) {
-        return c.json({ error: "Missing token" }, 400);
-    }
+const verifyEmailSchema = z.object({
+  token: z.string().min(1).max(255),
+});
+
+// Changed from GET to POST
+auth.post("/verify-email", zValidator("json", verifyEmailSchema), async (c) => {
+    const { token } = c.req.valid("json");
     
     const hashedToken = hashToken(token);
     const result = await db.select().from(authTokens).where(eq(authTokens.tokenHash, hashedToken));
