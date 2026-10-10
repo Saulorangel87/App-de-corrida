@@ -11,6 +11,7 @@ import { AuthHead, BackToLogin, InfoBox, PrimaryButton, PrimaryLink, StatusBadge
 import { TextField } from "../components/field";
 import { ApiError, fetchApi } from "../lib/api";
 import { useFragmentToken } from "../lib/fragment-token";
+import { passwordProblem } from "../lib/password-problem";
 import { useErrorText } from "../lib/use-error-text";
 
 export const Route = createFileRoute("/redefinir-senha")({
@@ -21,13 +22,6 @@ const formSchema = z
   .object({ password: newPasswordSchema, confirm: z.string() })
   .refine((v) => v.password === v.confirm, { path: ["confirm"], message: "mismatch" });
 type Form = z.infer<typeof formSchema>;
-
-/** Código do problema de senha devolvido pela API (details: [{ path: "password", code }]). */
-function passwordProblem(error: unknown): string | null {
-  if (!(error instanceof ApiError) || error.code !== "VALIDATION_ERROR" || !Array.isArray(error.details)) return null;
-  const item = (error.details as { path?: string; code?: string }[]).find((d) => d.path === "password");
-  return item?.code ?? null;
-}
 
 function ResetPassword() {
   const { t } = useTranslation();

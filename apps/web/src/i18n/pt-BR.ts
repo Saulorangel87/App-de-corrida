@@ -42,6 +42,7 @@ export const ptBR = {
     name: "Nome completo",
     namePlaceholder: "Como quer ser chamado?",
     newPasswordPlaceholder: "Mínimo de 10 caracteres",
+    passwordHint: "Mínimo de 10 caracteres. Evite senhas comuns e partes do seu e-mail.",
     adult: "Declaro que tenho 18 anos ou mais.",
     acceptTerms: "Aceito os Termos de Serviço.",
     acceptHealthData: "Autorizo o tratamento dos meus dados de saúde (necessário para os treinos).",

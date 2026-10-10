@@ -125,6 +125,26 @@ test("cadastro exige os três aceites e envia idioma e declaração de 18 anos",
   });
 });
 
+test("cadastro: senha recusada pelo servidor mostra o motivo no campo da senha", async ({ page }) => {
+  await mockApi(page, {
+    register: {
+      status: 400,
+      body: { error: { code: "VALIDATION_ERROR", message: "x", details: [{ path: "password", code: "CONTAINS_EMAIL" }] } },
+    },
+  });
+  await page.goto("/entrar");
+  await page.getByRole("tab", { name: "Criar conta" }).click();
+  await page.getByLabel("Nome completo").fill("Conta teste");
+  await page.getByLabel("E-mail", { exact: true }).fill("contateste@exemplo.com");
+  await page.getByLabel("Senha", { exact: true }).fill("contateste123");
+  await page.getByLabel("Declaro que tenho 18 anos ou mais.").check();
+  await page.getByLabel("Aceito os Termos de Serviço.").check();
+  await page.getByLabel(/Autorizo o tratamento dos meus dados de saúde/).check();
+  await page.getByRole("button", { name: "Criar minha conta" }).click();
+  await expect(page.getByText("A senha não pode conter partes do seu e-mail.")).toBeVisible();
+  await expect(page.getByText("Confira os dados informados.")).toHaveCount(0);
+});
+
 test("celular: a foto do desktop não é baixada e não há rolagem horizontal", async ({ browser }) => {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: "pt-BR" });
   const page = await ctx.newPage();

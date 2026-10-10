@@ -9,6 +9,7 @@ import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from
 import { AuthLayout } from "../components/auth-layout";
 import { CheckField, TextField } from "../components/field";
 import { fetchApi } from "../lib/api";
+import { passwordProblem } from "../lib/password-problem";
 import { useErrorText } from "../lib/use-error-text";
 import { AUTH_KEY, type AuthUser } from "../lib/queries";
 
@@ -152,6 +153,13 @@ function RegisterFormView() {
   });
 
   const required = (message: string | undefined) => field(message, t("validation.required"));
+  // Senha recusada só pelo servidor (comum, parte do e-mail...): o motivo aparece no próprio campo.
+  const problem = passwordProblem(signUp.error);
+  const passwordError = errors.password
+    ? t("validation.password")
+    : problem
+      ? t(`validation.pw.${problem}`, { defaultValue: t("errors.VALIDATION_ERROR") })
+      : undefined;
 
   return (
     <div>
@@ -159,7 +167,7 @@ function RegisterFormView() {
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{t("auth.registerTitle")}</h1>
       </div>
 
-      {signUp.isError && (
+      {signUp.isError && !problem && (
         <div role="alert" className="mb-3 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
           {errorText(signUp.error)}
         </div>
@@ -194,7 +202,8 @@ function RegisterFormView() {
           type="password"
           autoComplete="new-password"
           placeholder={t("auth.newPasswordPlaceholder")}
-          error={field(errors.password?.message, t("validation.password"))}
+          hint={t("auth.passwordHint")}
+          error={passwordError}
           {...register("password")}
         />
 

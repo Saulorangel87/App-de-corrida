@@ -43,6 +43,7 @@ export const en: Translation = {
     name: "Full name",
     namePlaceholder: "What should we call you?",
     newPasswordPlaceholder: "At least 10 characters",
+    passwordHint: "At least 10 characters. Avoid common passwords and parts of your email.",
     adult: "I declare that I am 18 years old or older.",
     acceptTerms: "I accept the Terms of Service.",
     acceptHealthData: "I authorize the processing of my health data (required for the workouts).",
