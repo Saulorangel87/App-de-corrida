@@ -43,13 +43,14 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - Subir banco na VPS (interno): `cd ~/apps/app-de-corrida && docker compose up -d`
 
 ## Estado atual
-Fase atual: Fase 1 CONCLUÍDA.
-- Monorepo `pnpm` criado (apps web e api; pacotes db, engine e shared).
-- Configurações base de TypeScript, Vite e ESLint aplicadas.
-- Drizzle ORM modelado em `packages/db/src/schema.ts` refletindo fielmente a Fase 0 (incluindo segurança com RLS, campos de dor avançados e UUIDs para usuários).
-- Migrations geradas e aplicadas no container PostgreSQL recém-criado na VPS, dentro de `~/apps/app-de-corrida/`.
-- Regras de Row-Level Security (RLS) devidamente aplicadas no banco da VPS.
-- Script de seeds base populado e pronto (`packages/db/src/seed.ts`).
-- Backup draft salvo em `ops/backup.sh`.
+Fase atual: Fase 2 CONCLUÍDA (aguardando aprovação).
+- API estruturada com rotas de registro, login, logout, verificação de e-mail e redefinição de senha.
+- Segurança de anti-enumeração estritamente implementada em endpoints de cadastro e login.
+- Gerenciamento de sessão customizado para armazenar apenas hashes (sha256) dos tokens gerados via `crypto`.
+- Integrou-se o `argon2` para o hash das senhas.
+- `resend` implementado para disparar e-mails, com mock no console para desenvolvimento.
+- Rate limiter (`hono-rate-limiter`) ativado utilizando `cf-connecting-ip`.
+- Tudo no `@passo/api` está tipado, compilando corretamente via Drizzle ORM do `@passo/db`.
 
-Próximo passo (aguardando liberação): Iniciar a **Fase 2 — Autenticação (e-mail e senha + Resend)**, que focará na API (Hono) para lidar com registro e login seguros.
+Próximo passo (aguardando liberação): Iniciar a **Fase 3 — Frontend (Autenticação)** ou realizar testes da API com uma instância Postgres local/mock antes de avançar.
+
