@@ -3,8 +3,8 @@
 Estado em 2026-10-10: Fases 0 a 5 aprovadas pelo dono. Falta a Fase 6 (telas) e o deploy. Quem continuar (Claude, agy ou outro agente) deve ler, nesta ordem: `AGENTS.md`, `docs/especificacao.md` (seções 9 e 10), `docs/adr/0006-acompanhamento-diario.md` e este arquivo.
 
 ## Regras que valem para toda tela
-1. **Figma primeiro.** Toda tela nova é desenhada no Figma (MCP), mostrada ao dono e **aprovada** antes de qualquer código. Arquivo: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0 (frames existentes: Painel `2:2`, Login `6:2`). O arquivo não tem variáveis; os tokens estão na seção 9 da especificação.
-2. **Mobile:** o Figma só tem desktop; o layout mobile é definido pelo agente, na mesma identidade visual.
+1. **Figma é só referência de estilo (decisão do dono, 2026-10-10).** Não é mais necessário desenhar nem manter o Figma em dia: as telas novas são feitas direto em código, na mesma linha visual das telas de acesso já implementadas (`apps/web/src/components/auth-*.tsx`, tokens da seção 9 da especificação). Arquivo de referência: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0 (frames: Painel `2:2`, Login `6:2`). O dono revisa o resultado rodando o app; ajustes pedidos por ele valem mais que o desenho.
+2. **Mobile:** o layout mobile é definido pelo agente, na mesma identidade visual.
 3. **Idiomas:** pt-BR e en. As mensagens do motor vêm em português com códigos de motivo estáveis (`decision.reasons[].code`); o front traduz pelos códigos.
 4. **Requisitos:** responsiva (mobile first), WCAG AA, teclado, labels, estados de carregamento/vazio/erro. Fonte Inter; ícones `lucide-react`; sem imagens do Figma por link (salvar em `apps/web/src/assets/`).
 5. **Segurança do front:** sessão por cookie (`__Host-passo_session` em produção), sem token em `localStorage`; requisições com `credentials: "include"` para `/api/v1`; CSP restritiva; nada de segredo no bundle. E-mail e senha nunca em URL. Token de e-mail vem no fragmento `#token=`.
@@ -33,11 +33,7 @@ Página "Telas", à direita do login. **Aprovadas pelo dono em 2026-10-10 e impl
 | Confirmar e-mail | confirmado | `24:767` |
 | Confirmar e-mail | link inválido, com reenvio por e-mail | `24:911` |
 
-Pendências do arquivo do Figma (o limite de chamadas do plano Starter do MCP foi atingido nesta sessão):
-- Remover o cartão "4,8 ★ Avaliação dos corredores" do painel visual de **todos** os frames de login e das telas novas (decisão do dono: não entra; talvez no futuro). Os outros dois números inventados já foram removidos.
-- Conferir visualmente os estados com ícone (e-mail enviado, link inválido, senha alterada, e-mail confirmado): só o formulário de "Esqueci a senha" e o de "Redefinir senha" foram vistos em captura.
-- O frame do Painel (`2:2`) tem o texto "Let's Go Run Pro" (antes "Passo Pro"). Decisão do dono: fica só "Let's Go Run", sem "Pro" (não há plano pago).
-- Ao implementar: o painel visual da tela real já mostra só "5k → 42k" (sem números inventados); manter assim.
+Pendências do arquivo do Figma: **encerradas por decisão do dono** (o Figma serviu de norte; não será mais editado). O código já está sem o cartão "4,8 ★", sem "Pro" e sem números inventados (painel visual mostra só "5k → 42k"). Os cinco estados com ícone (e-mail enviado, link inválido, senha alterada, e-mail confirmado, falha de confirmação) foram conferidos em captura do código, em desktop e mobile.
 
 ## Contrato da API (prefixo `/api/v1`, tudo com sessão; erros `{error:{code,message,details?}}`)
 | Rota | Uso |

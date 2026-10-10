@@ -2,7 +2,7 @@
 
 Especificação completa: `docs/especificacao.md`. Leia antes de iniciar ou revisar qualquer fase.
 Pesquisa científica: `docs/pesquisa/`. É a fonte da verdade para treinos, limites e classificação.
-Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
+Design no Figma (só referência de estilo; não precisa mais ser atualizado): https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 
 ## Regras inegociáveis
 - Nunca inventar treino, limite ou critério: tudo vem de `docs/pesquisa/` com referência verificada (abrir a fonte, nunca citar de memória).
@@ -24,8 +24,8 @@ Design no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0
 - Triagem: PAR-Q+ com o texto oficial em português e atribuição.
 - Catálogo: o dono do projeto aprova na Fase 0; os seeds entram como `publicado`.
 - Idade mínima: 18 anos.
-- Telas novas: desenhar primeiro no Figma (via MCP), aprovar, depois implementar.
-- Mobile: layout definido pelo agente, na mesma identidade visual (o Figma só tem desktop).
+- Telas novas: direto em código, na mesma linha visual das telas de acesso (decisão do dono, 2026-10-10: o Figma foi só um norte). O dono revisa rodando o app.
+- Mobile: layout definido pelo agente, na mesma identidade visual.
 - Figma: arquivo sem variáveis; tokens vêm da seção 9 da especificação. Frames: Painel `2:2`, Login `6:2`.
 
 - Repositório: https://github.com/Saulorangel87/App-de-corrida (remote `origin`, branch `main`). Push para `main` liberado após cada commit.
@@ -53,10 +53,10 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 Fase atual: 6 (telas), em andamento: telas de acesso prontas (`entrar`, `esqueci-a-senha`, `redefinir-senha`, `verificar-email` em `apps/web/src/routes/`; i18n pt/en, CSP, testes Playwright); painel é só um esqueleto. Fases 0 a 5 aprovadas pelo dono em 2026-10-10. Para continuar: ler `docs/fase-6-passagem.md` (ordem das telas, contrato da API, regras, deploy pendente).
 - API nova (ADR 0006): `GET /day/:date` (decisão e sessões do dia), `GET /plan/week/:date`, `PUT /checkins/:date`, `POST /pain/:date`, `PUT /workouts/:id/log` (devolve a decisão do dia seguinte), `PUT /profile/pause`, `POST /profile/professional-clearance`, `GET /history`, `GET /account/export`.
 - Semana do plano = janela de 7 dias desde `start_date` (`athlete_plan_weeks`); criada na primeira consulta; a anterior fecha (escada avança ou repete). `buildAthleteWeek` já nasce dentro dos tetos.
-- Front: TanStack Router/Query, React Hook Form + Zod de `@passo/shared`, i18next, Tailwind (ADR 0007). Telas que faltam: entrevista, resultado, painel, plano, treino, check-in, pós-treino, histórico, perfil. Cada uma: Figma, aprovação, código, teste Playwright.
+- Front: TanStack Router/Query, React Hook Form + Zod de `@passo/shared`, i18next, Tailwind (ADR 0007). Telas que faltam: entrevista, resultado, painel, plano, treino, check-in, pós-treino, histórico, perfil. Cada uma: código na linha visual existente, teste Playwright, aprovação do dono.
 - Testes: 345 no motor (inclui "seguir o plano à risca não gera ajuste" nos 13 modelos), 87 na API.
 - Banco: migrações 0008 e 0009 (semanas do plano, sessões agendadas com estrutura, check-in com dor ao caminhar, dor com data e momento, `for_date` na auditoria).
 - Fase 3: texto do PAR-Q+ transcrito e conferido; falta o dono ler uma vez contra o PDF.
 - Pendente (dono): confirmar os itens dos ADRs 0004, 0005 e 0006 (ou manter os padrões); avisar a PAR-Q+ Collaboration (R-TRI-14, não bloqueia); revisar os textos `razao` do seed.
 - Pendente (deploy): Dockerfile da API e rota no túnel; aplicar migrações 0008/0009 na VPS.
-- Próxima: Fase 6 — telas (Figma primeiro, aprovar, implementar), na ordem de `docs/fase-6-passagem.md`.
+- Próxima: Fase 6 — telas (direto em código, na linha visual das telas de acesso), na ordem de `docs/fase-6-passagem.md`.
