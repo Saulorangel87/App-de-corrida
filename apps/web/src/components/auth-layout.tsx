@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { AppFooter } from "./app-footer";
-import { setLanguage, type Language } from "../i18n";
+import { LanguageSwitch } from "./language-switch";
 import avif464 from "../assets/login/login-464.avif";
 import avif928 from "../assets/login/login-928.avif";
 import webp464 from "../assets/login/login-464.webp";
@@ -14,8 +14,7 @@ import jpg928 from "../assets/login/login-928.jpg";
  * foto e texto à esquerda (só a partir de 1024 px), conteúdo à direita e rodapé.
  */
 export function AuthLayout({ children }: { children: ReactNode }) {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language as Language;
+  const { t } = useTranslation();
 
   return (
     // h-dvh: no celular acompanha a barra de endereço que aparece e some.
@@ -78,22 +77,7 @@ export function AuthLayout({ children }: { children: ReactNode }) {
               >
                 {t("common.help")}
               </a>
-              <div role="group" aria-label={t("common.language")} className="flex items-center gap-3 font-medium">
-                {(["pt-BR", "en"] as const).map((l, i) => (
-                  <span key={l} className="flex items-center gap-3">
-                    {i > 0 && <span aria-hidden="true" className="text-gray-300">|</span>}
-                    <button
-                      type="button"
-                      lang={l}
-                      aria-pressed={lang === l}
-                      onClick={() => setLanguage(l)}
-                      className={lang === l ? "text-[#111827]" : "text-gray-500 hover:text-[#111827]"}
-                    >
-                      {l === "pt-BR" ? "PT" : "EN"}
-                    </button>
-                  </span>
-                ))}
-              </div>
+              <LanguageSwitch />
             </div>
           </div>
 

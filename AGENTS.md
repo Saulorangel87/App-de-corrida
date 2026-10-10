@@ -50,10 +50,10 @@ pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · Po
 - VPS (banco, papéis, backup): ver `ops/README.md`
 
 ## Estado atual
-Fase atual: 6 (telas), em andamento: telas de acesso prontas (`entrar`, `esqueci-a-senha`, `redefinir-senha`, `verificar-email` em `apps/web/src/routes/`; i18n pt/en, CSP, testes Playwright); painel é só um esqueleto. Fases 0 a 5 aprovadas pelo dono em 2026-10-10. Para continuar: ler `docs/fase-6-passagem.md` (ordem das telas, contrato da API, regras, deploy pendente).
+Fase atual: 6 (telas), em andamento: telas de acesso prontas (`entrar`, `esqueci-a-senha`, `redefinir-senha`, `verificar-email` em `apps/web/src/routes/`; i18n pt/en, CSP, testes Playwright), entrevista em 8 etapas (`entrevista`, lógica em `apps/web/src/features/interview/`) e resultado do perfil (`resultado`, com a autodeclaração de avaliação); painel é só um esqueleto. Fases 0 a 5 aprovadas pelo dono em 2026-10-10. Para continuar: ler `docs/fase-6-passagem.md` (ordem das telas, contrato da API, regras, deploy pendente).
 - API nova (ADR 0006): `GET /day/:date` (decisão e sessões do dia), `GET /plan/week/:date`, `PUT /checkins/:date`, `POST /pain/:date`, `PUT /workouts/:id/log` (devolve a decisão do dia seguinte), `PUT /profile/pause`, `POST /profile/professional-clearance`, `GET /history`, `GET /account/export`.
 - Semana do plano = janela de 7 dias desde `start_date` (`athlete_plan_weeks`); criada na primeira consulta; a anterior fecha (escada avança ou repete). `buildAthleteWeek` já nasce dentro dos tetos.
-- Front: TanStack Router/Query, React Hook Form + Zod de `@passo/shared`, i18next, Tailwind (ADR 0007). Telas que faltam: entrevista, resultado, painel, plano, treino, check-in, pós-treino, histórico, perfil. Cada uma: código na linha visual existente, teste Playwright, aprovação do dono.
+- Front: TanStack Router/Query, React Hook Form + Zod de `@passo/shared`, i18next, Tailwind (ADR 0007). Telas que faltam: painel, plano, treino, check-in, pós-treino, histórico, perfil. Cada uma: código na linha visual existente, teste Playwright, aprovação do dono.
 - Testes: 345 no motor (inclui "seguir o plano à risca não gera ajuste" nos 13 modelos), 87 na API.
 - Banco: migrações 0008 e 0009 (semanas do plano, sessões agendadas com estrutura, check-in com dor ao caminhar, dor com data e momento, `for_date` na auditoria).
 - Fase 3: texto do PAR-Q+ transcrito e conferido; falta o dono ler uma vez contra o PDF.

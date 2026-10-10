@@ -11,9 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as EntrevistaRouteImport } from './routes/entrevista'
 import { Route as EsqueciASenhaRouteImport } from './routes/esqueci-a-senha'
 import { Route as PainelRouteImport } from './routes/painel'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
+import { Route as ResultadoRouteImport } from './routes/resultado'
 import { Route as VerificarEmailRouteImport } from './routes/verificar-email'
 
 const IndexRoute = IndexRouteImport.update({
@@ -24,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
 const EntrarRoute = EntrarRouteImport.update({
   id: '/entrar',
   path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrevistaRoute = EntrevistaRouteImport.update({
+  id: '/entrevista',
+  path: '/entrevista',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EsqueciASenhaRoute = EsqueciASenhaRouteImport.update({
@@ -41,6 +48,11 @@ const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
   path: '/redefinir-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResultadoRoute = ResultadoRouteImport.update({
+  id: '/resultado',
+  path: '/resultado',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VerificarEmailRoute = VerificarEmailRouteImport.update({
   id: '/verificar-email',
   path: '/verificar-email',
@@ -50,26 +62,32 @@ const VerificarEmailRoute = VerificarEmailRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/entrar': typeof EntrarRoute
+  '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/painel': typeof PainelRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/resultado': typeof ResultadoRoute
   '/verificar-email': typeof VerificarEmailRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/entrar': typeof EntrarRoute
+  '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/painel': typeof PainelRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/resultado': typeof ResultadoRoute
   '/verificar-email': typeof VerificarEmailRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/entrar': typeof EntrarRoute
+  '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/painel': typeof PainelRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
+  '/resultado': typeof ResultadoRoute
   '/verificar-email': typeof VerificarEmailRoute
 }
 export interface FileRouteTypes {
@@ -77,34 +95,42 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/entrar'
+    | '/entrevista'
     | '/esqueci-a-senha'
     | '/painel'
     | '/redefinir-senha'
+    | '/resultado'
     | '/verificar-email'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/entrar'
+    | '/entrevista'
     | '/esqueci-a-senha'
     | '/painel'
     | '/redefinir-senha'
+    | '/resultado'
     | '/verificar-email'
   id:
     | '__root__'
     | '/'
     | '/entrar'
+    | '/entrevista'
     | '/esqueci-a-senha'
     | '/painel'
     | '/redefinir-senha'
+    | '/resultado'
     | '/verificar-email'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EntrarRoute: typeof EntrarRoute
+  EntrevistaRoute: typeof EntrevistaRoute
   EsqueciASenhaRoute: typeof EsqueciASenhaRoute
   PainelRoute: typeof PainelRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
+  ResultadoRoute: typeof ResultadoRoute
   VerificarEmailRoute: typeof VerificarEmailRoute
 }
 
@@ -122,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/entrar'
       fullPath: '/entrar'
       preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrevista': {
+      id: '/entrevista'
+      path: '/entrevista'
+      fullPath: '/entrevista'
+      preLoaderRoute: typeof EntrevistaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/esqueci-a-senha': {
@@ -145,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RedefinirSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/resultado': {
+      id: '/resultado'
+      path: '/resultado'
+      fullPath: '/resultado'
+      preLoaderRoute: typeof ResultadoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/verificar-email': {
       id: '/verificar-email'
       path: '/verificar-email'
@@ -158,9 +198,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EntrarRoute: EntrarRoute,
+  EntrevistaRoute: EntrevistaRoute,
   EsqueciASenhaRoute: EsqueciASenhaRoute,
   PainelRoute: PainelRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
+  ResultadoRoute: ResultadoRoute,
   VerificarEmailRoute: VerificarEmailRoute,
 }
 export const routeTree = rootRouteImport

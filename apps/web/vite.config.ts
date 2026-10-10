@@ -22,7 +22,7 @@ function securityHeaders(): Record<string, string> {
 const { version } = JSON.parse(readFileSync(path.resolve(__dirname, "package.json"), "utf8")) as { version: string };
 
 export default defineConfig({
-  plugins: [TanStackRouterVite(), react()],
+  plugins: [TanStackRouterVite({ autoCodeSplitting: true }), react()],
   preview: { headers: securityHeaders() },
   define: {
     __APP_VERSION__: JSON.stringify(version),

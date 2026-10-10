@@ -28,6 +28,7 @@ async function mockApi(page: Page, opts: { login?: Mock; register?: Mock } = {})
       const res = opts.register ?? { status: 202, body: { message: "Enviamos um e-mail para confirmar o cadastro." } };
       return json(res.status, res.body);
     }
+    if (path === "/profile") return json(200, { profile: {} }); // quem já fez a entrevista vê o painel
     if (path === "/auth/logout") {
       signedIn = false;
       return route.fulfill({ status: 204 });

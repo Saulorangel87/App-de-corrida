@@ -35,6 +35,18 @@ Página "Telas", à direita do login. **Aprovadas pelo dono em 2026-10-10 e impl
 
 Pendências do arquivo do Figma: **encerradas por decisão do dono** (o Figma serviu de norte; não será mais editado). O código já está sem o cartão "4,8 ★", sem "Pro" e sem números inventados (painel visual mostra só "5k → 42k"). Os cinco estados com ícone (e-mail enviado, link inválido, senha alterada, e-mail confirmado, falha de confirmação) foram conferidos em captura do código, em desktop e mobile.
 
+## Telas já implementadas (`apps/web/src/routes/`)
+| Rota | O que faz | Testes |
+|---|---|---|
+| `/entrar`, `/esqueci-a-senha`, `/redefinir-senha`, `/verificar-email` | acesso e recuperação de conta | `e2e/acesso.spec.ts`, `e2e/recuperar-conta.spec.ts` |
+| `/entrevista` | 8 etapas, salva cada uma (`PUT /interview/:step`), retoma de onde parou, envia (`POST /interview/submit`); triagem PAR-Q+ com o texto oficial inteiro; menor de 18 mostra aviso e exclusão da conta | `e2e/entrevista.spec.ts` |
+| `/resultado` | nível e explicação, triagem (texto oficial do PAR-Q+ conforme o estado), autodeclaração de avaliação (R-TRI-05), plano atribuído | `e2e/entrevista.spec.ts` |
+| `/painel` | esqueleto; sem perfil (404) leva à entrevista | `e2e/acesso.spec.ts` |
+
+Padrões para as próximas telas: moldura `FlowLayout` (cabeçalho com idioma e sair); campos de escolha em `components/choice.tsx`; formulário por etapa com `stepResolver` (valida com o esquema compartilhado e mapeia o erro para o campo; o texto vem do i18n); `useRequireUser()` redireciona sem sessão; nada de `style=""` inline (a CSP bloqueia).
+
+Pendências conhecidas desta parte: `/privacidade` e `/termos` ainda não existem; o texto do PAR-Q+ aparece só em português (é a tradução oficial; no app em inglês há um aviso); o formulário de "mudança de saúde" (R-TRI-11) e o refazer a triagem expirada entram com o perfil/configurações.
+
 ## Contrato da API (prefixo `/api/v1`, tudo com sessão; erros `{error:{code,message,details?}}`)
 | Rota | Uso |
 |---|---|

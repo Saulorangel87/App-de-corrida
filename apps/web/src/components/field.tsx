@@ -8,15 +8,19 @@ type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   error?: string;
   /** Conteúdo à direita do rótulo (ex.: "Esqueci minha senha"). */
   aside?: ReactNode;
+  /** Ajuda curta sob o rótulo (faixa de valores, unidade). */
+  hint?: string;
 };
 
 /** Campo de texto com rótulo ligado ao input e erro anunciado por leitor de tela. */
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
-  { label, error, aside, className, ...rest },
+  { label, error, aside, hint, className, ...rest },
   ref,
 ) {
   const id = useId();
   const errorId = `${id}-erro`;
+  const hintId = `${id}-ajuda`;
+  const describedBy = [hint ? hintId : null, error ? errorId : null].filter(Boolean).join(" ") || undefined;
   return (
     <div className="space-y-1">
       <div className="flex justify-between items-center">
@@ -25,11 +29,16 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
         </label>
         {aside}
       </div>
+      {hint && (
+        <p id={hintId} className="text-xs text-gray-500">
+          {hint}
+        </p>
+      )}
       <input
         ref={ref}
         id={id}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : undefined}
+        aria-describedby={describedBy}
         className={`${input} ${error ? "border-red-500" : "border-gray-300"} ${className ?? ""}`}
         {...rest}
       />

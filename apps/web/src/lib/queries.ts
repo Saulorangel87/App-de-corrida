@@ -1,4 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { ApiError, fetchApi } from "./api";
 
 export type AuthUser = { id: string; name: string; email: string; language: "pt-BR" | "en" };
@@ -21,4 +23,29 @@ export function useAuth() {
     retry: false,
     staleTime: 60_000,
   });
+}
+
+/** Sai da conta: encerra a sessão no servidor, limpa o cache do atleta e volta ao login. */
+export function useLogout() {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: () => fetchApi("/auth/logout", { method: "POST" }),
+    onSettled: () => {
+      queryClient.clear();
+      queryClient.setQueryData(AUTH_KEY, null);
+      void navigate({ to: "/entrar" });
+    },
+  });
+}
+
+/** Garante sessão: sem usuário, vai para o login. Devolve o usuário (ou `undefined` enquanto carrega). */
+export function useRequireUser() {
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const missing = !auth.isLoading && !auth.data;
+  useEffect(() => {
+    if (missing) void navigate({ to: "/entrar" });
+  }, [missing, navigate]);
+  return { user: auth.data ?? undefined, loading: auth.isLoading || missing };
 }
