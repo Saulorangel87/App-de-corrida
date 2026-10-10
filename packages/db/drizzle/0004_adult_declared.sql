@@ -1,0 +1,1 @@
+ALTER TABLE "consents" ADD COLUMN "adult_declared" boolean DEFAULT false NOT NULL;

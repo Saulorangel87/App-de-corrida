@@ -22,6 +22,8 @@ export const registerSchema = z.object({
   // Aceites separados e explícitos (LGPD): precisam ser true.
   acceptTerms: z.literal(true),
   acceptHealthData: z.literal(true),
+  // Idade mínima de 18 anos (AGENTS.md); conferida de novo na entrevista.
+  confirmAdult: z.literal(true),
 });
 
 export const loginSchema = z.object({
@@ -33,6 +35,9 @@ export const loginSchema = z.object({
 export const emailOnlySchema = z.object({ email: emailSchema });
 
 export const tokenSchema = z.object({ token: z.string().min(20).max(100) });
+
+/** Exclusão da conta: pede a senha atual (LGPD, seção 10.1). */
+export const deleteAccountSchema = z.object({ password: z.string().min(1).max(128) });
 
 export const resetPasswordSchema = z.object({
   token: z.string().min(20).max(100),

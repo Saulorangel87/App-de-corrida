@@ -100,6 +100,7 @@ export async function signUpAndLogin(t: TestApp, email = uniqueEmail(), remember
     password: PASSWORD,
     acceptTerms: true,
     acceptHealthData: true,
+    confirmAdult: true,
   });
   if (reg.status !== 202) throw new Error(`cadastro falhou: ${reg.status}`);
   await t.flush();

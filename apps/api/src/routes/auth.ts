@@ -1,6 +1,13 @@
 import { Hono, type MiddlewareHandler } from "hono";
 import { z } from "zod";
-import { emailOnlySchema, loginSchema, registerSchema, resetPasswordSchema, tokenSchema } from "@passo/shared";
+import {
+  deleteAccountSchema,
+  emailOnlySchema,
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
+  tokenSchema,
+} from "@passo/shared";
 import type { rateLimitConfig } from "../config";
 import { errors } from "../lib/errors";
 import { passwordProblem } from "../lib/password";
@@ -78,6 +85,13 @@ export function authRoutes(opts: {
   });
 
   r.get("/me", session, (c) => c.json({ user: toPublicUser(c.var.auth.user) }));
+
+  // Exclusão da conta (também oferecida a quem a entrevista barrar por idade).
+  r.delete("/account", loginLimit, session, validate("json", deleteAccountSchema), async (c) => {
+    await auth.deleteAccount(c.var.auth.user, c.req.valid("json").password);
+    cookie.clear(c);
+    return c.body(null, 204);
+  });
 
   r.get("/sessions", session, async (c) => {
     const current = c.var.auth.session.id;

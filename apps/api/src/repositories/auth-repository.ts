@@ -33,7 +33,9 @@ export function authRepository(db: Database) {
         if (!user) return null;
         // consents tem RLS: define o dono para esta transação.
         await tx.execute(sql`select set_config('app.user_id', ${user.id}, true)`);
-        await tx.insert(consents).values({ userId: user.id, termsVersion: input.termsVersion, healthDataAccepted: true });
+        await tx
+          .insert(consents)
+          .values({ userId: user.id, termsVersion: input.termsVersion, healthDataAccepted: true, adultDeclared: true });
         return user;
       });
     },
@@ -119,6 +121,9 @@ export function authRepository(db: Database) {
       db.update(sessions).set({ lastSeenAt: now }).where(eq(sessions.id, sessionId)),
 
     deleteSessionByTokenHash: (tokenHash: string) => db.delete(sessions).where(eq(sessions.tokenHash, tokenHash)),
+
+    /** Exclusão real: o cascade das FKs apaga todos os dados do atleta. */
+    deleteUser: (userId: string) => db.delete(users).where(eq(users.id, userId)),
 
     deleteSessionById: (sessionId: string) => db.delete(sessions).where(eq(sessions.id, sessionId)),
 

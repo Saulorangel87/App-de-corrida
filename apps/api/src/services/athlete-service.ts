@@ -58,7 +58,9 @@ export function ageRange(birthYear: number, birthMonth: number, on: string) {
 const incomplete = (missing: string[]) =>
   new AppError(400, "INTERVIEW_INCOMPLETE", "Faltam etapas da entrevista.", missing.map((s) => ({ path: s, code: "missing" })));
 
-const underage = () => new AppError(400, "UNDERAGE", "O App de corrida é só para maiores de 18 anos.");
+// details.canDeleteAccount: o front oferece excluir a conta (DELETE /auth/account).
+const underage = () =>
+  new AppError(400, "UNDERAGE", "O App de corrida é só para maiores de 18 anos.", { canDeleteAccount: true });
 
 /** Entradas guardadas no perfil para refazer a escolha do plano depois (ex.: após a avaliação). */
 type StoredInputs = {

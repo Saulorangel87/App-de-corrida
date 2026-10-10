@@ -106,7 +106,9 @@ describe("entrevista", () => {
     const now = new Date();
     const res = await t.request("PUT", "/interview/basicos", { ...interview().basicos, birthYear: now.getUTCFullYear() - 18, birthMonth: now.getUTCMonth() + 1 }, a.cookie);
     expect(res.status).toBe(400);
-    expect((await res.json()).error.code).toBe("UNDERAGE");
+    const err = (await res.json()).error;
+    expect(err.code).toBe("UNDERAGE");
+    expect(err.details).toEqual({ canDeleteAccount: true });
   });
 
   it("SIM nas perguntas gerais exige o seguimento das 10 seções", async () => {

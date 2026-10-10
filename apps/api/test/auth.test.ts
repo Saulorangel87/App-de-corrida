@@ -16,6 +16,7 @@ const register = (email: string, extra: Record<string, unknown> = {}) =>
     password: PASSWORD,
     acceptTerms: true,
     acceptHealthData: true,
+    confirmAdult: true,
     ...extra,
   });
 
@@ -42,6 +43,16 @@ describe("cadastro", () => {
       from users u join consents c on c.user_id = u.id where u.email = ${email.toLowerCase()}`;
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ terms_version: "2026-10-10", health_data_accepted: true });
+  });
+
+  it("exige a declaração de 18 anos ou mais e a registra no consentimento", async () => {
+    const res = await register(uniqueEmail(), { confirmAdult: false });
+    expect(res.status).toBe(400);
+    const email = uniqueEmail();
+    await register(email);
+    await t.flush();
+    const [row] = await admin`select c.adult_declared from consents c join users u on u.id = c.user_id where u.email = ${email}`;
+    expect(row!.adult_declared).toBe(true);
   });
 
   it("exige os dois aceites", async () => {

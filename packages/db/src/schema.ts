@@ -103,6 +103,7 @@ export const consents = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     termsVersion: varchar("terms_version", { length: 50 }).notNull(),
     healthDataAccepted: boolean("health_data_accepted").notNull(),
+    adultDeclared: boolean("adult_declared").default(false).notNull(), // "tenho 18 anos ou mais"
     acceptedAt: ts("accepted_at").defaultNow().notNull(),
   },
   (t) => [index("consents_user_id_idx").on(t.userId)],

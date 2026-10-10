@@ -236,6 +236,16 @@ export function authService(d: AuthDeps) {
       );
     },
 
+    /** Exclui a conta e todos os dados, depois de confirmar a senha (LGPD, seção 10.1). */
+    async deleteAccount(user: User, password: string) {
+      if (!(await verifyPassword(user.passwordHash, password))) {
+        logger.warn("account_delete_failed", { userId: user.id });
+        throw errors.invalidCredentials();
+      }
+      await repo.deleteUser(user.id);
+      logger.info("account_deleted", { userId: user.id });
+    },
+
     listSessions: (userId: string) => repo.listSessions(userId),
 
     async deleteSession(userId: string, sessionId: string) {
