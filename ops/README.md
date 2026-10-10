@@ -37,11 +37,11 @@ MIGRATION_DATABASE_URL=postgres://passo_migrator:...@host:5432/passo pnpm --filt
 ## Backup
 
 - `backup.sh`: `pg_dump -Fc` enviado direto para o remote `crypt` do rclone (Oracle Object Storage); conteúdo e nomes criptografados antes de sair da VPS.
-- Retenção de 30 dias por regra de ciclo de vida no bucket `cadencia-backups` (prefixo `corrida-run/`, apagar após 30 dias), configurada no console da Oracle. A VPS não tem permissão de apagar objetos, de propósito.
+- Retenção de 30 dias por regra de ciclo de vida no bucket `cadencia-backups` (prefixo `corrida-run/`, apagar após 30 dias), configurada no console da Oracle (regra `corrida-run-30-dias`, ativa desde 2026-10-10; o bucket também tem `apagar-60-dias` sem filtro, do Cadência, e vale a que vence primeiro). Controle de versão do bucket: desativado. A VPS não tem permissão de apagar objetos, de propósito.
 - Timer: copie `systemd/passo-backup.{service,timer}` para `/etc/systemd/system/` e rode `sudo systemctl enable --now passo-backup.timer`.
 - `restore-test.sh`: restaura o backup mais recente num container descartável sem rede. Rodar ao menos 1x por mês e anotar a data aqui.
 - **Guarde a senha do remote crypt fora da VPS** (gerenciador de senhas): sem ela, os backups não abrem.
 
 Último teste de restauração: 2026-10-10, OK (18 tabelas, 9 com RLS, 11 treinos).
 
-Chaves do crypt: `~/apps/app-de-corrida/.backup-crypt-keys.txt` (600). Copie para o gerenciador de senhas e apague o arquivo da VPS.
+Chaves do crypt (`password` e `password2` do remote `corrida-run`): guardadas no gerenciador de senhas do dono, fora da VPS.

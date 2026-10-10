@@ -52,6 +52,7 @@ Fase atual: correção das Fases 1 e 2 (feitas por outro agente) concluída em 2
 - Auth (`/api/v1/auth`): cadastro, verificação, login/logout, bloqueio, esqueci/redefinir senha, sessões ativas; e-mails PT/EN (ADR 0001). 47 testes de integração com Postgres real.
 - CI (lint, typecheck, testes, build, `pnpm audit`, gitleaks), Dependabot, pre-commit com gitleaks.
 - VPS: banco recriado com as migrações novas (rede `internal`, papéis restritos, seed aplicado); backup diário 04:30 UTC via `passo-backup.timer` para o remote `corrida-run:`; restauração testada em 2026-10-10.
-- Pendente (dono): regra de ciclo de vida de 30 dias no bucket `cadencia-backups` (prefixo `corrida-run/`); guardar as chaves do crypt fora da VPS; revisar os textos `razao` do seed.
+- Retenção de 30 dias ativa no bucket; chaves do crypt guardadas pelo dono fora da VPS.
+- Pendente (dono): revisar os textos `razao` do seed.
 - Pendente (deploy): Dockerfile da API e rota no túnel.
 - Próxima: Fase 3 — entrevista (onboarding) e perfil do atleta.
