@@ -96,5 +96,5 @@ Observação: o HSTS sai com 6 meses (`max-age=15552000`) porque a zona tem HSTS
 
 - Teste de invasão dinâmico (varredura com ZAP ou Burp, fuzzing de rotas). Recomendado depois do deploy, contra o ambiente real.
 - Revisão da configuração da Cloudflare (regras, WAF, acesso ao túnel) e da VPS (firewall, SSH, atualizações do sistema): não estão no repositório.
-- Revisão por especialista em segurança ou advogado (os textos legais seguem pendentes de leitura do dono, `docs/textos-legais.md`).
+- Revisão por especialista em segurança.
 - Análise de acessibilidade com ferramenta (axe) e de desempenho: ficam para depois do deploy.

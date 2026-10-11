@@ -9,7 +9,7 @@
 
 **App no ar:** <https://letsgorun.devsaulo.com.br> · **Português e inglês**
 
-> **Projeto pessoal, gratuito e sem fins lucrativos.** Não é dispositivo médico e não substitui a orientação de um profissional de saúde ou de educação física. O app não faz diagnóstico. Os textos de Privacidade e de Termos de Uso foram escritos e revisados pelo autor, sem revisão de um advogado.
+> **Projeto pessoal, gratuito e sem fins lucrativos.** Não é dispositivo médico e não substitui a orientação de um profissional de saúde ou de educação física. O app não faz diagnóstico.
 
 ---
 

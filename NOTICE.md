@@ -26,7 +26,7 @@ Termos de Uso, Política de Privacidade e textos do atleta (`apps/web/src/lib/le
 
 ### 4. Imagens e ícones
 
-A foto da tela de login (`apps/web/src/assets/login/`, `docs/design/foto-atleta-login.png`; foto do autor do projeto), os ícones e as imagens de `docs/design/` e `apps/web/public/`: não cobertas pela licença MIT.
+A imagem da tela de login (`apps/web/src/assets/login/`, `docs/design/foto-atleta-login.png`; gerada por inteligência artificial), os ícones e as imagens de `docs/design/` e `apps/web/public/`: não cobertas pela licença MIT.
 
 ### 5. Nome e marca
 

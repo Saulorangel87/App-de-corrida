@@ -87,7 +87,7 @@ Aprovadas pelo dono em 2026-10-10; o texto da especificação ainda não foi alt
 ## E. Tarefas e verificações (não são decisões nem perguntas)
 
 - Fase 3: comunicar o uso do PAR-Q+ à PAR-Q+ Collaboration por e-mail (recomendado, não bloqueia); copiar o texto do PDF oficial (não da extração da pesquisa); testar o link do ePARmed-X+ em português.
-- Antes do lançamento público: revisão jurídica dos termos de uso (autodeclaração) e revisão por fisioterapeuta, médico do esporte ou treinador das regras [P] de dor, de progressão e de recuperação.
+- Antes do lançamento público: revisão por fisioterapeuta, médico do esporte ou treinador das regras [P] de dor, de progressão e de recuperação.
 - Recalibrar os valores [P] com dados reais dos primeiros usuários, em especial os cortes femininos de desempenho (fator 1,1), o teto semanal de 110% e a curva de sono.
 
 ## F. Rastreio das 17 divergências e das seções B e C do relatório de consistência

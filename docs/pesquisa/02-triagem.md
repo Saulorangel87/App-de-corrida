@@ -156,7 +156,7 @@ Convenção: o **questionário PAR-Q+ é implementado sem alteração** (R-TRI-0
 - **P4. Teto de intensidade após avaliação.** Decisão [P]: manter `leve_moderada` (somente Z1) durante toda a validade de 6 meses; destrava com nova declaração do profissional ou ao refazer o PAR-Q+. Sem evidência suficiente para prazo menor.
 - **P5. Dados livres.** Decisão [P]: não guardar as listas de condições e medicamentos (minimização de dados).
 - **P6. Diretriz brasileira.** Decisão [P]: a orientação fica só informativa.
-- **P7. Autodeclaração.** Decisão do dono (6): autodeclaração com data e fonte, sem anexo (menos dados sensíveis). Recomenda-se revisão jurídica dos termos de uso antes do lançamento (tarefa, não bloqueia).
+- **P7. Autodeclaração.** Decisão do dono (6): autodeclaração com data e fonte, sem anexo (menos dados sensíveis).
 - **P8. Texto de emergência.** Decisão do dono (13): a mensagem de urgência usa SAMU 192 (Brasil).
 - **P9. ePARmed-X+ em português.** Não consegui confirmar. Tarefa da Fase 3 (verificação, não decisão): testar manualmente o link oficial antes de depender dele na tela de R-TRI-05; se não houver português, a tela orienta procurar profissional de exercício.
 

@@ -6,7 +6,7 @@
 
 **Base:** os textos do Cadência (`App de treino/frontend/lib/legal.ts`), adaptados ao que o Let's Go Run faz de verdade. Cada frase foi conferida no código ou na infraestrutura (tabela da seção 2). O que o Cadência tinha e este app **não** faz foi removido (importar arquivos de GPS, explicação por IA, planilha, FTP e potência, ciclismo).
 
-> **Aviso honesto:** isto descreve o que o app faz, no formato do Cadência. Não é parecer jurídico. Para um app com dados de saúde e uso público, vale uma leitura rápida de um advogado antes de abrir para outras pessoas.
+> Isto descreve o que o app faz, no formato do Cadência.
 
 ---
 
