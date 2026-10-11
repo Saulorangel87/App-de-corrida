@@ -44,7 +44,9 @@ export function ColumnChart({
   const focusable = columns.length <= FOCUSABLE_LIMIT;
 
   return (
-    <div>
+    // mt-auto: dentro de um card em coluna, o gráfico desce para o fim e as linhas de base de
+    // cards vizinhos ficam alinhadas, mesmo com textos de apoio de alturas diferentes.
+    <div className="mt-auto">
       <p aria-live="polite" className="mb-3 min-h-[1.5rem] text-sm font-semibold text-[#0F172A]">
         {columns[active]?.readout}
       </p>
@@ -63,7 +65,7 @@ export function ColumnChart({
               onFocus={() => setPicked(i)}
               onBlur={() => setPicked(null)}
               onClick={() => setPicked(i)}
-              className={`flex h-40 min-w-0 flex-1 items-end rounded-t-md outline-none focus-visible:ring-2 focus-visible:ring-[#FF5A1F] ${gap} ${
+              className={`flex h-40 min-w-0 max-w-[72px] flex-1 items-end rounded-t-md outline-none focus-visible:ring-2 focus-visible:ring-[#FF5A1F] ${gap} ${
                 i === active ? "bg-gray-100" : ""
               }`}
             >
@@ -83,7 +85,7 @@ export function ColumnChart({
       </div>
       <div className="flex" aria-hidden="true">
         {columns.map((c, i) => (
-          <div key={c.key} className="relative h-5 min-w-0 flex-1">
+          <div key={c.key} className="relative h-5 min-w-0 max-w-[72px] flex-1">
             {i % labelEvery === 0 && (
               <span className="absolute left-1/2 top-1 -translate-x-1/2 whitespace-nowrap text-[10px] tabular-nums text-gray-500">
                 {c.label}

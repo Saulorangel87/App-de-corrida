@@ -92,3 +92,22 @@ test("celular: o histórico não rola para o lado", async ({ browser }) => {
   expect(overflow).toBe(false);
   await ctx.close();
 });
+
+test("gráficos lado a lado ficam com a linha de base alinhada, mesmo com uma semana só", async ({ page }) => {
+  await page.setViewportSize({ width: 1200, height: 900 });
+  await mockApi(page, (days) => ({
+    from: day(-(days - 1)),
+    to: day(0),
+    sleep: [{ date: day(0), hours: 7, quality: 4 }],
+    pain: [],
+    weekly: [{ weekStart: day(-1), plannedSessions: 1, completedSessions: 1, adherencePct: 100, minutes: 30, srpeLoad: 90 }],
+  }));
+  await page.goto("/historico");
+  const groups = page.getByRole("group").filter({ has: page.locator("button[aria-label]") });
+  await expect(groups).toHaveCount(3);
+  const boxes = await Promise.all([0, 1].map((i) => groups.nth(i).boundingBox()));
+  expect(Math.abs((boxes[0]!.y + boxes[0]!.height) - (boxes[1]!.y + boxes[1]!.height))).toBeLessThan(1);
+  // uma coluna não vira uma faixa que ocupa o gráfico todo
+  const column = page.getByRole("button", { name: /1 de 1 treinos/ });
+  expect((await column.boundingBox())!.width).toBeLessThanOrEqual(73);
+});

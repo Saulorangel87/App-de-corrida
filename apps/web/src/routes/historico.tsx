@@ -18,9 +18,9 @@ const DEFAULT_WEEKS = 8;
 
 function Card({ title, hint, children }: { title: string; hint?: string; children: ReactNode }) {
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-5">
+    <section className="flex flex-col rounded-2xl border border-gray-200 bg-white p-5">
       <h2 className="text-lg font-bold tracking-tight text-[#0F172A]">{title}</h2>
-      {hint && <p className="mb-4 mt-1 text-sm text-gray-500">{hint}</p>}
+      {hint ? <p className="mb-4 mt-1 text-sm text-gray-500">{hint}</p> : <div className="mb-3" />}
       {children}
     </section>
   );
