@@ -30,6 +30,7 @@ export async function withAthlete<T>(
 }
 
 export * from "./schema";
-export { athleteStrings, buildAthleteText, TECHNICAL_MARKERS } from "./seed-data/athlete-text";
+export { athleteStrings, buildAthleteText, HOW_BY_SLUG, TECHNICAL_MARKERS } from "./seed-data/athlete-text";
+export { ladderHow, type LadderSession } from "./seed-data/ladder-text";
 export type { AthleteText } from "./seed-data/athlete-text";
 export { translateAthleteText } from "./seed-data/athlete-text.en";

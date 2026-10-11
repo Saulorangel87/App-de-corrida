@@ -4,6 +4,46 @@
 import type { AthleteText } from "./athlete-text";
 
 export const EN_BY_PT: Record<string, string> = {
+  "Caminhe 5 minutos em passo rápido, para o corpo esquentar.":
+    "Walk briskly for 5 minutes to warm up.",
+  "Caminhe 5 minutos devagar, para o corpo desacelerar.":
+    "Walk slowly for 5 minutes to wind down.",
+  "Caminhe rápido por 5 minutos (quem está começando) ou comece correndo bem devagar.":
+    "Walk briskly for 5 minutes (if you are just starting) or begin running very slowly.",
+  "Corra sem parar, em ritmo leve: você deve conseguir conversar.":
+    "Run without stopping, at an easy pace: you should be able to hold a conversation.",
+  "Termine com uma volta à calma. Quem está começando: 5 minutos de caminhada rápida.":
+    "Finish with a cool-down. If you are just starting: 5 minutes of brisk walking.",
+  "Faça sempre um aquecimento antes de correr.":
+    "Always warm up before you run.",
+  "Corra sem parar, em ritmo leve. É o treino mais longo da semana.":
+    "Run without stopping, at an easy pace. It is the longest workout of the week.",
+  "Termine sempre com uma volta à calma.":
+    "Always finish with a cool-down.",
+  "Corra pouco e bem devagar, no ritmo mais leve (quem está começando pode só caminhar rápido).":
+    "Run a little and very slowly, at your easiest pace (if you are just starting, you can simply walk briskly).",
+  "10 minutos em ritmo leve.":
+    "10 minutes at an easy pace.",
+  "5 a 10 minutos em ritmo leve.":
+    "5 to 10 minutes at an easy pace.",
+  "10 a 15 minutos em ritmo leve.":
+    "10 to 15 minutes at an easy pace.",
+  "Alterne trechos de 1 a 3 minutos em ritmo moderado com 2 a 3 minutos leves para recuperar. Avançados podem chegar ao ritmo forte.":
+    "Alternate 1 to 3 minute segments at a moderate pace with 2 to 3 easy minutes to recover. Advanced runners can reach a hard pace.",
+  "10 a 15 minutos em ritmo leve, mais 2 a 4 acelerações curtas.":
+    "10 to 15 minutes at an easy pace, plus 2 to 4 short accelerations.",
+  "Repita tiros de 15 a 30 segundos em ritmo forte, com recuperação leve entre eles (do mesmo tempo do tiro, ou o dobro se precisar).":
+    "Repeat 15 to 30 second efforts at a hard pace, with easy recovery between them (the same length as the effort, or double if you need it).",
+  "Repita tiros de 3 a 4 minutos em ritmo forte, com 2 a 3 minutos de recuperação leve entre eles.":
+    "Repeat 3 to 4 minute efforts at a hard pace, with 2 to 3 minutes of easy recovery between them.",
+  "Corra em blocos no ritmo moderado mais forte, com 2 minutos de trote leve entre os blocos.":
+    "Run in blocks at the upper end of the moderate pace, with 2 minutes of easy jogging between blocks.",
+  "Repita subidas de 30 a 60 segundos numa subida moderada, mantendo a postura. Desça caminhando ou em trote leve até a base.":
+    "Repeat 30 to 60 second climbs on a moderate hill, keeping your posture. Walk or jog easily back down to the bottom.",
+  "Faça de 2 a 4 exercícios para as pernas e o tronco.":
+    "Do 2 to 4 exercises for the legs and core.",
+  "Faça exercícios para quadril, parte de trás da coxa, panturrilha, tornozelo, parte da frente da coxa e parte de cima das costas: cerca de 1 minuto em cada, sem alongar até doer.":
+    "Do exercises for the hips, hamstrings, calves, ankles, quadriceps and upper back: about 1 minute each, without stretching to the point of pain.",
   "N x (corrida / caminhada), minutos de corrida e de caminhada por repetição":
     "N x (run / walk), minutes of running and of walking per repetition",
   "Sessões por etapa":

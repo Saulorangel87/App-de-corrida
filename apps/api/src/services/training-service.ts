@@ -7,6 +7,7 @@ import {
   engineDecisions,
   healthScreenings,
   interviewResponses,
+  ladderHow,
   painReports,
   planTemplates,
   references as referencesTable,
@@ -173,6 +174,17 @@ const EMPTY_DETAIL: WorkoutDetail = {
   regression: [],
   evidence: { direct: [], initial: [], insufficient: [] },
 };
+
+/**
+ * Sessão da escada de caminhada e corrida: o "Como fazer" é montado com os números da própria sessão
+ * (etapa, minutos de corrida e de caminhada, repetições), em frases simples (textos aprovados em
+ * docs/textos-para-o-atleta.md, seção 6). Os números vêm do motor; nada é calculado aqui.
+ */
+function withLadderText(detail: WorkoutDetail, row: { ladder: unknown; slot: number }, lang: Lang): WorkoutDetail {
+  const l = row.ladder as { etapa: string; corridaMin: number; caminhadaMin: number; repeticoes: number; continua?: boolean } | null;
+  if (!l) return detail;
+  return { ...detail, how: ladderHow(lang, l, row.slot) };
+}
 
 export function workoutDetail(structure: unknown, level: string, lang: Lang = "pt-BR"): WorkoutDetail {
   const st = typeof structure === "object" && structure !== null ? (structure as Record<string, unknown>) : {};
@@ -875,7 +887,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           .orderBy(asc(referencesTable.citation));
         return {
           session: view(row, logs.get(row.id)),
-          detail: workoutDetail(catalog?.structure, profile?.level ?? "", lang),
+          detail: withLadderText(workoutDetail(catalog?.structure, profile?.level ?? "", lang), row, lang),
           catalogVersion: catalog?.version ?? null,
           references: refs,
         };

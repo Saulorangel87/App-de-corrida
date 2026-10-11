@@ -247,7 +247,9 @@ Você não precisa de mais que isso. Nada é aplicado antes da sua resposta.
 
 Depois da sua aprovação, a sequência é: bloco `atleta` no seed e na API, testes que bloqueiam código e marcador técnico no texto do atleta, mensagem do dia sem colchetes, ajuste dos rótulos do painel, e então a tradução para inglês.
 
-## 6. Proposta: "Como fazer" em linguagem simples (2026-10-11, aguardando aprovação do dono)
+## 6. "Como fazer" em linguagem simples (aprovado pelo dono em 2026-10-11)
+
+Ajuste de uma frase na implementação, para não deixar dúvida de quantas vezes repetir: "Repita {n} vezes." virou "Faça isso {n} vezes ao todo." Código: `HOW_BY_SLUG` em `packages/db/src/seed-data/athlete-text.ts` (treinos fixos) e `packages/db/src/seed-data/ladder-text.ts` (caminhada e corrida, por sessão); inglês em `athlete-text.en.ts` e no próprio `ladder-text.ts`.
 
 Motivo: o dono achou a explicação dos treinos confusa (exemplo: "N x (corrida / caminhada), minutos de corrida e de caminhada por repetição"). Regras: frases curtas, sem sigla (Z1, Z2, Z3 viram "ritmo leve", "moderado", "forte"), sem fonte ou regra dentro do "Como fazer" (isso fica em "Por que" e "Base científica"), e os números vêm do motor, nunca escritos à mão.
 

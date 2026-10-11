@@ -39,6 +39,7 @@ const FEATURES = {
   },
   api: {
     account: "Conta: exportar e excluir dados (LGPD)",
+    "athlete-text": "Como fazer em linguagem simples (textos do treino)",
     auth: "Cadastro, login, senha e bloqueio",
     interview: "Entrevista, perfil e triagem",
     "legal-version": "Versão dos termos legais",

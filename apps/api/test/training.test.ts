@@ -495,7 +495,8 @@ describe("detalhe do treino", () => {
     expect(res.body.session.ladder).toMatchObject({ etapa: "1", corridaMin: 1, caminhadaMin: 1, repeticoes: 10 });
     // a tabela das 13 etapas e as notas de auditoria da fonte não vão para o atleta
     const labels = res.body.detail.how.main.facts.map((f: Json) => f.label);
-    expect(labels).toContain("Etapas");
+    // o "Como fazer" mostra só a sessão e o ritmo; a explicação das etapas fica em "Por que" e nos limites
+    expect(labels).toEqual(["Onde você está", "Ritmo"]);
     expect(JSON.stringify(res.body)).not.toMatch(/ajusteP|etapas"|DEC-12/);
   });
 
@@ -816,5 +817,23 @@ describe("posicionamento na escada (R-PLN-21)", () => {
     expect(planA.id).not.toBe(planB.id);
     expect(planA.startTemplateWeek).toBe(11);
     expect(planB.startTemplateWeek).toBe(1);
+  });
+});
+
+describe("detalhe da sessão da escada: Como fazer com os números da sessão", () => {
+  it("do zero, etapa 1: frases simples em português e em inglês (Accept-Language)", async () => {
+    const a = await onboard(beginner());
+    const week = await get(a.cookie, `/plan/week/${MONDAY}`);
+    const first = runs(week.body.sessions).find((s) => s.ladder) as Json;
+    const pt = await get(a.cookie, `/workouts/${first.id}`);
+    expect(pt.status).toBe(200);
+    expect(pt.body.detail.how.warmup.text).toBe("Caminhe 5 minutos em passo rápido, para o corpo esquentar.");
+    expect(pt.body.detail.how.main.text).toBe("Corra 1 minuto e depois caminhe 1 minuto. Faça isso 10 vezes ao todo.");
+    expect(pt.body.detail.how.main.facts[0]).toEqual({ label: "Onde você está", value: "Sessão 1 de 3 da etapa 1." });
+    expect(JSON.stringify(pt.body.detail.how)).not.toMatch(/N x|Buist|10b/);
+
+    const res = await t.request("GET", `/workouts/${first.id}`, undefined, a.cookie, { "accept-language": "en" });
+    const en = (await res.json()) as Json;
+    expect(en.detail.how.main.text).toBe("Run for 1 minute and then walk for 1 minute. Do this 10 times in total.");
   });
 });

@@ -125,7 +125,7 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
 
         {day.data && (
           <Card title={t("workout.todayTitle")}>
-            <p lang="pt-BR" className="whitespace-pre-line text-[15px] leading-relaxed text-gray-700">
+            <p className="whitespace-pre-line text-[15px] leading-relaxed text-gray-700">
               {day.data.decision.message}
             </p>
             <DecisionSources sources={day.data.decision.sources ?? []} />
@@ -134,7 +134,7 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
 
         {detail.summary && (
           <Card title={t("workout.reasonTitle")}>
-            <p lang="pt-BR" className="text-[15px] leading-relaxed text-gray-700">
+            <p className="text-[15px] leading-relaxed text-gray-700">
               {detail.summary}
             </p>
           </Card>
@@ -167,7 +167,7 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
                 </div>
               ))}
               {intensity.notes.length > 0 && (
-                <ul lang="pt-BR" className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-gray-700">
+                <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-gray-700">
                   {intensity.notes.map((n) => (
                     <li key={n}>{n}</li>
                   ))}
@@ -176,7 +176,7 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
               {intensity.studies.length > 0 && (
                 <div>
                   <h3 className="text-xs font-bold text-gray-500">{t("workout.studiesTitle")}</h3>
-                  <ul lang="pt-BR" className="mt-1 list-disc space-y-1 pl-5 text-sm leading-relaxed text-gray-700">
+                  <ul className="mt-1 list-disc space-y-1 pl-5 text-sm leading-relaxed text-gray-700">
                     {intensity.studies.map((n) => (
                       <li key={n}>{n}</li>
                     ))}
@@ -201,7 +201,7 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
 
         {detail.limits.length > 0 && (
           <Card title={t("workout.limitsTitle")}>
-            <ul lang="pt-BR" className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-gray-700">
+            <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-gray-700">
               {detail.limits.map((l) => (
                 <li key={l}>{l}</li>
               ))}
@@ -234,7 +234,7 @@ function Facts({ facts }: { facts: Fact[] }) {
       {facts.map((f) => (
         <div key={`${f.label}-${f.value}`} className="py-2">
           <dt className="text-xs font-semibold text-gray-500">{f.label}</dt>
-          <dd lang="pt-BR" className="mt-0.5 text-sm leading-relaxed text-gray-800">
+          <dd className="mt-0.5 text-sm leading-relaxed text-gray-800">
             {f.value}
           </dd>
         </div>
@@ -252,7 +252,7 @@ function Step({ title, step }: { title: string; step: StepView | null }) {
         {step.minutes && <span className="ml-2 font-semibold text-gray-500">{step.minutes} min</span>}
       </h3>
       {step.text && (
-        <p lang="pt-BR" className="mt-1 text-sm leading-relaxed text-gray-700">
+        <p className="mt-1 text-sm leading-relaxed text-gray-700">
           {step.text}
         </p>
       )}
@@ -266,7 +266,7 @@ function Lines({ title, items }: { title: string; items: string[] }) {
   return (
     <div>
       <p className="text-xs font-semibold text-gray-500">{title}</p>
-      <ul lang="pt-BR" className="mt-1 space-y-1 text-gray-800">
+      <ul className="mt-1 space-y-1 text-gray-800">
         {items.map((i) => (
           <li key={i}>{i}</li>
         ))}
@@ -324,7 +324,7 @@ function List({ title, hint, items }: { title: string; hint?: string; items: str
     <div>
       <h3 className="text-sm font-bold text-[#0F172A]">{title}</h3>
       {hint && <p className="text-xs text-gray-500">{hint}</p>}
-      <ul lang="pt-BR" className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-gray-700">
+      <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-gray-700">
         {items.map((i) => (
           <li key={i}>{i}</li>
         ))}

@@ -389,7 +389,7 @@ function percent(s: string): string {
   return s;
 }
 
-function step(raw: unknown, plain: Plain, extra: Fact[] = []): AthleteStep | null {
+function stepOf(raw: unknown, plain: Plain, extra: Fact[] = []): AthleteStep | null {
   if (!isObj(raw)) return null;
   const description = str(raw.descricao);
   const minutes = minutesOf(raw.minutos);
@@ -398,7 +398,77 @@ function step(raw: unknown, plain: Plain, extra: Fact[] = []): AthleteStep | nul
   return { minutes, text, facts: extra };
 }
 
-export function buildAthleteText(structure: Record<string, unknown>, names: Map<string, string>): AthleteText {
+/**
+ * "Como fazer" em linguagem simples, por treino (docs/textos-para-o-atleta.md, seção 6, aprovada em
+ * 2026-10-11). Vale no lugar do texto técnico do catálogo; o tempo vai dentro da frase. Na caminhada e
+ * corrida o bloco principal é montado por sessão (`ladder-text.ts`), então aqui ele fica vazio.
+ */
+const say = (text: string): AthleteStep => ({ minutes: null, text, facts: [] });
+const WARM = "Faça sempre um aquecimento antes de correr.";
+const COOL = "Termine sempre com uma volta à calma.";
+export const HOW_BY_SLUG: Record<string, AthleteText["how"]> = {
+  "caminhada-corrida": {
+    warmup: say("Caminhe 5 minutos em passo rápido, para o corpo esquentar."),
+    main: null,
+    cooldown: say("Caminhe 5 minutos devagar, para o corpo desacelerar."),
+  },
+  "rodagem-leve": {
+    warmup: say("Caminhe rápido por 5 minutos (quem está começando) ou comece correndo bem devagar."),
+    main: say("Corra sem parar, em ritmo leve: você deve conseguir conversar."),
+    cooldown: say("Termine com uma volta à calma. Quem está começando: 5 minutos de caminhada rápida."),
+  },
+  longao: {
+    warmup: say(WARM),
+    main: say("Corra sem parar, em ritmo leve. É o treino mais longo da semana."),
+    cooldown: say(COOL),
+  },
+  regenerativo: {
+    warmup: say(WARM),
+    main: say("Corra pouco e bem devagar, no ritmo mais leve (quem está começando pode só caminhar rápido)."),
+    cooldown: say(COOL),
+  },
+  fartlek: {
+    warmup: say("10 minutos em ritmo leve."),
+    main: say(
+      "Alterne trechos de 1 a 3 minutos em ritmo moderado com 2 a 3 minutos leves para recuperar. Avançados podem chegar ao ritmo forte.",
+    ),
+    cooldown: say("5 a 10 minutos em ritmo leve."),
+  },
+  "intervalado-curto": {
+    warmup: say("10 a 15 minutos em ritmo leve, mais 2 a 4 acelerações curtas."),
+    main: say(
+      "Repita tiros de 15 a 30 segundos em ritmo forte, com recuperação leve entre eles (do mesmo tempo do tiro, ou o dobro se precisar).",
+    ),
+    cooldown: say("10 minutos em ritmo leve."),
+  },
+  "intervalado-longo": {
+    warmup: say("10 a 15 minutos em ritmo leve."),
+    main: say("Repita tiros de 3 a 4 minutos em ritmo forte, com 2 a 3 minutos de recuperação leve entre eles."),
+    cooldown: say("10 minutos em ritmo leve."),
+  },
+  "limiar-continuo": {
+    warmup: say("10 a 15 minutos em ritmo leve."),
+    main: say("Corra em blocos no ritmo moderado mais forte, com 2 minutos de trote leve entre os blocos."),
+    cooldown: say("10 minutos em ritmo leve."),
+  },
+  subidas: {
+    warmup: say("10 a 15 minutos em ritmo leve."),
+    main: say(
+      "Repita subidas de 30 a 60 segundos numa subida moderada, mantendo a postura. Desça caminhando ou em trote leve até a base.",
+    ),
+    cooldown: say("10 minutos em ritmo leve."),
+  },
+  "forca-corredor": { warmup: null, main: say("Faça de 2 a 4 exercícios para as pernas e o tronco."), cooldown: null },
+  mobilidade: {
+    warmup: null,
+    main: say(
+      "Faça exercícios para quadril, parte de trás da coxa, panturrilha, tornozelo, parte da frente da coxa e parte de cima das costas: cerca de 1 minuto em cada, sem alongar até doer.",
+    ),
+    cooldown: null,
+  },
+};
+
+export function buildAthleteText(structure: Record<string, unknown>, names: Map<string, string>, slug?: string): AthleteText {
   const plain = makePlain(names);
   const st = structure;
 
@@ -488,10 +558,10 @@ export function buildAthleteText(structure: Record<string, unknown>, names: Map<
   return {
     summary: str(st.razao) ? plain(str(st.razao)!) : null,
     intensity,
-    how: {
-      warmup: step(st.aquecimento, plain),
+    how: (slug && HOW_BY_SLUG[slug]) || {
+      warmup: stepOf(st.aquecimento, plain),
       main: mainStep,
-      cooldown: step(st.desaquecimento, plain),
+      cooldown: stepOf(st.desaquecimento, plain),
     },
     levels,
     frequency,

@@ -67,7 +67,7 @@ export async function runSeed(db: Database): Promise<SeedCounts> {
     const workoutIdBySlug = new Map<string, string>();
     const workoutNames = new Map(workoutSeeds.map((w) => [w.slug, w.namePt]));
     for (const w of workoutSeeds) {
-      const atleta = buildAthleteText(w.structure as Record<string, unknown>, workoutNames);
+      const atleta = buildAthleteText(w.structure as Record<string, unknown>, workoutNames, w.slug);
       const values = {
         slug: w.slug,
         namePt: w.namePt,
