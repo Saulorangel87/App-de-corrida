@@ -91,6 +91,9 @@ function LogForm({ session }: { session: SessionView }) {
   const [heat, setHeat] = useState<Record<string, boolean>>({});
   const [errors, setErrors] = useState<{ completed?: string; duration?: string; srpe?: string; distance?: string; pain?: string }>({});
   const [result, setResult] = useState<Result | null>(null);
+  /** Apaga o erro de um campo assim que a pessoa mexe nele. */
+  const clear = (...keys: (keyof typeof errors)[]) =>
+    setErrors((prev) => (keys.some((k) => prev[k]) ? { ...prev, ...Object.fromEntries(keys.map((k) => [k, undefined])) } : prev));
 
   const name = session.name ? (i18n.language === "en" ? session.name.en : session.name["pt-BR"]) : session.slug;
 
@@ -100,11 +103,14 @@ function LogForm({ session }: { session: SessionView }) {
   };
 
   const toggleRegion = (region: string) => {
+    clear("pain");
     setRegions((prev) => (prev.includes(region) ? prev.filter((r) => r !== region) : [...prev, region]));
     setPain((prev) => (prev[region] ? prev : { ...prev, [region]: { flags: {} } }));
   };
-  const patchPain = (region: string, patch: Partial<PainDetail>) =>
+  const patchPain = (region: string, patch: Partial<PainDetail>) => {
+    clear("pain");
     setPain((prev) => ({ ...prev, [region]: { ...(prev[region] ?? { flags: {} }), ...patch } }));
+  };
   const setFlag = (region: string, flag: string, on: boolean) =>
     setPain((prev) => ({
       ...prev,
@@ -196,7 +202,10 @@ function LogForm({ session }: { session: SessionView }) {
             name="completed"
             legend={t("log.didIt")}
             value={completed}
-            onChange={setCompleted}
+            onChange={(v) => {
+              setCompleted(v);
+              clear("completed");
+            }}
             error={errors.completed}
             options={[
               { value: true, label: t("interview.yes") },
@@ -209,26 +218,35 @@ function LogForm({ session }: { session: SessionView }) {
               <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
                 <TextField
                   label={t("log.duration")}
-                  hint={t("log.durationHint")}
                   inputMode="numeric"
                   value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
+                  onChange={(e) => {
+                    setDuration(e.target.value);
+                    clear("duration");
+                  }}
                   error={errors.duration}
                 />
                 <TextField
                   label={t("log.distance")}
                   inputMode="decimal"
                   value={distance}
-                  onChange={(e) => setDistance(e.target.value)}
+                  onChange={(e) => {
+                    setDistance(e.target.value);
+                    clear("distance");
+                  }}
                   error={errors.distance}
                 />
+                <p className="text-xs text-gray-500 min-[480px]:col-span-2">{t("log.durationHint")}</p>
               </div>
               <ChoiceGroup
                 name="srpe"
                 legend={t("log.srpe")}
                 hint={t("log.srpeScale")}
                 value={srpe}
-                onChange={setSrpe}
+                onChange={(v) => {
+                  setSrpe(v);
+                  clear("srpe");
+                }}
                 error={errors.srpe}
                 columns="grid-cols-5 min-[480px]:grid-cols-10"
                 options={Array.from({ length: 10 }, (_, i) => ({ value: i + 1, label: String(i + 1) }))}

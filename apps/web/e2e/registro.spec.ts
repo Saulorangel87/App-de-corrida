@@ -60,6 +60,9 @@ test("pós-treino sem dor: registra duração e esforço e mostra o que muda ama
   expect(putBody(calls)).toBeUndefined();
 
   await page.getByLabel("Duração real (minutos)").fill("42");
+  await expect(page.getByText("Responda este campo.")).toHaveCount(1);
+  const top = async (label: string) => (await page.getByLabel(label).boundingBox())!.y;
+  expect(await top("Duração real (minutos)")).toBe(await top("Distância (km) — opcional"));
   await page.getByLabel("Distância (km) — opcional").fill("6,5");
   await page.getByRole("group", { name: "Como foi o esforço do treino todo?" }).getByText("4", { exact: true }).click();
   await page.getByRole("button", { name: "Salvar registro" }).click();
@@ -67,6 +70,27 @@ test("pós-treino sem dor: registra duração e esforço e mostra o que muda ama
   await expect(page.getByRole("heading", { name: "Registro salvo" })).toBeVisible();
   await expect(page.getByText("Amanhã: rodagem leve. [R-DIA-01]")).toBeVisible();
   expect(putBody(calls)).toEqual({ completed: true, durationMinutes: 42, distanceKm: 6.5, srpe: 4, pain: [] });
+});
+
+test("erro some quando a pessoa responde, e duração e distância ficam alinhadas", async ({ page }) => {
+  const calls = await mockApi(page);
+  await page.goto("/registro/s1");
+  await page.getByRole("button", { name: "Salvar registro" }).click();
+  await expect(page.getByText("Responda este campo.")).toHaveCount(1);
+
+  await page.getByRole("group", { name: "Você fez este treino?" }).getByText("Sim", { exact: true }).click();
+  await expect(page.getByText("Responda este campo.")).toHaveCount(0);
+
+  const top = async (label: string) => (await page.getByLabel(label).boundingBox())!.y;
+  expect(await top("Duração real (minutos)")).toBe(await top("Distância (km) — opcional"));
+
+  await page.getByRole("button", { name: "Salvar registro" }).click();
+  await expect(page.getByText("Responda este campo.")).toHaveCount(2);
+  await page.getByLabel("Duração real (minutos)").fill("30");
+  await expect(page.getByText("Responda este campo.")).toHaveCount(1);
+  await page.getByRole("group", { name: "Como foi o esforço do treino todo?" }).getByText("3", { exact: true }).click();
+  await expect(page.getByText("Responda este campo.")).toHaveCount(0);
+  expect(putBody(calls)).toBeUndefined();
 });
 
 test("pós-treino não feito: não pede duração nem esforço", async ({ page }) => {
