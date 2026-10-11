@@ -72,6 +72,39 @@ export type DayResponse = {
 
 export type WeekResponse = { plan: PlanWeekInfo | null; sessions: SessionView[] };
 
+export type CatalogObject = Record<string, unknown>;
+
+/** Detalhe do treino agendado: sessão + recorte do catálogo publicado (texto em português). */
+export type WorkoutDetailResponse = {
+  session: SessionView & { ladder: { etapa: string; corridaMin: number; caminhadaMin: number; repeticoes: number; continua: boolean } | null };
+  detail: {
+    reason: string | null;
+    intensity: CatalogObject | null;
+    warmup: CatalogObject | null;
+    main: CatalogObject | null;
+    cooldown: CatalogObject | null;
+    levelParams: CatalogObject | null;
+    frequency: CatalogObject | null;
+    limits: string[];
+    progression: string | null;
+    regression: string | null;
+    evidence: { direct: string[]; provisional: string[]; insufficient: string[] };
+  };
+  catalogVersion: string | null;
+  references: { citation: string; doi: string | null; url: string | null; studyType: string | null }[];
+};
+
+export const workoutKey = (id: string) => ["workout", id] as const;
+
+export function useWorkout(id: string, enabled = true) {
+  return useQuery({
+    queryKey: workoutKey(id),
+    queryFn: () => fetchApi<WorkoutDetailResponse>(`/workouts/${id}`),
+    enabled,
+    retry: false,
+  });
+}
+
 export type HistoryResponse = {
   from: string;
   to: string;

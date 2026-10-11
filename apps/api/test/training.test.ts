@@ -456,6 +456,44 @@ describe("histórico", () => {
   });
 });
 
+describe("detalhe do treino", () => {
+  it("traz a sessão, o recorte do catálogo para o nível do atleta e as referências", async () => {
+    const a = await onboard(intermediate());
+    const week = await get(a.cookie, `/plan/week/${MONDAY}`);
+    const session = runs(week.body.sessions)[0] as Json;
+    const res = await get(a.cookie, `/workouts/${session.id}`);
+    expect(res.status).toBe(200);
+    expect(res.body.session.id).toBe(session.id);
+    expect(res.body.session.slug).toBe(session.slug);
+    expect(res.body.detail.reason).toEqual(expect.any(String));
+    expect(res.body.detail.limits.length).toBeGreaterThan(0);
+    expect(res.body.references.length).toBeGreaterThan(0);
+    expect(res.body.references[0].citation).toEqual(expect.any(String));
+    // treinos citados em outros textos aparecem pelo nome, não pelo `slug` do catálogo
+    expect(JSON.stringify(res.body.detail)).not.toContain("`");
+    // sem campos internos do banco
+    expect(JSON.stringify(res.body)).not.toMatch(/user_?id|athlete_?plan/i);
+  });
+
+  it("a escada do iniciante vem pela sessão; a tabela inteira das 13 etapas não vai", async () => {
+    const a = await onboard(beginner());
+    const week = await get(a.cookie, `/plan/week/${MONDAY}`);
+    const session = runs(week.body.sessions)[0] as Json;
+    expect(session.slug).toBe("caminhada-corrida");
+    const res = await get(a.cookie, `/workouts/${session.id}`);
+    expect(res.status).toBe(200);
+    expect(res.body.session.ladder).toMatchObject({ etapa: "1", corridaMin: 1, caminhadaMin: 1, repeticoes: 10 });
+    expect(res.body.detail.main.escada).toBeDefined();
+    expect(res.body.detail.main.escada.etapas).toBeUndefined();
+  });
+
+  it("id inexistente ou que não é UUID: 404", async () => {
+    const a = await onboard(intermediate());
+    expect((await get(a.cookie, `/workouts/${crypto.randomUUID()}`)).status).toBe(404);
+    expect((await get(a.cookie, "/workouts/nao-e-uuid")).status).toBe(404);
+  });
+});
+
 describe("isolamento entre atletas (A tenta acessar B)", () => {
   it("B não vê, não registra e não consulta nada de A", async () => {
     const a = await onboard(intermediate());
@@ -471,6 +509,8 @@ describe("isolamento entre atletas (A tenta acessar B)", () => {
     const [stillPending] = await admin`select status from scheduled_workouts where id = ${aSession.id}`;
     expect(stillPending!.status).toBe("pending");
     expect((await send("PUT", b.cookie, `/workouts/${crypto.randomUUID()}/log`, { completed: false })).status).toBe(404);
+    // B tenta abrir o detalhe do treino de A: 404 (igual a um id que não existe)
+    expect((await get(b.cookie, `/workouts/${aSession.id}`)).status).toBe(404);
 
     // O dia e o histórico de B não contêm o check-in de A
     const day = await get(b.cookie, `/day/${aSession.date}`);
@@ -481,7 +521,7 @@ describe("isolamento entre atletas (A tenta acessar B)", () => {
   });
 
   it("sem sessão, tudo é 401", async () => {
-    for (const [m, p] of [["GET", `/day/${MONDAY}`], ["GET", `/plan/week/${MONDAY}`], ["PUT", `/checkins/${MONDAY}`], ["POST", `/pain/${MONDAY}`], ["PUT", `/workouts/${crypto.randomUUID()}/log`], ["PUT", "/profile/pause"], ["POST", "/profile/professional-clearance"], ["GET", "/history"]] as const) {
+    for (const [m, p] of [["GET", `/day/${MONDAY}`], ["GET", `/plan/week/${MONDAY}`], ["PUT", `/checkins/${MONDAY}`], ["POST", `/pain/${MONDAY}`], ["PUT", `/workouts/${crypto.randomUUID()}/log`], ["GET", `/workouts/${crypto.randomUUID()}`], ["PUT", "/profile/pause"], ["POST", "/profile/professional-clearance"], ["GET", "/history"]] as const) {
       const res = await t.request(m, p, m === "GET" ? undefined : {});
       expect(res.status, `${m} ${p}`).toBe(401);
     }

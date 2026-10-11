@@ -9,8 +9,10 @@ import {
   interviewResponses,
   painReports,
   planTemplates,
+  references as referencesTable,
   scheduledWorkouts,
   workoutLogs,
+  workoutReferences,
   workouts,
   withAthlete,
   type Database,
@@ -112,6 +114,64 @@ const view = (s: SessionRow, log: LogRow | undefined): SessionView => ({
     ? { completed: log.completed, durationMinutes: log.durationMinutes, distanceKm: num(log.distanceKm) ?? null, srpe: log.srpe, notes: log.notes }
     : null,
 });
+
+// ---- Detalhe do treino: recorte do catálogo (workouts.structure) que o atleta pode ler. Nada aqui
+// é calculado nem inventado: só campos do catálogo publicado, com o nível do próprio atleta.
+const asObject = (v: unknown): Record<string, unknown> | null =>
+  v !== null && typeof v === "object" && !Array.isArray(v) ? (v as Record<string, unknown>) : null;
+const asString = (v: unknown): string | null => (typeof v === "string" && v.trim() ? v : null);
+const asStrings = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
+
+export type WorkoutDetail = {
+  reason: string | null;
+  intensity: Record<string, unknown> | null;
+  warmup: Record<string, unknown> | null;
+  main: Record<string, unknown> | null;
+  cooldown: Record<string, unknown> | null;
+  /** Parâmetros do treino para o nível do atleta (`niveis[nível]` do catálogo). */
+  levelParams: Record<string, unknown> | null;
+  /** Frequência semanal do treino (sessões, intervalo mínimo, posição na semana). */
+  frequency: Record<string, unknown> | null;
+  limits: string[];
+  progression: string | null;
+  regression: string | null;
+  evidence: { direct: string[]; provisional: string[]; insufficient: string[] };
+};
+
+/** No catálogo, um treino citado em outro vem como `slug` entre crases; o atleta lê o nome dele. */
+const withNames = (value: unknown, names: Map<string, string>): unknown => {
+  if (typeof value === "string") return value.replace(/`([a-z0-9-]+)`/g, (_, slug: string) => names.get(slug) ?? slug);
+  if (Array.isArray(value)) return value.map((v) => withNames(v, names));
+  const obj = asObject(value);
+  return obj ? Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, withNames(v, names)])) : value;
+};
+
+export function workoutDetail(structure: unknown, level: string, names: Map<string, string> = new Map()): WorkoutDetail {
+  const st = asObject(structure) ?? {};
+  const ev = asObject(st.evidencia) ?? {};
+  // A tabela completa da escada (13 etapas) não vai: a sessão já traz a etapa do atleta.
+  const mainRaw = asObject(st.principal);
+  let main = mainRaw;
+  const ladder = asObject(mainRaw?.escada);
+  if (mainRaw && ladder) {
+    const { etapas: _etapas, ...ladderRest } = ladder;
+    main = { ...mainRaw, escada: ladderRest };
+  }
+  const detail: WorkoutDetail = {
+    reason: asString(st.razao),
+    intensity: asObject(st.intensidade),
+    warmup: asObject(st.aquecimento),
+    main,
+    cooldown: asObject(st.desaquecimento),
+    levelParams: asObject(asObject(st.niveis)?.[level]),
+    frequency: asObject(st.frequenciaSemanal),
+    limits: asStrings(st.limites),
+    progression: asString(asObject(st.progressao)?.regra),
+    regression: asString(asObject(st.regressao)?.regra),
+    evidence: { direct: asStrings(ev.fonteDireta), provisional: asStrings(ev.provisoriosP), insufficient: asStrings(ev.semEvidenciaSuficiente) },
+  };
+  return withNames(detail, names) as WorkoutDetail;
+}
 
 const painToRow = (p: PainReportInput) => {
   const { moment, region, intensity, type, changedStride, ...rest } = p;
@@ -682,6 +742,46 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
             weekEnd: addDays(current.startDate, 6),
           },
           sessions: rows.map((r) => view(r, logs.get(r.id))),
+        };
+      });
+    },
+
+    /**
+     * Detalhe de um treino agendado do próprio atleta: a sessão, o registro e o recorte do catálogo
+     * (razão, intensidade, blocos, limites, evidência) com as referências. De outro atleta: 404.
+     */
+    async workout(userId: string, scheduledWorkoutId: string) {
+      return withAthlete(db, userId, async (tx) => {
+        const [row] = await sessionsOf(tx, userId, eq(scheduledWorkouts.id, scheduledWorkoutId));
+        if (!row) throw errors.notFound();
+        const [catalog] = await tx
+          .select({ structure: workouts.structure, version: workouts.version })
+          .from(workouts)
+          .where(eq(workouts.id, row.workoutId))
+          .limit(1);
+        const [profile] = await tx
+          .select({ level: athleteProfiles.calculatedLevel })
+          .from(athleteProfiles)
+          .where(eq(athleteProfiles.userId, userId))
+          .limit(1);
+        const logs = await logsByWorkout(tx, userId, [row.id]);
+        const catalogNames = await tx.select({ slug: workouts.slug, namePt: workouts.namePt }).from(workouts);
+        const refs = await tx
+          .select({
+            citation: referencesTable.citation,
+            doi: referencesTable.doi,
+            url: referencesTable.url,
+            studyType: referencesTable.studyType,
+          })
+          .from(workoutReferences)
+          .innerJoin(referencesTable, eq(workoutReferences.referenceId, referencesTable.id))
+          .where(eq(workoutReferences.workoutId, row.workoutId))
+          .orderBy(asc(referencesTable.citation));
+        return {
+          session: view(row, logs.get(row.id)),
+          detail: workoutDetail(catalog?.structure, profile?.level ?? "", new Map(catalogNames.map((n) => [n.slug, n.namePt]))),
+          catalogVersion: catalog?.version ?? null,
+          references: refs,
         };
       });
     },

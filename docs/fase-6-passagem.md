@@ -46,6 +46,7 @@ Pendências do arquivo do Figma: **encerradas por decisão do dono** (o Figma se
 | `/registro/$id` | pós-treino: fez ou não, duração, distância, esforço CR-10 (1 a 10; rótulos de R-CRG-01), mapa do corpo clicável (frente/costas, lado direito/esquerdo), por local: intensidade, tipo e perguntas de R-DOR-15, sintomas cardiopulmonares e de calor, comentário; grava com `PUT /workouts/:id/log` e mostra a decisão do dia seguinte | `e2e/registro.spec.ts` |
 | `/configuracoes` | conta (nome, e-mail, idioma), aparelhos conectados (encerrar sessão), triagem e reavaliação, pausa por dor/lesão/doença e registro da liberação profissional (R-PRG-09), refazer a entrevista, baixar meus dados (JSON) e excluir a conta com senha | `e2e/configuracoes.spec.ts` |
 | `/historico` | resumo do período (treinos feitos, minutos, sono médio), colunas de treinos feitos e de carga semanal (sRPE × minutos), sono por dia, dor registrada (sem o registro "geral"); período de 4, 8 ou 12 semanas; leitura por coluna e tabela equivalente | `e2e/historico.spec.ts` |
+| `/treino/$id` | detalhe do treino agendado: escada da sessão, razão, aquecimento/principal/volta à calma, intensidade, parâmetros do nível do atleta, frequência, limites, progressão/regressão, evidência (com valores provisórios [P] à parte) e fontes com link do DOI; decisão do dia só para hoje | `e2e/treino.spec.ts` |
 
 O mapa do corpo usa os ids de `BODY_REGIONS` (`packages/shared/src/body-map.ts`); o servidor marca `highRiskBoneSite` pela região (R-DOR-03), não confia no cliente. Datas: o cliente sempre manda a data local do atleta (`localToday()`); pausa e liberação usam esse calendário, o servidor aceita hoje ±1 dia (fuso). Padrões para as próximas telas: moldura `FlowLayout` (cabeçalho com idioma e sair); campos de escolha em `components/choice.tsx`; formulário por etapa com `stepResolver` (valida com o esquema compartilhado e mapeia o erro para o campo; o texto vem do i18n); `useRequireUser()` redireciona sem sessão; nada de `style=""` inline (a CSP bloqueia).
 
@@ -64,6 +65,7 @@ Pendências conhecidas desta parte: a mensagem do motor (`decision.message`, com
 | `PUT /workouts/:id/log` | pós-treino; devolve `day` e `nextDay` (decisão do dia seguinte) |
 | `PUT /profile/pause`, `POST /profile/professional-clearance` | pausa e liberação profissional |
 | `GET /history?days=7..180` | sono, dor, carga semanal, aderência |
+| `GET /workouts/:id` | detalhe do treino agendado do próprio atleta: sessão, registro, recorte do catálogo (razão, intensidade, blocos, nível, limites, evidência) e referências; de outro atleta: 404 |
 | `GET /account/export` | exportação LGPD (JSON) |
 
 `:date` é a data **local** do atleta (`AAAA-MM-DD`); o servidor só aceita hoje ±1 dia. Esquemas de entrada: `packages/shared/src/{auth,interview,training}.ts` (Zod, reutilizáveis no front).

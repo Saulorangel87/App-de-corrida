@@ -31,6 +31,9 @@ export function trainingRoutes(opts: { training: TrainingService; session: Middl
   // Semana do plano que contém a data
   r.get("/plan/week/:date", session, async (c) => c.json(await training.week(me(c), dateParam(c))));
 
+  // Detalhe de um treino agendado (catálogo, referências, registro): só do próprio atleta
+  r.get("/workouts/:id", session, async (c) => c.json(await training.workout(me(c), idParam(c))));
+
   // Check-in diário (um por dia; reenviar substitui)
   r.put("/checkins/:date", session, validate("json", checkinSchema), async (c) =>
     c.json(await training.saveCheckin(me(c), dateParam(c), c.req.valid("json"))),

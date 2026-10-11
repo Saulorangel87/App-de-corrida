@@ -186,6 +186,15 @@ function TodayCard({ day }: { day: DayResponse }) {
             {mainSession.log ? t("panel.logEdit") : t("panel.logCta")}
           </Link>
         )}
+        {mainSession && (
+          <Link
+            to="/treino/$id"
+            params={{ id: mainSession.id }}
+            className="mt-3 inline-block text-sm font-semibold text-[#FF5A1F] hover:underline"
+          >
+            {t("panel.detailsCta")}
+          </Link>
+        )}
 
         <div className="mt-4 rounded-xl bg-[#F5F6F8] p-4 text-sm leading-relaxed text-gray-700">
           <p className="mb-1 font-semibold text-[#111827]">{t("panel.whyTitle")}</p>
@@ -203,7 +212,9 @@ function TodayCard({ day }: { day: DayResponse }) {
           <ul className="space-y-2">
             {complementary.map((s) => (
               <li key={s.id} className="flex items-center justify-between gap-3 text-sm">
-                <span className="font-medium text-[#0F172A]">{localized(s.name, i18n.language, s.slug)}</span>
+                <Link to="/treino/$id" params={{ id: s.id }} className="font-medium text-[#0F172A] hover:text-[#FF5A1F] hover:underline">
+                  {localized(s.name, i18n.language, s.slug)}
+                </Link>
                 <span className="text-gray-500">
                   {s.allowed === false ? t("panel.notAllowedToday") : t("panel.minutes", { count: s.minutes })}
                 </span>
@@ -293,7 +304,7 @@ function WeekCard({ week, today }: { week: WeekResponse; today: string }) {
                 {items.length === 0 ? (
                   <span className="text-gray-400">—</span>
                 ) : (
-                  items.map((s) => <SessionLine key={s.id} s={s} lang={i18n.language} canLog={date <= today} />)
+                  items.map((s) => <SessionLine key={s.id} s={s} lang={i18n.language} />)
                 )}
               </div>
             </li>
@@ -304,20 +315,16 @@ function WeekCard({ week, today }: { week: WeekResponse; today: string }) {
   );
 }
 
-function SessionLine({ s, lang, canLog }: { s: SessionView; lang: string; canLog: boolean }) {
+function SessionLine({ s, lang }: { s: SessionView; lang: string }) {
   const { t } = useTranslation();
   const state = s.log ? (s.log.completed ? "completed" : "skipped") : "pending";
   const tone = state === "completed" ? "text-green-700" : state === "skipped" ? "text-gray-400 line-through" : "text-[#0F172A]";
   return (
     <div className="flex items-baseline justify-between gap-2">
       <span className={`min-w-0 ${tone}`}>
-        {canLog && !s.optional ? (
-          <Link to="/registro/$id" params={{ id: s.id }} className="hover:text-[#FF5A1F] hover:underline">
-            {localized(s.name, lang, s.slug)}
-          </Link>
-        ) : (
-          localized(s.name, lang, s.slug)
-        )}
+        <Link to="/treino/$id" params={{ id: s.id }} className="hover:text-[#FF5A1F] hover:underline">
+          {localized(s.name, lang, s.slug)}
+        </Link>
         {s.optional && <span className="ml-1 text-xs font-normal text-gray-400">({t("panel.optional")})</span>}
       </span>
       <span className="shrink-0 text-xs text-gray-500">
