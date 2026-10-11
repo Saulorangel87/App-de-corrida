@@ -18,6 +18,7 @@ import { Route as PainelRouteImport } from './routes/painel'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as ResultadoRouteImport } from './routes/resultado'
 import { Route as VerificarEmailRouteImport } from './routes/verificar-email'
+import { Route as RegistroIdRouteImport } from './routes/registro.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +65,11 @@ const VerificarEmailRoute = VerificarEmailRouteImport.update({
   path: '/verificar-email',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegistroIdRoute = RegistroIdRouteImport.update({
+  id: '/registro/$id',
+  path: '/registro/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
   '/verificar-email': typeof VerificarEmailRoute
+  '/registro/$id': typeof RegistroIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
   '/verificar-email': typeof VerificarEmailRoute
+  '/registro/$id': typeof RegistroIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
   '/verificar-email': typeof VerificarEmailRoute
+  '/registro/$id': typeof RegistroIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/redefinir-senha'
     | '/resultado'
     | '/verificar-email'
+    | '/registro/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/redefinir-senha'
     | '/resultado'
     | '/verificar-email'
+    | '/registro/$id'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/redefinir-senha'
     | '/resultado'
     | '/verificar-email'
+    | '/registro/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   ResultadoRoute: typeof ResultadoRoute
   VerificarEmailRoute: typeof VerificarEmailRoute
+  RegistroIdRoute: typeof RegistroIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerificarEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/registro/$id': {
+      id: '/registro/$id'
+      path: '/registro/$id'
+      fullPath: '/registro/$id'
+      preLoaderRoute: typeof RegistroIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   RedefinirSenhaRoute: RedefinirSenhaRoute,
   ResultadoRoute: ResultadoRoute,
   VerificarEmailRoute: VerificarEmailRoute,
+  RegistroIdRoute: RegistroIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

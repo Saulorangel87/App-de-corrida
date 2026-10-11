@@ -44,7 +44,7 @@ import {
   type WorkoutLog,
   type Zone,
 } from "@passo/engine";
-import type { CheckinInput, PainReportInput, WorkoutLogInput } from "@passo/shared";
+import { isHighRiskBoneRegion, type CheckinInput, type PainReportInput, type WorkoutLogInput } from "@passo/shared";
 import { AppError, errors } from "../lib/errors";
 import type { Logger } from "../lib/logger";
 import { ENGINE_VERSION, ageRange, screeningInputFrom, type StoredInputs } from "./athlete-service";
@@ -114,7 +114,9 @@ const view = (s: SessionRow, log: LogRow | undefined): SessionView => ({
 });
 
 const painToRow = (p: PainReportInput) => {
-  const { moment, region, intensity, type, changedStride, ...extra } = p;
+  const { moment, region, intensity, type, changedStride, ...rest } = p;
+  // O sítio de alto risco vem do mapa do corpo (R-DOR-03), não só do que o cliente mandou.
+  const extra = isHighRiskBoneRegion(region) ? { ...rest, highRiskBoneSite: true } : rest;
   return {
     bodyPart: region,
     intensity,

@@ -140,6 +140,8 @@ function TodayCard({ day }: { day: DayResponse }) {
   const rest = d.session.slug === null;
   const complementary = day.sessions.filter((s) => s.optional);
   const name = localized(day.todayName, i18n.language, t("panel.rest"));
+  // Treino principal de hoje (o registro pós-treino fica nele).
+  const mainSession = day.sessions.find((s) => !s.optional);
 
   return (
     <>
@@ -167,6 +169,16 @@ function TodayCard({ day }: { day: DayResponse }) {
               <Fact>{t("panel.rpe", { rpe: day.sessions.find((s) => !s.optional && s.slug === d.session.slug)!.targetRpe })}</Fact>
             )}
           </dl>
+        )}
+
+        {mainSession && (
+          <Link
+            to="/registro/$id"
+            params={{ id: mainSession.id }}
+            className="mt-4 flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-bold text-[#0F172A] transition-colors hover:bg-gray-50"
+          >
+            {mainSession.log ? t("panel.logEdit") : t("panel.logCta")}
+          </Link>
         )}
 
         <div className="mt-4 rounded-xl bg-[#F5F6F8] p-4 text-sm leading-relaxed text-gray-700">
@@ -275,7 +287,7 @@ function WeekCard({ week, today }: { week: WeekResponse; today: string }) {
                 {items.length === 0 ? (
                   <span className="text-gray-400">—</span>
                 ) : (
-                  items.map((s) => <SessionLine key={s.id} s={s} lang={i18n.language} />)
+                  items.map((s) => <SessionLine key={s.id} s={s} lang={i18n.language} canLog={date <= today} />)
                 )}
               </div>
             </li>
@@ -286,14 +298,20 @@ function WeekCard({ week, today }: { week: WeekResponse; today: string }) {
   );
 }
 
-function SessionLine({ s, lang }: { s: SessionView; lang: string }) {
+function SessionLine({ s, lang, canLog }: { s: SessionView; lang: string; canLog: boolean }) {
   const { t } = useTranslation();
   const state = s.log ? (s.log.completed ? "completed" : "skipped") : "pending";
   const tone = state === "completed" ? "text-green-700" : state === "skipped" ? "text-gray-400 line-through" : "text-[#0F172A]";
   return (
     <div className="flex items-baseline justify-between gap-2">
       <span className={`min-w-0 ${tone}`}>
-        {localized(s.name, lang, s.slug)}
+        {canLog && !s.optional ? (
+          <Link to="/registro/$id" params={{ id: s.id }} className="hover:text-[#FF5A1F] hover:underline">
+            {localized(s.name, lang, s.slug)}
+          </Link>
+        ) : (
+          localized(s.name, lang, s.slug)
+        )}
         {s.optional && <span className="ml-1 text-xs font-normal text-gray-400">({t("panel.optional")})</span>}
       </span>
       <span className="shrink-0 text-xs text-gray-500">

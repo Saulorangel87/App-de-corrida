@@ -29,20 +29,36 @@ type GroupProps<T extends FieldValues> = {
   lang?: string;
 };
 
-/** Grupo de escolha única (radio nativo, com a aparência de botões). `columns` só ajusta a grade. */
-export function ChoiceField<T extends FieldValues, V extends string | number | boolean>({
-  control,
+type GroupViewProps<V extends string | number | boolean> = {
+  name: string;
+  legend: ReactNode;
+  hint?: ReactNode;
+  lang?: string;
+  options: Option<V>[];
+  value: V | undefined;
+  onChange: (value: V) => void;
+  onBlur?: () => void;
+  /** Ref do primeiro item marcado (ou do primeiro, se nada está marcado): foco no erro. */
+  inputRef?: (el: HTMLInputElement | null) => void;
+  error?: string;
+  columns?: string;
+};
+
+/** Grupo de escolha única, sem react-hook-form (radio nativo, com a aparência de botões). */
+export function ChoiceGroup<V extends string | number | boolean>({
   name,
   legend,
   hint,
-  options,
-  columns = "grid-cols-2",
   lang,
-}: GroupProps<T> & { options: Option<V>[]; columns?: string }) {
-  const { field, fieldState } = useController({ control, name });
-  const fieldError = useFieldError();
+  options,
+  value,
+  onChange,
+  onBlur,
+  inputRef,
+  error,
+  columns = "grid-cols-2",
+}: GroupViewProps<V>) {
   const id = useId();
-  const error = fieldError(fieldState.error?.message);
   const errorId = `${id}-erro`;
   const hintId = `${id}-ajuda`;
   return (
@@ -60,17 +76,17 @@ export function ChoiceField<T extends FieldValues, V extends string | number | b
       )}
       <div className={`grid gap-2 ${columns}`}>
         {options.map((o, index) => {
-          const checked = field.value === o.value;
+          const checked = value === o.value;
           return (
             <label key={String(o.value)} className="relative block">
               <input
                 type="radio"
                 className="peer sr-only"
-                name={field.name}
+                name={name}
                 checked={checked}
-                onChange={() => field.onChange(o.value)}
-                onBlur={field.onBlur}
-                ref={checked || (field.value === undefined && index === 0) ? field.ref : undefined}
+                onChange={() => onChange(o.value)}
+                onBlur={onBlur}
+                ref={checked || (value === undefined && index === 0) ? inputRef : undefined}
               />
               <span className={`${pill} ${checked ? pillOn : pillOff} flex-col text-center`}>
                 <span>{o.label}</span>
@@ -86,6 +102,35 @@ export function ChoiceField<T extends FieldValues, V extends string | number | b
         </p>
       )}
     </fieldset>
+  );
+}
+
+/** Grupo de escolha única ligado ao react-hook-form. */
+export function ChoiceField<T extends FieldValues, V extends string | number | boolean>({
+  control,
+  name,
+  legend,
+  hint,
+  options,
+  columns,
+  lang,
+}: GroupProps<T> & { options: Option<V>[]; columns?: string }) {
+  const { field, fieldState } = useController({ control, name });
+  const fieldError = useFieldError();
+  return (
+    <ChoiceGroup
+      name={field.name}
+      legend={legend}
+      hint={hint}
+      lang={lang}
+      options={options}
+      columns={columns}
+      value={field.value as V | undefined}
+      onChange={field.onChange}
+      onBlur={field.onBlur}
+      inputRef={field.ref}
+      error={fieldError(fieldState.error?.message)}
+    />
   );
 }
 

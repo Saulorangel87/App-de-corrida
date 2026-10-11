@@ -284,6 +284,33 @@ describe("registro pós-treino e dor", () => {
     expect(pain).toMatchObject({ body_part: "joelho", intensity: 6, altered_stride: true, reported_on: s.date });
   });
 
+  it("ponto doloroso no osso em sítio de alto risco bloqueia a corrida mesmo com dor baixa (o servidor aplica o mapa, não o cliente)", async () => {
+    const a = await onboard(intermediate());
+    const s = await firstRun(a);
+    onDate(s.date);
+    const res = await send("PUT", a.cookie, `/workouts/${s.id}/log`, {
+      completed: true, durationMinutes: 30, srpe: 4,
+      pain: [{ region: "canela_d", intensity: 2, bonePoint: true, moment: "treino" }],
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.nextDay.decision.blockRunning).toBe(true);
+    expect(res.body.nextDay.decision.refer).toBe(true);
+    const [row] = await admin`select extra_symptoms from pain_reports where user_id = ${a.userId}`;
+    expect(row!.extra_symptoms).toMatchObject({ bonePoint: true, highRiskBoneSite: true });
+  });
+
+  it("ponto doloroso em região de baixo risco, com dor baixa, não bloqueia por si só", async () => {
+    const a = await onboard(intermediate());
+    const s = await firstRun(a);
+    onDate(s.date);
+    const res = await send("PUT", a.cookie, `/workouts/${s.id}/log`, {
+      completed: true, durationMinutes: 30, srpe: 4,
+      pain: [{ region: "coxa_frente_d", intensity: 2, bonePoint: true, moment: "treino" }],
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.nextDay.decision.blockRunning).toBe(false);
+  });
+
   it("sinal cardiopulmonar é urgente e fica sem corrida mesmo sem dor", async () => {
     const a = await onboard(intermediate());
     onDate(MONDAY);
