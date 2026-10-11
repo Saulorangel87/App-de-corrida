@@ -81,6 +81,7 @@ export const en: Translation = {
     resend: "Resend confirmation email",
     resending: "Sending...",
     resendDone: "If an account is waiting for confirmation with that email, we sent another link.",
+    spamNote: "Can't find the email? Check your spam or junk folder too.",
   },
   validation: {
     email: "Enter a valid email.",

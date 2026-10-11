@@ -8,7 +8,8 @@ import type { z } from "zod";
 import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from "@passo/shared";
 import { AuthLayout } from "../components/auth-layout";
 import { CheckField, TextField } from "../components/field";
-import { fetchApi } from "../lib/api";
+import { ResendConfirmation } from "../components/resend-confirmation";
+import { ApiError, fetchApi } from "../lib/api";
 import { passwordProblem } from "../lib/password-problem";
 import { useErrorText } from "../lib/use-error-text";
 import { AUTH_KEY, type AuthUser } from "../lib/queries";
@@ -68,6 +69,7 @@ function LoginForm({ onGoToRegister }: { onGoToRegister: () => void }) {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<LoginForm, unknown, LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -90,8 +92,13 @@ function LoginForm({ onGoToRegister }: { onGoToRegister: () => void }) {
       </div>
 
       {login.isError && (
-        <div role="alert" className="mb-3 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
-          {errorText(login.error)}
+        <div className="mb-3">
+          <div role="alert" className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+            {errorText(login.error)}
+          </div>
+          {login.error instanceof ApiError && login.error.code === "EMAIL_NOT_VERIFIED" && (
+            <ResendConfirmation getEmail={() => getValues("email")} />
+          )}
         </div>
       )}
       <form className="space-y-2.5" noValidate onSubmit={handleSubmit((d) => login.mutate(d))}>
@@ -142,6 +149,7 @@ function RegisterFormView() {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<RegisterForm, unknown, RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -173,8 +181,12 @@ function RegisterFormView() {
         </div>
       )}
       {signUp.isSuccess && (
-        <div role="status" className="mb-3 p-3 bg-green-50 border border-green-200 text-green-800 rounded-lg text-sm">
-          {t("auth.registerDone")}
+        <div className="mb-3">
+          <div role="status" className="p-3 bg-green-50 border border-green-200 text-green-800 rounded-lg text-sm">
+            <p>{t("auth.registerDone")}</p>
+            <p className="mt-1">{t("auth.spamNote")}</p>
+          </div>
+          <ResendConfirmation getEmail={() => getValues("email")} />
         </div>
       )}
       <form

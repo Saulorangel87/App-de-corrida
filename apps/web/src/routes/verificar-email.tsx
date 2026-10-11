@@ -81,7 +81,10 @@ function VerifyFailed({ networkError }: { networkError: boolean }) {
       {resend.isError && <InfoBox tone="error">{errorText(resend.error)}</InfoBox>}
       {resend.isSuccess ? (
         <div role="status">
-          <InfoBox>{t("auth.resendDone")}</InfoBox>
+          <InfoBox>
+            <p>{t("auth.resendDone")}</p>
+            <p className="mt-1">{t("auth.spamNote")}</p>
+          </InfoBox>
         </div>
       ) : (
         <form className="space-y-4" noValidate onSubmit={handleSubmit((d) => resend.mutate(d))}>

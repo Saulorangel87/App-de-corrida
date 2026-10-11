@@ -28,6 +28,7 @@ async function mockApi(page: Page, opts: { login?: Mock; register?: Mock } = {})
       const res = opts.register ?? { status: 202, body: { message: "Enviamos um e-mail para confirmar o cadastro." } };
       return json(res.status, res.body);
     }
+    if (path === "/auth/resend-verification") return json(202, { message: "ok" });
     if (path === "/profile") return json(200, { profile: { plan: null } }); // quem já fez a entrevista vê o painel
     if (path.startsWith("/day/")) return json(200, { plan: null, sessions: [], checkin: null, decision: {}, questions: [] });
     if (path.startsWith("/plan/week/")) return json(200, { plan: null, sessions: [] });
@@ -100,6 +101,56 @@ test("credenciais erradas: mensagem traduzida pelo código", async ({ page }) =>
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page.getByRole("alert").filter({ hasText: "E-mail ou senha incorretos." })).toBeVisible();
   await expect(page).toHaveURL(/\/entrar$/);
+  // Senha errada não é "e-mail não confirmado": não oferece reenviar a confirmação.
+  await expect(page.getByRole("button", { name: "Reenviar e-mail de confirmação" })).toHaveCount(0);
+});
+
+test("login recusado por e-mail não confirmado oferece reenviar a confirmação, sem sair da tela", async ({ page }) => {
+  const calls = await mockApi(page, {
+    login: { status: 403, body: { error: { code: "EMAIL_NOT_VERIFIED", message: "x" } } },
+  });
+  await page.goto("/entrar");
+  await page.getByLabel("E-mail", { exact: true }).fill("ana@exemplo.com");
+  await page.getByLabel("Senha", { exact: true }).fill("Corrida-longa-2026!");
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "Confirme seu e-mail antes de entrar." })).toBeVisible();
+
+  await page.getByRole("button", { name: "Reenviar e-mail de confirmação" }).click();
+  const done = page.getByTestId("resend-done");
+  await expect(done).toContainText("enviamos outro link");
+  await expect(done).toContainText("caixa de spam");
+  // O endereço vai no corpo da requisição, nunca na URL.
+  expect(calls.find((c) => c.path === "/auth/resend-verification")?.body).toEqual({ email: "ana@exemplo.com" });
+  await expect(page).toHaveURL(/\/entrar$/);
+});
+
+test("depois do cadastro avisa do spam e permite reenviar a confirmação", async ({ page }) => {
+  const calls = await mockApi(page);
+  await page.goto("/entrar");
+  await page.getByRole("tab", { name: "Criar conta" }).click();
+  await page.getByLabel("Nome completo").fill("Ana Corredora");
+  await page.getByLabel("E-mail", { exact: true }).fill("ana@exemplo.com");
+  await page.getByLabel("Senha", { exact: true }).fill("Corrida-longa-2026!");
+  await page.getByLabel("Declaro que tenho 18 anos ou mais.").check();
+  await page.getByLabel(/Li e aceito os Termos de Uso e a Política de Privacidade/).check();
+  await page.getByLabel(/Autorizo o tratamento dos meus dados de saúde/).check();
+  await page.getByRole("button", { name: "Criar minha conta" }).click();
+  const status = page.getByRole("status");
+  await expect(status).toContainText("Enviamos um e-mail");
+  await expect(status).toContainText("caixa de spam ou lixo eletrônico");
+
+  await page.getByRole("button", { name: "Reenviar e-mail de confirmação" }).click();
+  await expect(page.getByTestId("resend-done")).toBeVisible();
+  expect(calls.find((c) => c.path === "/auth/resend-verification")?.body).toEqual({ email: "ana@exemplo.com" });
+});
+
+test("verificar e-mail sem link: pedir outro mostra o aviso do spam", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/verificar-email");
+  await page.getByLabel("E-mail", { exact: true }).fill("ana@exemplo.com");
+  await page.getByRole("button", { name: "Reenviar e-mail de confirmação" }).click();
+  await expect(page.getByText("enviamos outro link")).toBeVisible();
+  await expect(page.getByText("caixa de spam ou lixo eletrônico")).toBeVisible();
 });
 
 test("cadastro exige os três aceites e envia idioma e declaração de 18 anos", async ({ page }) => {

@@ -81,6 +81,7 @@ export const ptBR = {
     resend: "Reenviar e-mail de confirmação",
     resending: "Enviando...",
     resendDone: "Se houver uma conta aguardando confirmação com esse e-mail, enviamos outro link.",
+    spamNote: "Não achou o e-mail? Veja também a caixa de spam ou lixo eletrônico.",
   },
   validation: {
     email: "Informe um e-mail válido.",
