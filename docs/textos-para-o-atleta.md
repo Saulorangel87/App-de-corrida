@@ -5,7 +5,7 @@
 - Rótulos "Para aliviar" e "Para evoluir" vêm da tela; por isso os textos de regressão não repetem o prefixo "Para aliviar:".
 - N01 (nota de troca de treino) saiu sem o nome do treino original, porque o motor só conhece o identificador; a nota não aparece na tela hoje.
 - Glossário (G01 a G07) aparece no fim da tela de detalhe do treino.
-- Textos em inglês: na etapa de tradução.
+- **Inglês (2026-10-11):** cada frase final do texto do atleta tem uma tradução em `packages/db/src/seed-data/athlete-text.en.ts` (290 frases), gravada em `structure.atletaEn`; a mensagem do dia sai nos dois idiomas do motor. Nenhum número foi alterado (o conferidor automático compara os números de cada par). Quem reescrever um texto em português precisa atualizar a tradução.
 - **Pendência do dono (2026-10-11):** os textos de "Como fazer" (aquecimento, parte principal e volta à calma; em especial a escada de caminhada e corrida: "N x (corrida / caminhada), minutos de corrida e de caminhada por repetição", as 12 etapas e o degrau 10b, a fonte) ainda estão confusos para quem lê. Reescrever em linguagem de quem corre, sem inventar nada, **depois que o app estiver terminado**. A mesma regra de aprovação desta página vale.
 
 Fonte de tudo: `docs/pesquisa/` (a coluna "Sustentação" aponta o arquivo e a regra). Nenhum número novo foi criado: os números dos textos propostos são os mesmos dos textos atuais.

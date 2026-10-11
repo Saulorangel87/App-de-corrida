@@ -506,6 +506,57 @@ describe("detalhe do treino", () => {
     }
   });
 
+  it("os 11 treinos têm o texto em inglês: mesma estrutura, sem marcador técnico nem português", async () => {
+    const rows = await admin`select slug, structure->'atleta' as pt, structure->'atletaEn' as en from workouts where status = 'published'`;
+    expect(rows.length).toBe(11);
+    const LEFTOVER_PT = /\b(você|para|com|sem|treino|semana|esforço|corrida|caminhada|repetições|duração|minutos)\b/i;
+    for (const r of rows) {
+      const pt = athleteStrings(r.pt as AthleteText);
+      const en = athleteStrings(r.en as AthleteText);
+      expect(en.length, r.slug).toBe(pt.length);
+      en.forEach((text, i) => {
+        expect(text, `${r.slug}: "${text}"`).not.toMatch(TECHNICAL_MARKERS);
+        expect(text, `${r.slug}: "${text}"`).not.toMatch(LEFTOVER_PT);
+        // zona só aparece com o nome do esforço: "easy effort (Z1)"
+        expect(text.replace(/(easy|moderate|hard) effort \(Z[123]\)/gi, ""), `${r.slug}: "${text}"`).not.toMatch(/\bZ[123]\b/);
+        // igual ao português só quando não há o que traduzir (número, letra, nome do treino)
+        if (text === pt[i]) expect(text, `${r.slug}: sem tradução: "${text}"`).toMatch(/^([\d\sA-Za-z.,%x-]{1,12})$/);
+      });
+    }
+  });
+
+  it("o idioma do app (Accept-Language) escolhe o texto do treino e a mensagem do dia", async () => {
+    const a = await onboard(intermediate());
+    const week = await get(a.cookie, `/plan/week/${MONDAY}`);
+    const session = runs(week.body.sessions)[0] as Json;
+    const call = async (path: string, lang?: string) => {
+      const res = await t.request("GET", path, undefined, a.cookie, lang ? { "accept-language": lang } : {});
+      return (await res.json()) as Json;
+    };
+
+    const pt = await call(`/workouts/${session.id}`, "pt-BR");
+    const en = await call(`/workouts/${session.id}`, "en");
+    expect(pt.detail.summary).toMatch(/[ãçõ]|você|ritmo|corrida/i);
+    expect(en.detail.summary).not.toEqual(pt.detail.summary);
+    expect(en.detail.summary).not.toMatch(/[ãçõ]/);
+    expect(Object.keys(en.detail)).toEqual(Object.keys(pt.detail));
+
+    // sem o cabeçalho, vale o idioma da conta (pt-BR)
+    const none = await call(`/workouts/${session.id}`);
+    expect(none.detail.summary).toEqual(pt.detail.summary);
+
+    // mensagem do dia: só uma, no idioma pedido, sem o campo auxiliar
+    onDate(session.date);
+    const dayPt = await call(`/day/${session.date}`, "pt-BR");
+    const dayEn = await call(`/day/${session.date}`, "en-US,en;q=0.9");
+    expect(dayPt.decision.messageEn).toBeUndefined();
+    expect(dayEn.decision.messageEn).toBeUndefined();
+    expect(dayPt.decision.message).toMatch(/treino|planejado|check-in/i);
+    expect(dayEn.decision.message).toMatch(/workout|planned|check-in/i);
+    expect(dayEn.decision.message).not.toMatch(/[ãçõ]|treino/);
+    expect(dayEn.decision.action).toBe(dayPt.decision.action);
+  });
+
   it("id inexistente ou que não é UUID: 404", async () => {
     const a = await onboard(intermediate());
     expect((await get(a.cookie, `/workouts/${crypto.randomUUID()}`)).status).toBe(404);

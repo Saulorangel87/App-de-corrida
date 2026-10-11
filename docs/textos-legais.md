@@ -1,6 +1,6 @@
 # Política de Privacidade e Termos de Uso: proposta para aprovação
 
-**Estado: aprovado pelo dono em 2026-10-11 e implementado** (`apps/web/src/lib/legal.ts`, rotas `/privacidade` e `/termos`). Decisões: D1 e-mail mantido; D2 texto mantido ("podem tratar dados fora do Brasil"); D3 frase do cadastro trocada; D4 "Termos de Uso" padronizado; D7 só em português, com aviso em inglês. O dono vai ler tudo antes de abrir o app para outras pessoas.
+**Estado: aprovado pelo dono em 2026-10-11 e implementado** (`apps/web/src/lib/legal.ts`, rotas `/privacidade` e `/termos`). Decisões: D1 e-mail mantido; D2 texto mantido ("podem tratar dados fora do Brasil"); D3 frase do cadastro trocada; D4 "Termos de Uso" padronizado; D7 português e inglês (tradução em `legal.en.ts`, com o aviso de que vale a versão em português: cláusula nova, para você conferir). O dono vai ler tudo antes de abrir o app para outras pessoas.
 
 **Base:** os textos do Cadência (`App de treino/frontend/lib/legal.ts`), adaptados ao que o Let's Go Run faz de verdade. Cada frase foi conferida no código ou na infraestrutura (tabela da seção 2). O que o Cadência tinha e este app **não** faz foi removido (importar arquivos de GPS, explicação por IA, planilha, FTP e potência, ciclismo).
 

@@ -54,6 +54,8 @@ import { ENGINE_VERSION, ageRange, screeningInputFrom, type StoredInputs } from 
 // Acompanhamento diário (Fase 5): agenda das semanas, check-in, registro pós-treino com dor,
 // decisão do dia e histórico. Todo acesso passa por withAthlete (RLS) com o userId da sessão.
 
+export type Lang = "pt-BR" | "en";
+
 const DAY_MS = 86_400_000;
 const parse = (d: string) => Date.parse(`${d}T00:00:00Z`);
 const addDays = (d: string, n: number) => new Date(parse(d) + n * DAY_MS).toISOString().slice(0, 10);
@@ -74,6 +76,8 @@ type Ctx = {
   template: PlanTemplate | null;
   /** Média semanal de corrida da entrevista, em minutos. */
   baseWeekly: number;
+  /** Idioma dos textos calculados (mensagem do dia). */
+  lang: Lang;
 };
 
 type SessionRow = typeof scheduledWorkouts.$inferSelect & { slug: string; namePt?: string; nameEn?: string };
@@ -170,9 +174,10 @@ const EMPTY_DETAIL: WorkoutDetail = {
   evidence: { direct: [], initial: [], insufficient: [] },
 };
 
-export function workoutDetail(structure: unknown, level: string): WorkoutDetail {
+export function workoutDetail(structure: unknown, level: string, lang: Lang = "pt-BR"): WorkoutDetail {
   const st = typeof structure === "object" && structure !== null ? (structure as Record<string, unknown>) : {};
-  const a = st.atleta as (Partial<WorkoutDetail> & { levels?: Partial<Record<AthleteLevel, Fact[]>> }) | undefined;
+  // Em inglês, o bloco traduzido (`atletaEn`); se faltar, cai no português em vez de ficar sem texto.
+  const a = (lang === "en" ? (st.atletaEn ?? st.atleta) : st.atleta) as (Partial<WorkoutDetail> & { levels?: Partial<Record<AthleteLevel, Fact[]>> }) | undefined;
   if (!a || typeof a !== "object") return EMPTY_DETAIL;
   return {
     summary: a.summary ?? null,
@@ -224,7 +229,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
 
   // ---------------------------------------------------------------- contexto
 
-  async function loadContext(tx: Transaction, userId: string): Promise<Ctx> {
+  async function loadContext(tx: Transaction, userId: string, lang: Lang = "pt-BR"): Promise<Ctx> {
     const [profile] = await tx.select().from(athleteProfiles).where(eq(athleteProfiles.userId, userId)).limit(1);
     if (!profile) throw new AppError(409, "INTERVIEW_REQUIRED", "Conclua a entrevista para receber treinos.");
     const stored = profile.interviewResult as StoredInputs;
@@ -252,6 +257,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
       plan: row?.plan ?? null,
       template,
       baseWeekly: Math.round((stored.plan.weeklyKm ?? 0) * clsV1.load.minutesPerKm),
+      lang,
     };
   }
 
@@ -637,8 +643,11 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     const c = weekFor(ctx, date);
     const weeks = c && ctx.plan ? await ensureWeeks(tx, ctx, c) : [];
     const built = await buildDayInput(tx, ctx, userId, date, weeks);
-    const decision = decideDay(built.input);
-    await persistDecision(tx, userId, date, built.input, decision);
+    const full = decideDay(built.input);
+    await persistDecision(tx, userId, date, built.input, full);
+    // O motor devolve a mensagem nos dois idiomas; o atleta recebe só a do idioma do app.
+    const { messageEn, ...rest } = full;
+    const decision = { ...rest, message: ctx.lang === "en" ? messageEn : full.message };
 
     const [checkin] = await tx
       .select()
@@ -724,9 +733,9 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
 
   return {
     /** Decisão e sessões do dia (cria a semana do plano na primeira consulta). */
-    async day(userId: string, date: string) {
+    async day(userId: string, date: string, lang: Lang = "pt-BR") {
       assertDate(date);
-      return withAthlete(db, userId, async (tx) => dayView(tx, await loadContext(tx, userId), userId, date));
+      return withAthlete(db, userId, async (tx) => dayView(tx, await loadContext(tx, userId, lang), userId, date));
     },
 
     /** Semana do plano que contém `date`, com as sessões, os registros e as sem registro. */
@@ -833,7 +842,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
      * Detalhe de um treino agendado do próprio atleta: a sessão, o registro e o recorte do catálogo
      * (razão, intensidade, blocos, limites, evidência) com as referências. De outro atleta: 404.
      */
-    async workout(userId: string, scheduledWorkoutId: string) {
+    async workout(userId: string, scheduledWorkoutId: string, lang: Lang = "pt-BR") {
       return withAthlete(db, userId, async (tx) => {
         const [row] = await sessionsOf(tx, userId, eq(scheduledWorkouts.id, scheduledWorkoutId));
         if (!row) throw errors.notFound();
@@ -861,7 +870,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           .orderBy(asc(referencesTable.citation));
         return {
           session: view(row, logs.get(row.id)),
-          detail: workoutDetail(catalog?.structure, profile?.level ?? ""),
+          detail: workoutDetail(catalog?.structure, profile?.level ?? "", lang),
           catalogVersion: catalog?.version ?? null,
           references: refs,
         };
@@ -869,7 +878,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     },
 
     /** Check-in do dia: grava (um por dia) e devolve a decisão recalculada. */
-    async saveCheckin(userId: string, date: string, input: CheckinInput) {
+    async saveCheckin(userId: string, date: string, input: CheckinInput, lang: Lang = "pt-BR") {
       assertDate(date);
       const values = {
         sleepHours: input.sleepHours !== undefined ? input.sleepHours.toFixed(1) : null,
@@ -883,7 +892,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
         dailyPainWalking: input.dailyPainWalking ?? null,
       };
       return withAthlete(db, userId, async (tx) => {
-        const ctx = await loadContext(tx, userId);
+        const ctx = await loadContext(tx, userId, lang);
         await tx
           .insert(dailyCheckins)
           .values({ userId, date, ...values })
@@ -893,10 +902,10 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     },
 
     /** Relato de dor ou sintoma fora do registro de treino (check-in, manhã seguinte). */
-    async savePain(userId: string, date: string, report: PainReportInput) {
+    async savePain(userId: string, date: string, report: PainReportInput, lang: Lang = "pt-BR") {
       assertDate(date);
       return withAthlete(db, userId, async (tx) => {
-        const ctx = await loadContext(tx, userId);
+        const ctx = await loadContext(tx, userId, lang);
         await tx.insert(painReports).values({ userId, reportedOn: date, ...painToRow(report) });
         logger.info("pain_reported", { userId, moment: report.moment, intensity: report.intensity });
         return dayView(tx, ctx, userId, date);
@@ -907,14 +916,14 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
      * Registro pós-treino (substitui o anterior da mesma sessão) e a decisão do dia seguinte:
      * é aí que o atleta vê o ajuste e o motivo.
      */
-    async logWorkout(userId: string, scheduledWorkoutId: string, input: WorkoutLogInput) {
+    async logWorkout(userId: string, scheduledWorkoutId: string, input: WorkoutLogInput, lang: Lang = "pt-BR") {
       return withAthlete(db, userId, async (tx) => {
         const [row] = await sessionsOf(tx, userId, eq(scheduledWorkouts.id, scheduledWorkoutId));
         if (!row) throw errors.notFound();
         if (diff(todayUtc(), row.scheduledDate) > DATE_TOLERANCE_DAYS) {
           throw errors.validation([{ path: "scheduledWorkoutId", code: "future_session" }]);
         }
-        const ctx = await loadContext(tx, userId);
+        const ctx = await loadContext(tx, userId, lang);
         const values = {
           completed: input.completed,
           durationMinutes: input.completed ? (input.durationMinutes ?? null) : null,

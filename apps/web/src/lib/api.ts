@@ -1,3 +1,5 @@
+import i18n from "../i18n";
+
 // Em desenvolvimento a API fica no mesmo host que o front (localhost ou 127.0.0.1): o cookie de sessão
 // só vale quando os dois estão no mesmo "site".
 const devApi = `http://${window.location.hostname}:3000/api/v1`;
@@ -22,6 +24,8 @@ export async function fetchApi<T = unknown>(endpoint: string, options: RequestIn
       ...options,
       headers: {
         ...(options.body !== undefined ? { "Content-Type": "application/json" } : {}),
+        // Idioma da tela: a API devolve nele os textos calculados (mensagem do dia, treino).
+        "Accept-Language": i18n.language,
         ...options.headers,
       },
       // Envia o cookie de sessão (a API fica em outro subdomínio do mesmo site).

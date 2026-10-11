@@ -44,14 +44,30 @@ test("Termos de Uso: o que o app é e não é, triagem, PAR-Q+, gratuidade e eme
   await expect(page).toHaveURL(/\/privacidade$/);
 });
 
-test("com o app em inglês, mostra o aviso de que o documento está em português", async ({ page }) => {
+test("com o app em inglês, o documento aparece traduzido, com o aviso de que vale o português", async ({ page }) => {
   await page.goto("/termos");
   await expect(page.getByRole("note")).toHaveCount(0);
   await page.getByRole("button", { name: "EN" }).click();
-  await expect(page.getByRole("note")).toContainText("available only in Brazilian Portuguese");
-  // o texto continua em português, marcado com o idioma certo
-  await expect(page.locator("article")).toHaveAttribute("lang", "pt-BR");
-  await expect(page.getByRole("heading", { name: "Termos de Uso", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Terms of Use", level: 1 })).toBeVisible();
+  await expect(page.getByRole("note")).toContainText("the Portuguese version prevails");
+  await expect(page.locator("article")).toHaveAttribute("lang", "en");
+  await expect(page.getByText("Last updated: October 11, 2026")).toBeVisible();
+  await expect(page.getByText("No artificial intelligence generates or changes the workouts.")).toBeVisible();
+  await expect(page.getByText("call 192 (SAMU)")).toBeVisible();
+
+  // a mesma versão, as mesmas seções; o outro documento também em inglês
+  await expect(page.getByText("version 2026-10-11")).toBeVisible();
+  await page.getByRole("link", { name: "Privacy Policy", exact: true }).first().click();
+  await expect(page).toHaveURL(/\/privacidade$/);
+  await expect(page.getByRole("heading", { name: "Privacy Policy", level: 1 })).toBeVisible();
+  await expect(page.getByText("month and year of birth (we do not keep the day)")).toBeVisible();
+  const text = await page.locator("main").innerText();
+  expect(text).not.toMatch(/R-[A-Z]{3}-\d+|\[P\]|`/);
+
+  // volta para o português
+  await page.getByRole("button", { name: "PT" }).click();
+  await expect(page.getByRole("heading", { name: "Política de Privacidade", level: 1 })).toBeVisible();
+  await expect(page.getByRole("note")).toHaveCount(0);
 });
 
 test("rodapé leva às duas páginas", async ({ page }) => {

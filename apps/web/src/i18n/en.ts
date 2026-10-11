@@ -502,7 +502,7 @@ export const en: Translation = {
     updated: "Last updated: {{date}}",
     version: "version {{version}}",
     toc: "On this page",
-    enNotice: "For now, this document is available only in Brazilian Portuguese, the language of the law it follows (LGPD). An English translation is coming.",
+    enNotice: "This is a translation of the Portuguese version. If there is any difference between the two, the Portuguese version prevails.",
   },
   healthChange: {
     title: "Has anything changed in your health?",

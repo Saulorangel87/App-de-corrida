@@ -37,6 +37,8 @@ export type DayDecision = {
   persistentSleepIssue: boolean;
   /** Texto curto para o atleta, sem códigos nem colchetes; as fontes ficam em `sources`. */
   message: string;
+  /** O mesmo texto em inglês; a API entrega só o do idioma do app em `message`. */
+  messageEn: string;
   /** Tudo que contribuiu, na ordem de precedência (auditoria em engine_decisions). */
   reasons: DayReason[];
   sources: string[];
@@ -49,45 +51,86 @@ const parse = (d: string) => Date.parse(`${d}T00:00:00Z`);
 const addDays = (d: string, n: number) => new Date(parse(d) + n * DAY_MS).toISOString().slice(0, 10);
 const age = (d: string, today: string) => Math.round((parse(today) - parse(d)) / DAY_MS);
 const floor5 = (n: number) => Math.floor(n / 5) * 5;
-const hoursText = (h: number) => String(h).replace(".", ",");
 const unique = (xs: string[]) => [...new Set(xs)];
 
+/** Texto nos dois idiomas; as frases são compostas juntas para pt e en nunca saírem de passo. */
+type Msg = { pt: string; en: string };
+const m = (pt: string, en: string): Msg => ({ pt, en });
+const cat = (...parts: Msg[]): Msg => ({ pt: parts.map((x) => x.pt).join(""), en: parts.map((x) => x.en).join("") });
+const hoursText = (h: number): Msg => m(String(h).replace(".", ","), String(h));
+
 /** Frase do limite que reduziu o treino de hoje, em linguagem simples (R-PRG-02 a R-PRG-08, R-SES-07/08). */
-function capSentence(r: DayReason): string | null {
+function capSentence(r: DayReason): Msg | null {
   const minutes = (r.detail ?? "").replace(" na semana", "");
+  const recovery = m(
+    "Esta é uma semana de recuperação: o volume cai para 75% da última semana de construção e o treino forte vira leve.",
+    "This is a recovery week: the volume drops to 75% of the last build week and the hard workout becomes easy.",
+  );
   switch (r.code) {
     case "teto_da_sessao":
       return r.rule === "R-PRG-08"
-        ? `Hoje o treino ficou em ${minutes}: depois de uma pausa, o app limita a duração de cada corrida e aumenta aos poucos.`
-        : `Hoje o treino ficou em ${minutes}: nenhuma corrida deve passar de 110% da sua maior corrida dos últimos 30 dias.`;
+        ? m(
+            `Hoje o treino ficou em ${minutes}: depois de uma pausa, o app limita a duração de cada corrida e aumenta aos poucos.`,
+            `Today's workout is ${minutes}: after a break, the app limits the length of each run and increases it gradually.`,
+          )
+        : m(
+            `Hoje o treino ficou em ${minutes}: nenhuma corrida deve passar de 110% da sua maior corrida dos últimos 30 dias.`,
+            `Today's workout is ${minutes}: no run should go past 110% of your longest run in the last 30 days.`,
+          );
     case "teto_semanal":
       return r.rule === "R-PRG-07"
-        ? "Esta é uma semana de recuperação: o volume cai para 75% da última semana de construção e o treino forte vira leve."
-        : `Esta semana o volume está limitado a ${minutes}: o app só deixa o volume crescer até 110% da última semana de construção (regra de cautela do app).`;
+        ? recovery
+        : m(
+            `Esta semana o volume está limitado a ${minutes}: o app só deixa o volume crescer até 110% da última semana de construção (regra de cautela do app).`,
+            `This week the volume is limited to ${minutes}: the app only lets the volume grow up to 110% of the last build week (a precaution rule of the app).`,
+          );
     case "semana_de_recuperacao":
-      return "Esta é uma semana de recuperação: o volume cai para 75% da última semana de construção e o treino forte vira leve.";
+      return recovery;
     case "sem_z3_apos_pausa":
-      return "Nas duas primeiras semanas depois de uma pausa, o app não inclui esforço forte (Z3).";
+      return m(
+        "Nas duas primeiras semanas depois de uma pausa, o app não inclui esforço forte (Z3).",
+        "In the first two weeks after a break, the app does not include hard effort (Z3).",
+      );
     case "somente_z1":
-      return "Hoje o treino fica só em esforço leve (Z1), por causa da sua triagem de saúde ou da sua dor.";
+      return m(
+        "Hoje o treino fica só em esforço leve (Z1), por causa da sua triagem de saúde ou da sua dor.",
+        "Today's workout stays at easy effort (Z1) only, because of your health screening or your pain.",
+      );
     case "retomada_gradual":
-      return "Depois de uma pausa longa, a volta é gradual: começamos por um treino mais leve.";
+      return m(
+        "Depois de uma pausa longa, a volta é gradual: começamos por um treino mais leve.",
+        "After a long break, the return is gradual: we start with an easier workout.",
+      );
     default:
       return null;
   }
 }
 
-const FREEZE_TEXT: Record<FreezeReason, string> = {
-  dor_limite: "você teve dor de 3 ou mais durante ou depois do treino, ou um aumento de 2 pontos na manhã seguinte",
-  sono_s1_na_semana: "houve noites de sono ruins nesta semana",
-  sessoes_nao_concluidas: "mais de uma sessão não foi concluída",
-  corrida_acima_do_teto: "você correu acima do limite de uma corrida",
-  rpe_acima_do_alvo: "o esforço relatado ficou acima do alvo em 2 de 3 sessões",
+const FREEZE_TEXT: Record<FreezeReason, Msg> = {
+  dor_limite: m(
+    "você teve dor de 3 ou mais durante ou depois do treino, ou um aumento de 2 pontos na manhã seguinte",
+    "you had pain of 3 or more during or after a workout, or a 2-point increase the next morning",
+  ),
+  sono_s1_na_semana: m("houve noites de sono ruins nesta semana", "there were nights of poor sleep this week"),
+  sessoes_nao_concluidas: m("mais de uma sessão não foi concluída", "more than one session was not completed"),
+  corrida_acima_do_teto: m("você correu acima do limite de uma corrida", "you ran above the limit for a single run"),
+  rpe_acima_do_alvo: m(
+    "o esforço relatado ficou acima do alvo em 2 de 3 sessões",
+    "the reported effort was above target in 2 of 3 sessions",
+  ),
 };
-const joinAnd = (xs: string[]) => (xs.length <= 1 ? (xs[0] ?? "") : `${xs.slice(0, -1).join(", ")} e ${xs[xs.length - 1]}`);
+const joinAnd = (xs: Msg[]): Msg => {
+  if (xs.length <= 1) return xs[0] ?? m("", "");
+  const head = xs.slice(0, -1);
+  const last = xs[xs.length - 1]!;
+  return {
+    pt: `${head.map((x) => x.pt).join(", ")} e ${last.pt}`,
+    en: `${head.map((x) => x.en).join(", ")}${xs.length > 2 ? "," : ""} and ${last.en}`,
+  };
+};
 
 type Rank = 0 | 1 | 2 | 3 | 4;
-type Gate = { rank: Rank; text: string; sources: string[]; reasons: DayReason[] };
+type Gate = { rank: Rank; text: Msg; sources: string[]; reasons: DayReason[] };
 
 const ACTION_BY_RANK: Record<Rank, DayAction> = {
   0: "manter",
@@ -97,7 +140,7 @@ const ACTION_BY_RANK: Record<Rank, DayAction> = {
   4: "interromper_e_encaminhar",
 };
 
-const SAMU = "em emergência, ligue 192 (SAMU)";
+const SAMU = m("em emergência, ligue 192 (SAMU)", "in an emergency, call 192 (SAMU)");
 
 function sleepGate(w: WellbeingResult, todayKind: string | undefined, todayHours: number | undefined): Gate | null {
   if (w.level === 0) return null;
@@ -105,17 +148,39 @@ function sleepGate(w: WellbeingResult, todayKind: string | undefined, todayHours
   const sources = reasons.flatMap((r) => r.sources);
   const rank = w.level as Rank;
   const qualityDay = todayKind === "qualidade" || todayKind === "longao";
-  const effect = rank === 1 ? "reduzimos a intensidade e o volume de hoje" : rank === 2 ? "hoje o treino é regenerativo" : "hoje é dia de descanso ou mobilidade leve";
-  let cause: string;
-  if (w.carried) cause = "Você ainda está em um período de recuperação do sono e do bem-estar e não fez o check-in de hoje.";
-  else if (w.s >= 2 && w.night) cause = "Houve várias noites ruins seguidas ou nesta semana. O cansaço por falta de sono se acumula e muitas vezes não é percebido.";
-  else if (w.s === 1 && w.night === "muito_ruim" && qualityDay && todayHours !== undefined)
-    cause = `Você dormiu ${hoursText(todayHours)} h. Uma noite curta não costuma exigir mudança, mas hoje o treino é puxado.`;
-  else if (w.s === 1) cause = "Duas das últimas três noites foram ruins.";
-  else if (w.delta !== null && w.delta <= cfg.wellbeing.deviationYellow)
-    cause = `A soma das suas respostas de bem-estar (qualidade do sono, energia, humor, estresse e dor muscular) está ${Math.abs(w.delta)} pontos abaixo da sua média dos últimos 14 dias.`;
-  else cause = "Seu check-in de bem-estar de hoje ficou abaixo do esperado.";
-  return { rank, text: `${cause} Por isso, ${effect}.`, sources, reasons };
+  const effect =
+    rank === 1
+      ? m("reduzimos a intensidade e o volume de hoje", "we reduced today's intensity and volume")
+      : rank === 2
+        ? m("hoje o treino é regenerativo", "today's workout is a recovery workout")
+        : m("hoje é dia de descanso ou mobilidade leve", "today is a rest or light mobility day");
+  let cause: Msg;
+  if (w.carried)
+    cause = m(
+      "Você ainda está em um período de recuperação do sono e do bem-estar e não fez o check-in de hoje.",
+      "You are still in a recovery period for sleep and well-being and have not done today's check-in.",
+    );
+  else if (w.s >= 2 && w.night)
+    cause = m(
+      "Houve várias noites ruins seguidas ou nesta semana. O cansaço por falta de sono se acumula e muitas vezes não é percebido.",
+      "There were several bad nights in a row or this week. Tiredness from lack of sleep builds up and is often not noticed.",
+    );
+  else if (w.s === 1 && w.night === "muito_ruim" && qualityDay && todayHours !== undefined) {
+    const h = hoursText(todayHours);
+    cause = cat(
+      m("Você dormiu ", "You slept "),
+      h,
+      m(" h. Uma noite curta não costuma exigir mudança, mas hoje o treino é puxado.", " h. One short night does not usually call for a change, but today's workout is demanding."),
+    );
+  } else if (w.s === 1) cause = m("Duas das últimas três noites foram ruins.", "Two of the last three nights were poor.");
+  else if (w.delta !== null && w.delta <= cfg.wellbeing.deviationYellow) {
+    const n = Math.abs(w.delta);
+    cause = m(
+      `A soma das suas respostas de bem-estar (qualidade do sono, energia, humor, estresse e dor muscular) está ${n} pontos abaixo da sua média dos últimos 14 dias.`,
+      `The sum of your well-being answers (sleep quality, energy, mood, stress and muscle soreness) is ${n} points below your average of the last 14 days.`,
+    );
+  } else cause = m("Seu check-in de bem-estar de hoje ficou abaixo do esperado.", "Today's well-being check-in was below what is expected.");
+  return { rank, text: cat(cause, m(" Por isso, ", " Because of this, "), effect, m(".", ".")), sources, reasons };
 }
 
 function painGate(p: ReturnType<typeof evaluatePain>): Gate | null {
@@ -127,33 +192,58 @@ function painGate(p: ReturnType<typeof evaluatePain>): Gate | null {
   if (p.urgent)
     return {
       rank: 4,
-      text: `Pare agora. Dor no peito, falta de ar fora do normal, tontura forte, desmaio ou confusão exigem avaliação médica. Procure atendimento imediatamente; ${SAMU}. O Let's Go Run não faz diagnóstico.`,
+      text: cat(
+        m(
+          "Pare agora. Dor no peito, falta de ar fora do normal, tontura forte, desmaio ou confusão exigem avaliação médica. Procure atendimento imediatamente; ",
+          "Stop now. Chest pain, unusual shortness of breath, severe dizziness, fainting or confusion need medical evaluation. Seek care immediately; ",
+        ),
+        SAMU,
+        m(". O Let's Go Run não faz diagnóstico.", ". Let's Go Run does not make diagnoses."),
+      ),
       sources, reasons,
     };
   if (p.blockRunning && p.refer)
     return {
       rank: 4,
-      text: `Seus sintomas têm características que precisam de avaliação profissional antes de você voltar a correr. Não podemos dizer o que é; só um profissional pode examinar. Treinos de corrida estão pausados.${p.sameDayMedical ? " Procure atendimento médico ainda hoje." : ""}`,
+      text: cat(
+        m(
+          "Seus sintomas têm características que precisam de avaliação profissional antes de você voltar a correr. Não podemos dizer o que é; só um profissional pode examinar. Treinos de corrida estão pausados.",
+          "Your symptoms have features that need a professional evaluation before you go back to running. We cannot say what it is; only a professional can examine you. Running workouts are paused.",
+        ),
+        p.sameDayMedical ? m(" Procure atendimento médico ainda hoje.", " Seek medical care today.") : m("", ""),
+      ),
       sources, reasons,
     };
   if (p.blockRunning)
     return {
       rank: 3,
-      text: "Sua dor passou do limite de segurança. Hoje não corra: caminhe ou escolha uma atividade sem dor (bicicleta, água). A corrida volta quando a dor ao caminhar ficar em 2/10 ou menos.",
+      text: m(
+        "Sua dor passou do limite de segurança. Hoje não corra: caminhe ou escolha uma atividade sem dor (bicicleta, água). A corrida volta quando a dor ao caminhar ficar em 2/10 ou menos.",
+        "Your pain went past the safety limit. Do not run today: walk or choose a pain-free activity (cycling, water). Running comes back when the pain while walking is 2/10 or less.",
+      ),
       sources, reasons,
     };
   if (p.refer)
     return {
       rank: 1,
-      text: "Essa dor já vem limitando seus treinos; vale uma avaliação de fisioterapeuta ou médico do esporte. Por ora, o treino de hoje ficou mais leve.",
+      text: m(
+        "Essa dor já vem limitando seus treinos; vale uma avaliação de fisioterapeuta ou médico do esporte. Por ora, o treino de hoje ficou mais leve.",
+        "This pain has already been limiting your workouts; it is worth seeing a physiotherapist or a sports doctor. For now, today's workout is lighter.",
+      ),
       sources, reasons,
     };
   const doms = p.findings.every((f) => f.code === "doms");
   return {
     rank: 1,
     text: doms
-      ? "Dor muscular dos dois lados, que apareceu depois de um treino mais forte, costuma ser dor muscular tardia e melhora em até uma semana. Mantenha leve; se for num ponto só, piorar ou passar de 7 dias, procure um profissional."
-      : "Sua dor ficou acima do que consideramos seguro para treinar forte. Por isso o treino de hoje ficou mais leve. Se a dor continuar ou piorar, procure um fisioterapeuta ou médico do esporte.",
+      ? m(
+          "Dor muscular dos dois lados, que apareceu depois de um treino mais forte, costuma ser dor muscular tardia e melhora em até uma semana. Mantenha leve; se for num ponto só, piorar ou passar de 7 dias, procure um profissional.",
+          "Muscle soreness on both sides that appeared after a harder workout is usually delayed-onset muscle soreness and improves within a week. Keep it easy; if it is in one spot only, gets worse or lasts more than 7 days, see a professional.",
+        )
+      : m(
+          "Sua dor ficou acima do que consideramos seguro para treinar forte. Por isso o treino de hoje ficou mais leve. Se a dor continuar ou piorar, procure um fisioterapeuta ou médico do esporte.",
+          "Your pain is above what we consider safe for hard training. That is why today's workout is lighter. If the pain continues or gets worse, see a physiotherapist or a sports doctor.",
+        ),
     sources, reasons,
   };
 }
@@ -182,33 +272,41 @@ export function decideDay(i: DayInput): DayDecision {
   const sc = i.screening.state;
   if (sc === "AVALIACAO_NECESSARIA")
     gates.push({
-      rank: 4, text: "Antes de começar, procure mais orientação. Registre aqui quando um profissional avaliar e liberar você.",
+      rank: 4,
+      text: m("Antes de começar, procure mais orientação. Registre aqui quando um profissional avaliar e liberar você.", "Before you start, seek more guidance. Record here when a professional has evaluated and cleared you."),
       sources: ["PARQ+ 2025", "Riebe 2015"], reasons: [{ rule: "R-TRI-05", code: "triagem_avaliacao_necessaria", sources: ["PARQ+ 2025"] }],
     });
   else if (sc === "EXPIRADO")
     gates.push({
-      rank: 3, text: "Sua triagem de saúde venceu ou sua saúde mudou. Refaça o questionário PAR-Q+ para voltar a treinar.",
+      rank: 3,
+      text: m("Sua triagem de saúde venceu ou sua saúde mudou. Refaça o questionário PAR-Q+ para voltar a treinar.", "Your health screening has expired or your health has changed. Redo the PAR-Q+ questionnaire to go back to training."),
       sources: ["PARQ+ 2025"], reasons: [{ rule: "R-TRI-10", code: "triagem_expirada", sources: ["PARQ+ 2025"] }],
     });
   else if (sc === "ADIADO")
     gates.push({
-      rank: 3, text: "Hoje não tem treino: o início fica adiado (doença aguda ou gravidez). Volte quando estiver bem ou com orientação profissional.",
+      rank: 3,
+      text: m("Hoje não tem treino: o início fica adiado (doença aguda ou gravidez). Volte quando estiver bem ou com orientação profissional.", "No workout today: starting is postponed (acute illness or pregnancy). Come back when you are well or with professional guidance."),
       sources: ["PARQ+ 2025"], reasons: [{ rule: "R-TRI-09", code: "triagem_adiada", sources: ["PARQ+ 2025"] }],
     });
   else if (sc === "NAO_FEITA")
     gates.push({
-      rank: 3, text: "Para receber treinos, responda primeiro à triagem de saúde (PAR-Q+).",
+      rank: 3,
+      text: m("Para receber treinos, responda primeiro à triagem de saúde (PAR-Q+).", "To receive workouts, first answer the health screening (PAR-Q+)."),
       sources: [], reasons: [{ rule: "R-TRI-01", code: "triagem_nao_feita", sources: [] }],
     });
   if (wellbeing.acuteIllnessToday)
     gates.push({
-      rank: 3, text: "Doença aguda hoje (febre, resfriado): sem treino. É melhor esperar até se sentir bem.",
+      rank: 3,
+      text: m("Doença aguda hoje (febre, resfriado): sem treino. É melhor esperar até se sentir bem.", "Acute illness today (fever, cold): no workout. It is better to wait until you feel well."),
       sources: ["PARQ+ 2025"], reasons: [{ rule: "R-SON-16", code: "doenca_aguda", sources: ["PARQ+ 2025"] }],
     });
   if (ret.waitingProfessional)
     gates.push({
       rank: 4,
-      text: "Sua pausa foi por dor, lesão ou doença. Procure um profissional de saúde; quando ele liberar, registre aqui para retomar o plano com volta gradual.",
+      text: m(
+        "Sua pausa foi por dor, lesão ou doença. Procure um profissional de saúde; quando ele liberar, registre aqui para retomar o plano com volta gradual.",
+        "Your break was because of pain, injury or illness. See a health professional; when they clear you, record it here to resume the plan with a gradual return.",
+      ),
       sources: ["Garber 2011"], reasons: [{ rule: "R-PRG-09", code: "pausa_aguardando_liberacao", sources: [] }],
     });
 
@@ -328,19 +426,39 @@ export function decideDay(i: DayInput): DayDecision {
   if (wellbeing.needsCheckin && !wellbeing.acuteIllnessToday)
     reasons.push({ rule: "R-SON-13", code: "pedir_checkin", sources: [] });
 
-  let text = primary?.text;
+  let text: Msg | undefined = primary?.text;
   if (!text) {
-    if (!base) text = "Hoje é dia de descanso no seu plano.";
+    if (!base) text = m("Hoje é dia de descanso no seu plano.", "Today is a rest day in your plan.");
     else if (capReasons.length > 0) {
-      const why = unique(capReasons.map(capSentence).filter((x): x is string => x !== null));
-      text = why.length > 0 ? `Seu treino de hoje foi ajustado. ${why.join(" ")}` : "Seu treino de hoje foi ajustado para respeitar os limites de progressão.";
-    } else text = "Siga o treino de hoje como planejado.";
+      const why = capReasons.map(capSentence).filter((x): x is Msg => x !== null);
+      const distinct = why.filter((x, idx) => why.findIndex((y) => y.pt === x.pt) === idx);
+      text =
+        distinct.length > 0
+          ? m(`Seu treino de hoje foi ajustado. ${distinct.map((x) => x.pt).join(" ")}`, `Today's workout was adjusted. ${distinct.map((x) => x.en).join(" ")}`)
+          : m(
+              "Seu treino de hoje foi ajustado para respeitar os limites de progressão.",
+              "Today's workout was adjusted to respect the progression limits.",
+            );
+    } else text = m("Siga o treino de hoje como planejado.", "Follow today's workout as planned.");
   }
-  if (freezes.length > 0 && rank < 3)
-    text += ` A progressão está parada esta semana (o plano repete a semana anterior) porque ${joinAnd(freezes.map((f) => FREEZE_TEXT[f]))}.`;
+  if (freezes.length > 0 && rank < 3) {
+    const why = joinAnd(freezes.map((f) => FREEZE_TEXT[f]));
+    text = cat(
+      text,
+      m(" A progressão está parada esta semana (o plano repete a semana anterior) porque ", " Progression is on hold this week (the plan repeats the previous week) because "),
+      why,
+      m(".", "."),
+    );
+  }
   if (wellbeing.persistentSleepIssue)
-    text += " Seu sono insuficiente já dura semanas; vale conversar com um profissional de saúde.";
-  if (wellbeing.needsCheckin && !wellbeing.acuteIllnessToday) text += " Faça o check-in de hoje.";
+    text = cat(
+      text,
+      m(
+        " Seu sono insuficiente já dura semanas; vale conversar com um profissional de saúde.",
+        " Your insufficient sleep has lasted weeks; it is worth talking to a health professional.",
+      ),
+    );
+  if (wellbeing.needsCheckin && !wellbeing.acuteIllnessToday) text = cat(text, m(" Faça o check-in de hoje.", " Do today's check-in."));
   const allSources = unique([...(primary?.sources ?? []), ...reasons.flatMap((r) => r.sources)]);
 
   return {
@@ -364,7 +482,8 @@ export function decideDay(i: DayInput): DayDecision {
     },
     needsCheckin: wellbeing.needsCheckin && !wellbeing.acuteIllnessToday,
     persistentSleepIssue: wellbeing.persistentSleepIssue,
-    message: text,
+    message: text.pt,
+    messageEn: text.en,
     reasons,
     sources: allSources,
     levels: {

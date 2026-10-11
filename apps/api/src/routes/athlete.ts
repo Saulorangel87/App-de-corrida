@@ -2,6 +2,7 @@ import { Hono, type MiddlewareHandler } from "hono";
 import { z } from "zod";
 import { INTERVIEW_STEPS, PARQ_INSTRUMENT, PARQ_TEXT_COMPLETE, evaluationSchema, healthChangeSchema, isoDate, type InterviewStep } from "@passo/shared";
 import { errors } from "../lib/errors";
+import { requestLang } from "../lib/lang";
 import { validate } from "../lib/validate";
 import type { AthleteService } from "../services/athlete-service";
 import type { AppEnv } from "../types";
@@ -34,7 +35,7 @@ export function athleteRoutes(opts: { athlete: AthleteService; session: Middlewa
   r.post("/interview/submit", session, async (c) => {
     const user = me(c);
     const result = await athlete.submit(user.id);
-    const profile = await athlete.getProfile(user.id, user.language === "en" ? "en" : "pt-BR");
+    const profile = await athlete.getProfile(user.id, requestLang(c));
     return c.json({ profile, planSelection: result.selection }, 201);
   });
 
@@ -42,7 +43,7 @@ export function athleteRoutes(opts: { athlete: AthleteService; session: Middlewa
 
   r.get("/profile", session, async (c) => {
     const user = me(c);
-    return c.json({ profile: await athlete.getProfile(user.id, user.language === "en" ? "en" : "pt-BR") });
+    return c.json({ profile: await athlete.getProfile(user.id, requestLang(c)) });
   });
 
   r.post("/profile/screening/evaluation", session, validate("json", evaluationSchema), async (c) => {

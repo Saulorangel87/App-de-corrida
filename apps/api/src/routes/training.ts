@@ -2,6 +2,7 @@ import { Hono, type MiddlewareHandler } from "hono";
 import { checkinSchema, clearanceSchema, historyQuerySchema, isoDate, painReportSchema, pauseSchema, workoutLogSchema } from "@passo/shared";
 import { z } from "zod";
 import { errors } from "../lib/errors";
+import { requestLang } from "../lib/lang";
 import { validate } from "../lib/validate";
 import type { TrainingService } from "../services/training-service";
 import type { AppEnv } from "../types";
@@ -26,7 +27,7 @@ export function trainingRoutes(opts: { training: TrainingService; session: Middl
   };
 
   // Decisão e sessões do dia
-  r.get("/day/:date", session, async (c) => c.json(await training.day(me(c), dateParam(c))));
+  r.get("/day/:date", session, async (c) => c.json(await training.day(me(c), dateParam(c), requestLang(c))));
 
   // Semana do plano que contém a data
   r.get("/plan/week/:date", session, async (c) => c.json(await training.week(me(c), dateParam(c))));
@@ -35,21 +36,21 @@ export function trainingRoutes(opts: { training: TrainingService; session: Middl
   r.get("/plan/overview/:date", session, async (c) => c.json(await training.overview(me(c), dateParam(c))));
 
   // Detalhe de um treino agendado (catálogo, referências, registro): só do próprio atleta
-  r.get("/workouts/:id", session, async (c) => c.json(await training.workout(me(c), idParam(c))));
+  r.get("/workouts/:id", session, async (c) => c.json(await training.workout(me(c), idParam(c), requestLang(c))));
 
   // Check-in diário (um por dia; reenviar substitui)
   r.put("/checkins/:date", session, validate("json", checkinSchema), async (c) =>
-    c.json(await training.saveCheckin(me(c), dateParam(c), c.req.valid("json"))),
+    c.json(await training.saveCheckin(me(c), dateParam(c), c.req.valid("json"), requestLang(c))),
   );
 
   // Dor ou sintoma fora do registro de treino
   r.post("/pain/:date", session, validate("json", painReportSchema), async (c) =>
-    c.json(await training.savePain(me(c), dateParam(c), c.req.valid("json")), 201),
+    c.json(await training.savePain(me(c), dateParam(c), c.req.valid("json"), requestLang(c)), 201),
   );
 
   // Registro pós-treino (reenviar substitui) e decisão do dia seguinte
   r.put("/workouts/:id/log", session, validate("json", workoutLogSchema), async (c) =>
-    c.json(await training.logWorkout(me(c), idParam(c), c.req.valid("json"))),
+    c.json(await training.logWorkout(me(c), idParam(c), c.req.valid("json"), requestLang(c))),
   );
 
   // Pausa e liberação profissional

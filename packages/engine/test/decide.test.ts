@@ -256,6 +256,60 @@ describe("texto do atleta: o limite que agiu e a progressão parada", () => {
   });
 });
 
+describe("mensagem do dia em inglês (messageEn)", () => {
+  const en = (o: Partial<DayInput>) => decideDay(base(o)).messageEn;
+  const PT_WORDS = /\b(você|seu|sua|treino|hoje|dor|sono|semana|profissional|procure|faça|não)\b|[ãõçáéíóúâêô]/i;
+
+  it("os cenários principais têm o mesmo sentido do português", () => {
+    expect(en({})).toBe("Follow today's workout as planned.");
+    expect(en({ planned: null })).toBe("Today is a rest day in your plan.");
+    expect(en({ planned: long })).toContain("Today's workout is 55 min: no run should go past 110% of your longest run in the last 30 days.");
+    expect(en({ checkins: good(-6, -1) })).toContain("Do today's check-in.");
+    const urgent = en({ pain: [pain(0, { moment: "checkin", cardio: { chestPain: true } })] });
+    expect(urgent).toContain("call 192 (SAMU)");
+    expect(urgent).toContain("does not make diagnoses");
+    expect(en({ checkins: [...good(-6, -3), ck(-2, 6.0), ck(-1, 5.5), ck(0, 6.0)], planned: interval })).toContain("recovery workout");
+  });
+
+  it("horas de sono com ponto decimal e lista de motivos com 'and'", () => {
+    expect(en({ checkins: [...good(-6, -1), ck(0, 4.5)], planned: interval })).toContain("You slept 4.5 h.");
+    const frozen = en({ planned: interval, pain: [pain(-1, { intensity: 4, region: "joelho" })] });
+    expect(frozen).toMatch(/Progression is on hold this week \(the plan repeats the previous week\) because you had pain of 3 or more/);
+  });
+
+  it("soma de bem-estar e estados da triagem", () => {
+    const checkins = [...good(-13, -1).map((c) => ({ ...c, energy: 5, mood: 5, stress: 5, muscleSoreness: 5, sleepQuality: 5 })), ck(0, 7.5, { energy: 3, mood: 3, stress: 3, muscleSoreness: 3, sleepQuality: 3 })];
+    expect(en({ checkins })).toContain("sleep quality, energy, mood, stress and muscle soreness");
+    expect(en({ screening: { state: "EXPIRADO", maxIntensity: "nenhuma" } })).toContain("Redo the PAR-Q+ questionnaire");
+    expect(en({ screening: { state: "AVALIACAO_NECESSARIA", maxIntensity: "nenhuma" } })).toContain("seek more guidance");
+  });
+
+  it("nenhuma mensagem em inglês deixa passar português nem código de regra", () => {
+    const scenarios: Partial<DayInput>[] = [
+      {},
+      { planned: null },
+      { planned: long },
+      { planned: interval, pain: [pain(-1, { intensity: 6, region: "joelho" })] },
+      { planned: interval, pain: [pain(-1, { intensity: 4, region: "joelho" })] },
+      { pain: [pain(-1, { intensity: 1, changedStride: true, region: "tornozelo" })] },
+      { pain: [pain(0, { moment: "checkin", cardio: { chestPain: true } })] },
+      { checkins: [...good(-6, -3), ck(-2, 6.0), ck(-1, 5.5), ck(0, 6.0)], planned: interval },
+      { checkins: [ck(-6, 6.0), ck(-5, 7.5), ck(-4, 6.0), ck(-3, 5.5), ck(-2, 7.5), ck(-1, 6.0), ck(0, 6.0)] },
+      { checkins: Array.from({ length: 21 }, (_, i) => ck(-20 + i, 5.5)) },
+      { screening: { state: "NAO_FEITA", maxIntensity: "nenhuma" } },
+      { screening: { state: "ADIADO", maxIntensity: "nenhuma" } },
+      { pauseCause: "lesao" },
+      { daysSinceLastRun: 40, planned: long },
+    ];
+    for (const s of scenarios) {
+      const r = decideDay(base(s));
+      expect(r.messageEn.length).toBeGreaterThan(0);
+      expect(r.messageEn, r.message).not.toMatch(/\[|R-[A-Z]{3}-\d+|\[P\]/);
+      expect(r.messageEn, r.message).not.toMatch(PT_WORDS);
+    }
+  });
+});
+
 describe("auditoria e fontes", () => {
   it("toda decisão traz texto, regra aplicada e fontes", () => {
     const r = decideDay(base({ planned: interval, pain: [pain(-1, { intensity: 4, region: "joelho" })] }));

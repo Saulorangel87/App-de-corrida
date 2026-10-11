@@ -502,7 +502,7 @@ export const ptBR = {
     updated: "Última atualização: {{date}}",
     version: "versão {{version}}",
     toc: "Nesta página",
-    enNotice: "Por enquanto, este documento está disponível só em português do Brasil, a língua da lei que ele segue (LGPD). A tradução para o inglês virá em seguida.",
+    enNotice: "Este texto é uma tradução da versão em português. Se houver diferença entre as duas, vale a versão em português.",
   },
   healthChange: {
     title: "Mudou algo na sua saúde?",

@@ -1,15 +1,26 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { LEGAL_UPDATED_LABEL, LEGAL_VERSION, type LegalDocument } from "../lib/legal";
+import { LEGAL_UPDATED_LABEL, LEGAL_VERSION, PRIVACY_POLICY, TERMS_OF_USE, type LegalDocument } from "../lib/legal";
+import { LEGAL_UPDATED_LABEL_EN, PRIVACY_POLICY_EN, TERMS_OF_USE_EN } from "../lib/legal.en";
 import { AppFooter } from "./app-footer";
 import { LanguageSwitch } from "./language-switch";
 
+const DOCS: Record<"privacy" | "terms", Record<"pt-BR" | "en", LegalDocument>> = {
+  privacy: { "pt-BR": PRIVACY_POLICY, en: PRIVACY_POLICY_EN },
+  terms: { "pt-BR": TERMS_OF_USE, en: TERMS_OF_USE_EN },
+};
+
 /**
- * Página pública (sem login) de um documento legal. O texto está só em português (a tradução entra
- * na etapa de tradução); com o app em inglês, um aviso diz isso.
+ * Página pública (sem login) de um documento legal, no idioma do app. A versão em português é a
+ * que vale; com o app em inglês, um aviso diz que o texto é uma tradução.
  */
-export function LegalPage({ document, other }: { document: LegalDocument; other: { to: "/privacidade" | "/termos"; label: string } }) {
+export function LegalPage({ kind }: { kind: "privacy" | "terms" }) {
   const { t, i18n } = useTranslation();
+  const lang = i18n.language === "en" ? "en" : "pt-BR";
+  const document = DOCS[kind][lang];
+  const otherKind = kind === "privacy" ? "terms" : "privacy";
+  const other = { to: otherKind === "terms" ? ("/termos" as const) : ("/privacidade" as const), label: DOCS[otherKind][lang].title };
+  const updated = lang === "en" ? LEGAL_UPDATED_LABEL_EN : LEGAL_UPDATED_LABEL;
   return (
     <div className="min-h-dvh flex flex-col bg-[#F5F6F8] text-[#111827]">
       <header className="w-full border-b border-gray-200 bg-white">
@@ -22,17 +33,17 @@ export function LegalPage({ document, other }: { document: LegalDocument; other:
       </header>
 
       <main className="mx-auto w-full max-w-[760px] flex-1 px-5 py-6 sm:py-8">
-        {i18n.language === "en" && (
+        {lang === "en" && (
           <p role="note" className="mb-5 rounded-xl border border-gray-200 bg-white p-4 text-sm leading-relaxed text-gray-700">
             {t("legal.enNotice")}
           </p>
         )}
 
-        <article lang="pt-BR">
+        <article lang={lang}>
           <p className="text-xs font-bold uppercase tracking-widest text-[#FF5A1F]">{document.kicker}</p>
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#0F172A]">{document.title}</h1>
           <p className="mt-2 text-sm text-gray-500">
-            {t("legal.updated", { date: LEGAL_UPDATED_LABEL })} · {t("legal.version", { version: LEGAL_VERSION })}
+            {t("legal.updated", { date: updated })} · {t("legal.version", { version: LEGAL_VERSION })}
           </p>
           <p className="mt-4 text-[15px] leading-relaxed text-gray-700">{document.intro}</p>
 

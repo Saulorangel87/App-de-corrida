@@ -393,7 +393,7 @@ function RegionCard({
 }
 
 function Done({ result }: { result: Result }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const urgent = result.day.decision.urgent || result.nextDay.decision.urgent;
   const refer = result.day.decision.refer || result.nextDay.decision.refer;
   return (
@@ -412,8 +412,8 @@ function Done({ result }: { result: Result }) {
         )}
         <div className="rounded-xl bg-[#F5F6F8] p-4 text-sm leading-relaxed text-gray-700">
           <p className="mb-1 font-semibold text-[#111827]">{t("log.nextDayTitle")}</p>
-          {/* Texto do motor de regras, com as fontes entre colchetes; só em português por enquanto. */}
-          <p lang="pt-BR" className="whitespace-pre-line">
+          {/* Texto do motor de regras, já no idioma da tela. */}
+          <p lang={i18n.language} className="whitespace-pre-line">
             {result.nextDay.decision.message}
           </p>
         </div>

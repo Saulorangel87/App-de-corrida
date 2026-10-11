@@ -32,3 +32,4 @@ export async function withAthlete<T>(
 export * from "./schema";
 export { athleteStrings, buildAthleteText, TECHNICAL_MARKERS } from "./seed-data/athlete-text";
 export type { AthleteText } from "./seed-data/athlete-text";
+export { translateAthleteText } from "./seed-data/athlete-text.en";

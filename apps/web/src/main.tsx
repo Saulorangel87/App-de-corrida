@@ -4,10 +4,13 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import "@fontsource-variable/inter";
-import "./i18n";
+import i18n from "./i18n";
 import "./index.css";
 
 const queryClient = new QueryClient();
+
+// Os textos calculados pelo servidor vêm no idioma da tela: trocar o idioma refaz as consultas.
+i18n.on("languageChanged", () => void queryClient.invalidateQueries());
 
 const router = createRouter({
   routeTree,
