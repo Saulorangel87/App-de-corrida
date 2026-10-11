@@ -205,14 +205,38 @@ O texto de decisão já é amigável. Três mudanças: (a) tirar os colchetes co
 | U01 | Treino de hoje, zona | "Zona até Z2" | "Até esforço moderado (Z2)" | R-INT-01 |
 | U02 | Treino de hoje, esforço | "Esforço alvo (PSE) 4" | "Esforço alvo: 4 de 10" | R-INT-01 (CR-10) |
 
-## 5. O que preciso de você
+### 4.11 Glossário (aprovado em 2026-10-11; definições para você conferir)
 
-1. **Aprovar, ajustar ou recusar** as linhas por ID (pode ser "aprovo T01 a T34 e M01 a M23; mudar T08 e T40").
-2. **Decisões de apresentação** (recomendação entre parênteses):
-   - Escala de Borg (T03): esconder do atleta? (recomendo esconder)
-   - Ajustes da escada (T55, T56, T58): esconder do atleta e deixar só na auditoria? (recomendo esconder)
-   - Frequência cardíaca (T04, T05): mostrar só no bloco "Se você usa relógio"? (recomendo sim)
-   - Glossário (T87): posso escrever as definições a partir da pesquisa e trazer para você conferir? (recomendo sim)
-3. **Limites do que eu consigo garantir**: as frases propostas mantêm os mesmos fatos e números dos textos atuais e das regras citadas. Onde a pesquisa marca um valor como `[P]` (ponto de partida aceito por você em 2026-10-10), o texto diz "valor inicial do app, ainda sem estudo direto". Isso é intencional.
+**Importante:** a pesquisa **usa** estes termos, mas **não os define** em nenhum lugar. As definições abaixo são os significados gerais e simples, e a coluna "Base na pesquisa" mostra o que na pesquisa se apoia neles. Se você preferir outra redação, é só dizer.
+
+| ID | Termo | Definição proposta (texto do atleta) | Base na pesquisa |
+|---|---|---|---|
+| G01 | VO2max | "A quantidade máxima de oxigênio que o corpo consegue usar por minuto num esforço intenso. É a medida mais usada da capacidade aeróbica." | Termo usado em `07-tipos-sessao.md:43` (Helgerud 2007: aumentos de 5,5% e 7,2%). A definição é geral |
+| G02 | Limiar | "O ponto de esforço em que a resposta do corpo muda; por exemplo, o ponto em que a respiração passa a acelerar. O app usa dois limiares para separar as três zonas: leve, moderada e forte. Existem vários conceitos de limiar e eles diferem entre si (Faude, 2009); por isso o app descreve o limiar por faixa de esforço, e não por um ritmo único." | `03-distribuicao-intensidade.md:3` (zonas definidas pelos dois limiares, LT1/VT1 e LT2/VT2); Faude 2009 (25 conceitos de limiar de lactato); texto do treino Limiar contínuo |
+| G03 | Economia de corrida | "Quanto de energia (oxigênio) você gasta para correr numa certa velocidade. Quanto melhor a economia, menos esforço o corpo faz para o mesmo ritmo." | Termo usado em `07-tipos-sessao.md:59` (efeito da força sobre a economia). A definição é geral |
+| G04 | Frequência cardíaca máxima | "O maior número de batimentos por minuto que o seu coração atinge num esforço máximo. Pode ser medida (em teste de esforço) ou estimada por fórmula. A estimada erra, em média, cerca de 10 batimentos por minuto; por isso, as faixas em % da estimada são só uma aproximação." | `04-controle-intensidade.md:7` (erro padrão de 10,8 bpm no estudo HUNT; zonas por % da estimada "são só aproximadas") |
+| G05 | 1RM (uma repetição máxima) | "A maior carga com que você consegue fazer um exercício uma única vez, com boa técnica. As cargas de força são indicadas como porcentagem dela." | Termo usado em `07-tipos-sessao.md:59` e R-SES-71. A definição é geral |
+| G06 | Esforço percebido (0 a 10) | "Uma nota que você dá ao esforço do treino, de 0 a 10: 3 é moderado, 5 é difícil e 7 é muito difícil. É a escala CR-10 de Foster." | R-INT-06 e R-CRG-01. **A tradução dos rótulos para o português é própria e não validada** (nota da própria pesquisa) |
+| G07 | Teste da fala | "Fale uma frase em voz alta enquanto corre. Se conseguir sem parar para respirar, o esforço é leve (Z1); se só consegue frases curtas, é moderado (Z2); se não consegue, é forte (Z3)." | R-INT-05, `04-controle-intensidade.md:79` (Jeanes 2011; Woltmann 2015) |
+
+*G06 e G07 não estavam na sua lista: acrescentei porque aparecem em quase todo treino e são o centro do controle de esforço. Pode recusar.*
+
+## 5. Como aprovar (explicação simples) e o que já foi decidido
+
+**O que é "aprovar por ID".** Cada linha das tabelas tem um código curto na primeira coluna (T01, T02... M01, M02...). Você me diz quais aprova e quais quer mudar, citando só os códigos. Exemplos de resposta válida:
+- "Aprovo tudo." (eu aplico todos)
+- "Aprovo tudo, menos T08 e T30." (eu pergunto o que você prefere nesses dois)
+- "Aprovo T01 a T34. Em T35 quero que diga 'sem dor forte' em vez de 'sem dor de 3 ou mais'." (eu ajusto e aplico)
+- Se for mais fácil: "aprovo a seção 4.2 e 4.3" (seções inteiras).
+
+Você não precisa de mais que isso. Nada é aplicado antes da sua resposta.
+
+**Decisões de apresentação (aprovadas por você em 2026-10-11):**
+1. Escala de Borg escondida do atleta (T03).
+2. Ajustes da escada escondidos do atleta e mantidos só na auditoria (T55, T56, T58).
+3. Frequência cardíaca só no bloco "Se você usa relógio de frequência cardíaca" (T04, T05).
+4. Glossário: definições escritas a partir da pesquisa para você conferir (seção 4.11).
+
+**Limites do que eu consigo garantir:** as frases propostas mantêm os mesmos fatos e números dos textos atuais e das regras citadas. Onde a pesquisa marca um valor como `[P]` (ponto de partida aceito por você em 2026-10-10), o texto diz "valor inicial do app, ainda sem estudo direto". Isso é intencional.
 
 Depois da sua aprovação, a sequência é: bloco `atleta` no seed e na API, testes que bloqueiam código e marcador técnico no texto do atleta, mensagem do dia sem colchetes, ajuste dos rótulos do painel, e então a tradução para inglês.
