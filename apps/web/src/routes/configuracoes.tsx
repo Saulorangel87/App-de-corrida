@@ -6,6 +6,7 @@ import { PrimaryButton, SecondaryButton } from "../components/auth-ui";
 import { ChoiceGroup } from "../components/choice";
 import { CheckField, TextField } from "../components/field";
 import { FlowLayout } from "../components/flow-layout";
+import { HealthChangeCard } from "../components/health-change";
 import { LanguageSwitch } from "../components/language-switch";
 import { ApiError, fetchApi } from "../lib/api";
 import { formatDate, localToday } from "../lib/dates";
@@ -20,6 +21,7 @@ type Cause = "dor" | "lesao" | "doenca";
 type Profile = {
   nextEvaluationDate: string;
   pause: { cause: Cause | null; declaredOn: string | null; clearedByProfessionalOn: string | null };
+  screening: { allowsTraining: boolean } | null;
 };
 type SessionItem = { id: string; createdAt: string; lastSeenAt: string; userAgent: string | null; current: boolean };
 
@@ -247,6 +249,8 @@ function HealthCard({ profile }: { profile: Profile }) {
           </SecondaryButton>
         </div>
       )}
+
+      {profile.screening?.allowsTraining && <HealthChangeCard variant="inline" />}
 
       <div className="space-y-2 rounded-xl bg-[#F5F6F8] p-4">
         <h3 className="text-sm font-bold text-[#0F172A]">{t("settings.redoTitle")}</h3>

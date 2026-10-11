@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allowsTraining, IncompleteScreeningError, screen, type ScreeningInput } from "../src/screening/screen";
+import { allowsTraining, healthCheckDue, IncompleteScreeningError, screen, type ScreeningInput } from "../src/screening/screen";
 
 const allNo = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false };
 const noFollowUp = { "1": { has: false, answers: {} } };
@@ -89,5 +89,20 @@ describe("TRI-v1 (docs/pesquisa/02-triagem.md)", () => {
 
   it("R-TRI-11: mudança de saúde → EXPIRADO", () => {
     expect(screen(base({ healthChangedAt: "2026-11-01", now: "2026-11-01" }))).toMatchObject({ state: "EXPIRADO", reasons: ["saude_mudou"] });
+  });
+
+  it("R-TRI-11: a pergunta é semanal, conta da última resposta e só vale com liberação", () => {
+    const due = (over: Partial<ScreeningInput>, confirmedAt?: string) => {
+      const input = base(over);
+      return healthCheckDue({ screening: screen(input), completedAt: input.completedAt, confirmedAt, now: input.now });
+    };
+    expect(due({ now: "2026-10-16" })).toBe(false); // 6 dias
+    expect(due({ now: "2026-10-17" })).toBe(true); // 7 dias desde o preenchimento
+    expect(due({ now: "2026-10-23" }, "2026-10-17")).toBe(false); // respondeu há 6 dias
+    expect(due({ now: "2026-10-24" }, "2026-10-17")).toBe(true);
+    expect(due({ now: "2026-10-24" }, "2026-10-01")).toBe(true); // resposta anterior ao preenchimento não conta
+    // sem liberação não há o que invalidar
+    expect(due({ now: "2026-10-24", pregnant: true })).toBe(false);
+    expect(due({ now: "2026-10-24", healthChangedAt: "2026-10-20" })).toBe(false);
   });
 });

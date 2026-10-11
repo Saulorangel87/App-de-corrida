@@ -175,6 +175,91 @@ describe("triagem com risco (R-TRI-04, R-TRI-05, R-TRI-06)", () => {
   });
 });
 
+describe("mudança de saúde (R-TRI-11)", () => {
+  const addDays = (d: string, n: number) => new Date(Date.parse(`${d}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+  const post = async (cookie: string, body: unknown) => {
+    const res = await t.request("POST", "/profile/screening/health-change", body, cookie);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- corpo de resposta inspecionado livremente no teste
+    return { status: res.status, body: (await res.json()) as Record<string, any> };
+  };
+  const profileOf = async (cookie: string) => (await (await t.request("GET", "/profile", undefined, cookie)).json()).profile;
+  const TODAY = "2026-10-05";
+  afterAll(() => t.setNow(null));
+
+  async function onboard() {
+    t.setNow(new Date(`${TODAY}T12:00:00Z`));
+    const a = await signUpAndLogin(t, undefined, true);
+    await fill(a.cookie, interview());
+    expect((await submit(a.cookie)).status).toBe(201);
+    return a;
+  }
+
+  it("a pergunta volta a cada 7 dias; responder \"não\" a adia por mais 7", async () => {
+    const a = await onboard();
+    expect((await profileOf(a.cookie)).screening.healthCheckDue).toBe(false);
+
+    t.setNow(new Date(`${addDays(TODAY, 6)}T12:00:00Z`));
+    expect((await profileOf(a.cookie)).screening.healthCheckDue).toBe(false);
+    t.setNow(new Date(`${addDays(TODAY, 7)}T12:00:00Z`));
+    expect((await profileOf(a.cookie)).screening.healthCheckDue).toBe(true);
+
+    const no = await post(a.cookie, { changed: false, date: addDays(TODAY, 7) });
+    expect(no.status).toBe(200);
+    expect(no.body.screening).toMatchObject({ state: "LIBERADO", reasons: [] });
+    expect((await profileOf(a.cookie)).screening.healthCheckDue).toBe(false);
+    t.setNow(new Date(`${addDays(TODAY, 13)}T12:00:00Z`));
+    expect((await profileOf(a.cookie)).screening.healthCheckDue).toBe(false);
+    t.setNow(new Date(`${addDays(TODAY, 14)}T12:00:00Z`));
+    expect((await profileOf(a.cookie)).screening.healthCheckDue).toBe(true);
+  });
+
+  it("\"sim\" expira a triagem, trava o dia e a pergunta deixa de aparecer; refazer a entrevista libera", async () => {
+    const a = await onboard();
+    const day = addDays(TODAY, 3);
+    t.setNow(new Date(`${day}T12:00:00Z`));
+    const yes = await post(a.cookie, { changed: true, date: day });
+    expect(yes.status).toBe(200);
+    expect(yes.body.screening).toMatchObject({ state: "EXPIRADO", maxIntensity: "nenhuma", reasons: ["saude_mudou"] });
+
+    const profile = await profileOf(a.cookie);
+    expect(profile.screening).toMatchObject({ state: "EXPIRADO", allowsTraining: false, healthCheckDue: false });
+    // o motor trava o dia por causa da triagem vencida
+    const today = await (await t.request("GET", `/day/${day}`, undefined, a.cookie)).json();
+    expect(today.decision.reasons.map((r: { code: string }) => r.code)).toContain("triagem_expirada");
+
+    const [row] = await admin`select health_changed_on::text as changed, health_confirmed_on::text as confirmed, state from health_screenings where user_id = ${a.userId}`;
+    expect(row).toMatchObject({ changed: day, confirmed: day, state: "EXPIRADO" });
+    const rules = await admin`select applied_rule from engine_decisions where user_id = ${a.userId} and applied_rule = 'TRI-v1'`;
+    expect(rules.length).toBeGreaterThanOrEqual(2); // entrevista + mudança de saúde
+
+    // um "não" depois não desfaz o "sim"
+    expect((await post(a.cookie, { changed: false, date: day })).body.screening.state).toBe("EXPIRADO");
+
+    // refazer a entrevista é o caminho para voltar
+    await fill(a.cookie, interview());
+    expect((await submit(a.cookie)).status).toBe(201);
+    expect((await profileOf(a.cookie)).screening).toMatchObject({ state: "LIBERADO", allowsTraining: true });
+  });
+
+  it("data no futuro e corpo fora do formato: 400; sem entrevista: 404; sem sessão: 401", async () => {
+    const a = await onboard();
+    expect((await post(a.cookie, { changed: true, date: "2999-01-01" })).status).toBe(400);
+    expect((await post(a.cookie, { changed: "sim", date: TODAY })).status).toBe(400);
+    expect((await post(a.cookie, { changed: true, date: TODAY, userId: "x" })).status).toBe(400);
+    const stranger = await signUpAndLogin(t);
+    expect((await post(stranger.cookie, { changed: true, date: TODAY })).status).toBe(404);
+    expect((await t.request("POST", "/profile/screening/health-change", { changed: true, date: TODAY })).status).toBe(401);
+  });
+
+  it("B não altera a triagem de A", async () => {
+    const a = await onboard();
+    const b = await onboard();
+    expect((await post(b.cookie, { changed: true, date: TODAY })).body.screening.state).toBe("EXPIRADO");
+    const [rowA] = await admin`select health_changed_on, state from health_screenings where user_id = ${a.userId}`;
+    expect(rowA).toMatchObject({ health_changed_on: null, state: "LIBERADO" });
+  });
+});
+
 describe("A tenta acessar os dados de B", () => {
   it("perfil, rascunho e triagem de B ficam invisíveis para A", async () => {
     const a = await signUpAndLogin(t);

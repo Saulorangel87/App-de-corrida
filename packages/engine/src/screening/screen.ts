@@ -146,3 +146,13 @@ export function screen(input: ScreeningInput): ScreeningResult {
 /** Só estes estados permitem gerar treino (R-TRI-01). */
 export const allowsTraining = (r: ScreeningResult) =>
   r.state === "LIBERADO" || r.state === "LIBERADO_APOS_AVALIACAO";
+
+/**
+ * R-TRI-11: a pergunta "algo mudou na sua saúde?" é semanal e só vale enquanto a liberação vale
+ * (sem liberação não há o que invalidar). Conta a partir da última resposta, ou do preenchimento.
+ */
+export function healthCheckDue(i: { screening: ScreeningResult; completedAt: string; confirmedAt?: string; now: string }): boolean {
+  if (!allowsTraining(i.screening)) return false;
+  const last = i.confirmedAt && i.confirmedAt > i.completedAt ? i.confirmedAt : i.completedAt;
+  return daysBetween(last, i.now) >= cfg.healthCheck.everyDays;
+}

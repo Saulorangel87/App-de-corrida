@@ -23,6 +23,7 @@ import {
   screen,
   selectPlan,
   allowsTraining,
+  healthCheckDue,
   CLS_VERSION,
   type ClassificationInput,
   type Evaluation,
@@ -411,6 +412,9 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
             expiresSoon: screening.expiresSoon,
             reasons: screening.reasons,
             allowsTraining: allowsTraining(screening),
+            // R-TRI-11: o servidor diz quando a pergunta semanal deve aparecer.
+            healthCheckDue:
+              !!row && !!screening && healthCheckDue({ screening, completedAt: row.completedOn, confirmedAt: row.healthConfirmedOn ?? undefined, now: on }),
           } : null,
           plan: plan ? {
             id: plan.plan.id,
@@ -462,6 +466,39 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
         }
         logger.info("screening_evaluation_declared", { userId, state: next.state });
         return { screening: next, selection };
+      });
+    },
+
+    /**
+     * Pergunta "algo mudou na sua saúde?" (R-TRI-11). Sim invalida a liberação (EXPIRADO) e o atleta
+     * precisa refazer o PAR-Q+; não só registra a data da resposta, para a pergunta voltar em uma semana.
+     */
+    async declareHealthChange(userId: string, input: { changed: boolean; date: string }) {
+      const on = today(d.now());
+      if (input.date > tomorrow(on)) throw errors.validation([{ path: "date", code: "future_date" }]);
+      return withAthlete(db, userId, async (tx) => {
+        const row = await latestScreening(tx, userId);
+        const [profile] = await tx.select().from(athleteProfiles).where(eq(athleteProfiles.userId, userId)).limit(1);
+        if (!row || !profile) throw errors.notFound();
+        const stored = profile.interviewResult as StoredInputs;
+        const ageMax = ageRange(stored.birth.year, stored.birth.month, on).max;
+
+        // A data da mudança nunca fica antes do preenchimento: senão a regra não a enxergaria.
+        const changedOn = input.changed ? (input.date > row.completedOn ? input.date : row.completedOn) : null;
+        const healthChangedOn = changedOn ?? row.healthChangedOn ?? undefined;
+        const next = screen({ ...screeningInputFrom(row, ageMax, on), healthChangedAt: healthChangedOn });
+
+        await tx
+          .update(healthScreenings)
+          .set({
+            healthConfirmedOn: input.date,
+            ...(changedOn ? { healthChangedOn: changedOn, state: next.state, maxIntensity: next.maxIntensity, validUntil: next.validUntil } : {}),
+            updatedAt: d.now(),
+          })
+          .where(eq(healthScreenings.id, row.id));
+        await audit(tx, userId, next.ruleVersion, { healthChanged: input.changed }, next);
+        logger.info("health_change_declared", { userId, changed: input.changed, state: next.state });
+        return { screening: next };
       });
     },
 

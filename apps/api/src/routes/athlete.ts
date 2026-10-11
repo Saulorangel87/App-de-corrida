@@ -1,6 +1,6 @@
 import { Hono, type MiddlewareHandler } from "hono";
 import { z } from "zod";
-import { INTERVIEW_STEPS, PARQ_INSTRUMENT, PARQ_TEXT_COMPLETE, evaluationSchema, isoDate, type InterviewStep } from "@passo/shared";
+import { INTERVIEW_STEPS, PARQ_INSTRUMENT, PARQ_TEXT_COMPLETE, evaluationSchema, healthChangeSchema, isoDate, type InterviewStep } from "@passo/shared";
 import { errors } from "../lib/errors";
 import { validate } from "../lib/validate";
 import type { AthleteService } from "../services/athlete-service";
@@ -49,6 +49,11 @@ export function athleteRoutes(opts: { athlete: AthleteService; session: Middlewa
     const result = await athlete.declareEvaluation(me(c).id, c.req.valid("json"));
     return c.json(result);
   });
+
+  // R-TRI-11: "algo mudou na sua saúde?" (sim invalida a liberação até refazer o PAR-Q+)
+  r.post("/profile/screening/health-change", session, validate("json", healthChangeSchema), async (c) =>
+    c.json(await athlete.declareHealthChange(me(c).id, c.req.valid("json"))),
+  );
 
   r.post("/profile/screening/professional-consulted", session,
     validate("json", z.object({ date: isoDate })),

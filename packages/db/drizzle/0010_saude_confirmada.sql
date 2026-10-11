@@ -1,0 +1,1 @@
+ALTER TABLE "health_screenings" ADD COLUMN "health_confirmed_on" date;

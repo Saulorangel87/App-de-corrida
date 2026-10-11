@@ -71,6 +71,13 @@
       "when": 1791656628374,
       "tag": "0009_fase5_rls_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791726498240,
+      "tag": "0010_saude_confirmada",
+      "breakpoints": true
     }
   ]
 }

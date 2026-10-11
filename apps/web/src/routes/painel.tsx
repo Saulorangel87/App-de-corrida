@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,7 @@ import { useRequireUser } from "../lib/queries";
 import { useErrorText } from "../lib/use-error-text";
 import { zoneUpTo } from "../lib/zone";
 import { DecisionSources } from "../components/decision-sources";
+import { HealthChangeCard } from "../components/health-change";
 import { WeekAgenda, weekStats } from "../components/week-agenda";
 import { localized, useDay, useWeek, type DayAction, type DayResponse, type WeekResponse } from "../lib/training";
 
@@ -18,6 +19,8 @@ export const Route = createFileRoute("/painel")({
 
 type ProfileSummary = {
   plan: { objective: string; endDate: string } | null;
+  /** `healthCheckDue`: o servidor diz quando a pergunta semanal de saúde (R-TRI-11) deve aparecer. */
+  screening: { healthCheckDue: boolean } | null;
 };
 
 const ACTION_TONE: Record<DayAction, string> = {
@@ -46,6 +49,7 @@ function Panel() {
   const errorText = useErrorText();
   const { user, loading } = useRequireUser();
   const today = localToday();
+  const [healthAnswered, setHealthAnswered] = useState(false);
 
   // Quem ainda não fez a entrevista não tem perfil (404): vai para ela.
   const profile = useQuery({
@@ -97,6 +101,9 @@ function Panel() {
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[3fr_2fr]">
           <div className="space-y-4">
+            {(profile.data?.screening?.healthCheckDue || healthAnswered) && (
+              <HealthChangeCard variant="banner" onAnswered={() => setHealthAnswered(true)} />
+            )}
             <TodayCard day={day.data} />
           </div>
           <div className="space-y-4">

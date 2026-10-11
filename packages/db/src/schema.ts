@@ -171,7 +171,8 @@ export const healthScreenings = pgTable(
     completedOn: date("completed_on").notNull(),
     evaluation: jsonb("evaluation"), // autodeclaração (R-TRI-05)
     consultedProfessionalOn: date("consulted_professional_on"), // R-TRI-07
-    healthChangedOn: date("health_changed_on"), // R-TRI-11
+    healthChangedOn: date("health_changed_on"), // R-TRI-11: "sim, algo mudou"
+    healthConfirmedOn: date("health_confirmed_on"), // R-TRI-11: última resposta à pergunta semanal (sim ou não)
     state: varchar("state", { length: 30 }).notNull(),
     maxIntensity: varchar("max_intensity", { length: 20 }).notNull(),
     validUntil: date("valid_until"),

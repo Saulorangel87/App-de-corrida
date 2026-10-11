@@ -16,6 +16,9 @@ export const triV1 = {
     warnDaysBefore: 30,
   },
 
+  // R-TRI-11 [PARQ+ 2025]: a pergunta "algo mudou na sua saúde?" é semanal.
+  healthCheck: { everyDays: 7 },
+
   // R-TRI-07 [PARQ+ 2025; Whitfield 2017]: 45+ sem exercício regular → leve/moderada (só Z1)
   // até registrar consulta a profissional de educação física.
   ageRegularExerciseCheck: 45,

@@ -138,6 +138,9 @@ export type Interview = z.infer<typeof interviewSchema>;
 export type InterviewDraft = Partial<Interview>;
 
 /** Autodeclaração de avaliação profissional (R-TRI-05). */
+/** R-TRI-11: resposta à pergunta "algo mudou na sua saúde?" (data local do atleta). */
+export const healthChangeSchema = z.object({ changed: z.boolean(), date: isoDate }).strict();
+
 export const evaluationSchema = z.object({
   result: z.enum(["sem_restricoes", "com_restricoes", "encaminhado_ao_medico", "nao_liberado"]),
   date: isoDate,

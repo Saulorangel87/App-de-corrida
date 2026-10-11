@@ -6,6 +6,7 @@
 - N01 (nota de troca de treino) saiu sem o nome do treino original, porque o motor só conhece o identificador; a nota não aparece na tela hoje.
 - Glossário (G01 a G07) aparece no fim da tela de detalhe do treino.
 - Textos em inglês: na etapa de tradução.
+- **Pendência do dono (2026-10-11):** os textos de "Como fazer" (aquecimento, parte principal e volta à calma; em especial a escada de caminhada e corrida: "N x (corrida / caminhada), minutos de corrida e de caminhada por repetição", as 12 etapas e o degrau 10b, a fonte) ainda estão confusos para quem lê. Reescrever em linguagem de quem corre, sem inventar nada, **depois que o app estiver terminado**. A mesma regra de aprovação desta página vale.
 
 Fonte de tudo: `docs/pesquisa/` (a coluna "Sustentação" aponta o arquivo e a regra). Nenhum número novo foi criado: os números dos textos propostos são os mesmos dos textos atuais.
 
