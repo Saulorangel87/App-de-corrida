@@ -52,8 +52,8 @@ test("configurações: conta, aparelhos e encerrar outra sessão", async ({ page
   const calls = await mockApi(page);
   await page.goto("/configuracoes");
   await expect(page.getByRole("heading", { name: "Perfil e configurações" })).toBeVisible();
-  await expect(page.getByText("Ana Corredora")).toBeVisible();
-  await expect(page.getByText("ana@exemplo.com")).toBeVisible();
+  await expect(page.getByRole("main").getByText("Ana Corredora")).toBeVisible();
+  await expect(page.getByRole("main").getByText("ana@exemplo.com")).toBeVisible();
   await expect(page.getByText("Chrome · Windows")).toBeVisible();
   await expect(page.getByText("Este aparelho")).toBeVisible();
   await expect(page.getByText("Chrome · Android")).toBeVisible();

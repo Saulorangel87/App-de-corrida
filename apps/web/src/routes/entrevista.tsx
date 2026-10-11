@@ -113,7 +113,7 @@ function InterviewPage() {
 
   if (loading || interview.isLoading) {
     return (
-      <FlowLayout>
+      <FlowLayout chrome="focus">
         <p role="status" className="text-gray-600">
           {t("common.loading")}
         </p>
@@ -123,7 +123,7 @@ function InterviewPage() {
 
   if (interview.isError || !data) {
     return (
-      <FlowLayout>
+      <FlowLayout chrome="focus">
         <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
           <p>{interview.error ? errorText(interview.error) : t("interview.loadError")}</p>
           <button type="button" onClick={() => void interview.refetch()} className="mt-3 font-semibold underline">
@@ -136,7 +136,7 @@ function InterviewPage() {
 
   if (save.error instanceof ApiError && save.error.code === "UNDERAGE") {
     return (
-      <FlowLayout>
+      <FlowLayout chrome="focus">
         <UnderageNotice />
       </FlowLayout>
     );
@@ -147,7 +147,7 @@ function InterviewPage() {
   const last = current === total - 1;
 
   return (
-    <FlowLayout>
+    <FlowLayout chrome="focus">
       <div className="mb-3 space-y-2">
         <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-gray-500">
           <span>{t("interview.stepOf", { current: current + 1, total })}</span>

@@ -83,13 +83,13 @@ test("painel: a pergunta semanal aparece só quando o servidor manda, e \"não\"
   await expect(page.getByText("Perguntamos de novo em uma semana.")).toBeVisible();
   expect(healthCalls(calls).map((c) => c.body)).toEqual([{ changed: false, date: today }]);
   // o painel continua normal
-  await expect(page.getByRole("heading", { name: "Olá, Ana Corredora" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^(Bom dia|Boa tarde|Boa noite), Ana$/ })).toBeVisible();
 });
 
 test("painel sem aviso do servidor não mostra a pergunta", async ({ page }) => {
   await mockApi(page, { due: false });
   await page.goto("/painel");
-  await expect(page.getByRole("heading", { name: "Olá, Ana Corredora" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^(Bom dia|Boa tarde|Boa noite), Ana$/ })).toBeVisible();
   await expect(page.getByText("Mudou algo na sua saúde?")).toHaveCount(0);
 });
 

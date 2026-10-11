@@ -50,7 +50,7 @@ const putBody = (calls: { method: string; path: string; body: unknown }[]) =>
 test("pós-treino sem dor: registra duração e esforço e mostra o que muda amanhã", async ({ page }) => {
   const calls = await mockApi(page);
   await page.goto("/painel");
-  await page.getByRole("link", { name: "Registrar treino" }).click();
+  await page.getByRole("link", { name: "Registrar treino" }).first().click();
   await expect(page).toHaveURL(/\/registro\/s1$/);
   await expect(page.getByRole("heading", { name: "Rodagem leve" })).toBeVisible();
 

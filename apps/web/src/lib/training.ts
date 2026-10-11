@@ -21,6 +21,8 @@ export type SessionView = {
   targetRpe: number | null;
   optional: boolean;
   note: string | null;
+  /** Etapa da escada de caminhada e corrida (só nas sessões da escada). */
+  ladder?: { etapa: string; corridaMin: number; caminhadaMin: number; repeticoes: number; continua: boolean } | null;
   status: "pending" | "completed" | "skipped" | string;
   log: { completed: boolean; durationMinutes: number | null; distanceKm: number | null; srpe: number | null; notes: string | null } | null;
   allowed?: boolean;

@@ -163,7 +163,7 @@ test("painel leva ao plano completo", async ({ page }) => {
     });
   });
   await page.goto("/painel");
-  await page.getByRole("link", { name: "Plano completo" }).click();
+  await page.getByRole("link", { name: "Ver plano completo" }).click();
   await expect(page).toHaveURL(/\/plano$/);
   await expect(page.getByRole("heading", { name: "Plano completo", level: 1 })).toBeVisible();
 });

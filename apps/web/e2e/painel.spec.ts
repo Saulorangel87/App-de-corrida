@@ -93,7 +93,7 @@ async function mockApi(page: Page, opts: Opts = {}) {
     if (path === "/profile") {
       return opts.hasProfile === false
         ? json(404, { error: { code: "NOT_FOUND", message: "x" } })
-        : json(200, { profile: { plan: { objective: "10k", endDate: plusDays(60) } } });
+        : json(200, { profile: { level: "intermediario", plan: { objective: "10k", startDate: plusDays(-14), endDate: plusDays(56), durationWeeks: 10 }, screening: null } });
     }
     if (path.startsWith("/day/")) return json(200, day);
     if (path.startsWith("/plan/week/")) return json(200, opts.week ?? weekBody);
@@ -110,29 +110,87 @@ async function mockApi(page: Page, opts: Opts = {}) {
   return calls;
 }
 
-test("painel: treino de hoje, motivo do motor, semana e convite ao check-in", async ({ page }) => {
+test("painel: treino de hoje, motivo do motor, resumo da semana e convite ao check-in", async ({ page }) => {
   await mockApi(page);
   await page.goto("/painel");
-  await expect(page.getByRole("heading", { name: "Olá, Ana Corredora" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^(Bom dia|Boa tarde|Boa noite), Ana$/ })).toBeVisible();
+  await expect(page.getByText("Semana 3 de 10 · Prova de 10 km")).toBeVisible();
 
-  const hoje = page.getByRole("region", { name: "Treino de hoje" }).or(page.locator("section", { has: page.getByRole("heading", { name: "Treino de hoje" }) }));
+  // menu lateral só com telas que existem
+  const menu = page.getByRole("navigation", { name: "Navegação principal" });
+  await expect(menu.getByRole("link", { name: "Painel" })).toHaveAttribute("aria-current", "page");
+  for (const [label, href] of [["Plano de treino", "/plano"], ["Histórico", "/historico"], ["Perfil e plano", "/resultado"]]) {
+    await expect(menu.getByRole("link", { name: label })).toHaveAttribute("href", href);
+  }
+  await expect(page.getByRole("navigation", { name: "Conta" }).getByRole("link", { name: "Configurações" })).toHaveAttribute("href", "/configuracoes");
+  await expect(menu.locator("xpath=ancestor::aside").getByText("Nível intermediário")).toBeVisible();
+
+  // treino de hoje (cartão escuro)
+  const hoje = page.locator("section", { has: page.getByRole("heading", { name: "Treino de hoje" }) });
   await expect(hoje.getByText("Rodagem leve")).toBeVisible();
   await expect(hoje.getByText("Treino mantido", { exact: true })).toBeVisible();
   await expect(hoje.getByText("40 min")).toBeVisible();
   await expect(hoje.getByText("Até esforço moderado (Z2)")).toBeVisible();
-  await expect(hoje.getByText("Esforço alvo: 4 de 10")).toBeVisible();
+  await expect(hoje.getByText("Moderado (Z2)", { exact: true })).toBeVisible();
+  await expect(hoje.getByText("4 de 10")).toBeVisible();
   await expect(hoje.getByText("Mantenha o treino planejado.")).toBeVisible();
+  await expect(hoje.getByRole("link", { name: "Ver o treino completo" })).toHaveAttribute("href", "/treino/s1");
 
   await expect(page.getByText("Faça o check-in de hoje")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Complementares de hoje" })).toBeVisible();
   await expect(page.getByText("Mobilidade básica")).toBeVisible();
 
-  const semana = page.locator("section", { has: page.getByRole("heading", { name: "Sua semana" }) });
-  await expect(semana.getByText("Semana 3")).toBeVisible();
-  await expect(semana.getByText("0 de 2 treinos feitos")).toBeVisible();
-  await expect(semana.getByText("Longão leve")).toBeVisible();
+  // resumo da semana: só o que a API devolveu (nada feito ainda)
+  await expect(page.getByText("0 de 2 treinos feitos")).toBeVisible();
+  await expect(page.getByText("Informe a distância ao registrar um treino")).toBeVisible();
+  await expect(page.getByText("Aparece quando você informa distância e duração")).toBeVisible();
 
+  // volume semanal e plano da semana
+  const volume = page.locator("section", { has: page.getByRole("heading", { name: "Volume semanal" }) });
+  await expect(volume.getByText("Concluído", { exact: true })).toBeVisible();
+  await expect(volume.getByRole("img", { name: /min planejados/ }).first()).toBeVisible();
+  const semana = page.locator("section", { has: page.getByRole("heading", { name: "Plano da semana" }) });
+  await expect(semana.getByText("Semana 3 · Base")).toBeVisible();
+  await expect(semana.getByText("Longão leve")).toBeVisible();
+  await expect(semana.getByText("Descanso").first()).toBeVisible();
+
+  // objetivo e treinos recentes
+  await expect(page.getByRole("heading", { name: "Seu objetivo" })).toBeVisible();
+  await expect(page.getByText("Prova de 10 km", { exact: true })).toBeVisible();
   await expect(page.getByText("O plano termina em")).toBeVisible();
+  await expect(page.getByText("Progresso do plano")).toBeVisible();
+  await expect(page.getByText("Os treinos que você registrar esta semana aparecem aqui.")).toBeVisible();
+});
+
+test("painel: treino feito entra no resumo, no volume e nos treinos recentes", async ({ page }) => {
+  const doneSession = session("s0", today, {
+    status: "completed",
+    log: { completed: true, durationMinutes: 42, distanceKm: 7, srpe: 4, notes: null },
+  });
+  await mockApi(page, {
+    week: {
+      plan: planInfo,
+      sessions: [doneSession, session("s2", plusDays(2), { name: { "pt-BR": "Longão leve", en: "Easy long run" }, kind: "longao", minutes: 60 })],
+    },
+    day: dayBody({ sessions: [doneSession], checkin: { sleepHours: 7, sleepQuality: 4, energy: 4, mood: 4, stress: 2, muscleSoreness: 2, restingHr: null, acuteIllness: false, dailyPainWalking: null }, questions: [] }),
+  });
+  await page.goto("/painel");
+  await expect(page.getByText("1 de 2 treinos feitos")).toBeVisible();
+  await expect(page.getByText("42 min").first()).toBeVisible();
+  await expect(page.getByText("6:00")).toBeVisible(); // 42 min / 7 km
+  await expect(page.getByText("Dos treinos com distância e duração")).toBeVisible();
+  const recentes = page.locator("section", { has: page.getByRole("heading", { name: "Treinos recentes" }) });
+  await expect(recentes.getByText("7 km")).toBeVisible();
+  await expect(page.getByRole("img", { name: "Feito", exact: true })).toBeVisible();
+});
+
+test("painel: com o app em inglês, o menu e o resumo mudam de idioma", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/painel");
+  await page.getByRole("complementary").getByRole("button", { name: "EN" }).click();
+  await expect(page.getByRole("heading", { name: /^(Good morning|Good afternoon|Good evening), Ana$/ })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Training plan" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Weekly volume" })).toBeVisible();
 });
 
 test("painel: descanso e alerta de emergência quando o motor manda parar", async ({ page }) => {

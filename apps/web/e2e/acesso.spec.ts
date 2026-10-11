@@ -82,7 +82,7 @@ test("entra e chega ao painel; sair volta ao login", async ({ page }) => {
   await page.getByLabel("Manter conectado neste dispositivo").check();
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page).toHaveURL(/\/painel$/);
-  await expect(page.getByRole("heading", { name: "Olá, Ana Corredora" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^(Bom dia|Boa tarde|Boa noite), Ana$/ })).toBeVisible();
   expect(calls.find((c) => c.path === "/auth/login")?.body).toMatchObject({ email: "ana@exemplo.com", rememberMe: true });
 
   await page.getByRole("button", { name: "Sair" }).click();
