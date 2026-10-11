@@ -112,13 +112,13 @@ export function GoalStep({ saved, onSubmit, ...actions }: StepProps) {
             <ChoiceField
               control={control}
               name="raceDistance"
-              legend={t("interview.objetivo.raceDistance")}
+              legend={t(goal === "melhorar_tempo" ? "interview.objetivo.timeDistance" : "interview.objetivo.raceDistance")}
               columns="grid-cols-4"
               options={(["5k", "10k", "21k", "42k"] as const).map((d) => ({ value: d, label: d.replace("k", " km") }))}
             />
             <TextField
-              label={t("interview.objetivo.raceDate")}
-              hint={t("interview.objetivo.raceDateHint")}
+              label={t(goal === "melhorar_tempo" ? "interview.objetivo.timeDate" : "interview.objetivo.raceDate")}
+              hint={t(goal === "melhorar_tempo" ? "interview.objetivo.timeDateHint" : "interview.objetivo.raceDateHint")}
               type="date"
               min={today}
               error={fieldError(formState.errors.raceDate?.message)}

@@ -245,6 +245,9 @@ export const en: Translation = {
       raceDistance: "What is the race distance?",
       raceDate: "Race date (optional)",
       raceDateHint: "If you have not chosen one yet, leave it blank.",
+      timeDistance: "Which distance do you want to improve your time at?",
+      timeDate: "Do you have a race scheduled? Enter the date (optional)",
+      timeDateHint: "If you don't, leave it blank.",
     },
     disponibilidade: {
       daysPerWeek: "On how many days a week can you train?",

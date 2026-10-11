@@ -161,7 +161,14 @@ test("entrevista completa: 8 etapas, cada uma salva, e o envio leva ao resultado
   });
 
   await expect(page.getByRole("heading", { name: "Seu objetivo" })).toBeVisible();
+  // "Melhorar meu tempo" pede a distância, mas não fala em prova marcada: a data é só opcional.
+  await answer(page, "Qual é o seu objetivo?", "Melhorar meu tempo");
+  await expect(page.getByText("Em qual distância você quer melhorar seu tempo?")).toBeVisible();
+  await expect(page.getByLabel("Tem uma prova marcada? Informe a data (opcional)")).toBeVisible();
+  await expect(page.getByText("Se não tiver, deixe em branco.")).toBeVisible();
+  await expect(page.getByText("Qual a distância da prova?")).toHaveCount(0);
   await answer(page, "Qual é o seu objetivo?", "Minha primeira prova");
+  await expect(page.getByText("Em qual distância você quer melhorar seu tempo?")).toHaveCount(0);
   await answer(page, "Qual a distância da prova?", "5 km");
   await page.getByLabel("Data da prova (opcional)").fill("2027-02-14");
   await next(page);

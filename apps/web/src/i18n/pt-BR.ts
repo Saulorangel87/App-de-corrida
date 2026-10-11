@@ -245,6 +245,10 @@ export const ptBR = {
       raceDistance: "Qual a distância da prova?",
       raceDate: "Data da prova (opcional)",
       raceDateHint: "Se ainda não escolheu, deixe em branco.",
+      // "Melhorar meu tempo" não exige prova marcada: a distância define o plano; a data é opcional.
+      timeDistance: "Em qual distância você quer melhorar seu tempo?",
+      timeDate: "Tem uma prova marcada? Informe a data (opcional)",
+      timeDateHint: "Se não tiver, deixe em branco.",
     },
     disponibilidade: {
       daysPerWeek: "Em quantos dias por semana você pode treinar?",
