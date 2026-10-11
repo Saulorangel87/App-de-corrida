@@ -235,10 +235,33 @@ describe("volta de pausa e tetos", () => {
   });
 });
 
+describe("texto do atleta: o limite que agiu e a progressão parada", () => {
+  it("treino ajustado por limite diz qual limite foi, sem código nem colchetes", () => {
+    // maior corrida recente: 50 min, então o longão de 70 min vai a 55 min (110%)
+    const r = decideDay(base({ planned: long }));
+    expect(r.session).toMatchObject({ slug: "longao", minutes: 55, changed: true });
+    expect(r.message).toContain("Hoje o treino ficou em 55 min: nenhuma corrida deve passar de 110% da sua maior corrida dos últimos 30 dias.");
+    expect(r.message).not.toMatch(/\[|R-[A-Z]{3}-\d+/);
+  });
+
+  it("progressão parada por dor conta o motivo em palavras", () => {
+    const r = decideDay(base({ planned: interval, pain: [pain(-1, { intensity: 4, region: "joelho" })] }));
+    expect(r.message).toMatch(/A progressão está parada esta semana \(o plano repete a semana anterior\) porque você teve dor de 3 ou mais/);
+  });
+
+  it("a mensagem de bem-estar diz de que é feita a soma", () => {
+    const checkins = [...good(-13, -1).map((c) => ({ ...c, energy: 5, mood: 5, stress: 5, muscleSoreness: 5, sleepQuality: 5 })), ck(0, 7.5, { energy: 3, mood: 3, stress: 3, muscleSoreness: 3, sleepQuality: 3 })];
+    const r = decideDay(base({ checkins }));
+    expect(r.message).toContain("qualidade do sono, energia, humor, estresse e dor muscular");
+  });
+});
+
 describe("auditoria e fontes", () => {
   it("toda decisão traz texto, regra aplicada e fontes", () => {
     const r = decideDay(base({ planned: interval, pain: [pain(-1, { intensity: 4, region: "joelho" })] }));
-    expect(r.message).toMatch(/\[Silbernagel/);
+    // o texto do atleta não leva código nem colchetes; as fontes seguem na lista `sources`
+    expect(r.message).not.toMatch(/\[|R-[A-Z]{3}-\d+/);
+    expect(r.sources.join(" ")).toMatch(/Silbernagel/);
     expect(r.reasons[0]).toMatchObject({ rule: "R-DOR-04", code: "dor_3_4" });
     expect(r.sources.length).toBeGreaterThan(0);
   });

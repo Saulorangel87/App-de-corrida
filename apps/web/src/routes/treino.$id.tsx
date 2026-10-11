@@ -1,25 +1,24 @@
 import type { ReactNode } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { CatalogFacts } from "../components/catalog-facts";
+import { DecisionSources } from "../components/decision-sources";
 import { FlowLayout } from "../components/flow-layout";
+import { Glossary } from "../components/glossary";
 import { ApiError } from "../lib/api";
 import { formatDate, localToday } from "../lib/dates";
 import { useRequireUser } from "../lib/queries";
-import { useDay, useWorkout, type CatalogObject, type WorkoutDetailResponse } from "../lib/training";
+import { useDay, useWorkout, type Fact, type StepView, type WorkoutDetailResponse } from "../lib/training";
 import { useErrorText } from "../lib/use-error-text";
+import { zoneUpTo } from "../lib/zone";
 
 export const Route = createFileRoute("/treino/$id")({
   component: WorkoutPage,
 });
 
-function Card({ title, aside, children }: { title: string; aside?: ReactNode; children: ReactNode }) {
+function Card({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="rounded-2xl border border-gray-200 bg-white p-5">
-      <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h2 className="text-lg font-bold tracking-tight text-[#0F172A]">{title}</h2>
-        {aside}
-      </div>
+      <h2 className="mb-3 text-lg font-bold tracking-tight text-[#0F172A]">{title}</h2>
       {children}
     </section>
   );
@@ -71,9 +70,14 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
     state === "completed" ? "bg-green-100 text-green-700" : state === "skipped" ? "bg-gray-100 text-gray-600" : "bg-orange-100 text-orange-800";
   const canLog = !session.optional && session.date <= today;
   const ladder = session.ladder;
+  const isRun = session.kind !== "forca" && session.kind !== "mobilidade";
 
   // A decisão do motor só existe para hoje e os vizinhos; mostramos a de hoje, que é a que importa.
   const day = useDay(session.date, isToday && !session.optional);
+
+  const { how, intensity } = detail;
+  const hasHow = !!(how.warmup || how.main || how.cooldown);
+  const hasIntensity = !!intensity && (intensity.groups.length > 0 || intensity.notes.length > 0 || intensity.studies.length > 0);
 
   return (
     <FlowLayout width="max-w-[760px]">
@@ -93,7 +97,7 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
           <p className="text-sm text-gray-500">{formatDate(session.date, i18n.language, { dateStyle: "full" })}</p>
           <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm font-semibold text-gray-700">
             <div>{t("panel.minutes", { count: session.minutes })}</div>
-            {session.kind !== "forca" && session.kind !== "mobilidade" && <div>{t("panel.zone", { zone: session.maxZone })}</div>}
+            {isRun && <div>{zoneUpTo(t, session.maxZone)}</div>}
             {session.targetRpe != null && <div>{t("panel.rpe", { rpe: session.targetRpe })}</div>}
           </dl>
 
@@ -124,42 +128,74 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
             <p lang="pt-BR" className="whitespace-pre-line text-[15px] leading-relaxed text-gray-700">
               {day.data.decision.message}
             </p>
+            <DecisionSources sources={day.data.decision.sources ?? []} />
           </Card>
         )}
 
-        {detail.reason && (
+        {detail.summary && (
           <Card title={t("workout.reasonTitle")}>
             <p lang="pt-BR" className="text-[15px] leading-relaxed text-gray-700">
-              {detail.reason}
+              {detail.summary}
             </p>
           </Card>
         )}
 
-        {(detail.warmup || detail.main || detail.cooldown) && (
+        {hasHow && (
           <Card title={t("workout.howTitle")}>
             <div className="space-y-5">
-              <Step title={t("workout.warmup")} data={detail.warmup} />
-              <Step title={t("workout.main")} data={detail.main} />
-              <Step title={t("workout.cooldown")} data={detail.cooldown} />
+              <Step title={t("workout.warmup")} step={how.warmup} />
+              <Step title={t("workout.main")} step={how.main} />
+              <Step title={t("workout.cooldown")} step={how.cooldown} />
             </div>
           </Card>
         )}
 
-        {detail.intensity && Object.keys(detail.intensity).length > 0 && (
+        {hasIntensity && intensity && (
           <Card title={t("workout.intensityTitle")}>
-            <CatalogFacts data={detail.intensity} />
+            <div className="space-y-5">
+              {intensity.groups.map((g, i) => (
+                <div key={i}>
+                  {g.title && <h3 className="text-sm font-bold text-[#0F172A]">{g.title}</h3>}
+                  {g.zone && <p className="text-base font-extrabold text-[#0F172A]">{g.zone}</p>}
+                  <Facts facts={g.facts} />
+                  {g.watch.length > 0 && (
+                    <div className="mt-2 rounded-xl bg-[#F5F6F8] p-3">
+                      <p className="text-xs font-bold text-gray-600">{t("workout.watch")}</p>
+                      <Facts facts={g.watch} />
+                    </div>
+                  )}
+                </div>
+              ))}
+              {intensity.notes.length > 0 && (
+                <ul lang="pt-BR" className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-gray-700">
+                  {intensity.notes.map((n) => (
+                    <li key={n}>{n}</li>
+                  ))}
+                </ul>
+              )}
+              {intensity.studies.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-bold text-gray-500">{t("workout.studiesTitle")}</h3>
+                  <ul lang="pt-BR" className="mt-1 list-disc space-y-1 pl-5 text-sm leading-relaxed text-gray-700">
+                    {intensity.studies.map((n) => (
+                      <li key={n}>{n}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </Card>
         )}
 
-        {detail.levelParams && (
+        {detail.level && detail.level.length > 0 && (
           <Card title={t("workout.levelTitle")}>
-            <CatalogFacts data={detail.levelParams} />
+            <Facts facts={detail.level} />
           </Card>
         )}
 
-        {detail.frequency && (
+        {detail.frequency.length > 0 && (
           <Card title={t("workout.frequencyTitle")}>
-            <CatalogFacts data={detail.frequency} />
+            <Facts facts={detail.frequency} />
           </Card>
         )}
 
@@ -174,69 +210,80 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
           </Card>
         )}
 
-        {(detail.progression || detail.regression) && (
+        {(detail.progression.length > 0 || detail.regression.length > 0) && (
           <Card title={t("workout.nextTitle")}>
-            <dl className="space-y-3 text-sm">
-              {detail.progression && (
-                <div>
-                  <dt className="text-xs font-semibold text-gray-500">{t("workout.progression")}</dt>
-                  <dd lang="pt-BR" className="text-gray-800">
-                    {detail.progression}
-                  </dd>
-                </div>
-              )}
-              {detail.regression && (
-                <div>
-                  <dt className="text-xs font-semibold text-gray-500">{t("workout.regression")}</dt>
-                  <dd lang="pt-BR" className="text-gray-800">
-                    {detail.regression}
-                  </dd>
-                </div>
-              )}
-            </dl>
+            <div className="space-y-4 text-sm">
+              <Lines title={t("workout.progression")} items={detail.progression} />
+              <Lines title={t("workout.regression")} items={detail.regression} />
+            </div>
           </Card>
         )}
 
         <Evidence evidence={detail.evidence} references={references} />
+
+        <Glossary />
       </div>
     </FlowLayout>
   );
 }
 
-function Step({ title, data }: { title: string; data: CatalogObject | null }) {
-  if (!data) return null;
-  const { minutos, descricao, formato, ...rest } = data;
-  const minutes = Array.isArray(minutos) ? minutos.join("–") : typeof minutos === "number" ? String(minutos) : null;
+function Facts({ facts }: { facts: Fact[] }) {
+  if (facts.length === 0) return null;
+  return (
+    <dl className="divide-y divide-gray-100">
+      {facts.map((f) => (
+        <div key={`${f.label}-${f.value}`} className="py-2">
+          <dt className="text-xs font-semibold text-gray-500">{f.label}</dt>
+          <dd lang="pt-BR" className="mt-0.5 text-sm leading-relaxed text-gray-800">
+            {f.value}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function Step({ title, step }: { title: string; step: StepView | null }) {
+  if (!step) return null;
   return (
     <div>
       <h3 className="text-sm font-bold text-[#0F172A]">
         {title}
-        {minutes && <span className="ml-2 font-semibold text-gray-500">{minutes} min</span>}
+        {step.minutes && <span className="ml-2 font-semibold text-gray-500">{step.minutes} min</span>}
       </h3>
-      {typeof formato === "string" && (
-        <p lang="pt-BR" className="mt-1 text-sm font-medium text-gray-800">
-          {formato}
-        </p>
-      )}
-      {typeof descricao === "string" && (
+      {step.text && (
         <p lang="pt-BR" className="mt-1 text-sm leading-relaxed text-gray-700">
-          {descricao}
+          {step.text}
         </p>
       )}
-      <CatalogFacts data={rest} />
+      <Facts facts={step.facts} />
+    </div>
+  );
+}
+
+function Lines({ title, items }: { title: string; items: string[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div>
+      <p className="text-xs font-semibold text-gray-500">{title}</p>
+      <ul lang="pt-BR" className="mt-1 space-y-1 text-gray-800">
+        {items.map((i) => (
+          <li key={i}>{i}</li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 function Evidence({ evidence, references }: { evidence: WorkoutDetailResponse["detail"]["evidence"]; references: WorkoutDetailResponse["references"] }) {
   const { t } = useTranslation();
-  const has = evidence.direct.length + evidence.provisional.length + evidence.insufficient.length > 0;
+  const has = evidence.direct.length + evidence.initial.length + evidence.insufficient.length > 0;
   if (!has && references.length === 0) return null;
   return (
     <Card title={t("workout.evidenceTitle")}>
       <div className="space-y-5">
         <List title={t("workout.evidenceDirect")} items={evidence.direct} />
-        <List title={t("workout.evidenceProvisional")} hint={t("workout.evidenceProvisionalHint")} items={evidence.provisional} />
+        <List title={t("workout.evidenceProvisional")} hint={t("workout.evidenceProvisionalHint")} items={evidence.initial} />
         <List title={t("workout.evidenceInsufficient")} items={evidence.insufficient} />
         {references.length > 0 && (
           <div>

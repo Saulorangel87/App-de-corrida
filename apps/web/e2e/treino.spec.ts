@@ -31,21 +31,42 @@ const baseSession = {
 };
 
 const detail = {
-  reason: "Alterna trechos de corrida e de caminhada em ritmo de conversa, sem falta de ar.",
-  intensity: { zona: "Z1", descricao: "leve", testeDaFala: "frases completas, sem pausa", cr10: "1-3", fcMaxMedida: "<= 75%" },
-  warmup: { minutos: 5, descricao: "Caminhada rápida." },
-  main: {
-    formato: "N x (corrida / caminhada), minutos de corrida e de caminhada por repetição",
-    escada: { fonte: "Buist 2007, Tabela 2", sessoesPorEtapa: 3, unidade: "minutos" },
+  summary: "Alterna trechos de corrida e de caminhada em ritmo de conversa, sem falta de ar.",
+  intensity: {
+    groups: [
+      {
+        title: null,
+        zone: "Esforço leve (Z1)",
+        facts: [
+          { label: "Teste da fala", value: "Frases completas, sem pausa" },
+          { label: "Esforço percebido (0 a 10)", value: "1 a 3" },
+        ],
+        watch: [{ label: "Com a frequência cardíaca máxima medida", value: "Até 75%" }],
+      },
+    ],
+    notes: ["Se a fala, o esforço e o relógio indicarem zonas diferentes, vale a mais forte: então diminua o ritmo."],
+    studies: ["Nos estudos, o treino de base ficou perto de 70% da frequência cardíaca máxima medida (Helgerud, 2007)."],
   },
-  cooldown: { minutos: 5, descricao: "Caminhada rápida." },
-  levelParams: { duracaoMin: [20, 40], frequenciaSemanal: [2, 3], evidencia: "P" },
-  limits: ["Nenhuma sessão passa de 110% da maior sessão dos últimos 30 dias."],
-  progression: "Avançar para a etapa seguinte após as 3 sessões concluídas sem dor.",
-  regression: "Repetir a etapa ou voltar uma etapa.",
+  how: {
+    warmup: { minutes: "5", text: "Caminhada rápida.", facts: [] },
+    main: {
+      minutes: null,
+      text: "N x (corrida / caminhada), minutos de corrida e de caminhada por repetição",
+      facts: [{ label: "Etapas", value: "A escada tem 12 etapas, mais um degrau extra (10b)." }],
+    },
+    cooldown: { minutes: "5", text: "Caminhada rápida.", facts: [] },
+  },
+  level: [
+    { label: "Duração (min)", value: "20 a 40" },
+    { label: "Base", value: "Valor inicial do app, ainda sem estudo direto" },
+  ],
+  frequency: [{ label: "Sessões por semana", value: "3" }],
+  limits: ["Nenhuma corrida passa de 110% da sua maior corrida dos últimos 30 dias."],
+  progression: ["Você avança para a próxima etapa quando as 3 sessões da etapa foram feitas sem dor de 3 ou mais."],
+  regression: ["Repetir a etapa ou voltar uma etapa."],
   evidence: {
-    direct: ["Escada de etapas 1 a 12: Buist 2007, Tabela 2."],
-    provisional: ["Degrau 10b."],
+    direct: ["Escada de etapas 1 a 12: Buist (2007), Tabela 2."],
+    initial: ["Degrau 10b."],
     insufficient: [],
   },
 };
@@ -79,7 +100,7 @@ async function mockApi(page: Page, opts: { workout?: Json; notFound?: boolean } 
         decision: {
           action: "manter", session: { slug: "caminhada-corrida", minutes: 45, maxZone: "Z1", changed: false },
           blockRunning: false, refer: false, urgent: false, sameDayMedical: false, needsEvaluation: false,
-          needsCheckin: false, message: "Mantenha o treino planejado. [R-DIA-01]", reasons: [],
+          needsCheckin: false, message: "Mantenha o treino planejado.", reasons: [], sources: ["Garber 2011"],
         },
         todayName: baseSession.name, questions: [],
       });
@@ -95,6 +116,9 @@ test("detalhe do treino: escada, razão, como fazer, intensidade, nível, limite
   await expect(page.getByRole("heading", { name: "Caminhada e corrida", level: 1 })).toBeVisible();
   await expect(page.getByText("Planejado", { exact: true })).toBeVisible();
   await expect(page.getByText("45 min")).toBeVisible();
+  // rótulos fixos com o nome do esforço, sem sigla solta
+  await expect(page.getByText("Até esforço leve (Z1)")).toBeVisible();
+  await expect(page.getByText("Esforço alvo: 3 de 10")).toBeVisible();
 
   // escada: só formatação do que a sessão traz
   await expect(page.getByText("Etapa 3 da escada")).toBeVisible();
@@ -103,18 +127,28 @@ test("detalhe do treino: escada, razão, como fazer, intensidade, nível, limite
   await expect(page.getByText("Alterna trechos de corrida e de caminhada")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Aquecimento" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Volta à calma" })).toBeVisible();
-  // intensidade com rótulos legíveis
-  await expect(page.getByText("Teste da fala")).toBeVisible();
-  await expect(page.getByText("frases completas, sem pausa")).toBeVisible();
-  // nível do atleta: faixa vira "20–40" e o "P" vira ponto de partida
-  await expect(page.getByText("20–40")).toBeVisible();
-  await expect(page.getByText("Ponto de partida (valor provisório)")).toBeVisible();
-  await expect(page.getByText("Nenhuma sessão passa de 110%")).toBeVisible();
-  await expect(page.getByText("O app não faz diagnóstico.")).toBeVisible();
-  await expect(page.getByText("Valores ainda provisórios")).toBeVisible();
 
-  // decisão do motor, só para hoje
-  await expect(page.getByText("Mantenha o treino planejado. [R-DIA-01]")).toBeVisible();
+  // intensidade em palavras: zona com nome, escala 0 a 10 e frequência cardíaca só no bloco do relógio
+  await expect(page.getByText("Esforço leve (Z1)", { exact: true })).toBeVisible();
+  await expect(page.getByText("Esforço percebido (0 a 10)").first()).toBeVisible();
+  await expect(page.getByText("Se você usa relógio de frequência cardíaca")).toBeVisible();
+  await expect(page.getByText("Com a frequência cardíaca máxima medida")).toBeVisible();
+
+  await expect(page.getByText("20 a 40")).toBeVisible();
+  await expect(page.getByText("Valor inicial do app, ainda sem estudo direto")).toBeVisible();
+  await expect(page.getByText("Nenhuma corrida passa de 110%")).toBeVisible();
+  await expect(page.getByText("O app não faz diagnóstico.")).toBeVisible();
+  await expect(page.getByText("Valores iniciais do app")).toBeVisible();
+
+  // decisão do motor, só para hoje, sem código nem colchete; as fontes ficam à parte
+  await expect(page.getByText("Mantenha o treino planejado.")).toBeVisible();
+  await expect(page.getByText(/\[R-|\[Garber/)).toHaveCount(0);
+  await page.getByText("Base científica deste conselho").click();
+  await expect(page.getByText("Garber (2011)")).toBeVisible();
+
+  // nenhuma tela mostra código de regra, marcador provisório ou crase
+  const text = await page.locator("main").innerText();
+  expect(text).not.toMatch(/R-[A-Z]{3}-\d+|\[P\]|`|CR-10|<=|>=/);
 
   // fontes: DOI vira link para doi.org; sem DOI usa a URL; abrem em nova aba sem opener
   const links = page.getByRole("link", { name: "Abrir fonte" });
@@ -124,6 +158,18 @@ test("detalhe do treino: escada, razão, como fazer, intensidade, nível, limite
   await expect(links.nth(0)).toHaveAttribute("rel", /noopener/);
 
   await expect(page.getByRole("link", { name: "Registrar treino" })).toHaveAttribute("href", "/registro/s1");
+});
+
+test("glossário: definições dos termos técnicos, fechado por padrão", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/treino/s1");
+  const glossary = page.locator("details", { has: page.getByText("Glossário", { exact: true }) });
+  await expect(glossary.getByText("VO2max")).toBeHidden();
+  await glossary.getByText("Glossário", { exact: true }).click();
+  await expect(glossary.getByText("VO2max", { exact: true })).toBeVisible();
+  await expect(glossary.getByText("Economia de corrida")).toBeVisible();
+  await expect(glossary.getByText("1RM (uma repetição máxima)")).toBeVisible();
+  await expect(glossary.getByText("Teste da fala")).toBeVisible();
 });
 
 test("treino de outro dia não mostra a decisão de hoje, e complementar não tem registro", async ({ page }) => {

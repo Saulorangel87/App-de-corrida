@@ -8,6 +8,7 @@ import {
 } from "./schema";
 import { planTemplateSeeds, planTemplateStructures } from "./seed-data/plan-templates";
 import { referenceSeeds } from "./seed-data/references";
+import { buildAthleteText } from "./seed-data/athlete-text";
 import { workoutSeeds } from "./seed-data/workouts";
 
 export type SeedCounts = {
@@ -63,6 +64,7 @@ export async function runSeed(db: Database): Promise<SeedCounts> {
 
     // 2. Treinos: upsert por slug.
     const workoutIdBySlug = new Map<string, string>();
+    const workoutNames = new Map(workoutSeeds.map((w) => [w.slug, w.namePt]));
     for (const w of workoutSeeds) {
       const values = {
         slug: w.slug,
@@ -71,7 +73,8 @@ export async function runSeed(db: Database): Promise<SeedCounts> {
         type: w.type,
         objective: w.objective ?? null,
         allowedLevels: w.allowedLevels,
-        structure: w.structure,
+        // O atleta lê só `atleta` (texto sem código de regra); o resto é técnico, para o motor e a auditoria.
+        structure: { ...(w.structure as Record<string, unknown>), atleta: buildAthleteText(w.structure as Record<string, unknown>, workoutNames) },
         targetRpe: w.targetRpe ?? null,
         targetHrZone: w.targetHrZone ?? null,
         targetPaceRelative: w.targetPaceRelative ?? null,

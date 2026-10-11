@@ -35,7 +35,7 @@ export type DayDecision = {
   caps: { sessionMinutes: number | null; weeklyMinutes: number | null; absoluteWeeklyMinutes: number | null };
   needsCheckin: boolean;
   persistentSleepIssue: boolean;
-  /** Texto curto para o atleta, com as fontes entre colchetes. */
+  /** Texto curto para o atleta, sem códigos nem colchetes; as fontes ficam em `sources`. */
   message: string;
   /** Tudo que contribuiu, na ordem de precedência (auditoria em engine_decisions). */
   reasons: DayReason[];
@@ -51,8 +51,40 @@ const age = (d: string, today: string) => Math.round((parse(today) - parse(d)) /
 const floor5 = (n: number) => Math.floor(n / 5) * 5;
 const hoursText = (h: number) => String(h).replace(".", ",");
 const unique = (xs: string[]) => [...new Set(xs)];
-const withSources = (text: string, sources: string[]) =>
-  sources.length ? `${text} ${unique(sources).map((s) => `[${s}]`).join(" ")}` : text;
+
+/** Frase do limite que reduziu o treino de hoje, em linguagem simples (R-PRG-02 a R-PRG-08, R-SES-07/08). */
+function capSentence(r: DayReason): string | null {
+  const minutes = (r.detail ?? "").replace(" na semana", "");
+  switch (r.code) {
+    case "teto_da_sessao":
+      return r.rule === "R-PRG-08"
+        ? `Hoje o treino ficou em ${minutes}: depois de uma pausa, o app limita a duração de cada corrida e aumenta aos poucos.`
+        : `Hoje o treino ficou em ${minutes}: nenhuma corrida deve passar de 110% da sua maior corrida dos últimos 30 dias.`;
+    case "teto_semanal":
+      return r.rule === "R-PRG-07"
+        ? "Esta é uma semana de recuperação: o volume cai para 75% da última semana de construção e o treino forte vira leve."
+        : `Esta semana o volume está limitado a ${minutes}: o app só deixa o volume crescer até 110% da última semana de construção (regra de cautela do app).`;
+    case "semana_de_recuperacao":
+      return "Esta é uma semana de recuperação: o volume cai para 75% da última semana de construção e o treino forte vira leve.";
+    case "sem_z3_apos_pausa":
+      return "Nas duas primeiras semanas depois de uma pausa, o app não inclui esforço forte (Z3).";
+    case "somente_z1":
+      return "Hoje o treino fica só em esforço leve (Z1), por causa da sua triagem de saúde ou da sua dor.";
+    case "retomada_gradual":
+      return "Depois de uma pausa longa, a volta é gradual: começamos por um treino mais leve.";
+    default:
+      return null;
+  }
+}
+
+const FREEZE_TEXT: Record<FreezeReason, string> = {
+  dor_limite: "você teve dor de 3 ou mais durante ou depois do treino, ou um aumento de 2 pontos na manhã seguinte",
+  sono_s1_na_semana: "houve noites de sono ruins nesta semana",
+  sessoes_nao_concluidas: "mais de uma sessão não foi concluída",
+  corrida_acima_do_teto: "você correu acima do limite de uma corrida",
+  rpe_acima_do_alvo: "o esforço relatado ficou acima do alvo em 2 de 3 sessões",
+};
+const joinAnd = (xs: string[]) => (xs.length <= 1 ? (xs[0] ?? "") : `${xs.slice(0, -1).join(", ")} e ${xs[xs.length - 1]}`);
 
 type Rank = 0 | 1 | 2 | 3 | 4;
 type Gate = { rank: Rank; text: string; sources: string[]; reasons: DayReason[] };
@@ -81,7 +113,7 @@ function sleepGate(w: WellbeingResult, todayKind: string | undefined, todayHours
     cause = `Você dormiu ${hoursText(todayHours)} h. Uma noite curta não costuma exigir mudança, mas hoje o treino é puxado.`;
   else if (w.s === 1) cause = "Duas das últimas três noites foram ruins.";
   else if (w.delta !== null && w.delta <= cfg.wellbeing.deviationYellow)
-    cause = `Seu bem-estar está ${Math.abs(w.delta)} pontos abaixo da sua média dos últimos 14 dias.`;
+    cause = `A soma das suas respostas de bem-estar (qualidade do sono, energia, humor, estresse e dor muscular) está ${Math.abs(w.delta)} pontos abaixo da sua média dos últimos 14 dias.`;
   else cause = "Seu check-in de bem-estar de hoje ficou abaixo do esperado.";
   return { rank, text: `${cause} Por isso, ${effect}.`, sources, reasons };
 }
@@ -299,9 +331,13 @@ export function decideDay(i: DayInput): DayDecision {
   let text = primary?.text;
   if (!text) {
     if (!base) text = "Hoje é dia de descanso no seu plano.";
-    else if (capReasons.length > 0) text = "Seu treino de hoje foi ajustado para respeitar os limites de progressão.";
-    else text = "Siga o treino de hoje como planejado.";
+    else if (capReasons.length > 0) {
+      const why = unique(capReasons.map(capSentence).filter((x): x is string => x !== null));
+      text = why.length > 0 ? `Seu treino de hoje foi ajustado. ${why.join(" ")}` : "Seu treino de hoje foi ajustado para respeitar os limites de progressão.";
+    } else text = "Siga o treino de hoje como planejado.";
   }
+  if (freezes.length > 0 && rank < 3)
+    text += ` A progressão está parada esta semana (o plano repete a semana anterior) porque ${joinAnd(freezes.map((f) => FREEZE_TEXT[f]))}.`;
   if (wellbeing.persistentSleepIssue)
     text += " Seu sono insuficiente já dura semanas; vale conversar com um profissional de saúde.";
   if (wellbeing.needsCheckin && !wellbeing.acuteIllnessToday) text += " Faça o check-in de hoje.";
@@ -328,7 +364,7 @@ export function decideDay(i: DayInput): DayDecision {
     },
     needsCheckin: wellbeing.needsCheckin && !wellbeing.acuteIllnessToday,
     persistentSleepIssue: wellbeing.persistentSleepIssue,
-    message: withSources(text, primary?.sources ?? []),
+    message: text,
     reasons,
     sources: allSources,
     levels: {

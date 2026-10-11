@@ -46,7 +46,7 @@ const decision = (over: Json = {}) => ({
   sameDayMedical: false,
   needsEvaluation: false,
   needsCheckin: true,
-  message: "Mantenha o treino planejado. [R-DIA-01]",
+  message: "Mantenha o treino planejado.",
   reasons: [],
   ...over,
 });
@@ -100,7 +100,7 @@ async function mockApi(page: Page, opts: Opts = {}) {
     if (path.startsWith("/checkins/") && req.method() === "PUT") {
       day = dayBody({
         checkin: { sleepHours: 7.5, sleepQuality: 4, energy: 4, mood: 5, stress: 3, muscleSoreness: 4, restingHr: null, acuteIllness: false, dailyPainWalking: null },
-        decision: decision({ needsCheckin: false, message: "Treino mantido depois do check-in. [R-DIA-02]" }),
+        decision: decision({ needsCheckin: false, message: "Treino mantido depois do check-in." }),
         questions: [],
       });
       return json(200, day);
@@ -119,9 +119,9 @@ test("painel: treino de hoje, motivo do motor, semana e convite ao check-in", as
   await expect(hoje.getByText("Rodagem leve")).toBeVisible();
   await expect(hoje.getByText("Treino mantido", { exact: true })).toBeVisible();
   await expect(hoje.getByText("40 min")).toBeVisible();
-  await expect(hoje.getByText("Zona até Z2")).toBeVisible();
-  await expect(hoje.getByText("Esforço alvo (PSE) 4")).toBeVisible();
-  await expect(hoje.getByText("Mantenha o treino planejado. [R-DIA-01]")).toBeVisible();
+  await expect(hoje.getByText("Até esforço moderado (Z2)")).toBeVisible();
+  await expect(hoje.getByText("Esforço alvo: 4 de 10")).toBeVisible();
+  await expect(hoje.getByText("Mantenha o treino planejado.")).toBeVisible();
 
   await expect(page.getByText("Faça o check-in de hoje")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Complementares de hoje" })).toBeVisible();
@@ -200,7 +200,7 @@ test("check-in: salva só o que foi respondido e volta ao painel já marcado com
 
   await expect(page).toHaveURL(/\/painel$/);
   await expect(page.getByText("Check-in de hoje feito.")).toBeVisible();
-  await expect(page.getByText("Treino mantido depois do check-in. [R-DIA-02]")).toBeVisible();
+  await expect(page.getByText("Treino mantido depois do check-in.")).toBeVisible();
   const put = calls.find((c) => c.method === "PUT" && c.path === `/checkins/${today}`);
   expect(put?.body).toEqual({ sleepHours: 7.5, sleepQuality: 4, mood: 5, acuteIllness: false });
 });

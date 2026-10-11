@@ -48,6 +48,8 @@ export type DayDecision = {
   needsCheckin: boolean;
   message: string;
   reasons: { code: string }[];
+  /** Fontes do conselho (autor e ano), fora do texto da mensagem. */
+  sources: string[];
 };
 
 export type DayResponse = {
@@ -72,23 +74,26 @@ export type DayResponse = {
 
 export type WeekResponse = { plan: PlanWeekInfo | null; sessions: SessionView[] };
 
-export type CatalogObject = Record<string, unknown>;
+export type Fact = { label: string; value: string };
+export type StepView = { minutes: string | null; text: string | null; facts: Fact[] };
 
-/** Detalhe do treino agendado: sessão + recorte do catálogo publicado (texto em português). */
+/** Detalhe do treino agendado: sessão + texto do atleta do catálogo publicado (em português). */
 export type WorkoutDetailResponse = {
   session: SessionView & { ladder: { etapa: string; corridaMin: number; caminhadaMin: number; repeticoes: number; continua: boolean } | null };
   detail: {
-    reason: string | null;
-    intensity: CatalogObject | null;
-    warmup: CatalogObject | null;
-    main: CatalogObject | null;
-    cooldown: CatalogObject | null;
-    levelParams: CatalogObject | null;
-    frequency: CatalogObject | null;
+    summary: string | null;
+    intensity: {
+      groups: { title: string | null; zone: string | null; facts: Fact[]; watch: Fact[] }[];
+      notes: string[];
+      studies: string[];
+    } | null;
+    how: { warmup: StepView | null; main: StepView | null; cooldown: StepView | null };
+    level: Fact[] | null;
+    frequency: Fact[];
     limits: string[];
-    progression: string | null;
-    regression: string | null;
-    evidence: { direct: string[]; provisional: string[]; insufficient: string[] };
+    progression: string[];
+    regression: string[];
+    evidence: { direct: string[]; initial: string[]; insufficient: string[] };
   };
   catalogVersion: string | null;
   references: { citation: string; doi: string | null; url: string | null; studyType: string | null }[];

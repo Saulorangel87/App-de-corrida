@@ -14,6 +14,7 @@ import { useRequireUser } from "../lib/queries";
 import { toNumber, toText } from "../lib/step-form";
 import { useWeek, type DayResponse, type SessionView } from "../lib/training";
 import { useErrorText } from "../lib/use-error-text";
+import { zoneUpTo } from "../lib/zone";
 
 export const Route = createFileRoute("/registro/$id")({
   component: LogPage,
@@ -187,7 +188,7 @@ function LogForm({ session }: { session: SessionView }) {
         <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{t("log.kicker")}</p>
         <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-[#0F172A]">{name}</h1>
         <p className="mt-1 mb-5 text-sm text-gray-600">
-          {t("panel.minutes", { count: session.minutes })} · {t("panel.zone", { zone: session.maxZone })}
+          {t("panel.minutes", { count: session.minutes })} · {zoneUpTo(t, session.maxZone)}
         </p>
 
         <form

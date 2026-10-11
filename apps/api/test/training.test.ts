@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { athleteStrings, TECHNICAL_MARKERS, type AthleteText } from "@passo/db";
 import { admin, makeApp, signUpAndLogin, uniqueEmail, type TestApp } from "./helpers";
 
 let t: TestApp;
@@ -182,7 +183,9 @@ describe("check-in e decisão do dia", () => {
     expect(res.status).toBe(200);
     expect(res.body.decision.action).not.toBe("manter");
     expect(res.body.decision.reasons.map((r: Json) => r.rule).some((r: string) => r.startsWith("R-SON"))).toBe(true);
-    expect(res.body.decision.message).toMatch(/\[/); // fontes entre colchetes
+    // texto limpo para o atleta; as fontes vêm numa lista à parte
+    expect(res.body.decision.message).not.toMatch(/\[|R-[A-Z]{3}-\d+/);
+    expect(res.body.decision.sources.length).toBeGreaterThan(0);
   });
 
   it("campos desconhecidos e notas fora da escala: 400", async () => {
@@ -465,12 +468,12 @@ describe("detalhe do treino", () => {
     expect(res.status).toBe(200);
     expect(res.body.session.id).toBe(session.id);
     expect(res.body.session.slug).toBe(session.slug);
-    expect(res.body.detail.reason).toEqual(expect.any(String));
+    expect(res.body.detail.summary).toEqual(expect.any(String));
     expect(res.body.detail.limits.length).toBeGreaterThan(0);
     expect(res.body.references.length).toBeGreaterThan(0);
     expect(res.body.references[0].citation).toEqual(expect.any(String));
-    // treinos citados em outros textos aparecem pelo nome, não pelo `slug` do catálogo
-    expect(JSON.stringify(res.body.detail)).not.toContain("`");
+    // texto do atleta: sem código de regra, [P], crase (nome técnico de treino), sigla ou "Autor 2007"
+    expect(JSON.stringify(res.body.detail)).not.toMatch(TECHNICAL_MARKERS);
     // sem campos internos do banco
     expect(JSON.stringify(res.body)).not.toMatch(/user_?id|athlete_?plan/i);
   });
@@ -483,8 +486,24 @@ describe("detalhe do treino", () => {
     const res = await get(a.cookie, `/workouts/${session.id}`);
     expect(res.status).toBe(200);
     expect(res.body.session.ladder).toMatchObject({ etapa: "1", corridaMin: 1, caminhadaMin: 1, repeticoes: 10 });
-    expect(res.body.detail.main.escada).toBeDefined();
-    expect(res.body.detail.main.escada.etapas).toBeUndefined();
+    // a tabela das 13 etapas e as notas de auditoria da fonte não vão para o atleta
+    const labels = res.body.detail.how.main.facts.map((f: Json) => f.label);
+    expect(labels).toContain("Etapas");
+    expect(JSON.stringify(res.body)).not.toMatch(/ajusteP|etapas"|DEC-12/);
+  });
+
+  it("os 11 treinos do catálogo têm texto do atleta sem nenhum marcador técnico", async () => {
+    const rows = await admin`select slug, structure->'atleta' as atleta from workouts where status = 'published'`;
+    expect(rows.length).toBe(11);
+    for (const r of rows) {
+      const a = r.atleta as AthleteText | null;
+      expect(a, r.slug).toBeTruthy();
+      for (const text of athleteStrings(a!)) {
+        expect(text, `${r.slug}: "${text}"`).not.toMatch(TECHNICAL_MARKERS);
+        // zona só aparece com o nome do esforço: "esforço leve (Z1)"
+        expect(text.replace(/(leve|moderado|forte) \(Z[123]\)/g, ""), `${r.slug}: "${text}"`).not.toMatch(/\bZ[123]\b/);
+      }
+    }
   });
 
   it("id inexistente ou que não é UUID: 404", async () => {

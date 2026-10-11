@@ -17,7 +17,7 @@ const run = {
 const decision = (over: Record<string, unknown> = {}) => ({
   action: "manter", session: { slug: "rodagem-leve", minutes: 40, maxZone: "Z2", changed: false },
   blockRunning: false, refer: false, urgent: false, sameDayMedical: false, needsEvaluation: false, needsCheckin: false,
-  message: "Treino mantido. [R-DIA-01]", reasons: [], ...over,
+  message: "Treino mantido.", reasons: [], ...over,
 });
 const dayBody = (over: Record<string, unknown> = {}) => ({
   date: today, plan: planInfo, sessions: [run], checkin: null, decision: decision(), todayName: run.name, questions: [], ...over,
@@ -36,7 +36,7 @@ async function mockApi(page: Page, opts: { logReply?: Record<string, unknown> } 
     if (path.startsWith("/day/")) return json(200, dayBody());
     if (path.startsWith("/plan/week/")) return json(200, { plan: planInfo, sessions: [run] });
     if (path === "/workouts/s1/log" && req.method() === "PUT") {
-      const nextDay = dayBody({ decision: decision({ message: "Amanhã: rodagem leve. [R-DIA-01]" }) });
+      const nextDay = dayBody({ decision: decision({ message: "Amanhã: rodagem leve." }) });
       return json(200, opts.logReply ?? { session: run, day: dayBody(), nextDay });
     }
     return json(404, { error: { code: "NOT_FOUND", message: "x" } });
@@ -68,7 +68,7 @@ test("pós-treino sem dor: registra duração e esforço e mostra o que muda ama
   await page.getByRole("button", { name: "Salvar registro" }).click();
 
   await expect(page.getByRole("heading", { name: "Registro salvo" })).toBeVisible();
-  await expect(page.getByText("Amanhã: rodagem leve. [R-DIA-01]")).toBeVisible();
+  await expect(page.getByText("Amanhã: rodagem leve.")).toBeVisible();
   expect(putBody(calls)).toEqual({ completed: true, durationMinutes: 42, distanceKm: 6.5, srpe: 4, pain: [] });
 });
 

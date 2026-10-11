@@ -133,7 +133,7 @@ function ladderSessions(week: TemplateWeek): MaterializedSession[] {
         slot: s.slot, optional: false, slug: s.slug, kind: "caminhada-corrida" as const, minutes, maxZone: "Z1" as const,
         targetRpe: RPE["caminhada-corrida"],
         ladder: { etapa: stage.etapa, corridaMin: base.corridaMin, caminhadaMin: base.caminhadaMin, repeticoes: reps, continua: !!base.continua },
-        ...(pct === 100 ? {} : { note: `semana de recuperação: ${pct}% das repetições` }),
+        ...(pct === 100 ? {} : { note: `Semana de recuperação: ${pct}% das repetições.` }),
       };
     });
 }
@@ -201,7 +201,7 @@ export function materializeWeek(input: MaterializeInput): MaterializedWeek {
     if (!heavy) break;
     const from = heavy.slug;
     heavy.slug = REGRESS[from]!;
-    heavy.note = `trocada de ${from}: orçamento de intensidade da semana (R-DIS-02/03)`;
+    heavy.note = "Trocado por um treino mais leve: a semana já atingiu o limite de esforço moderado e forte.";
     notes.push(`${from} → ${heavy.slug}`);
   }
 
@@ -214,7 +214,7 @@ export function materializeWeek(input: MaterializeInput): MaterializedWeek {
       const cap = Math.min(template.longRunCapMinutes, Math.floor(weekly * 0.4), sessionCap);
       if (it.minutes > cap) {
         it.minutes = cap;
-        it.note = "longão limitado pelo teto do modelo, 40% da semana ou 110% da maior corrida (R-SES-30/31)";
+        it.note = "Longão limitado: não passa do limite do plano, de cerca de 40% do tempo da semana nem de 110% da sua maior corrida recente.";
       }
     } else if (it.slug === "rodagem-leve" || it.slug === "regenerativo") {
       const max = Math.min(EASY_MAX[level], sessionCap);

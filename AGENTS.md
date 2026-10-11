@@ -26,6 +26,7 @@ Design no Figma (só referência de estilo; não precisa mais ser atualizado): h
 - Idade mínima: 18 anos.
 - Telas novas: direto em código, na mesma linha visual das telas de acesso (decisão do dono, 2026-10-10: o Figma foi só um norte). O dono revisa rodando o app.
 - Mobile: layout definido pelo agente, na mesma identidade visual.
+- Textos do atleta (decisão do dono, 2026-10-11): linguagem simples, sem código de regra, sem `[P]`, sem sigla solta e sem inventar nada. O catálogo técnico (`workouts.structure`) fica para o motor e a auditoria; o atleta lê só `structure.atleta`, gerado no seed por `packages/db/src/seed-data/athlete-text.ts` (redação aprovada em `docs/textos-para-o-atleta.md`). Texto novo no catálogo sem redação aprovada falha nos testes da API. A mensagem do dia (`decision.message`) não leva colchetes; as fontes vão em `decision.sources`.
 - Figma: arquivo sem variáveis; tokens vêm da seção 9 da especificação. Frames: Painel `2:2`, Login `6:2`.
 
 - Repositório: https://github.com/Saulorangel87/App-de-corrida (remote `origin`, branch `main`). Push para `main` liberado após cada commit.
@@ -54,7 +55,7 @@ Fase atual: 6 (telas), em andamento: telas de acesso prontas (`entrar`, `esqueci
 - API nova (ADR 0006): `GET /day/:date` (decisão e sessões do dia), `GET /plan/week/:date`, `PUT /checkins/:date`, `POST /pain/:date`, `PUT /workouts/:id/log` (devolve a decisão do dia seguinte), `PUT /profile/pause`, `POST /profile/professional-clearance`, `GET /history`, `GET /workouts/:id` (detalhe do treino agendado), `GET /account/export`.
 - Semana do plano = janela de 7 dias desde `start_date` (`athlete_plan_weeks`); criada na primeira consulta; a anterior fecha (escada avança ou repete). `buildAthleteWeek` já nasce dentro dos tetos.
 - Front: TanStack Router/Query, React Hook Form + Zod de `@passo/shared`, i18next, Tailwind (ADR 0007). Tela que falta: plano completo (calendário). Cada uma: código na linha visual existente, teste Playwright, aprovação do dono.
-- Testes: 345 no motor (inclui "seguir o plano à risca não gera ajuste" nos 13 modelos), 96 na API.
+- Testes: 348 no motor (inclui "seguir o plano à risca não gera ajuste" nos 13 modelos), 97 na API.
 - Banco: migrações 0008 e 0009 (semanas do plano, sessões agendadas com estrutura, check-in com dor ao caminhar, dor com data e momento, `for_date` na auditoria).
 - Fase 3: texto do PAR-Q+ transcrito e conferido; falta o dono ler uma vez contra o PDF.
 - Pendente (dono): confirmar os itens dos ADRs 0004, 0005 e 0006 (ou manter os padrões); avisar a PAR-Q+ Collaboration (R-TRI-14, não bloqueia); revisar os textos `razao` do seed.

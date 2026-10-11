@@ -7,6 +7,8 @@ import { ApiError, fetchApi } from "../lib/api";
 import { addDays, formatDate, localToday } from "../lib/dates";
 import { useRequireUser } from "../lib/queries";
 import { useErrorText } from "../lib/use-error-text";
+import { zoneUpTo } from "../lib/zone";
+import { DecisionSources } from "../components/decision-sources";
 import {
   useDay,
   useWeek,
@@ -170,7 +172,7 @@ function TodayCard({ day }: { day: DayResponse }) {
         ) : (
           <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-700">
             <Fact>{t("panel.minutes", { count: d.session.minutes })}</Fact>
-            {d.session.maxZone && <Fact>{t("panel.zone", { zone: d.session.maxZone })}</Fact>}
+            {d.session.maxZone && <Fact>{zoneUpTo(t, d.session.maxZone)}</Fact>}
             {day.sessions.find((s) => !s.optional && s.slug === d.session.slug)?.targetRpe != null && (
               <Fact>{t("panel.rpe", { rpe: day.sessions.find((s) => !s.optional && s.slug === d.session.slug)!.targetRpe })}</Fact>
             )}
@@ -202,6 +204,7 @@ function TodayCard({ day }: { day: DayResponse }) {
           <p lang="pt-BR" className="whitespace-pre-line">
             {d.message}
           </p>
+          <DecisionSources sources={d.sources ?? []} />
         </div>
       </Card>
 

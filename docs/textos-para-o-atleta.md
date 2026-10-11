@@ -1,6 +1,11 @@
 # Textos do atleta: proposta de reescrita (para aprovação)
 
-**Estado: proposta.** Nada foi alterado no seed, no motor nem nas telas. Cada linha tem um ID (T01, M05...). Você aprova, pede ajuste ou recusa por ID, e só depois eu aplico.
+**Estado: aprovado pelo dono em 2026-10-11 e aplicado** (seed, API, motor e telas). Cada linha tem um ID (T01, M05...). Observações da aplicação:
+- Texto do atleta gerado no seed (`packages/db/src/seed-data/athlete-text.ts`) e guardado em `structure.atleta`; a API serve só esse bloco.
+- Rótulos "Para aliviar" e "Para evoluir" vêm da tela; por isso os textos de regressão não repetem o prefixo "Para aliviar:".
+- N01 (nota de troca de treino) saiu sem o nome do treino original, porque o motor só conhece o identificador; a nota não aparece na tela hoje.
+- Glossário (G01 a G07) aparece no fim da tela de detalhe do treino.
+- Textos em inglês: na etapa de tradução.
 
 Fonte de tudo: `docs/pesquisa/` (a coluna "Sustentação" aponta o arquivo e a regra). Nenhum número novo foi criado: os números dos textos propostos são os mesmos dos textos atuais.
 
