@@ -30,7 +30,7 @@ const profileOk = {
       baseWeeks: 2,
       startDate: "2026-10-12",
       endDate: "2026-12-20",
-      selection: {},
+      selection: { placement: { etapa: "10", reason: "declarado" } },
     },
   },
 };
@@ -203,6 +203,7 @@ test("entrevista completa: 8 etapas, cada uma salva, e o envio leva ao resultado
   await expect(page.getByText("Iniciante", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("Triagem concluída")).toBeVisible();
   await expect(page.getByText("Prova de 5 km")).toBeVisible();
+  await expect(page.getByText("Etapa 10 da corrida e caminhada, pelo que você disse que já consegue correr sem parar.")).toBeVisible();
   expect(calls.some((c) => c.path === "/interview/submit" && c.method === "POST")).toBe(true);
   expect(puts(calls)).toEqual(STEPS);
 });

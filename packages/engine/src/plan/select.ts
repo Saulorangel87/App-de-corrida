@@ -1,6 +1,9 @@
 import type { LevelName } from "../classification/classify";
 import type { MaxIntensity, ScreeningState } from "../screening/screen";
 import { PLN_SOURCES, PLN_VERSION, RACE_ORDER, plnV1 as cfg, type Objective } from "./config";
+import { clsV1 } from "../classification/config";
+import { ladderPlacement, type LadderPlacement } from "./placement";
+import { buildPlanTemplate } from "./templates";
 
 export type Goal = "saude" | "emagrecimento" | "primeira_prova" | "melhorar_tempo";
 export type RaceDistance = (typeof RACE_ORDER)[number];
@@ -21,6 +24,9 @@ export type PlanSelectionInput = {
   runningInjuryLast3m: boolean;
   currentPain: number; // 0–10
   bmi?: number;
+  /** Flags da classificação (R-CLS-08/09): entram no posicionamento na escada (R-PLN-21). */
+  cautelaLesao?: boolean;
+  inicioDoZero?: boolean;
   screening: { state: ScreeningState; maxIntensity: MaxIntensity };
   today: string; // AAAA-MM-DD
 };
@@ -55,6 +61,11 @@ export type PlanSelection =
       weightTagBlocked: boolean; // R-PLN-17
       level: LevelName;
       templateWeeks: number;
+      /** Semana do modelo em que o plano começa e o porquê (escada, R-PLN-21); null sem escada. */
+      startTemplateWeek: number;
+      placement: LadderPlacement | null;
+      /** Semanas que faltam do modelo a partir da entrada (templateWeeks - startTemplateWeek + 1). */
+      remainingWeeks: number;
       baseWeeks: number; // semanas extras de base antes do modelo (R-PLN-05/07)
       startDate: string;
       endDate: string;
@@ -137,12 +148,27 @@ export function selectPlan(i: PlanSelectionInput): PlanSelection {
   const templateWeeks = cfg.weeks[objective][i.level];
   if (templateWeeks === null) throw new Error("modelo inexistente após rebaixamento"); // inalcançável: R-PLN-04 já rebaixou
 
+  // R-PLN-21: onde o plano começa na escada (o que o atleta já consegue não é repetido).
+  const template = buildPlanTemplate(objective, i.level);
+  const placement = template
+    ? ladderPlacement({
+        template,
+        canRunContinuousMinutes: i.canRunContinuousMinutes,
+        baseWeeklyMinutes: Math.round(i.weeklyKm * clsV1.load.minutesPerKm),
+        bmi: i.bmi,
+        cautelaLesao: i.cautelaLesao,
+        inicioDoZero: i.inicioDoZero,
+      })
+    : null;
+  const startTemplateWeek = placement?.startWeek ?? 1;
+  const remainingWeeks = templateWeeks - (startTemplateWeek - 1);
+
   // R-PLN-05: prazo até a prova. Só vale se a prova é a pedida (rebaixado = sem data de prova).
   let baseWeeks = 0;
-  let endDate = addDays(i.today, templateWeeks * 7);
+  let endDate = addDays(i.today, remainingWeeks * 7);
   if (isRace && i.raceDate && downgrades.length === 0) {
     const available = weeksBetween(i.today, i.raceDate);
-    if (available < templateWeeks) {
+    if (available < remainingWeeks) {
       const smallerThatFit = RACE_ORDER.slice(0, RACE_ORDER.indexOf(objective as RaceDistance)).filter((d) => {
         const w = cfg.weeks[d][i.level];
         return w !== null && w <= available && blockerFor(d, i) === null;
@@ -150,14 +176,14 @@ export function selectPlan(i: PlanSelectionInput): PlanSelection {
       return {
         status: "prazo_insuficiente",
         objective,
-        weeksNeeded: templateWeeks,
+        weeksNeeded: remainingWeeks,
         weeksAvailable: available,
-        earliestRaceDate: addDays(i.today, templateWeeks * 7),
+        earliestRaceDate: addDays(i.today, remainingWeeks * 7),
         smallerThatFit,
         ruleVersion: PLN_VERSION,
       };
     }
-    baseWeeks = available - templateWeeks; // semanas extras viram base (R-PLN-05/07)
+    baseWeeks = available - remainingWeeks; // semanas extras viram base (R-PLN-05/07)
     endDate = i.raceDate;
   }
 
@@ -174,6 +200,9 @@ export function selectPlan(i: PlanSelectionInput): PlanSelection {
     weightTagBlocked,
     level: i.level,
     templateWeeks,
+    startTemplateWeek,
+    placement,
+    remainingWeeks,
     baseWeeks,
     startDate: i.today,
     endDate,

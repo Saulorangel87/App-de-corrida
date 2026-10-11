@@ -78,6 +78,13 @@
       "when": 1791726498240,
       "tag": "0010_saude_confirmada",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791742063036,
+      "tag": "0011_posicionamento_na_escada",
+      "breakpoints": true
     }
   ]
 }

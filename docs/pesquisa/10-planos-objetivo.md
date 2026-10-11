@@ -164,6 +164,29 @@ Regra geral: a recuperação ocorre em toda 4ª semana (R-PRG-07), exceto no pla
 
 **R-PLN-20 [P]** Expectativa transparente para iniciantes: informar na entrada que cerca de 1 em cada 5 novatos relata lesão em programas de 8–13 semanas e que ~30% param de correr em 6 meses, e como o app reage a dor [Buist 2008; Relph 2023; Fokkema 2019].
 
+**R-PLN-21 [P]** Posicionamento na escada (decisão do dono, 2026-10-11, DEC-49). O plano com escada (5 km iniciante e saúde iniciante) não começa sempre na etapa 1: a entrada usa o que o atleta declara na entrevista em "por quantos minutos você consegue correr sem parar" (`canRunContinuousMinutes`). Para cada etapa da escada, o maior bloco contínuo de corrida é o maior `corridaMin` entre as 3 sessões da etapa (tabela de R-SES-10). Regra:
+
+- declarou **menos de 10 min**: etapa 1 (como antes);
+- declarou **10 min ou mais**: entra na etapa mais avançada cujo maior bloco contínuo não passa do que ele declarou, **menos 1 etapa de folga** (mínimo: etapa 1). O resultado está na tabela abaixo;
+- **teto de volume** (R-PRG-04): a semana da etapa (as 3 sessões, cada uma com 5 min de aquecimento e 5 de volta à calma) não pode passar de **120%** do volume semanal que o atleta declarou fazer hoje (média das últimas 4 semanas, convertida a 7 min/km); se passar, a entrada desce uma etapa por vez até caber (mínimo: etapa 1). Esse teto vale para a escada, que só é isenta do 110% (R-PRG-03). Sem volume declarado (0), não há esse teto, como na escada do zero. Sem ele o motor diário cortaria as sessões já no primeiro dia;
+- **sempre etapa 1**, qualquer que seja a declaração: IMC ≥ 30 (R-SES-10, já existente), `cautela_lesao` (R-CLS-09) e `inicio_do_zero` (R-CLS-08, declaração incoerente com a história). Os dois últimos são a escolha conservadora quando a pesquisa é omissa; não há fonte direta.
+- na escada de saúde (12 semanas com recuperações; a etapa mais alta é a 9), a entrada nunca passa da etapa mais alta que o modelo contém;
+- a duração restante do plano é a do modelo menos as semanas puladas (o que o atleta já consegue não é repetido); o fim do plano é a etapa final do modelo (5 km: a etapa 12, que equivale a correr 30 min contínuos, o ponto de chegada do programa [Buist 2007]).
+
+Tabela pelo que o atleta declara correr sem parar (quando o volume semanal dele não limita antes):
+
+| Declarou (min contínuos) | Entra na etapa | Semanas restantes (5 km) |
+|---|---|---|
+| menos de 10 | 1 | 13 |
+| 10 a 13 | 7 | 7 |
+| 14 e 15 | 8 | 6 |
+| 16 a 19 | 9 | 5 |
+| 20 a 29 | 10 | 4 |
+| 30 a 39 | 10b | 3 |
+| 40 ou mais | 11 | 2 |
+
+(A tabela acima é a aplicação mecânica da regra; a regra é a fonte. A autodeclaração pode estar errada: por isso a entrada tem 1 etapa de folga, dor e sono ruim continuam reduzindo ou bloqueando a carga acima de qualquer declaração, e a escada só avança com as 3 sessões feitas, sem dor e em esforço leve, R-SES-11.) Sem estudo direto sobre o ponto de entrada: [P]. O limiar de 10 min e a folga de 1 etapa são valores de projeto, recalibráveis com dados reais.
+
 ### Esboço do modelo de dados (para a Fase 1)
 
 `plan_templates`: `goal` (5k/10k/21k/42k/saude), `level`, `total_weeks`, `sessions_per_week_min/max`, `prerequisites` (JSONB com os campos de R-PLN-03), `peak_weekly_cap`, `peak_long_run_cap`, `deload_weeks` (int[]), `taper` (JSONB: semanas e % por semana), `slow_mode_multiplier`, `status`, `version`, referências.

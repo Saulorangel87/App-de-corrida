@@ -233,6 +233,13 @@ describe("coerência entre o plano e a decisão do dia", () => {
     const adjusted = seen.filter((x) => x.action !== "manter" || x.changed || x.minutes !== x.planned);
     expect(adjusted, JSON.stringify(adjusted, null, 1)).toEqual([]);
   });
+
+  it("iniciante que entra na etapa 10 pelo que declarou: segue as 4 semanas sem ajuste", async () => {
+    const seen = await followPlan(runner(20), 4);
+    expect(seen.length).toBeGreaterThanOrEqual(10);
+    const adjusted = seen.filter((x) => x.action !== "manter" || x.changed || x.minutes !== x.planned);
+    expect(adjusted, JSON.stringify(adjusted, null, 1)).toEqual([]);
+  });
 });
 
 describe("registro pós-treino e dor", () => {
@@ -711,5 +718,103 @@ describe("LGPD com dados de treino", () => {
       (select count(*)::int from engine_decisions where user_id = ${a.userId}) as decisions,
       (select count(*)::int from health_screenings where user_id = ${a.userId}) as screenings`;
     expect(left).toEqual({ plans: 0, weeks: 0, scheduled: 0, logs: 0, checkins: 0, pain: 0, decisions: 0, screenings: 0 });
+  });
+});
+
+/** Iniciante (menos de 12 meses) que já corre: quanto consegue correr sem parar muda a etapa de entrada. */
+const runner = (canRunContinuousMinutes: number, over: Record<string, unknown> = {}) => ({
+  ...intermediate(),
+  historico: {
+    monthsRegular: 3, weeklySessions: 3, weeklyVolume: { unit: "km", value: 25 }, longestRecentKm: 5,
+    canRunContinuousMinutes, daysSinceLastRun: 2, halfMarathonLast3m: false, regularExercise3m: true,
+  },
+  objetivo: { goal: "primeira_prova", raceDistance: "5k" },
+  disponibilidade: { daysPerWeek: 3, minutesPerSession: 60, longRunDay: 7 },
+  ...over,
+});
+
+describe("posicionamento na escada (R-PLN-21)", () => {
+  it("quem corre 20 min sem parar entra na etapa 10, com 4 semanas pela frente", async () => {
+    const a = await onboard(runner(20));
+    const profile = await get(a.cookie, "/profile");
+    expect(profile.body.profile.plan).toMatchObject({ template: "5k-iniciante", durationWeeks: 4, startTemplateWeek: 10 });
+    expect(profile.body.profile.plan.selection.placement).toMatchObject({ etapa: "10", reason: "declarado" });
+
+    const day = await get(a.cookie, `/day/${MONDAY}`);
+    expect(day.body.plan).toMatchObject({ calendarWeek: 1, templateWeek: 10 });
+    const week = await get(a.cookie, `/plan/week/${MONDAY}`);
+    const ladder = week.body.sessions.filter((s: Json) => s.ladder);
+    expect(ladder).toHaveLength(3);
+    expect(new Set(ladder.map((s: Json) => s.ladder.etapa))).toEqual(new Set(["10"]));
+
+    const ov = await get(a.cookie, `/plan/overview/${MONDAY}`);
+    const weeks = ov.body.weeks as Json[];
+    expect(ov.body.plan.durationWeeks).toBe(4);
+    expect(weeks.map((w) => [w.calendarWeek, w.templateWeek, w.ladderStage])).toEqual([
+      [1, 10, "10"],
+      [2, 11, "10b"],
+      [3, 12, "11"],
+      [4, 13, "12"],
+    ]);
+    expect(new Date(`${ov.body.plan.endDate}T00:00:00Z`).getTime() - new Date(`${MONDAY}T00:00:00Z`).getTime()).toBe(4 * 7 * 86_400_000);
+  });
+
+  it("quem corre 40 min ou mais entra na etapa 11 e o plano termina na etapa 12", async () => {
+    const a = await onboard(runner(45));
+    const ov = await get(a.cookie, `/plan/overview/${MONDAY}`);
+    expect((ov.body.weeks as Json[]).map((w) => w.ladderStage)).toEqual(["11", "12"]);
+    // as 2 semanas concluídas fecham o plano
+    await advanceToWeek(a.cookie, 2);
+    const profile = await get(a.cookie, "/profile");
+    const [row] = await admin`select status from athlete_plans where user_id = ${a.userId} and status = 'completed'`;
+    expect(profile.status).toBe(200);
+    expect(row?.status).toBe("completed");
+  });
+
+  it("o volume semanal que o atleta faz limita a entrada: poucos km por semana não vão direto à etapa 10", async () => {
+    const low = runner(20, {
+      historico: {
+        monthsRegular: 3, weeklySessions: 2, weeklyVolume: { unit: "km", value: 8 }, longestRecentKm: 5,
+        canRunContinuousMinutes: 20, daysSinceLastRun: 2, halfMarathonLast3m: false, regularExercise3m: true,
+      },
+    });
+    const a = await onboard(low);
+    const plan = (await get(a.cookie, "/profile")).body.profile.plan;
+    expect(plan.selection.placement.reason).toBe("teto_de_volume");
+    expect(plan.startTemplateWeek).toBeLessThan(10);
+    // e o dia a dia concorda com o plano: seguir à risca não gera ajuste
+    const week = await get(a.cookie, `/plan/week/${MONDAY}`);
+    for (const s of runs(week.body.sessions)) {
+      onDate(s.date);
+      const ci = await send("PUT", a.cookie, `/checkins/${s.date}`, { sleepHours: 8, sleepQuality: 5, energy: 4, mood: 4, stress: 4, muscleSoreness: 4 });
+      expect(ci.body.decision.session, s.date).toMatchObject({ minutes: s.minutes, changed: false });
+    }
+  });
+
+  it("menos de 10 min, IMC 30 ou mais e cautela de lesão ficam na etapa 1", async () => {
+    const few = await onboard(runner(5));
+    expect((await get(few.cookie, "/profile")).body.profile.plan).toMatchObject({ durationWeeks: 13, startTemplateWeek: 1 });
+
+    const heavy = await onboard(runner(30, { basicos: { birthMonth: 1, birthYear, sex: "F", heightCm: 165, weightKg: 100 } }));
+    const heavyPlan = (await get(heavy.cookie, "/profile")).body.profile.plan;
+    expect(heavyPlan).toMatchObject({ durationWeeks: 13, startTemplateWeek: 1 });
+    expect(heavyPlan.selection.placement).toMatchObject({ etapa: "1", reason: "imc" });
+
+    const injured = await onboard(
+      runner(30, { lesoes: { injury12m: true, runningInjuryLast3m: true, injuryOrPersistentPainLast6w: false, currentPain: { intensity: 0 } } }),
+    );
+    const injuredPlan = (await get(injured.cookie, "/profile")).body.profile.plan;
+    expect(injuredPlan).toMatchObject({ startTemplateWeek: 1 });
+    expect(injuredPlan.selection.placement).toMatchObject({ etapa: "1", reason: "cautela_lesao" });
+  });
+
+  it("o atleta B não vê o plano posicionado do atleta A", async () => {
+    const a = await onboard(runner(30));
+    const b = await onboard(runner(5));
+    const planA = (await get(a.cookie, "/profile")).body.profile.plan;
+    const planB = (await get(b.cookie, "/profile")).body.profile.plan;
+    expect(planA.id).not.toBe(planB.id);
+    expect(planA.startTemplateWeek).toBe(11);
+    expect(planB.startTemplateWeek).toBe(1);
   });
 });

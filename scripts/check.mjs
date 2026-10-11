@@ -29,6 +29,7 @@ const FEATURES = {
     decide: "Decisão do dia: manter, reduzir ou bloquear",
     materialize: "Montagem das sessões do plano",
     pain: "Dor reduz ou bloqueia a carga",
+    placement: "Onde o iniciante entra na escada (posicionamento)",
     "plan-follow": "Seguir o plano à risca (13 modelos)",
     progression: "Progressão e escada de caminhada e corrida",
     screen: "Triagem de saúde (PAR-Q+)",

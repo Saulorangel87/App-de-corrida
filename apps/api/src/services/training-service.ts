@@ -367,7 +367,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
 
     while (weeks.length < upTo) {
       const calendarWeek = weeks.length + 1;
-      let templateWeek = 1;
+      let templateWeek = plan.startTemplateWeek; // R-PLN-21: onde o atleta entrou na escada
       let repeatedOnce = false;
       if (calendarWeek > 1) {
         const prev = weeks[weeks.length - 1]!;
@@ -815,7 +815,11 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
         // Semanas que ainda não existem: seguem o modelo a partir da última criada. Na escada, repetir
         // uma etapa empurra tudo uma semana, por isso é só uma previsão ("se tudo correr como o previsto").
         const last = created[created.length - 1];
-        let templateWeek = last ? (last.status === "closed" && last.ladderAction === "repetir" ? last.templateWeek : last.templateWeek + 1) : 1;
+        let templateWeek = last
+          ? last.status === "closed" && last.ladderAction === "repetir"
+            ? last.templateWeek
+            : last.templateWeek + 1
+          : plan.startTemplateWeek;
         let calendarWeek = (last?.calendarWeek ?? 0) + 1;
         while (templateWeek <= template.durationWeeks) {
           weeks.push(shape({ calendarWeek, templateWeek, startDate: addDays(plan.startDate, 7 * (calendarWeek - 1)) }, true, []));
@@ -828,7 +832,8 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
             template: template.slug,
             objective: template.objective,
             level: template.level,
-            durationWeeks: template.durationWeeks,
+            // Semanas que faltam do modelo a partir de onde o atleta entrou (R-PLN-21).
+            durationWeeks: template.durationWeeks - (plan.startTemplateWeek - 1),
             startDate: plan.startDate,
             endDate: plan.endDate,
           },

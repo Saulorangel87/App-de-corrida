@@ -357,6 +357,13 @@ export const en: Translation = {
     planBase: "+ {{weeks}} of base before the template",
     planDates: "{{start}} to {{end}}",
     planStart: "Start and end",
+    planEntry: "Where you start",
+    placement: {
+      declarado: "Stage {{etapa}} of the run-walk program, based on how long you said you can already run without stopping.",
+      teto_de_volume:
+        "Stage {{etapa}} of the run-walk program. You can already run longer than this without stopping, but the weekly total cannot jump all at once, so your week starts here.",
+      default: "Stage {{etapa}} of the run-walk program, the beginning, at the most careful pace. You move up as you feel ready.",
+    },
     planNone: "There is no plan yet. When the screening allows it, the plan is built automatically.",
     toPanel: "Go to the dashboard",
     redo: "Redo the interview",

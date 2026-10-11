@@ -144,6 +144,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
         planTemplateId: template.id,
         goalTag: selection.goalTag,
         baseWeeks: selection.baseWeeks,
+        startTemplateWeek: selection.startTemplateWeek,
         selection,
         startDate: selection.startDate,
         endDate: selection.endDate,
@@ -152,8 +153,16 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
     return plan!;
   }
 
-  function planInput(stored: StoredInputs, level: LevelName, s: ScreeningResult, on: string): PlanSelectionInput {
-    return { ...stored.plan, level, screening: { state: s.state, maxIntensity: s.maxIntensity }, today: on };
+  function planInput(stored: StoredInputs, level: LevelName, flags: string[], s: ScreeningResult, on: string): PlanSelectionInput {
+    return {
+      ...stored.plan,
+      level,
+      // R-PLN-21: o posicionamento na escada considera cautela de lesão e início do zero.
+      cautelaLesao: flags.includes("cautela_lesao"),
+      inicioDoZero: flags.includes("inicio_do_zero"),
+      screening: { state: s.state, maxIntensity: s.maxIntensity },
+      today: on,
+    };
   }
 
   return {
@@ -333,7 +342,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
             bmi,
           },
         };
-        const selection = selectPlan(planInput(stored, classification.levelName, screening, on));
+        const selection = selectPlan(planInput(stored, classification.levelName, classification.flags, screening, on));
         await audit(tx, userId, selection.ruleVersion, stored.plan, { status: selection.status });
         const plan = await assignPlan(tx, userId, selection);
 
@@ -421,7 +430,9 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
             template: plan.template.slug,
             objective: plan.template.objective,
             level: plan.template.level,
-            durationWeeks: plan.template.durationWeeks,
+            // Semanas que faltam do modelo a partir de onde o atleta entrou (R-PLN-21).
+            durationWeeks: plan.template.durationWeeks - (plan.plan.startTemplateWeek - 1),
+            startTemplateWeek: plan.plan.startTemplateWeek,
             baseWeeks: plan.plan.baseWeeks,
             goalTag: plan.plan.goalTag,
             startDate: plan.plan.startDate,
@@ -460,7 +471,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
 
         let selection: PlanSelection | null = null;
         if (allowsTraining(next)) {
-          selection = selectPlan(planInput(stored, profile.calculatedLevel as LevelName, next, on));
+          selection = selectPlan(planInput(stored, profile.calculatedLevel as LevelName, (profile.flags ?? []) as string[], next, on));
           await audit(tx, userId, selection.ruleVersion, stored.plan, { status: selection.status });
           await assignPlan(tx, userId, selection);
         }

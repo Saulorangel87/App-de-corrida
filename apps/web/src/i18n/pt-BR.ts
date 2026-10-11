@@ -357,6 +357,13 @@ export const ptBR = {
     planBase: "+ {{weeks}} de base antes do modelo",
     planDates: "{{start}} a {{end}}",
     planStart: "Início e fim",
+    planEntry: "Onde você começa",
+    placement: {
+      declarado: "Etapa {{etapa}} da corrida e caminhada, pelo que você disse que já consegue correr sem parar.",
+      teto_de_volume:
+        "Etapa {{etapa}} da corrida e caminhada. Você já corre mais do que isso sem parar, mas o total da semana não pode crescer de uma vez, então a semana começa aqui.",
+      default: "Etapa {{etapa}} da corrida e caminhada, o começo, no ritmo mais cuidadoso. Você avança conforme for se sentindo.",
+    },
     planNone: "Ainda não há plano. Quando a triagem permitir, o plano será montado automaticamente.",
     toPanel: "Ir para o painel",
     redo: "Refazer a entrevista",

@@ -322,6 +322,8 @@ export const athletePlans = pgTable(
     status: varchar("status", { length: 50 }).notNull().default("active"), // 'active' | 'completed' | 'abandoned'
     goalTag: varchar("goal_tag", { length: 30 }), // controle_de_peso (R-PLN-01)
     baseWeeks: integer("base_weeks").default(0).notNull(), // R-PLN-05
+    // Semana do modelo em que o plano começa (posicionamento na escada, R-PLN-21); 1 = do início.
+    startTemplateWeek: integer("start_template_week").default(1).notNull(),
     selection: jsonb("selection").notNull(), // pedido, rebaixamentos e motivos (PLN-v1)
     startDate: date("start_date").notNull(),
     endDate: date("end_date").notNull(),

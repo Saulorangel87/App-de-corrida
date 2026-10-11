@@ -36,6 +36,8 @@ type Profile = {
     baseWeeks: number;
     startDate: string;
     endDate: string;
+    /** Onde o plano começa na escada de caminhada e corrida (R-PLN-21); ausente nos outros planos. */
+    selection?: { placement?: { etapa: string; reason: string } | null };
   } | null;
 };
 
@@ -176,6 +178,15 @@ function ResultPage() {
                   (p.plan.baseWeeks > 0 ? ` ${t("result.planBase", { weeks: p.plan.baseWeeks })}` : "")
                 }
               />
+              {p.plan.selection?.placement && (
+                <Fact
+                  label={t("result.planEntry")}
+                  value={t(`result.placement.${p.plan.selection.placement.reason}`, {
+                    etapa: p.plan.selection.placement.etapa,
+                    defaultValue: t("result.placement.default", { etapa: p.plan.selection.placement.etapa }),
+                  })}
+                />
+              )}
               <Fact
                 label={t("result.planStart")}
                 value={t("result.planDates", { start: date(p.plan.startDate), end: date(p.plan.endDate) })}

@@ -1,0 +1,1 @@
+ALTER TABLE "athlete_plans" ADD COLUMN "start_template_week" integer DEFAULT 1 NOT NULL;

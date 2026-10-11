@@ -29,6 +29,13 @@ export const plnV1 = {
     "42k": { minRegularMonths: 12, minWeeklyKm: 30, minLongestKm: 16 },
   },
 
+  // R-PLN-21 (DEC-49) [P]: entrada na escada pelo maior bloco contínuo que o atleta declara.
+  placement: {
+    minContinuousMinutes: 10, // abaixo disso: etapa 1
+    marginStages: 1, // etapas de folga abaixo da que cabe no declarado
+    bmiAlwaysFirst: 30, // IMC ≥ 30: sempre etapa 1 (R-SES-10)
+  },
+
   // R-PLN-02 / R-DOR-04: dor atual ≥ 3/10 (limite_dor_progressao) bloqueia a liberação do plano.
   painBlocksAt: 3,
 
