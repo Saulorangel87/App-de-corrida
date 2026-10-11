@@ -16,10 +16,13 @@ export function FlowLayout({ children, width = "max-w-[640px]" }: { children: Re
     <div className="min-h-dvh flex flex-col bg-[#F5F6F8] text-[#111827]">
       <header className="w-full border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-[960px] items-center justify-between gap-4 px-5 py-2 text-sm">
-          <Link to="/painel" className="text-lg font-bold tracking-tight">
+          <Link to="/painel" className="shrink-0 whitespace-nowrap text-lg font-bold tracking-tight">
             {t("common.appName")}
           </Link>
           <div className="flex items-center gap-3 sm:gap-6">
+            <Link to="/historico" className="hidden font-medium text-gray-500 transition-colors hover:text-[#111827] min-[420px]:inline">
+              {t("history.link")}
+            </Link>
             <Link to="/configuracoes" className="font-medium text-gray-500 transition-colors hover:text-[#111827]">
               {t("settings.link")}
             </Link>

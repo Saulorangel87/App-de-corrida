@@ -15,6 +15,7 @@ import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as EntrevistaRouteImport } from './routes/entrevista'
 import { Route as EsqueciASenhaRouteImport } from './routes/esqueci-a-senha'
+import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as PainelRouteImport } from './routes/painel'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as ResultadoRouteImport } from './routes/resultado'
@@ -51,6 +52,11 @@ const EsqueciASenhaRoute = EsqueciASenhaRouteImport.update({
   path: '/esqueci-a-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HistoricoRoute = HistoricoRouteImport.update({
+  id: '/historico',
+  path: '/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PainelRoute = PainelRouteImport.update({
   id: '/painel',
   path: '/painel',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/entrar': typeof EntrarRoute
   '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
+  '/historico': typeof HistoricoRoute
   '/painel': typeof PainelRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
   '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
+  '/historico': typeof HistoricoRoute
   '/painel': typeof PainelRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/entrar': typeof EntrarRoute
   '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
+  '/historico': typeof HistoricoRoute
   '/painel': typeof PainelRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/entrevista'
     | '/esqueci-a-senha'
+    | '/historico'
     | '/painel'
     | '/redefinir-senha'
     | '/resultado'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/entrevista'
     | '/esqueci-a-senha'
+    | '/historico'
     | '/painel'
     | '/redefinir-senha'
     | '/resultado'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/entrevista'
     | '/esqueci-a-senha'
+    | '/historico'
     | '/painel'
     | '/redefinir-senha'
     | '/resultado'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   EntrarRoute: typeof EntrarRoute
   EntrevistaRoute: typeof EntrevistaRoute
   EsqueciASenhaRoute: typeof EsqueciASenhaRoute
+  HistoricoRoute: typeof HistoricoRoute
   PainelRoute: typeof PainelRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   ResultadoRoute: typeof ResultadoRoute
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EsqueciASenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/historico': {
+      id: '/historico'
+      path: '/historico'
+      fullPath: '/historico'
+      preLoaderRoute: typeof HistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/painel': {
       id: '/painel'
       path: '/painel'
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   EntrarRoute: EntrarRoute,
   EntrevistaRoute: EntrevistaRoute,
   EsqueciASenhaRoute: EsqueciASenhaRoute,
+  HistoricoRoute: HistoricoRoute,
   PainelRoute: PainelRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
   ResultadoRoute: ResultadoRoute,

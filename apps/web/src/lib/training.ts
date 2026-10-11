@@ -72,6 +72,32 @@ export type DayResponse = {
 
 export type WeekResponse = { plan: PlanWeekInfo | null; sessions: SessionView[] };
 
+export type HistoryResponse = {
+  from: string;
+  to: string;
+  sleep: { date: string; hours: number | null; quality: number | null }[];
+  pain: { date: string; region: string; intensity: number | null; moment: string | null }[];
+  weekly: {
+    weekStart: string;
+    plannedSessions: number;
+    completedSessions: number;
+    adherencePct: number | null;
+    minutes: number;
+    srpeLoad: number;
+  }[];
+};
+
+export const historyKey = (days: number) => ["history", days] as const;
+
+export function useHistory(days: number, enabled = true) {
+  return useQuery({
+    queryKey: historyKey(days),
+    queryFn: () => fetchApi<HistoryResponse>(`/history?days=${days}`),
+    enabled,
+    retry: false,
+  });
+}
+
 export const dayKey = (date: string) => ["day", date] as const;
 export const weekKey = (date: string) => ["week", date] as const;
 

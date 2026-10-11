@@ -106,6 +106,12 @@ function Panel() {
           </div>
           <div className="space-y-4">
             <WeekCard week={week.data} today={today} />
+            <Link
+              to="/historico"
+              className="flex w-full items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-bold text-[#0F172A] transition-colors hover:bg-gray-50"
+            >
+              {t("history.title")}
+            </Link>
             {profile.data?.plan && <GoalCard plan={profile.data.plan} />}
           </div>
         </div>
