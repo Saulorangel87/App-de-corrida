@@ -85,6 +85,13 @@
       "when": 1791742063036,
       "tag": "0011_posicionamento_na_escada",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791743182541,
+      "tag": "0012_avaliacao_do_bloco",
+      "breakpoints": true
     }
   ]
 }

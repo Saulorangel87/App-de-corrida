@@ -512,6 +512,31 @@ export const ptBR = {
     back: "Voltar",
     enNotice: "Este texto é uma tradução da versão em português. Se houver diferença entre as duas, vale a versão em português.",
   },
+  review: {
+    title: "Como foi este bloco de 2 semanas?",
+    text: "Sua resposta serve para cuidar melhor de você: ela pode deixar os próximos treinos mais calmos, nunca mais pesados.",
+    options: {
+      facil: "Fácil, sobrou energia",
+      no_ponto: "No ponto, do jeito certo",
+      puxado: "Puxado, cansei mais do que esperava",
+      nao_consegui: "Não consegui acompanhar",
+    },
+    saved: "Resposta registrada.",
+    effect: {
+      facil: "Que bom! O plano continua do mesmo jeito, sem pular etapas. Se quiser mais, você pode reavaliar seu nível.",
+      no_ponto: "Perfeito, o plano continua.",
+      puxado: "Vamos com calma: na caminhada e corrida, a próxima semana repete esta etapa. Se sentir dor, registre e procure um profissional.",
+      nao_consegui: "Vamos com calma: na caminhada e corrida, a próxima semana repete esta etapa. Se sentir dor, registre e procure um profissional.",
+    },
+    suggestTitle: "Quer um plano um pouco mais avançado?",
+    suggestText:
+      "Você disse que o último bloco foi fácil. O plano atual segue sem pular etapas, mas você pode refazer a avaliação: se sua condição permitir, o app indica um ponto de partida mais adiante.",
+    suggestCta: "Refazer a avaliação",
+    completedTitle: "Você concluiu o plano de {{objective}}",
+    completedText:
+      "Parabéns pelo trabalho! Para continuar, refaça a avaliação e escolha o próximo objetivo. O app recalcula seu nível com o que você já consegue hoje.",
+    completedCta: "Escolher o próximo objetivo",
+  },
   nav: {
     label: "Navegação principal",
     menu: "Menu",

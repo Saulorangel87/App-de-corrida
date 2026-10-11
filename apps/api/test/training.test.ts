@@ -837,3 +837,127 @@ describe("detalhe da sessão da escada: Como fazer com os números da sessão", 
     expect(en.detail.how.main.text).toBe("Run for 1 minute and then walk for 1 minute. Do this 10 times in total.");
   });
 });
+
+describe("avaliação do bloco de 2 semanas (R-PLN-22)", () => {
+  const WEEK2 = addDays(MONDAY, 7);
+  const WEEK3 = addDays(MONDAY, 14);
+
+  /** Do zero, na semana 2 com todas as sessões da semana 1 feitas; a semana 2 já existe. */
+  async function atWeekTwo() {
+    const a = await onboard(beginner());
+    await advanceToWeek(a.cookie, 1);
+    await get(a.cookie, `/plan/week/${WEEK2}`);
+    return a;
+  }
+  const review = (cookie: string, date: string) => get(cookie, `/plan/review/${date}`);
+
+  async function doWeek(cookie: string, start: string) {
+    const week = await get(cookie, `/plan/week/${start}`);
+    for (const s of runs(week.body.sessions)) {
+      onDate(s.date);
+      await send("PUT", cookie, `/workouts/${s.id}/log`, { completed: true, durationMinutes: s.minutes, srpe: 3 });
+    }
+  }
+
+  it("só aparece nos 3 últimos dias das semanas pares e some depois de respondida", async () => {
+    const a = await atWeekTwo();
+    onDate(MONDAY);
+    expect((await review(a.cookie, MONDAY)).body).toMatchObject({ due: false, calendarWeek: null });
+    onDate(addDays(WEEK2, 2));
+    expect((await review(a.cookie, addDays(WEEK2, 2))).body).toMatchObject({ due: false, calendarWeek: 2 });
+    onDate(addDays(WEEK2, 4));
+    expect((await review(a.cookie, addDays(WEEK2, 4))).body).toEqual({ due: true, calendarWeek: 2, felt: null, advanceSuggested: false });
+
+    const saved = await send("PUT", a.cookie, `/plan/review/${addDays(WEEK2, 4)}`, { felt: "no_ponto" });
+    expect(saved.status).toBe(200);
+    expect(saved.body).toEqual({ due: false, calendarWeek: 2, felt: "no_ponto", advanceSuggested: false });
+    // reenviar substitui, não duplica
+    await send("PUT", a.cookie, `/plan/review/${addDays(WEEK2, 5)}`, { felt: "facil" });
+    const [{ n }] = await admin`select count(*)::int as n from plan_reviews where user_id = ${a.userId}`;
+    expect(n).toBe(1);
+  });
+
+  it("fora da janela ou com resposta inválida: 409 e 400", async () => {
+    const a = await atWeekTwo();
+    onDate(MONDAY);
+    const early = await send("PUT", a.cookie, `/plan/review/${MONDAY}`, { felt: "puxado" });
+    expect(early.status).toBe(409);
+    expect(early.body.error.code).toBe("REVIEW_NOT_DUE");
+    onDate(addDays(WEEK2, 4));
+    expect((await send("PUT", a.cookie, `/plan/review/${addDays(WEEK2, 4)}`, { felt: "otimo" })).status).toBe(400);
+    expect((await send("PUT", a.cookie, `/plan/review/${addDays(WEEK2, 4)}`, {})).status).toBe(400);
+    const noAuth = await t.request("PUT", `/plan/review/${MONDAY}`, { felt: "facil" });
+    expect(noAuth.status).toBe(401);
+  });
+
+  it("\"puxado\" repete a etapa mesmo com as 3 sessões feitas; sem avaliação a etapa avança", async () => {
+    const hard = await atWeekTwo();
+    await doWeek(hard.cookie, WEEK2);
+    onDate(addDays(WEEK2, 6));
+    expect((await send("PUT", hard.cookie, `/plan/review/${addDays(WEEK2, 6)}`, { felt: "puxado" })).status).toBe(200);
+    onDate(WEEK3);
+    const w3 = await get(hard.cookie, `/plan/week/${WEEK3}`);
+    expect(w3.body.plan).toMatchObject({ calendarWeek: 3, templateWeek: 2 }); // repetiu a etapa 2
+    expect(new Set(runs(w3.body.sessions).filter((s) => s.ladder).map((s) => s.ladder.etapa))).toEqual(new Set(["2"]));
+
+    const ok = await atWeekTwo();
+    await doWeek(ok.cookie, WEEK2);
+    onDate(WEEK3);
+    const ok3 = await get(ok.cookie, `/plan/week/${WEEK3}`);
+    expect(ok3.body.plan).toMatchObject({ calendarWeek: 3, templateWeek: 3 });
+  });
+
+  it("\"fácil\" não pula etapa: o plano segue o molde e o app só sugere reavaliar", async () => {
+    const a = await atWeekTwo();
+    await doWeek(a.cookie, WEEK2);
+    onDate(addDays(WEEK2, 6));
+    const saved = await send("PUT", a.cookie, `/plan/review/${addDays(WEEK2, 6)}`, { felt: "facil" });
+    expect(saved.body).toMatchObject({ felt: "facil", advanceSuggested: true });
+    onDate(WEEK3);
+    const w3 = await get(a.cookie, `/plan/week/${WEEK3}`);
+    expect(w3.body.plan).toMatchObject({ calendarWeek: 3, templateWeek: 3 }); // próxima etapa, normalmente
+  });
+
+  it("cada atleta vê só a própria avaliação", async () => {
+    const a = await atWeekTwo();
+    const b = await atWeekTwo();
+    onDate(addDays(WEEK2, 5));
+    await send("PUT", a.cookie, `/plan/review/${addDays(WEEK2, 5)}`, { felt: "puxado" });
+    expect((await review(a.cookie, addDays(WEEK2, 5))).body).toMatchObject({ felt: "puxado", due: false });
+    expect((await review(b.cookie, addDays(WEEK2, 5))).body).toMatchObject({ felt: null, due: true });
+    const rows = await admin`select user_id from plan_reviews where user_id in (${a.userId}, ${b.userId})`;
+    expect(rows.map((r) => r.user_id)).toEqual([a.userId]);
+  });
+
+  it("plano concluído aparece no perfil para o cartão do próximo objetivo", async () => {
+    const a = await onboard(runner(45));
+    await advanceToWeek(a.cookie, 2);
+    onDate(addDays(MONDAY, 14));
+    await get(a.cookie, `/plan/week/${addDays(MONDAY, 14)}`);
+    const profile = (await get(a.cookie, "/profile")).body.profile;
+    expect(profile.plan).toBeNull();
+    expect(profile.completedPlan).toMatchObject({ objective: "5k", level: "iniciante" });
+  });
+});
+
+describe("avaliação do bloco respondida antes da última sessão", () => {
+  it("\"não consegui\" na quinta-feira já repete a etapa quando a semana fecha", async () => {
+    const WEEK2 = addDays(MONDAY, 7);
+    const a = await onboard(beginner());
+    await advanceToWeek(a.cookie, 1);
+    await get(a.cookie, `/plan/week/${WEEK2}`);
+    onDate(addDays(WEEK2, 4));
+    expect((await send("PUT", a.cookie, `/plan/review/${addDays(WEEK2, 4)}`, { felt: "nao_consegui" })).status).toBe(200);
+    const week = await get(a.cookie, `/plan/week/${addDays(WEEK2, 4)}`);
+    for (const s of runs(week.body.sessions)) {
+      onDate(s.date);
+      await send("PUT", a.cookie, `/workouts/${s.id}/log`, { completed: true, durationMinutes: s.minutes, srpe: 3 });
+    }
+    const WEEK3 = addDays(MONDAY, 14);
+    onDate(WEEK3);
+    const w3 = await get(a.cookie, `/plan/week/${WEEK3}`);
+    expect(w3.body.plan).toMatchObject({ calendarWeek: 3, templateWeek: 2 });
+    const [{ n }] = await admin`select count(*)::int as n from athlete_plan_weeks where user_id = ${a.userId}`;
+    expect(n).toBe(3); // semanas 1, 2 e 3: nada duplicado
+  });
+});

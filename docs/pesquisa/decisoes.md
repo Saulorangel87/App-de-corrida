@@ -65,6 +65,8 @@ Registro único das decisões do dono do projeto e das decisões de projeto toma
 
 49. **DEC-49. Posicionamento na escada pelo que o atleta declara — decisão do dono [P] (2026-10-11).** O dono observou que, sendo iniciante e conseguindo correr 5 a 7 km, o plano o colocaria em 1 minuto de corrida e 13 semanas. A entrevista já pergunta por quantos minutos o atleta corre sem parar, mas só usava a resposta para liberar 10 km. Decisão: entrada na escada pelo maior bloco contínuo declarado, com 1 etapa de folga; etapa 1 abaixo de 10 min, com IMC ≥ 30, `cautela_lesao` ou `inicio_do_zero`; a escada continua sem pular etapas e o plano restante é mais curto. Regras: R-PLN-21 (nova), R-PLN-12, R-PLN-13 (duração restante), R-SES-10. Arquivos: 10, 07. Os cortes (10 min, folga de 1 etapa) e a etapa 1 para `cautela_lesao` e `inicio_do_zero` são [P]. O teste de coerência (seguir o plano à risca) mostrou que a entrada também precisa respeitar o teto absoluto de 120% do volume semanal já feito (R-PRG-04), que vale para a escada; entrou na mesma regra, sem novo valor.
 
+50. **DEC-50. Avaliação a cada 2 semanas e sugestão de avanço — decisão do dono [P] (2026-10-11).** O dono pediu que o atleta diga como se sente a cada 2 semanas e que o plano possa sugerir um pequeno avanço, sem pular etapa. Como R-PLN-18 proíbe o plano de passar do molde e a escada não pula etapa, "avançar" vira **sugestão de reavaliação** (nova entrevista, R-PLN-21), e "puxado" repete a etapa. Regra: R-PLN-22 (nova). Arquivo: 10.
+
 ## D. Correções à especificação (`docs/especificacao.md`)
 
 Aprovadas pelo dono em 2026-10-10; o texto da especificação ainda não foi alterado e deve ser atualizado na revisão da especificação.

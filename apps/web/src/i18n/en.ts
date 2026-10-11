@@ -512,6 +512,31 @@ export const en: Translation = {
     back: "Back",
     enNotice: "This is a translation of the Portuguese version. If there is any difference between the two, the Portuguese version prevails.",
   },
+  review: {
+    title: "How was this 2-week block?",
+    text: "Your answer helps take better care of you: it can make the next workouts calmer, never heavier.",
+    options: {
+      facil: "Easy, I had energy left",
+      no_ponto: "Just right",
+      puxado: "Hard, I got more tired than expected",
+      nao_consegui: "I could not keep up",
+    },
+    saved: "Answer saved.",
+    effect: {
+      facil: "Great! The plan continues the same way, without skipping steps. If you want more, you can re-evaluate your level.",
+      no_ponto: "Perfect, the plan continues.",
+      puxado: "Let's take it easy: in run-walk, next week repeats this step. If you feel pain, log it and see a professional.",
+      nao_consegui: "Let's take it easy: in run-walk, next week repeats this step. If you feel pain, log it and see a professional.",
+    },
+    suggestTitle: "Want a slightly more advanced plan?",
+    suggestText:
+      "You said the last block was easy. Your current plan continues without skipping steps, but you can redo the assessment: if your fitness allows, the app suggests a starting point further ahead.",
+    suggestCta: "Redo the assessment",
+    completedTitle: "You completed your {{objective}} plan",
+    completedText:
+      "Congratulations on the work! To keep going, redo the assessment and choose your next goal. The app recalculates your level with what you can do today.",
+    completedCta: "Choose the next goal",
+  },
   nav: {
     label: "Main navigation",
     menu: "Menu",

@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { FlowLayout } from "../components/flow-layout";
 import { DecisionSources } from "../components/decision-sources";
 import { HealthChangeCard } from "../components/health-change";
+import { PlanReviewCard } from "../components/plan-review";
 import { weekStats } from "../components/week-agenda";
 import { ApiError, fetchApi } from "../lib/api";
 import { addDays, formatDate, localToday } from "../lib/dates";
@@ -29,6 +30,8 @@ export const Route = createFileRoute("/painel")({
 
 type ProfileSummary = {
   plan: { objective: string; startDate: string; endDate: string; durationWeeks: number } | null;
+  /** Último plano concluído, quando não há plano ativo: alimenta o cartão do próximo objetivo. */
+  completedPlan?: { objective: string } | null;
   /** `healthCheckDue`: o servidor diz quando a pergunta semanal de saúde (R-TRI-11) deve aparecer. */
   screening: { healthCheckDue: boolean } | null;
 };
@@ -202,13 +205,14 @@ function Panel() {
       </div>
 
       {planInfo === null ? (
-        <NoPlan />
+        <NoPlan completed={profile.data?.completedPlan ?? null} />
       ) : (
         <div className="space-y-5">
           {(profile.data?.screening?.healthCheckDue || healthAnswered) && (
             <HealthChangeCard variant="banner" onAnswered={() => setHealthAnswered(true)} />
           )}
           <CheckinPrompt day={day.data} />
+          <PlanReviewCard date={today} />
 
           <StatsRow week={week.data} sleep={history.data?.sleep ?? null} />
 
@@ -231,8 +235,21 @@ function Panel() {
   );
 }
 
-function NoPlan() {
+function NoPlan({ completed }: { completed: { objective: string } | null }) {
   const { t } = useTranslation();
+  if (completed) {
+    return (
+      <section className={card}>
+        <h2 className="text-lg font-bold tracking-tight text-[#0F172A]">
+          {t("review.completedTitle", { objective: t(`result.objectives.${completed.objective}`, { defaultValue: completed.objective }) })}
+        </h2>
+        <p className="mt-2 text-[15px] leading-relaxed text-gray-700">{t("review.completedText")}</p>
+        <Link to="/entrevista" className="mt-4 inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+          {t("review.completedCta")}
+        </Link>
+      </section>
+    );
+  }
   return (
     <section className={card}>
       <h2 className="text-lg font-bold tracking-tight text-[#0F172A]">{t("panel.noPlanTitle")}</h2>

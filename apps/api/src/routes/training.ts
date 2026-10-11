@@ -1,5 +1,14 @@
 import { Hono, type MiddlewareHandler } from "hono";
-import { checkinSchema, clearanceSchema, historyQuerySchema, isoDate, painReportSchema, pauseSchema, workoutLogSchema } from "@passo/shared";
+import {
+  checkinSchema,
+  clearanceSchema,
+  historyQuerySchema,
+  isoDate,
+  painReportSchema,
+  pauseSchema,
+  planReviewSchema,
+  workoutLogSchema,
+} from "@passo/shared";
 import { z } from "zod";
 import { errors } from "../lib/errors";
 import { requestLang } from "../lib/lang";
@@ -34,6 +43,12 @@ export function trainingRoutes(opts: { training: TrainingService; session: Middl
 
   // Plano inteiro: semanas criadas com as sessões e o contorno das que faltam
   r.get("/plan/overview/:date", session, async (c) => c.json(await training.overview(me(c), dateParam(c))));
+
+  // Avaliação do bloco de 2 semanas ("como foi?"): estado e resposta (reenviar substitui)
+  r.get("/plan/review/:date", session, async (c) => c.json(await training.review(me(c), dateParam(c))));
+  r.put("/plan/review/:date", session, validate("json", planReviewSchema), async (c) =>
+    c.json(await training.saveReview(me(c), dateParam(c), c.req.valid("json"))),
+  );
 
   // Detalhe de um treino agendado (catálogo, referências, registro): só do próprio atleta
   r.get("/workouts/:id", session, async (c) => c.json(await training.workout(me(c), idParam(c), requestLang(c))));

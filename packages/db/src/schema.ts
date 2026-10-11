@@ -485,6 +485,33 @@ export const engineDecisions = pgTable(
   (t) => [index("engine_decisions_user_id_idx").on(t.userId, t.forDate)],
 );
 
+/**
+ * Avaliação do bloco de 2 semanas ("como foi?", R-PLN-22): uma resposta por semana avaliada.
+ * `felt`: facil | no_ponto | puxado | nao_consegui. Só segura ou sugere; nunca aumenta carga.
+ */
+export const planReviews = pgTable(
+  "plan_reviews",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    athletePlanId: uuid("athlete_plan_id")
+      .notNull()
+      .references(() => athletePlans.id, { onDelete: "cascade" }),
+    calendarWeek: integer("calendar_week").notNull(),
+    felt: varchar("felt", { length: 20 }).notNull(),
+    answeredOn: date("answered_on").notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    uniqueIndex("plan_reviews_plan_week_idx").on(t.athletePlanId, t.calendarWeek),
+    index("plan_reviews_user_id_idx").on(t.userId),
+    check("plan_reviews_felt", sql`${t.felt} in ('facil', 'no_ponto', 'puxado', 'nao_consegui')`),
+  ],
+);
+
 /** Tabelas com dados do atleta: RLS por user_id (ver 0001_rls.sql). */
 export const athleteTables = [
   "consents",
@@ -497,5 +524,6 @@ export const athleteTables = [
   "workout_logs",
   "daily_checkins",
   "pain_reports",
+  "plan_reviews",
   "engine_decisions",
 ] as const;

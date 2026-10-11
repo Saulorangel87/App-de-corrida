@@ -187,6 +187,14 @@ Tabela pelo que o atleta declara correr sem parar (quando o volume semanal dele 
 
 (A tabela acima é a aplicação mecânica da regra; a regra é a fonte. A autodeclaração pode estar errada: por isso a entrada tem 1 etapa de folga, dor e sono ruim continuam reduzindo ou bloqueando a carga acima de qualquer declaração, e a escada só avança com as 3 sessões feitas, sem dor e em esforço leve, R-SES-11.) Sem estudo direto sobre o ponto de entrada: [P]. O limiar de 10 min e a folga de 1 etapa são valores de projeto, recalibráveis com dados reais.
 
+**R-PLN-22 [P]** Avaliação a cada 2 semanas ("como foi?", decisão do dono, 2026-10-11, DEC-50). Em intervalos de 2 semanas do plano (semanas 2, 4, 6...), nos 3 últimos dias da semana, o app pergunta ao atleta como foi o bloco: `facil`, `no_ponto`, `puxado` ou `nao_consegui`. A resposta é dele; nenhuma resposta aumenta carga:
+
+- `puxado` ou `nao_consegui`: na escada de caminhada e corrida, a semana seguinte **repete a etapa** (R-SES-11: repetir a etapa; R-PRG-06 já congela por esforço acima do alvo, a avaliação é o mesmo sinal vindo do atleta). Não compensa volume (R-PRG-06) e não muda o teto de volume (R-PRG-04). Nos demais planos a resposta só fica registrada: o congelamento por esforço (R-CRG-07) e os demais portões do dia seguem como estão;
+- `no_ponto`: nada muda;
+- `facil`: **nada muda no plano atual**, porque o plano nunca passa do molde (R-PLN-18) e a escada não pula etapa (decisão do dono). O app só **sugere** reavaliar: "quer refazer a avaliação para um plano um pouco mais avançado?". Refazer a entrevista aplica R-PLN-21 e os tetos de sempre; promoção só vale a partir do novo plano (R-PLN-18, R-CLS-11).
+
+Ao concluir o plano, o app mostra um cartão de plano concluído que leva à entrevista para escolher o próximo objetivo (o 10 km só é oferecido a quem cumpre R-PLN-03). Dor, sono ruim e triagem continuam acima de qualquer resposta (R-PRG-11). A avaliação não é diagnóstico.
+
 ### Esboço do modelo de dados (para a Fase 1)
 
 `plan_templates`: `goal` (5k/10k/21k/42k/saude), `level`, `total_weeks`, `sessions_per_week_min/max`, `prerequisites` (JSONB com os campos de R-PLN-03), `peak_weekly_cap`, `peak_long_run_cap`, `deload_weeks` (int[]), `taper` (JSONB: semanas e % por semana), `slow_mode_multiplier`, `status`, `version`, referências.

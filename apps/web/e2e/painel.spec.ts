@@ -76,11 +76,12 @@ const weekBody = {
   ],
 };
 
-type Opts = { day?: Json; week?: Json; hasProfile?: boolean };
+type Opts = { day?: Json; week?: Json; hasProfile?: boolean; review?: Json; profile?: Json };
 
 async function mockApi(page: Page, opts: Opts = {}) {
   const calls: { method: string; path: string; body: unknown }[] = [];
   let day = opts.day ?? dayBody();
+  let review: Json = opts.review ?? { due: false, calendarWeek: null, felt: null, advanceSuggested: false };
   await page.route(`${API}/**`, async (route) => {
     const req = route.request();
     const path = new URL(req.url()).pathname.replace("/api/v1", "");
@@ -93,7 +94,21 @@ async function mockApi(page: Page, opts: Opts = {}) {
     if (path === "/profile") {
       return opts.hasProfile === false
         ? json(404, { error: { code: "NOT_FOUND", message: "x" } })
-        : json(200, { profile: { level: "intermediario", plan: { objective: "10k", startDate: plusDays(-14), endDate: plusDays(56), durationWeeks: 10 }, screening: null } });
+        : json(200, {
+            profile: {
+              level: "intermediario",
+              plan: { objective: "10k", startDate: plusDays(-14), endDate: plusDays(56), durationWeeks: 10 },
+              screening: null,
+              ...(opts.profile ?? {}),
+            },
+          });
+    }
+    if (path.startsWith("/plan/review/")) {
+      if (req.method() === "PUT") {
+        review = { due: false, calendarWeek: 2, felt: (body as { felt: string }).felt, advanceSuggested: (body as { felt: string }).felt === "facil" };
+        return json(200, review);
+      }
+      return json(200, review);
     }
     if (path.startsWith("/day/")) return json(200, day);
     if (path.startsWith("/plan/week/")) return json(200, opts.week ?? weekBody);
@@ -321,4 +336,38 @@ test("raiz do app: quem já entrou vai para o painel", async ({ page }) => {
   await mockApi(page);
   await page.goto("/");
   await expect(page).toHaveURL(/\/painel$/);
+});
+
+test("avaliação do bloco: pergunta nos últimos dias, grava a resposta e só sugere reavaliar quando foi fácil", async ({ page }) => {
+  const calls = await mockApi(page, { review: { due: true, calendarWeek: 2, felt: null, advanceSuggested: false } });
+  await page.goto("/painel");
+  await expect(page.getByRole("heading", { name: "Como foi este bloco de 2 semanas?" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Puxado, cansei mais do que esperava" })).toBeVisible();
+  await page.getByRole("button", { name: "Fácil, sobrou energia" }).click();
+
+  const put = calls.find((c) => c.method === "PUT" && c.path.startsWith("/plan/review/"));
+  expect(put?.body).toEqual({ felt: "facil" });
+  await expect(page.getByText("Resposta registrada.")).toBeVisible();
+  await expect(page.getByText("O plano continua do mesmo jeito, sem pular etapas", { exact: false })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Quer um plano um pouco mais avançado?" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Refazer a avaliação" })).toHaveAttribute("href", "/entrevista");
+  await expect(page.getByRole("heading", { name: "Como foi este bloco de 2 semanas?" })).toHaveCount(0);
+});
+
+test("avaliação do bloco: sem janela aberta não aparece nada", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/painel");
+  await expect(page.getByRole("heading", { name: /Boa|Bom/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Como foi este bloco de 2 semanas?" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Quer um plano um pouco mais avançado?" })).toHaveCount(0);
+});
+
+test("plano concluído: o painel leva ao próximo objetivo", async ({ page }) => {
+  await mockApi(page, {
+    day: { ...dayBody(), plan: null, sessions: [] },
+    profile: { plan: null, completedPlan: { objective: "5k" } },
+  });
+  await page.goto("/painel");
+  await expect(page.getByRole("heading", { name: "Você concluiu o plano de Prova de 5 km" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Escolher o próximo objetivo" })).toHaveAttribute("href", "/entrevista");
 });

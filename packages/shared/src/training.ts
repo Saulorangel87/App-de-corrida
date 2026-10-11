@@ -8,6 +8,12 @@ import { isoDate } from "./interview";
 const rating = z.number().int().min(1).max(5);
 const pain010 = z.number().int().min(0).max(10);
 
+/** Avaliação do bloco de 2 semanas ("como foi?", R-PLN-22). */
+export const planReviewSchema = z.object({
+  felt: z.enum(["facil", "no_ponto", "puxado", "nao_consegui"]),
+});
+export type PlanReviewInput = z.infer<typeof planReviewSchema>;
+
 /** Check-in do dia (menos de 30 segundos). Tudo é opcional: o atleta pode pular o que não sabe. */
 export const checkinSchema = z
   .object({

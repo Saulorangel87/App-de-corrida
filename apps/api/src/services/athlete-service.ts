@@ -9,6 +9,7 @@ import {
   healthScreenings,
   interviewResponses,
   painReports,
+  planReviews,
   planTemplates,
   scheduledWorkouts,
   users,
@@ -181,7 +182,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           .from(users)
           .where(eq(users.id, userId));
         const [
-          consentRows, profile, interviews, screenings, plans, planWeeks, scheduled, logs, checkins, pain, decisions,
+          consentRows, profile, interviews, screenings, plans, planWeeks, scheduled, logs, checkins, pain, decisions, reviews,
         ] = await Promise.all([
           tx.select().from(consents).where(eq(consents.userId, userId)),
           tx.select().from(athleteProfiles).where(eq(athleteProfiles.userId, userId)),
@@ -194,6 +195,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           tx.select().from(dailyCheckins).where(eq(dailyCheckins.userId, userId)),
           tx.select().from(painReports).where(eq(painReports.userId, userId)),
           tx.select().from(engineDecisions).where(eq(engineDecisions.userId, userId)),
+          tx.select().from(planReviews).where(eq(planReviews.userId, userId)),
         ]);
         return {
           exportedAt: d.now().toISOString(),
@@ -209,6 +211,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           dailyCheckins: checkins,
           painReports: pain,
           engineDecisions: decisions,
+          planReviews: reviews,
         };
       });
     },
@@ -402,6 +405,16 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           .innerJoin(planTemplates, eq(athletePlans.planTemplateId, planTemplates.id))
           .where(and(eq(athletePlans.userId, userId), eq(athletePlans.status, "active")))
           .limit(1);
+        // Sem plano ativo, o último concluído alimenta o cartão "plano concluído" (próximo objetivo).
+        const [finished] = plan
+          ? []
+          : await tx
+              .select({ id: athletePlans.id, endDate: athletePlans.endDate, objective: planTemplates.objective, level: planTemplates.level })
+              .from(athletePlans)
+              .innerJoin(planTemplates, eq(athletePlans.planTemplateId, planTemplates.id))
+              .where(and(eq(athletePlans.userId, userId), eq(athletePlans.status, "completed")))
+              .orderBy(desc(athletePlans.updatedAt))
+              .limit(1);
         return {
           level: profile.calculatedLevel,
           flags: profile.flags,
@@ -439,6 +452,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
             endDate: plan.plan.endDate,
             selection: plan.plan.selection,
           } : null,
+          completedPlan: finished ?? null,
         };
       });
     },

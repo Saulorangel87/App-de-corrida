@@ -9,6 +9,7 @@ import {
   interviewResponses,
   ladderHow,
   painReports,
+  planReviews,
   planTemplates,
   references as referencesTable,
   scheduledWorkouts,
@@ -47,7 +48,7 @@ import {
   type WorkoutLog,
   type Zone,
 } from "@passo/engine";
-import { isHighRiskBoneRegion, type CheckinInput, type PainReportInput, type WorkoutLogInput } from "@passo/shared";
+import { isHighRiskBoneRegion, type CheckinInput, type PainReportInput, type PlanReviewInput, type WorkoutLogInput } from "@passo/shared";
 import { AppError, errors } from "../lib/errors";
 import type { Logger } from "../lib/logger";
 import { ENGINE_VERSION, ageRange, screeningInputFrom, type StoredInputs } from "./athlete-service";
@@ -332,6 +333,20 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
       action = result.action;
       repeatedOnce = result.repeatedOnce;
       if (result.action === "repetir") next = prev.templateWeek;
+
+      // R-PLN-22: "puxado" ou "não consegui" na avaliação do bloco repetem a etapa. Só segura: nunca avança.
+      if (result.action !== "repetir" && ctx.plan) {
+        const [review] = await tx
+          .select({ felt: planReviews.felt })
+          .from(planReviews)
+          .where(and(eq(planReviews.athletePlanId, ctx.plan.id), eq(planReviews.calendarWeek, prev.calendarWeek)))
+          .limit(1);
+        if (review && (review.felt === "puxado" || review.felt === "nao_consegui")) {
+          action = "repetir";
+          repeatedOnce = prev.ladderRepeatedOnce;
+          next = prev.templateWeek;
+        }
+      }
     }
 
     await tx
@@ -458,6 +473,50 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     if (!ctx.plan || diff(ctx.plan.startDate, date) < 0) return null;
     return Math.floor(diff(ctx.plan.startDate, date) / 7) + 1;
   };
+
+  /**
+   * O registro da última sessão da semana já olha o "dia seguinte", que cria a semana seguinte e fecha
+   * esta. Se o atleta responde "puxado" depois disso (ainda dentro da semana), a semana seguinte, que
+   * ainda não tem nenhum registro, é refeita para repetir a etapa. Só na escada, só segura carga.
+   */
+  async function holdAlreadyClosedWeek(tx: Transaction, ctx: Ctx, calendarWeek: number) {
+    if (!ctx.plan || !ctx.template) return;
+    const weeks = await weeksOf(tx, ctx.plan.id);
+    const reviewed = weeks.find((w) => w.calendarWeek === calendarWeek);
+    const following = weeks.find((w) => w.calendarWeek === calendarWeek + 1);
+    if (!reviewed || !following || reviewed.status !== "closed" || reviewed.ladderAction === "repetir") return;
+    if (!ctx.template.weeks[reviewed.templateWeek - 1]?.ladderStage) return;
+    const sessions = await tx
+      .select({ id: scheduledWorkouts.id })
+      .from(scheduledWorkouts)
+      .where(eq(scheduledWorkouts.athletePlanWeekId, following.id));
+    const ids = sessions.map((s) => s.id);
+    if (ids.length > 0) {
+      const logged = await tx.select({ id: workoutLogs.id }).from(workoutLogs).where(inArray(workoutLogs.scheduledWorkoutId, ids)).limit(1);
+      if (logged.length > 0) return; // a semana seguinte já começou: tarde demais para refazer
+      await tx.delete(scheduledWorkouts).where(inArray(scheduledWorkouts.id, ids));
+    }
+    await tx.delete(athletePlanWeeks).where(eq(athletePlanWeeks.id, following.id));
+    await tx.update(athletePlanWeeks).set({ ladderAction: "repetir" }).where(eq(athletePlanWeeks.id, reviewed.id));
+  }
+
+  /** Estado da avaliação do bloco para a data (R-PLN-22). */
+  async function reviewState(tx: Transaction, ctx: Ctx, date: string) {
+    const none = { due: false, calendarWeek: null as number | null, felt: null as string | null, advanceSuggested: false };
+    if (!ctx.plan) return none;
+    const c = weekFor(ctx, date);
+    const rows = await tx
+      .select({ calendarWeek: planReviews.calendarWeek, felt: planReviews.felt })
+      .from(planReviews)
+      .where(eq(planReviews.athletePlanId, ctx.plan.id))
+      .orderBy(desc(planReviews.calendarWeek));
+    // Sugestão: a avaliação mais recente deste plano foi "fácil".
+    const advanceSuggested = rows[0]?.felt === "facil";
+    if (c === null || c % 2 !== 0) return { ...none, advanceSuggested };
+    const lastDays = diff(ctx.plan.startDate, date) % 7 >= 4; // os 3 últimos dias da semana
+    const answered = rows.find((r) => r.calendarWeek === c) ?? null;
+    return { due: lastDays && !answered, calendarWeek: c, felt: answered?.felt ?? null, advanceSuggested };
+  }
 
   // ------------------------------------------------------------ decisão do dia
 
@@ -852,6 +911,38 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           currentWeek: c,
           weeks,
         };
+      });
+    },
+
+    /**
+     * Avaliação do bloco de 2 semanas (R-PLN-22). Aparece nos 3 últimos dias das semanas 2, 4, 6...;
+     * "facil" só gera uma sugestão de reavaliar, nunca muda a carga do plano atual.
+     */
+    async review(userId: string, date: string) {
+      assertDate(date);
+      return withAthlete(db, userId, async (tx) => reviewState(tx, await loadContext(tx, userId), date));
+    },
+
+    async saveReview(userId: string, date: string, input: PlanReviewInput) {
+      assertDate(date);
+      return withAthlete(db, userId, async (tx) => {
+        const ctx = await loadContext(tx, userId);
+        const state = await reviewState(tx, ctx, date);
+        if (!ctx.plan || state.calendarWeek === null || (!state.due && state.felt === null)) {
+          throw new AppError(409, "REVIEW_NOT_DUE", "A avaliação aparece nos últimos dias de cada bloco de 2 semanas.");
+        }
+        await tx
+          .insert(planReviews)
+          .values({ userId, athletePlanId: ctx.plan.id, calendarWeek: state.calendarWeek, felt: input.felt, answeredOn: date })
+          .onConflictDoUpdate({
+            target: [planReviews.athletePlanId, planReviews.calendarWeek],
+            set: { felt: input.felt, answeredOn: date, updatedAt: d.now() },
+          });
+        if (input.felt === "puxado" || input.felt === "nao_consegui") {
+          await holdAlreadyClosedWeek(tx, ctx, state.calendarWeek);
+        }
+        logger.info("plan_review_saved", { userId, calendarWeek: state.calendarWeek, felt: input.felt });
+        return reviewState(tx, ctx, date);
       });
     },
 
