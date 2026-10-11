@@ -36,6 +36,7 @@ Design no Figma (só referência de estilo; não precisa mais ser atualizado): h
 - Banco do Let's Go Run: container próprio chamado `app-de-corrida` (`postgres:17-alpine`), numa rede Docker `internal` (`app-de-corrida_data`), sem porta publicada. Segurança extra: Row-Level Security (RLS) habilitado nas tabelas do atleta.
 - Backups: diários, rclone crypt (remote `corrida-run:` sobre `cadencia-oos:cadencia-backups/corrida-run`), timer do systemd; retenção de 30 dias por regra de ciclo de vida do bucket (a VPS não pode apagar objetos).
 - Exposição da API: rota nova no túnel existente (container `cloudflared-tunnel`). A rede `app-de-corrida_edge` existe e o túnel está ligado a ela desde 2026-10-11 (o `connect` não sobrevive à recriação do container do túnel; ver `ops/README.md`). Nenhuma porta pública nova.
+- E-mails transacionais (aprovado pelo dono, 2026-10-11): modelo HTML único com a identidade do app (faixa e marca laranja `#FF5A1F`, fundo `#F5F6F8`, botão `#C2410C` por contraste, modo escuro e celular), versão em texto e rodapé "e-mail automático"; código em `apps/api/src/lib/email-templates.ts`. Tabelas e estilos inline, sem imagem nem CSS externo. O assunto e o texto puro não mudam sem ajustar os testes de fluxo, que leem o token do texto.
 
 ## Stack
 pnpm monorepo · React + Vite + TypeScript · Hono (Node) em Docker na VPS · PostgreSQL da VPS + Drizzle · Resend (e-mails de auth) · Vitest + Playwright · Front no Cloudflare Pages
