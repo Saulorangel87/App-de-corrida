@@ -39,7 +39,17 @@ docker build -f apps/api/Dockerfile -t app-de-corrida-api:latest .
 docker compose up -d api
 ```
 
-Rede do túnel (uma vez): a rede `app-de-corrida_edge` precisa existir e estar ligada ao container `cloudflared-tunnel`; a rota do túnel aponta `letsgorun-api.devsaulo.com.br` para `http://app-de-corrida-api:3000`. Conferir depois: `curl https://letsgorun-api.devsaulo.com.br/health` e nenhuma porta publicada em `docker ps`.
+Rede do túnel (uma vez; em 2026-10-11 ela ainda **não existia** na VPS e o `cloudflared-tunnel` estava só na rede `bridge`):
+
+```
+docker network create app-de-corrida_edge
+```
+
+```
+docker network connect app-de-corrida_edge cloudflared-tunnel
+```
+
+O `connect` não sobrevive à recriação do container do túnel: se ele for recriado, repetir. Depois, no painel da Cloudflare (Zero Trust, Networks, Tunnels, o túnel `cloudflared-tunnel`, Public hostnames), a rota `letsgorun-api.devsaulo.com.br` aponta para `http://app-de-corrida-api:3000`. Conferir depois: `curl https://letsgorun-api.devsaulo.com.br/health` e nenhuma porta publicada em `docker ps`.
 
 ## Migrações e seed (do repositório, com o banco acessível)
 
