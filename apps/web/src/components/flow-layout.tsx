@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { BarChart3, CalendarDays, LayoutDashboard, LogOut, Menu, Route as RouteIcon, Settings, Target, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { AppFooter } from "./app-footer";
+import { Avatar } from "./avatar";
 import { LanguageSwitch } from "./language-switch";
 import { fetchApi } from "../lib/api";
 import { useAuth, useLogout } from "../lib/queries";
@@ -124,15 +125,6 @@ function NavItem({ to, icon: Icon, label }: { to: "/painel" | "/plano" | "/histo
   );
 }
 
-const initials = (name: string) =>
-  name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .map((p) => p[0]!.toUpperCase())
-    .slice(0, 2)
-    .join("");
-
 /** Menu lateral (a partir de 1024 px): só leva a telas que existem no app. */
 function Sidebar() {
   const { t } = useTranslation();
@@ -185,12 +177,7 @@ function Sidebar() {
         </div>
         {user && (
           <div className="flex items-center gap-3 px-2">
-            <span
-              aria-hidden="true"
-              className="grid size-[38px] shrink-0 place-items-center rounded-full bg-linear-to-br from-orange-400 to-rose-500 text-sm font-bold text-white"
-            >
-              {initials(user.name)}
-            </span>
+            <Avatar name={user.name} photoVersion={user.photoVersion} />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-white">{user.name}</p>
               {level && (

@@ -21,7 +21,15 @@ export type AuthDeps = {
   background: BackgroundRunner;
 };
 
-export type PublicUser = { id: string; name: string; email: string; language: string; emailVerified: boolean };
+export type PublicUser = {
+  id: string;
+  name: string;
+  email: string;
+  language: string;
+  emailVerified: boolean;
+  /** Versão da foto de perfil (para o cache do navegador); null = sem foto. */
+  photoVersion: number | null;
+};
 
 export const toPublicUser = (u: User): PublicUser => ({
   id: u.id,
@@ -29,6 +37,7 @@ export const toPublicUser = (u: User): PublicUser => ({
   email: u.email,
   language: u.language,
   emailVerified: u.emailVerifiedAt !== null,
+  photoVersion: u.avatarUpdatedAt ? u.avatarUpdatedAt.getTime() : null,
 });
 
 const lang = (u: Pick<User, "language">): Lang => (u.language === "en" ? "en" : "pt-BR");
@@ -36,6 +45,8 @@ const lang = (u: Pick<User, "language">): Lang => (u.language === "en" ? "en" : 
 export function authService(d: AuthDeps) {
   const { repo, mailer, logger, now } = d;
   const hash = (token: string) => hashToken(d.sessionSecret, token);
+  /** "a***@exemplo.com": mostra o endereço sem entregá-lo inteiro a quem lê o aviso. */
+  const hint = (email: string) => email.replace(/^(.).*(@.*)$/, "$1***$2");
   const link = (path: string, token?: string) =>
     `${d.frontendUrl}${path}${token ? `#token=${encodeURIComponent(token)}` : ""}`;
 
@@ -236,6 +247,67 @@ export function authService(d: AuthDeps) {
       );
     },
 
+    /** Editar o nome do perfil. */
+    async updateName(userId: string, name: string) {
+      await repo.db.update(users).set({ name, updatedAt: now() }).where(eq(users.id, userId));
+    },
+
+    /**
+     * Pede a troca de e-mail: confirma a senha atual e manda um link para o endereço NOVO. A resposta é
+     * sempre a mesma (existindo ou não conta com o endereço novo); o endereço só muda quando o link é
+     * aberto. O endereço antigo recebe um aviso.
+     */
+    async requestEmailChange(user: User, input: { newEmail: string; password: string }) {
+      if (!(await verifyPassword(user.passwordHash, input.password))) {
+        logger.warn("email_change_failed", { userId: user.id });
+        throw errors.invalidCredentials();
+      }
+      d.background("email_change_request", async () => {
+        if (input.newEmail === user.email) return;
+        const taken = await repo.findUserByEmail(input.newEmail);
+        if (taken) {
+          logger.info("email_change_taken", { userId: user.id });
+          return;
+        }
+        const token = newToken();
+        const t = now();
+        await repo.issueToken({
+          userId: user.id,
+          type: "email_change",
+          tokenHash: hash(token),
+          expiresAt: new Date(t.getTime() + authConfig.tokens.passwordResetMs),
+          now: t,
+          newEmail: input.newEmail,
+        });
+        await mailer.send(templates.confirmNewEmail(lang(user), input.newEmail, user.name, link("/confirmar-novo-email", token)));
+        await mailer.send(templates.emailChangeRequested(lang(user), user.email, user.name, hint(input.newEmail), link("/esqueci-a-senha")));
+      });
+    },
+
+    /** Abre o link do e-mail novo: troca o endereço, encerra as sessões e avisa o endereço antigo. */
+    async confirmEmailChange(token: string) {
+      const t = now();
+      const result = await repo.db.transaction(async (tx) => {
+        const found = await repo.consumeEmailChangeToken(tx, hash(token), t);
+        if (!found || !found.newEmail) return null;
+        const [owner] = await tx.select().from(users).where(eq(users.id, found.userId)).for("update");
+        if (!owner) return null;
+        const [clash] = await tx.select({ id: users.id }).from(users).where(eq(users.email, found.newEmail)).limit(1);
+        if (clash) return null; // alguém ficou com o endereço no meio do caminho
+        await tx
+          .update(users)
+          .set({ email: found.newEmail, emailVerifiedAt: t, updatedAt: t })
+          .where(eq(users.id, owner.id));
+        await tx.delete(sessions).where(eq(sessions.userId, owner.id));
+        return { owner, newEmail: found.newEmail };
+      });
+      if (!result) throw errors.invalidToken();
+      logger.info("email_changed", { userId: result.owner.id });
+      d.background("email_changed_notice", () =>
+        mailer.send(templates.emailChanged(lang(result.owner), result.owner.email, result.owner.name, hint(result.newEmail), link("/esqueci-a-senha"))),
+      );
+    },
+
     /** Exclui a conta e todos os dados, depois de confirmar a senha (LGPD, seção 10.1). */
     async deleteAccount(user: User, password: string) {
       if (!(await verifyPassword(user.passwordHash, password))) {
@@ -247,6 +319,12 @@ export function authService(d: AuthDeps) {
     },
 
     listSessions: (userId: string) => repo.listSessions(userId),
+
+    userById: async (id: string) => {
+      const u = await repo.findUserById(id);
+      if (!u) throw errors.notFound();
+      return u;
+    },
 
     async deleteSession(userId: string, sessionId: string) {
       if (!(await repo.deleteOwnSession(userId, sessionId))) throw errors.notFound();

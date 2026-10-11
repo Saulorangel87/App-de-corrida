@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as ConfiguracoesRouteImport } from './routes/configuracoes'
+import { Route as ConfirmarNovoEmailRouteImport } from './routes/confirmar-novo-email'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as EntrevistaRouteImport } from './routes/entrevista'
 import { Route as EsqueciASenhaRouteImport } from './routes/esqueci-a-senha'
@@ -39,6 +40,11 @@ const CheckinRoute = CheckinRouteImport.update({
 const ConfiguracoesRoute = ConfiguracoesRouteImport.update({
   id: '/configuracoes',
   path: '/configuracoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfirmarNovoEmailRoute = ConfirmarNovoEmailRouteImport.update({
+  id: '/confirmar-novo-email',
+  path: '/confirmar-novo-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EntrarRoute = EntrarRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/checkin': typeof CheckinRoute
   '/configuracoes': typeof ConfiguracoesRoute
+  '/confirmar-novo-email': typeof ConfirmarNovoEmailRoute
   '/entrar': typeof EntrarRoute
   '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/checkin': typeof CheckinRoute
   '/configuracoes': typeof ConfiguracoesRoute
+  '/confirmar-novo-email': typeof ConfirmarNovoEmailRoute
   '/entrar': typeof EntrarRoute
   '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/checkin': typeof CheckinRoute
   '/configuracoes': typeof ConfiguracoesRoute
+  '/confirmar-novo-email': typeof ConfirmarNovoEmailRoute
   '/entrar': typeof EntrarRoute
   '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/'
     | '/checkin'
     | '/configuracoes'
+    | '/confirmar-novo-email'
     | '/entrar'
     | '/entrevista'
     | '/esqueci-a-senha'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/'
     | '/checkin'
     | '/configuracoes'
+    | '/confirmar-novo-email'
     | '/entrar'
     | '/entrevista'
     | '/esqueci-a-senha'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/'
     | '/checkin'
     | '/configuracoes'
+    | '/confirmar-novo-email'
     | '/entrar'
     | '/entrevista'
     | '/esqueci-a-senha'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CheckinRoute: typeof CheckinRoute
   ConfiguracoesRoute: typeof ConfiguracoesRoute
+  ConfirmarNovoEmailRoute: typeof ConfirmarNovoEmailRoute
   EntrarRoute: typeof EntrarRoute
   EntrevistaRoute: typeof EntrevistaRoute
   EsqueciASenhaRoute: typeof EsqueciASenhaRoute
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/configuracoes'
       fullPath: '/configuracoes'
       preLoaderRoute: typeof ConfiguracoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confirmar-novo-email': {
+      id: '/confirmar-novo-email'
+      path: '/confirmar-novo-email'
+      fullPath: '/confirmar-novo-email'
+      preLoaderRoute: typeof ConfirmarNovoEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entrar': {
@@ -359,6 +379,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CheckinRoute: CheckinRoute,
   ConfiguracoesRoute: ConfiguracoesRoute,
+  ConfirmarNovoEmailRoute: ConfirmarNovoEmailRoute,
   EntrarRoute: EntrarRoute,
   EntrevistaRoute: EntrevistaRoute,
   EsqueciASenhaRoute: EsqueciASenhaRoute,

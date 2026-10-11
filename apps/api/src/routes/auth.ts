@@ -1,12 +1,14 @@
 import { Hono, type MiddlewareHandler } from "hono";
 import { z } from "zod";
 import {
+  changeEmailSchema,
   deleteAccountSchema,
   emailOnlySchema,
   loginSchema,
   registerSchema,
   resetPasswordSchema,
   tokenSchema,
+  updateProfileSchema,
 } from "@passo/shared";
 import type { rateLimitConfig } from "../config";
 import { errors } from "../lib/errors";
@@ -89,6 +91,26 @@ export function authRoutes(opts: {
   });
 
   r.get("/me", session, (c) => c.json({ user: toPublicUser(c.var.auth.user) }));
+
+  // Editar o nome do perfil (o dono vem da sessão).
+  r.patch("/profile", session, validate("json", updateProfileSchema), async (c) => {
+    await auth.updateName(c.var.auth.user.id, c.req.valid("json").name);
+    const fresh = await auth.userById(c.var.auth.user.id);
+    return c.json({ user: toPublicUser(fresh) });
+  });
+
+  // Troca de e-mail: senha atual + link no endereço novo. Mesma resposta exista ou não conta com ele.
+  r.post("/email-change", loginLimit, emailLimit, session, validate("json", changeEmailSchema), async (c) => {
+    await auth.requestEmailChange(c.var.auth.user, c.req.valid("json"));
+    return c.json(GENERIC_EMAIL_SENT, 202);
+  });
+
+  // Link do e-mail novo (sem sessão: pode abrir em outro aparelho). Encerra as sessões.
+  r.post("/email-change/confirm", resetLimit, validate("json", tokenSchema), async (c) => {
+    await auth.confirmEmailChange(c.req.valid("json").token);
+    cookie.clear(c);
+    return c.json({ message: "E-mail alterado. Entre de novo." });
+  });
 
   // Exclusão da conta (também oferecida a quem a entrevista barrar por idade).
   r.delete("/account", loginLimit, session, validate("json", deleteAccountSchema), async (c) => {

@@ -13,6 +13,7 @@ import {
   index,
   uniqueIndex,
   check,
+  customType,
   date,
 } from "drizzle-orm/pg-core";
 
@@ -20,6 +21,9 @@ import {
 const ts = (name: string) => timestamp(name, { withTimezone: true });
 const createdAt = () => ts("created_at").defaultNow().notNull();
 const updatedAt = () => ts("updated_at").defaultNow().notNull();
+
+/** Binário (a foto de perfil em miniatura). */
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({ dataType: () => "bytea" });
 
 // ---------------------------------------------------------------------------
 // Autenticação. Sem RLS: o login acontece antes de existir sessão; o acesso
@@ -43,6 +47,8 @@ export const users = pgTable(
     lockedUntil: ts("locked_until"),
     lockoutLevel: integer("lockout_level").default(0).notNull(),
     passwordChangedAt: ts("password_changed_at"),
+    // Quando a foto de perfil foi enviada (versão do cache); a imagem fica em user_photos.
+    avatarUpdatedAt: ts("avatar_updated_at"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -80,13 +86,15 @@ export const authTokens = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     tokenHash: varchar("token_hash", { length: 64 }).notNull().unique(),
     type: varchar("type", { length: 30 }).notNull(),
+    // Troca de e-mail: o endereço novo, que só passa a valer quando o link do e-mail é aberto.
+    newEmail: varchar("new_email", { length: 254 }),
     expiresAt: ts("expires_at").notNull(),
     usedAt: ts("used_at"),
     createdAt: createdAt(),
   },
   (t) => [
     index("auth_tokens_user_type_idx").on(t.userId, t.type),
-    check("auth_tokens_type", sql`${t.type} in ('email_verification', 'password_reset')`),
+    check("auth_tokens_type", sql`${t.type} in ('email_verification', 'password_reset', 'email_change')`),
   ],
 );
 
@@ -485,6 +493,21 @@ export const engineDecisions = pgTable(
   (t) => [index("engine_decisions_user_id_idx").on(t.userId, t.forDate)],
 );
 
+/** Foto de perfil: uma miniatura JPEG por atleta (opcional), só dele (RLS). */
+export const userPhotos = pgTable(
+  "user_photos",
+  {
+    userId: uuid("user_id")
+      .primaryKey()
+      .references(() => users.id, { onDelete: "cascade" }),
+    contentType: varchar("content_type", { length: 30 }).notNull().default("image/jpeg"),
+    data: bytea("data").notNull(),
+    byteSize: integer("byte_size").notNull(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [check("user_photos_size", sql`${t.byteSize} between 1 and 204800`)],
+);
+
 /**
  * Avaliação do bloco de 2 semanas ("como foi?", R-PLN-22): uma resposta por semana avaliada.
  * `felt`: facil | no_ponto | puxado | nao_consegui. Só segura ou sugere; nunca aumenta carga.
@@ -525,5 +548,6 @@ export const athleteTables = [
   "daily_checkins",
   "pain_reports",
   "plan_reviews",
+  "user_photos",
   "engine_decisions",
 ] as const;

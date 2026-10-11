@@ -6,7 +6,7 @@ import { authTokens, consents, sessions, users, type Database } from "@passo/db"
 
 export type User = typeof users.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
-export type TokenType = "email_verification" | "password_reset";
+export type TokenType = "email_verification" | "password_reset" | "email_change";
 
 export function authRepository(db: Database) {
   return {
@@ -152,7 +152,7 @@ export function authRepository(db: Database) {
     // ----- tokens de e-mail -----
 
     /** Cria um token novo e invalida os anteriores do mesmo tipo. */
-    issueToken: (input: { userId: string; type: TokenType; tokenHash: string; expiresAt: Date; now: Date }) =>
+    issueToken: (input: { userId: string; type: TokenType; tokenHash: string; expiresAt: Date; now: Date; newEmail?: string }) =>
       db.transaction(async (tx) => {
         await tx
           .update(authTokens)
@@ -163,6 +163,7 @@ export function authRepository(db: Database) {
           type: input.type,
           tokenHash: input.tokenHash,
           expiresAt: input.expiresAt,
+          newEmail: input.newEmail ?? null,
           createdAt: input.now,
         });
       }),
@@ -186,6 +187,23 @@ export function authRepository(db: Database) {
           )
           .returning({ userId: authTokens.userId })
       )[0]?.userId ?? null,
+
+    /** Como `consumeToken`, devolvendo também o e-mail novo (troca de e-mail). */
+    consumeEmailChangeToken: async (tx: Pick<Database, "update">, tokenHash: string, now: Date) =>
+      (
+        await tx
+          .update(authTokens)
+          .set({ usedAt: now })
+          .where(
+            and(
+              eq(authTokens.tokenHash, tokenHash),
+              eq(authTokens.type, "email_change"),
+              isNull(authTokens.usedAt),
+              gt(authTokens.expiresAt, now),
+            ),
+          )
+          .returning({ userId: authTokens.userId, newEmail: authTokens.newEmail })
+      )[0] ?? null,
 
     db,
   };

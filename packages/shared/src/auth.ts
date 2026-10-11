@@ -44,5 +44,11 @@ export const resetPasswordSchema = z.object({
   password: newPasswordSchema,
 });
 
+/** Editar o nome do perfil. */
+export const updateProfileSchema = z.object({ name: z.string().trim().min(1).max(100) });
+
+/** Pedir a troca de e-mail: pede a senha atual; o novo endereço só vale depois de confirmado. */
+export const changeEmailSchema = z.object({ newEmail: emailSchema, password: z.string().min(1).max(128) });
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

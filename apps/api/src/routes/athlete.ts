@@ -61,6 +61,31 @@ export function athleteRoutes(opts: { athlete: AthleteService; session: Middlewa
     async (c) => c.json(await athlete.declareProfessionalConsulted(me(c).id, c.req.valid("json").date)),
   );
 
+  // ----- foto de perfil: JPEG reduzido no aparelho (≤ 60 KB), só do dono -----
+
+  r.put("/profile/photo", session, async (c) => {
+    const bytes = new Uint8Array(await c.req.arrayBuffer());
+    return c.json(await athlete.savePhoto(me(c).id, bytes));
+  });
+
+  r.get("/profile/photo", session, async (c) => {
+    const photo = await athlete.getPhoto(me(c).id);
+    return new Response(new Uint8Array(photo.data), {
+      status: 200,
+      headers: {
+        "Content-Type": photo.contentType,
+        "Cache-Control": "private, max-age=3600",
+        "Content-Disposition": "inline",
+        "X-Content-Type-Options": "nosniff",
+      },
+    });
+  });
+
+  r.delete("/profile/photo", session, async (c) => {
+    await athlete.deletePhoto(me(c).id);
+    return c.body(null, 204);
+  });
+
   // ----- LGPD: exportar todos os meus dados -----
 
   r.get("/account/export", session, async (c) => {

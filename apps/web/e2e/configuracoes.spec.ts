@@ -4,10 +4,11 @@ const API = "http://localhost:3000/api/v1";
 const user = { id: "u1", name: "Ana Corredora", email: "ana@exemplo.com", language: "pt-BR" };
 const today = new Date().toLocaleDateString("sv-SE");
 
-type Call = { method: string; path: string; body: unknown };
+type Call = { method: string; path: string; body: unknown; contentType?: string; firstBytes?: number[] };
 
-async function mockApi(page: Page) {
+async function mockApi(page: Page, opts: { emailChangeStatus?: number } = {}) {
   const calls: Call[] = [];
+  const me: { id: string; name: string; email: string; language: string; photoVersion: number | null } = { ...user, photoVersion: null };
   let pause: { cause: string | null; declaredOn: string | null; clearedByProfessionalOn: string | null } = {
     cause: null,
     declaredOn: null,
@@ -20,13 +21,42 @@ async function mockApi(page: Page) {
   await page.route(`${API}/**`, async (route) => {
     const req = route.request();
     const path = new URL(req.url()).pathname.replace("/api/v1", "");
-    const raw = req.postData();
+    const isPhoto = path === "/profile/photo" && req.method() === "PUT";
+    const raw = isPhoto ? null : req.postData();
     const body = raw ? JSON.parse(raw) : undefined;
-    calls.push({ method: req.method(), path, body });
+    const bytes = isPhoto ? req.postDataBuffer() : null;
+    calls.push({
+      method: req.method(),
+      path,
+      body,
+      contentType: req.headers()["content-type"],
+      firstBytes: bytes ? [...bytes.subarray(0, 3)] : undefined,
+    });
     const json = (status: number, data?: unknown) =>
       route.fulfill({ status, contentType: "application/json", body: JSON.stringify(data ?? {}) });
 
-    if (path === "/auth/me") return json(200, { user });
+    if (path === "/auth/me") return json(200, { user: me });
+    if (path === "/auth/profile" && req.method() === "PATCH") {
+      me.name = (body as { name: string }).name.trim();
+      return json(200, { user: me });
+    }
+    if (path === "/profile/photo") {
+      if (req.method() === "PUT") {
+        me.photoVersion = 1760000000000;
+        return json(200, { photoVersion: me.photoVersion });
+      }
+      if (req.method() === "DELETE") {
+        me.photoVersion = null;
+        return route.fulfill({ status: 204 });
+      }
+      return json(404, { error: { code: "NOT_FOUND", message: "x" } });
+    }
+    if (path === "/auth/email-change") {
+      const status = opts.emailChangeStatus ?? 202;
+      return status === 202
+        ? json(202, { message: "ok" })
+        : json(status, { error: { code: "INVALID_CREDENTIALS", message: "E-mail ou senha incorretos." } });
+    }
     if (path === "/profile") return json(200, { profile: { nextEvaluationDate: "2027-01-10", pause, plan: null } });
     if (path === "/auth/sessions" && req.method() === "GET") return json(200, { sessions });
     if (path.startsWith("/auth/sessions/") && req.method() === "DELETE") {
@@ -52,7 +82,7 @@ test("configurações: conta, aparelhos e encerrar outra sessão", async ({ page
   const calls = await mockApi(page);
   await page.goto("/configuracoes");
   await expect(page.getByRole("heading", { name: "Perfil e configurações" })).toBeVisible();
-  await expect(page.getByRole("main").getByText("Ana Corredora")).toBeVisible();
+  await expect(page.getByLabel("Nome", { exact: true })).toHaveValue("Ana Corredora");
   await expect(page.getByRole("main").getByText("ana@exemplo.com")).toBeVisible();
   await expect(page.getByText("Chrome · Windows")).toBeVisible();
   await expect(page.getByText("Este aparelho")).toBeVisible();
@@ -116,4 +146,99 @@ test("celular: o cabeçalho cabe e a tela não rola para o lado", async ({ brows
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
   expect(overflow).toBe(false);
   await ctx.close();
+});
+
+const PNG_1X1 = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+  "base64",
+);
+
+test("perfil: edita o nome e a barra lateral acompanha", async ({ page }) => {
+  const calls = await mockApi(page);
+  await page.goto("/configuracoes");
+  const save = page.getByRole("button", { name: "Salvar nome" });
+  await expect(save).toBeDisabled();
+  await page.getByLabel("Nome", { exact: true }).fill("  Ana Maria Corredora ");
+  await save.click();
+  expect(calls.find((c) => c.method === "PATCH" && c.path === "/auth/profile")?.body).toEqual({ name: "Ana Maria Corredora" });
+  await expect(page.getByText("Nome salvo.")).toBeVisible();
+  await expect(page.getByRole("complementary").getByText("Ana Maria Corredora")).toBeVisible();
+});
+
+test("perfil: a foto é reduzida no aparelho (JPEG), enviada, trocada e removida", async ({ page }) => {
+  const calls = await mockApi(page);
+  await page.goto("/configuracoes");
+  await expect(page.getByRole("button", { name: "Remover foto" })).toHaveCount(0);
+  await page.getByLabel("Escolher uma foto de perfil").setInputFiles({ name: "eu.png", mimeType: "image/png", buffer: PNG_1X1 });
+
+  await expect(page.getByRole("button", { name: "Remover foto" })).toBeVisible();
+  const put = calls.find((c) => c.method === "PUT" && c.path === "/profile/photo");
+  expect(put?.contentType).toBe("image/jpeg");
+  expect(put?.firstBytes).toEqual([0xff, 0xd8, 0xff]); // saiu JPEG, não o PNG original
+  await expect(page.getByText("Trocar foto")).toBeVisible();
+
+  await page.getByRole("button", { name: "Remover foto" }).click();
+  await expect(page.getByRole("button", { name: "Remover foto" })).toHaveCount(0);
+  expect(calls.some((c) => c.method === "DELETE" && c.path === "/profile/photo")).toBe(true);
+});
+
+test("perfil: arquivo que não é imagem aceita (SVG) é recusado antes de sair do aparelho", async ({ page }) => {
+  const calls = await mockApi(page);
+  await page.goto("/configuracoes");
+  await page.getByLabel("Escolher uma foto de perfil").setInputFiles({
+    name: "x.svg",
+    mimeType: "image/svg+xml",
+    buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>'),
+  });
+  await expect(page.getByRole("alert").filter({ hasText: "Use uma imagem JPEG, PNG ou WebP." })).toBeVisible();
+  expect(calls.some((c) => c.path === "/profile/photo" && c.method === "PUT")).toBe(false);
+});
+
+test("perfil: troca de e-mail pede a senha e avisa que só muda quando o link for aberto", async ({ page }) => {
+  const calls = await mockApi(page);
+  await page.goto("/configuracoes");
+  await page.getByRole("button", { name: "Trocar e-mail" }).click();
+  await expect(page.getByRole("button", { name: "Enviar link de confirmação" })).toBeDisabled();
+  await page.getByLabel("Novo e-mail").fill("Ana.Nova@Exemplo.com");
+  await page.getByLabel("Sua senha atual").fill("minha-senha-longa");
+  await page.getByRole("button", { name: "Enviar link de confirmação" }).click();
+
+  expect(calls.find((c) => c.path === "/auth/email-change")?.body).toEqual({ newEmail: "Ana.Nova@Exemplo.com", password: "minha-senha-longa" });
+  await expect(page.getByText(/enviamos o link de confirmação\. O e-mail só muda depois que você abri-lo/)).toBeVisible();
+  // o e-mail da conta continua o antigo até a confirmação
+  await expect(page.getByRole("main").getByText("ana@exemplo.com")).toBeVisible();
+});
+
+test("perfil: senha errada na troca de e-mail mostra o erro e mantém o formulário", async ({ page }) => {
+  await mockApi(page, { emailChangeStatus: 401 });
+  await page.goto("/configuracoes");
+  await page.getByRole("button", { name: "Trocar e-mail" }).click();
+  await page.getByLabel("Novo e-mail").fill("ana.nova@exemplo.com");
+  await page.getByLabel("Sua senha atual").fill("errada-errada-1");
+  await page.getByRole("button", { name: "Enviar link de confirmação" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: /senha/i })).toBeVisible();
+  await expect(page.getByLabel("Sua senha atual")).toBeVisible();
+});
+
+test("link do e-mail novo: confirma uma vez e leva ao login; link inválido mostra o aviso", async ({ page }) => {
+  const calls: string[] = [];
+  await page.route(`${API}/**`, async (route) => {
+    const path = new URL(route.request().url()).pathname.replace("/api/v1", "");
+    calls.push(path);
+    if (path === "/auth/me") return route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: { code: "UNAUTHORIZED", message: "x" } }) });
+    if (path === "/auth/email-change/confirm") {
+      const token = (JSON.parse(route.request().postData() ?? "{}") as { token?: string }).token ?? "";
+      return token.startsWith("valido")
+        ? route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ message: "ok" }) })
+        : route.fulfill({ status: 400, contentType: "application/json", body: JSON.stringify({ error: { code: "INVALID_TOKEN", message: "x" } }) });
+    }
+    return route.fulfill({ status: 404, contentType: "application/json", body: "{}" });
+  });
+  await page.goto("/confirmar-novo-email#token=" + "valido-de-teste-".repeat(3));
+  await expect(page.getByRole("heading", { name: "E-mail alterado" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Entrar" })).toBeVisible();
+  expect(calls.filter((p) => p === "/auth/email-change/confirm")).toHaveLength(1);
+
+  await page.goto("/confirmar-novo-email#token=" + "invalido-teste-".repeat(3));
+  await expect(page.getByRole("heading", { name: "Link inválido ou expirado" })).toBeVisible();
 });

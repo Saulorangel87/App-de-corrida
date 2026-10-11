@@ -2,7 +2,8 @@ import { useState, type ReactNode } from "react";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { PrimaryButton, SecondaryButton } from "../components/auth-ui";
+import { Avatar } from "../components/avatar";
+import { InfoBox, PrimaryButton, SecondaryButton } from "../components/auth-ui";
 import { ChoiceGroup } from "../components/choice";
 import { CheckField, TextField } from "../components/field";
 import { FlowLayout } from "../components/flow-layout";
@@ -10,7 +11,8 @@ import { HealthChangeCard } from "../components/health-change";
 import { LanguageSwitch } from "../components/language-switch";
 import { ApiError, fetchApi } from "../lib/api";
 import { formatDate, localToday } from "../lib/dates";
-import { AUTH_KEY, useRequireUser } from "../lib/queries";
+import { toAvatarJpeg, AvatarProblem } from "../lib/image";
+import { AUTH_KEY, useRequireUser, type AuthUser } from "../lib/queries";
 import { useErrorText } from "../lib/use-error-text";
 
 export const Route = createFileRoute("/configuracoes")({
@@ -81,7 +83,7 @@ function SettingsPage() {
     <FlowLayout>
       <h1 className="mb-4 text-2xl font-extrabold tracking-tight text-[#0F172A]">{t("settings.title")}</h1>
       <div className="space-y-4">
-        <AccountCard name={user.name} email={user.email} />
+        <ProfileCard user={user} />
         <DevicesCard />
         {profile.data && <HealthCard profile={profile.data} />}
         <DataCard />
@@ -90,20 +92,166 @@ function SettingsPage() {
   );
 }
 
-function AccountCard({ name, email }: { name: string; email: string }) {
+function ProfileCard({ user }: { user: AuthUser }) {
   const { t } = useTranslation();
+  const errorText = useErrorText();
+  const queryClient = useQueryClient();
+  const [name, setName] = useState(user.name);
+  const [photoProblem, setPhotoProblem] = useState<string | null>(null);
+  const [emailOpen, setEmailOpen] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const setUser = (next: AuthUser) => queryClient.setQueryData(AUTH_KEY, next);
+
+  const saveName = useMutation({
+    mutationFn: () => fetchApi<{ user: AuthUser }>("/auth/profile", { method: "PATCH", body: JSON.stringify({ name: name.trim() }) }),
+    onSuccess: (res) => {
+      setUser(res.user);
+      setName(res.user.name);
+    },
+  });
+
+  const upload = useMutation({
+    mutationFn: async (file: File) => {
+      const blob = await toAvatarJpeg(file);
+      return fetchApi<{ photoVersion: number }>("/profile/photo", {
+        method: "PUT",
+        body: blob,
+        headers: { "Content-Type": "image/jpeg" },
+      });
+    },
+    onMutate: () => setPhotoProblem(null),
+    onSuccess: (res) => setUser({ ...user, photoVersion: res.photoVersion }),
+    onError: (err) => setPhotoProblem(err instanceof AvatarProblem ? t(`settings.photoErrors.${err.kind}`) : errorText(err)),
+  });
+
+  const removePhoto = useMutation({
+    mutationFn: () => fetchApi("/profile/photo", { method: "DELETE" }),
+    onSuccess: () => setUser({ ...user, photoVersion: null }),
+  });
+
+  const changeEmail = useMutation({
+    mutationFn: () => fetchApi("/auth/email-change", { method: "POST", body: JSON.stringify({ newEmail, password }) }),
+    onSuccess: () => {
+      setPassword("");
+    },
+  });
+
+  const nameChanged = name.trim() !== user.name && name.trim().length > 0;
+
   return (
     <Card title={t("settings.accountTitle")}>
-      <dl className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">{t("settings.name")}</dt>
-          <dd className="font-semibold text-[#0F172A]">{name}</dd>
+      <div className="flex items-center gap-4">
+        <Avatar name={user.name} photoVersion={user.photoVersion} className="size-[72px] text-2xl" />
+        <div className="space-y-2">
+          <div className="flex flex-wrap gap-2">
+            <label className="inline-flex h-10 cursor-pointer items-center rounded-xl border border-gray-300 bg-white px-4 text-sm font-semibold text-[#111827] transition-colors hover:bg-gray-50 focus-within:ring-2 focus-within:ring-[#FF5A1F]/30">
+              {upload.isPending ? t("common.loading") : user.photoVersion ? t("settings.photoChange") : t("settings.photoAdd")}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="sr-only"
+                aria-label={t("settings.photoInput")}
+                disabled={upload.isPending}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (file) upload.mutate(file);
+                }}
+              />
+            </label>
+            {user.photoVersion && (
+              <SecondaryButton type="button" disabled={removePhoto.isPending} onClick={() => removePhoto.mutate()}>
+                {t("settings.photoRemove")}
+              </SecondaryButton>
+            )}
+          </div>
+          <p className="text-xs text-gray-500">{t("settings.photoHint")}</p>
         </div>
-        <div>
-          <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">{t("settings.email")}</dt>
-          <dd className="break-all font-semibold text-[#0F172A]">{email}</dd>
+      </div>
+      {(photoProblem || removePhoto.isError) && (
+        <p role="alert" className="text-sm text-red-700">
+          {photoProblem ?? errorText(removePhoto.error)}
+        </p>
+      )}
+
+      <form
+        className="space-y-2"
+        noValidate
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (nameChanged) saveName.mutate();
+        }}
+      >
+        <TextField label={t("settings.name")} value={name} maxLength={100} autoComplete="name" onChange={(e) => setName(e.target.value)} />
+        <div className="flex items-center gap-3">
+          <PrimaryButton disabled={!nameChanged || saveName.isPending}>{saveName.isPending ? t("common.loading") : t("settings.nameSave")}</PrimaryButton>
+          {saveName.isSuccess && !nameChanged && (
+            <span role="status" className="text-sm font-semibold text-green-700">
+              {t("settings.nameSaved")}
+            </span>
+          )}
         </div>
-      </dl>
+        {saveName.isError && (
+          <p role="alert" className="text-sm text-red-700">
+            {errorText(saveName.error)}
+          </p>
+        )}
+      </form>
+
+      <div className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{t("settings.email")}</p>
+        <p className="break-all font-semibold text-[#0F172A]">{user.email}</p>
+        {changeEmail.isSuccess ? (
+          <div role="status">
+            <InfoBox>{t("settings.emailSent", { email: newEmail })}</InfoBox>
+          </div>
+        ) : emailOpen ? (
+          <form
+            className="space-y-3 rounded-xl bg-[#F5F6F8] p-4"
+            noValidate
+            onSubmit={(e) => {
+              e.preventDefault();
+              changeEmail.mutate();
+            }}
+          >
+            <p className="text-sm text-gray-700">{t("settings.emailExplain")}</p>
+            <TextField
+              label={t("settings.newEmail")}
+              type="email"
+              autoComplete="email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+            />
+            <TextField
+              label={t("settings.currentPassword")}
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {changeEmail.isError && (
+              <p role="alert" className="text-sm text-red-700">
+                {errorText(changeEmail.error)}
+              </p>
+            )}
+            <div className="flex flex-col gap-2 min-[480px]:flex-row">
+              <PrimaryButton disabled={changeEmail.isPending || newEmail.trim() === "" || password === ""}>
+                {changeEmail.isPending ? t("common.loading") : t("settings.emailSend")}
+              </PrimaryButton>
+              <SecondaryButton type="button" onClick={() => setEmailOpen(false)}>
+                {t("settings.cancel")}
+              </SecondaryButton>
+            </div>
+          </form>
+        ) : (
+          <SecondaryButton type="button" onClick={() => setEmailOpen(true)}>
+            {t("settings.emailChange")}
+          </SecondaryButton>
+        )}
+      </div>
+
       <div className="flex items-center gap-4 text-sm">
         <span className="font-semibold text-gray-600">{t("settings.language")}</span>
         <LanguageSwitch />

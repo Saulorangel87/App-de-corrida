@@ -39,6 +39,21 @@ export const templates = {
       ? { subject: "Your Let's Go Run password was changed", lines: [hi(lang, name), "Your password was changed and all sessions were signed out.", "If it wasn't you, reset your password now."], link: { url: resetUrl, label: "Reset password" } }
       : { subject: "Sua senha do Let's Go Run foi alterada", lines: [hi(lang, name), "Sua senha foi alterada e todas as sessões foram encerradas.", "Se não foi você, redefina a senha agora."], link: { url: resetUrl, label: "Redefinir senha" } }),
 
+  confirmNewEmail: (lang: Lang, to: string, name: string, url: string) =>
+    render(to, lang === "en"
+      ? { subject: "Confirm your new email – Let's Go Run", lines: [hi(lang, name), "You asked to use this email address for your Let's Go Run account. Confirm to finish the change. The link expires in 60 minutes and works only once.", "If you didn't ask for this, ignore this email; nothing changes."], link: { url, label: "Confirm new email" } }
+      : { subject: "Confirme seu novo e-mail – Let's Go Run", lines: [hi(lang, name), "Você pediu para usar este endereço na sua conta do Let's Go Run. Confirme para concluir a troca. O link vale por 60 minutos e só funciona uma vez.", "Se você não pediu, ignore este e-mail; nada muda."], link: { url, label: "Confirmar novo e-mail" } }),
+
+  emailChangeRequested: (lang: Lang, to: string, name: string, newEmailHint: string, resetUrl: string) =>
+    render(to, lang === "en"
+      ? { subject: "Email change requested – Let's Go Run", lines: [hi(lang, name), `Someone asked to change the email of your account to ${newEmailHint}. Nothing changes until that address is confirmed.`, "If it wasn't you, reset your password now."], link: { url: resetUrl, label: "Reset password" } }
+      : { subject: "Pedido de troca de e-mail – Let's Go Run", lines: [hi(lang, name), `Alguém pediu para trocar o e-mail da sua conta para ${newEmailHint}. Nada muda até que esse endereço seja confirmado.`, "Se não foi você, redefina a senha agora."], link: { url: resetUrl, label: "Redefinir senha" } }),
+
+  emailChanged: (lang: Lang, to: string, name: string, newEmailHint: string, resetUrl: string) =>
+    render(to, lang === "en"
+      ? { subject: "Your Let's Go Run email was changed", lines: [hi(lang, name), `The email of your account is now ${newEmailHint} and all sessions were signed out.`, "If it wasn't you, reset your password now."], link: { url: resetUrl, label: "Reset password" } }
+      : { subject: "Seu e-mail do Let's Go Run foi alterado", lines: [hi(lang, name), `O e-mail da sua conta agora é ${newEmailHint} e todas as sessões foram encerradas.`, "Se não foi você, redefina a senha agora."], link: { url: resetUrl, label: "Redefinir senha" } }),
+
   accountLocked: (lang: Lang, to: string, name: string, minutes: number, resetUrl: string) =>
     render(to, lang === "en"
       ? { subject: "Login temporarily blocked – Let's Go Run", lines: [hi(lang, name), `After several wrong password attempts, login to your account was blocked for ${minutes} minutes.`, "If it wasn't you, we recommend resetting your password."], link: { url: resetUrl, label: "Reset password" } }

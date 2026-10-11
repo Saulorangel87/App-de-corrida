@@ -42,6 +42,7 @@ const FEATURES = {
     "athlete-text": "Como fazer em linguagem simples (textos do treino)",
     auth: "Cadastro, login, senha e bloqueio",
     interview: "Entrevista, perfil e triagem",
+    profile: "Perfil: nome, troca de e-mail e foto",
     "legal-version": "Versão dos termos legais",
     rls: "Isolamento de dados por atleta no banco",
     security: "Cabeçalhos de segurança e limites",

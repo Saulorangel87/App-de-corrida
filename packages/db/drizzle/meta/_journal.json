@@ -92,6 +92,13 @@
       "when": 1791743182541,
       "tag": "0012_avaliacao_do_bloco",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1791743904180,
+      "tag": "0013_perfil_foto_e_troca_de_email",
+      "breakpoints": true
     }
   ]
 }

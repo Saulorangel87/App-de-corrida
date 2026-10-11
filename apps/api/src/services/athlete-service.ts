@@ -12,6 +12,7 @@ import {
   planReviews,
   planTemplates,
   scheduledWorkouts,
+  userPhotos,
   users,
   withAthlete,
   workoutLogs,
@@ -96,6 +97,11 @@ export const screeningInputFrom = (row: typeof healthScreenings.$inferSelect, ag
     now: on,
   };
 };
+
+/** JPEG começa com FF D8 FF. Só JPEG é aceito: o app mesmo reduz e regrava a imagem no aparelho. */
+const isJpeg = (b: Uint8Array) => b.byteLength > 4 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
+/** Tamanho máximo da miniatura (o limite geral de corpo da API é 64 KB). */
+const PHOTO_MAX_BYTES = 60 * 1024;
 
 export function athleteService(d: { db: Database; logger: Logger; now: () => Date }) {
   const { db, logger } = d;
@@ -182,7 +188,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           .from(users)
           .where(eq(users.id, userId));
         const [
-          consentRows, profile, interviews, screenings, plans, planWeeks, scheduled, logs, checkins, pain, decisions, reviews,
+          consentRows, profile, interviews, screenings, plans, planWeeks, scheduled, logs, checkins, pain, decisions, reviews, photo,
         ] = await Promise.all([
           tx.select().from(consents).where(eq(consents.userId, userId)),
           tx.select().from(athleteProfiles).where(eq(athleteProfiles.userId, userId)),
@@ -196,6 +202,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           tx.select().from(painReports).where(eq(painReports.userId, userId)),
           tx.select().from(engineDecisions).where(eq(engineDecisions.userId, userId)),
           tx.select().from(planReviews).where(eq(planReviews.userId, userId)),
+          tx.select().from(userPhotos).where(eq(userPhotos.userId, userId)),
         ]);
         return {
           exportedAt: d.now().toISOString(),
@@ -212,7 +219,43 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           painReports: pain,
           engineDecisions: decisions,
           planReviews: reviews,
+          profilePhoto: photo[0]
+            ? { contentType: photo[0].contentType, updatedAt: photo[0].updatedAt, dataBase64: photo[0].data.toString("base64") }
+            : null,
         };
+      });
+    },
+
+    // ----- foto de perfil: uma miniatura JPEG, só do dono (RLS) -----
+
+    /** Grava a foto (substitui a anterior). O formato é conferido pelos bytes, não pelo que o cliente diz. */
+    async savePhoto(userId: string, bytes: Uint8Array) {
+      if (!isJpeg(bytes)) throw errors.validation([{ path: "photo", code: "invalid_image" }]);
+      if (bytes.byteLength > PHOTO_MAX_BYTES) throw errors.validation([{ path: "photo", code: "image_too_large" }]);
+      const now = d.now();
+      await withAthlete(db, userId, async (tx) => {
+        const data = Buffer.from(bytes);
+        await tx
+          .insert(userPhotos)
+          .values({ userId, data, byteSize: data.byteLength, updatedAt: now })
+          .onConflictDoUpdate({ target: userPhotos.userId, set: { data, byteSize: data.byteLength, updatedAt: now } });
+        await tx.update(users).set({ avatarUpdatedAt: now, updatedAt: now }).where(eq(users.id, userId));
+      });
+      return { photoVersion: now.getTime() };
+    },
+
+    async getPhoto(userId: string) {
+      return withAthlete(db, userId, async (tx) => {
+        const [row] = await tx.select().from(userPhotos).where(eq(userPhotos.userId, userId)).limit(1);
+        if (!row) throw errors.notFound();
+        return { data: row.data, contentType: row.contentType, updatedAt: row.updatedAt };
+      });
+    },
+
+    async deletePhoto(userId: string) {
+      await withAthlete(db, userId, async (tx) => {
+        await tx.delete(userPhotos).where(eq(userPhotos.userId, userId));
+        await tx.update(users).set({ avatarUpdatedAt: null, updatedAt: d.now() }).where(eq(users.id, userId));
       });
     },
 
