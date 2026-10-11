@@ -22,11 +22,51 @@ services:
       timeout: 5s
       retries: 5
 
+  # API (Hono). Imagem construída do repositório: apps/api/Dockerfile (ver ops/README.md).
+  # Sem "ports": só o túnel da Cloudflare a alcança, pela rede "edge".
+  api:
+    image: app-de-corrida-api:latest
+    container_name: app-de-corrida-api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      # Só o que a API usa: o .env também tem as senhas do administrador do banco e do backup.
+      DATABASE_URL: ${DATABASE_URL:?defina no .env}
+      FRONTEND_URL: ${FRONTEND_URL:?defina no .env}
+      SESSION_SECRET: ${SESSION_SECRET:?defina no .env}
+      RESEND_API_KEY: ${RESEND_API_KEY:?defina no .env}
+      EMAIL_FROM: ${EMAIL_FROM:-Let's Go Run <no-reply@letsgorun.devsaulo.com.br>}
+    networks:
+      - app-de-corrida_data
+      - app-de-corrida_edge
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    pids_limit: 200
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 networks:
   # internal: sem rota para fora; só a API (na mesma rede) alcança o banco.
   app-de-corrida_data:
     name: app-de-corrida_data
     internal: true
+  # Compartilhada com o container do túnel (cloudflared-tunnel); dá a saída para a internet (Resend).
+  app-de-corrida_edge:
+    name: app-de-corrida_edge
+    external: true
 
 volumes:
   app-de-corrida_data:

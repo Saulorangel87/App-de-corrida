@@ -10,6 +10,9 @@ Pasta na VPS: `~/apps/app-de-corrida` (copie para lá `docker-compose.yml` e os 
 | `MIGRATOR_DB_PASSWORD` | papel `passo_migrator` (migrações e seed) |
 | `PASSO_API_DB_PASSWORD` | papel `passo_api` (a API) |
 | `DATABASE_URL` | `postgres://passo_api:...@app-de-corrida:5432/passo` |
+| `FRONTEND_URL` | origem exata do front, com https (`https://letsgorun.devsaulo.com.br`): CORS, verificação de `Origin` e links dos e-mails |
+| `SESSION_SECRET` | 32+ caracteres aleatórios (`openssl rand -hex 32`); troca derruba todas as sessões e invalida os links pendentes |
+| `RESEND_API_KEY`, `EMAIL_FROM` | e-mails de conta; a API não inicia em produção sem a chave; o domínio do remetente precisa estar verificado no Resend (SPF e DKIM) |
 | `BACKUP_RCLONE_REMOTE` | remote `crypt` do rclone: `corrida-run:` (sobre `cadencia-oos:cadencia-backups/corrida-run`) |
 
 Gere senhas com `openssl rand -hex 32`.
@@ -24,7 +27,23 @@ docker compose up -d
 ./db-roles.sh
 ```
 
+## API (container)
+
+Imagem multi-arquitetura, sem root, sistema de arquivos somente leitura, sem portas publicadas (`docker-compose.yml`, serviço `api`). Construir na própria VPS (arm64), a partir de uma cópia limpa do repositório (`git archive`):
+
+```
+docker build -f apps/api/Dockerfile -t app-de-corrida-api:latest .
+```
+
+```
+docker compose up -d api
+```
+
+Rede do túnel (uma vez): a rede `app-de-corrida_edge` precisa existir e estar ligada ao container `cloudflared-tunnel`; a rota do túnel aponta `letsgorun-api.devsaulo.com.br` para `http://app-de-corrida-api:3000`. Conferir depois: `curl https://letsgorun-api.devsaulo.com.br/health` e nenhuma porta publicada em `docker ps`.
+
 ## Migrações e seed (do repositório, com o banco acessível)
+
+Migrações atuais: 0000 a 0013 (a 0011 guarda onde o plano começa, a 0012 as avaliações de bloco, a 0013 a foto de perfil e o e-mail novo pendente). O seed grava o catálogo com os textos do atleta em português e inglês; rode depois de migrar.
 
 ```
 MIGRATION_DATABASE_URL=postgres://passo_migrator:...@host:5432/passo pnpm --filter @passo/db db:migrate
@@ -42,6 +61,6 @@ MIGRATION_DATABASE_URL=postgres://passo_migrator:...@host:5432/passo pnpm --filt
 - `restore-test.sh`: restaura o backup mais recente num container descartável sem rede. Rodar ao menos 1x por mês e anotar a data aqui.
 - **Guarde a senha do remote crypt fora da VPS** (gerenciador de senhas): sem ela, os backups não abrem.
 
-Último teste de restauração: 2026-10-10, OK (18 tabelas, 9 com RLS, 11 treinos).
+Último teste de restauração: 2026-10-10, OK (18 tabelas, 9 com RLS, 11 treinos). **Refazer depois do primeiro deploy com as migrações 0011 a 0013** (agora são 23 tabelas, 13 com RLS) e anotar a data aqui.
 
 Chaves do crypt (`password` e `password2` do remote `corrida-run`): guardadas no gerenciador de senhas do dono, fora da VPS.

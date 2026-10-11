@@ -88,6 +88,8 @@ jobs:
           node-version: 22
       - name: Audit production dependencies
         run: pnpm audit --prod --audit-level high
+      - name: Audit all dependencies (including dev tools)
+        run: pnpm audit --audit-level moderate
 
   gitleaks:
     name: Secret scan

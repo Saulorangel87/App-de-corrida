@@ -290,7 +290,9 @@ function Evidence({ evidence, references }: { evidence: WorkoutDetailResponse["d
             <h3 className="text-sm font-bold text-[#0F172A]">{t("workout.referencesTitle")}</h3>
             <ol className="mt-2 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-gray-700">
               {references.map((r) => {
-                const href = r.doi ? `https://doi.org/${r.doi}` : r.url;
+                const candidate = r.doi ? `https://doi.org/${r.doi}` : r.url;
+                // Só https: o endereço vem do catálogo; qualquer outro esquema (javascript:, data:) é ignorado.
+                const href = candidate && /^https:\/\//i.test(candidate) ? candidate : null;
                 return (
                   <li key={r.citation}>
                     <span lang="en">{r.citation}</span>

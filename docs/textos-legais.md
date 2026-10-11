@@ -2,6 +2,8 @@
 
 **Estado: aprovado pelo dono em 2026-10-11 e implementado** (`apps/web/src/lib/legal.ts`, rotas `/privacidade` e `/termos`). Decisões: D1 e-mail mantido; D2 texto mantido ("podem tratar dados fora do Brasil"); D3 frase do cadastro trocada; D4 "Termos de Uso" padronizado; D7 português e inglês (tradução em `legal.en.ts`, com o aviso de que vale a versão em português: cláusula nova, para você conferir). O dono vai ler tudo antes de abrir o app para outras pessoas.
 
+**Acréscimos de 2026-10-11 (para o dono reler):** na lista "Quais dados coletamos", a **foto de perfil** (opcional; reduzida no aparelho; só o dono vê; apagada ao remover ou excluir a conta) e a **avaliação de cada bloco de 2 semanas** (fácil, no ponto, puxado, não consegui), em português e inglês. A versão do texto continua `2026-10-11` porque nenhum atleta aceitou ainda; se alguém tiver aceitado antes de você reler, suba a versão em `legal.ts` e em `apps/api/src/config.ts` no mesmo commit.
+
 **Base:** os textos do Cadência (`App de treino/frontend/lib/legal.ts`), adaptados ao que o Let's Go Run faz de verdade. Cada frase foi conferida no código ou na infraestrutura (tabela da seção 2). O que o Cadência tinha e este app **não** faz foi removido (importar arquivos de GPS, explicação por IA, planilha, FTP e potência, ciclismo).
 
 > **Aviso honesto:** isto descreve o que o app faz, no formato do Cadência. Não é parecer jurídico. Para um app com dados de saúde e uso público, vale uma leitura rápida de um advogado antes de abrir para outras pessoas.

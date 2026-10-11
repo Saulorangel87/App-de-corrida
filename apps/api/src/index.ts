@@ -4,7 +4,7 @@ import { createDb } from "@passo/db";
 import { createApp } from "./app";
 import { loadEnv } from "./env";
 import { createLogger } from "./lib/logger";
-import { consoleMailer, resendMailer } from "./lib/mailer";
+import { consoleMailer, resendMailer, throttledMailer } from "./lib/mailer";
 
 const env = loadEnv();
 const logger = createLogger();
@@ -17,7 +17,10 @@ const app = createApp({
   production,
   frontendUrl: env.FRONTEND_URL,
   sessionSecret: env.SESSION_SECRET,
-  mailer: env.RESEND_API_KEY ? resendMailer(env.RESEND_API_KEY, env.EMAIL_FROM) : consoleMailer(logger, path.resolve(process.cwd(), "dev-emails.log")),
+  mailer: throttledMailer(
+    env.RESEND_API_KEY ? resendMailer(env.RESEND_API_KEY, env.EMAIL_FROM) : consoleMailer(logger, path.resolve(process.cwd(), "dev-emails.log")),
+    logger,
+  ),
 });
 
 const server = serve({ fetch: app.fetch, port: env.PORT }, (info) =>

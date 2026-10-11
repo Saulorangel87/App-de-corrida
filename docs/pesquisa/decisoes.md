@@ -49,7 +49,7 @@ Registro único das decisões do dono do projeto e das decisões de projeto toma
 36. **DEC-36. Pequenas inconsistências.** Em 05 a tabela de evidência fraca passa a falar em teto absoluto de 120% (antes "20%"); Soligard 2016 passa a ser citada no corpo de 05 como leitura de contexto. Arquivo: 05.
 37. **DEC-37. Plano 5 km iniciante do zero com 17 semanas.** As sessões são as da escada (12 etapas da fonte + degrau 10b = 13 degraus) e a recuperação repete a etapa anterior nas semanas 4, 8, 12 e 16, o que dá 17 semanas (antes 12). Consequência das decisões 14, 15 e 16; curva recalculada. Regras: R-PLN-05, R-PLN-12, R-PLN-13. Arquivo: 10.
 
-## C. Decisões menores por arquivo (DEC-38 a DEC-48)
+## C. Decisões menores por arquivo (DEC-38 a DEC-50)
 
 38. **DEC-38 (01).** Limiares de [Honert 2020] como ponto de partida [P]; entrevista aceita minutos por semana (7 min/km), com iniciante automático abaixo de 12 meses; só 5 e 10 km na v1 (meia e maratona fora da entrevista de nível); sem autoclassificação como critério (o atleta pode pedir nível menor); taxonomia por exposição acumulada fora do `CLS-v1`.
 39. **DEC-39 (02).** P2: bloqueio por Q2, Q3 ou Q7 aceito; P3: "liberado com restrições" mantém o bloqueio; P4: `leve_moderada` (Z1) durante os 6 meses de validade; P5: campos livres de condições e medicamentos exibidos mas não armazenados; P6: diretriz brasileira só informativa; P7: autodeclaração com data e fonte, sem anexo; P8: SAMU 192; P9: verificação do ePARmed-X+ em português é tarefa da Fase 3.

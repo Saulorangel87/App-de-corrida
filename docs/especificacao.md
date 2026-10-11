@@ -129,6 +129,8 @@ Antes de receber qualquer treino, o atleta responde uma entrevista em etapas, co
 
 ## 9. Fase 6 — Telas
 
+> **Estado (2026-10-11):** todas as telas listadas abaixo existem em código (`apps/web/src/routes/`), além de plano com posicionamento na escada, avaliação a cada 2 semanas, perfil com foto e troca de e-mail, e as páginas de Privacidade e Termos. O que mudou depois desta especificação está em `AGENTS.md` (decisões) e `docs/pesquisa/decisoes.md` (DEC-48 a DEC-50); o mapa de telas e da API, em `docs/fase-6-passagem.md`.
+
 O design já existe no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0. Use o Figma MCP para ler as telas e os tokens antes de implementar.
 
 **Telas prontas:**
@@ -194,7 +196,9 @@ Boas práticas de segurança não são opcionais. Nenhuma fase é aprovada se de
 - Headers de segurança na API e no front: HSTS, `X-Content-Type-Options: nosniff`, `Referrer-Policy` e `Permissions-Policy`.
 - CORS restrito ao domínio do front, com credenciais.
 - Validação de toda entrada com Zod no backend e consultas só pelo Drizzle, sem SQL montado com texto do usuário.
-- Logs sem dados pessoais ou de saúde, sem senhas, tokens ou cookies.
+- Logs sem dados pessoais ou de saúde, sem senhas, tokens ou cookies. Erros do banco entram no log só com tipo e código (a mensagem do driver traz a consulta e os valores).
+- Limite de e-mails por destinatário nos fluxos sem login (cadastro, reenvio, "esqueci a senha"), além do limite por IP.
+- Auditoria de segurança de 2026-10-11 e lista de verificação do deploy: `docs/auditoria-seguranca.md`.
 
 ### 10.5 Repositório e CI
 - `.gitignore` com `.env` e variantes desde o primeiro commit. Só o `.env.example`, sem valores reais, entra no repositório.

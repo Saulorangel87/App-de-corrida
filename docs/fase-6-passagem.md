@@ -1,6 +1,6 @@
 # Fase 6 — Telas: passagem de contexto
 
-Estado em 2026-10-10: Fases 0 a 5 aprovadas pelo dono. Falta a Fase 6 (telas) e o deploy. Quem continuar (Claude, agy ou outro agente) deve ler, nesta ordem: `AGENTS.md`, `docs/especificacao.md` (seções 9 e 10), `docs/adr/0006-acompanhamento-diario.md` e este arquivo.
+Estado em 2026-10-11: Fases 0 a 5 aprovadas pelo dono; as telas da Fase 6 estão todas em código e passaram por auditoria de segurança (`docs/auditoria-seguranca.md`); faltam a revisão final do dono e o deploy. Quem continuar (Claude, agy ou outro agente) deve ler, nesta ordem: `AGENTS.md`, `docs/especificacao.md` (seções 9 e 10), `docs/adr/0006-acompanhamento-diario.md` e este arquivo.
 
 ## Regras que valem para toda tela
 1. **Figma é só referência de estilo (decisão do dono, 2026-10-10).** Não é mais necessário desenhar nem manter o Figma em dia: as telas novas são feitas direto em código, na mesma linha visual das telas de acesso já implementadas (`apps/web/src/components/auth-*.tsx`, tokens da seção 9 da especificação). Arquivo de referência: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0 (frames: Painel `2:2`, Login `6:2`). O dono revisa o resultado rodando o app; ajustes pedidos por ele valem mais que o desenho.
@@ -41,13 +41,14 @@ Pendências do arquivo do Figma: **encerradas por decisão do dono** (o Figma se
 | `/entrar`, `/esqueci-a-senha`, `/redefinir-senha`, `/verificar-email` | acesso e recuperação de conta | `e2e/acesso.spec.ts`, `e2e/recuperar-conta.spec.ts` |
 | `/entrevista` | 8 etapas, salva cada uma (`PUT /interview/:step`), retoma de onde parou, envia (`POST /interview/submit`); triagem PAR-Q+ com o texto oficial inteiro; menor de 18 mostra aviso e exclusão da conta | `e2e/entrevista.spec.ts` |
 | `/resultado` | nível e explicação, triagem (texto oficial do PAR-Q+ conforme o estado), autodeclaração de avaliação (R-TRI-05), plano atribuído | `e2e/entrevista.spec.ts` |
-| `/painel` | segue o frame `2:2` do Figma, adaptado: menu lateral (desktop) ou cabeçalho (celular); saudação com semana e objetivo; cartões de resumo da semana (distância, tempo em treino, ritmo médio e sono médio, só do que o atleta registrou); treino de hoje (decisão do motor, motivo e fontes, etapa da escada); volume semanal por dia (feito x planejado); plano da semana; objetivo e progresso do plano; treinos recentes; pergunta de saúde e check-in; sem perfil (404) leva à entrevista; sem plano mostra o motivo | `e2e/painel.spec.ts` |
+| `/painel` | segue o frame `2:2` do Figma, adaptado: menu lateral (desktop) ou cabeçalho (celular); saudação com semana e objetivo; cartões de resumo da semana (distância, tempo em treino, ritmo médio e sono médio, só do que o atleta registrou); treino de hoje (decisão do motor, motivo e fontes, etapa da escada); volume semanal por dia (feito x planejado); plano da semana; objetivo e progresso do plano; treinos recentes; pergunta de saúde e check-in; sem perfil (404) leva à entrevista; sem plano mostra o motivo, ou o cartão "plano concluído" com o próximo objetivo; avaliação "Como foi?" a cada 2 semanas e a sugestão de reavaliar quando foi fácil (R-PLN-22) | `e2e/painel.spec.ts` |
 | `/checkin` | check-in do dia (< 30 s, tudo opcional); pergunta a dor ao caminhar só quando o motor pede (`questions`); grava com `PUT /checkins/:date` e volta ao painel com o dia recalculado | `e2e/painel.spec.ts` |
 | `/registro/$id` | pós-treino: fez ou não, duração, distância, esforço CR-10 (1 a 10; rótulos de R-CRG-01), mapa do corpo clicável (frente/costas, lado direito/esquerdo), por local: intensidade, tipo e perguntas de R-DOR-15, sintomas cardiopulmonares e de calor, comentário; grava com `PUT /workouts/:id/log` e mostra a decisão do dia seguinte | `e2e/registro.spec.ts` |
-| `/configuracoes` | conta (nome, e-mail, idioma), aparelhos conectados (encerrar sessão), triagem e reavaliação, pausa por dor/lesão/doença e registro da liberação profissional (R-PRG-09), refazer a entrevista, baixar meus dados (JSON) e excluir a conta com senha | `e2e/configuracoes.spec.ts` |
+| `/configuracoes` | perfil (foto reduzida no aparelho e enviada como JPEG, nome editável, troca de e-mail com senha e link no endereço novo), idioma, aparelhos conectados (encerrar sessão), triagem e reavaliação, pausa por dor/lesão/doença e registro da liberação profissional (R-PRG-09), refazer a entrevista, baixar meus dados (JSON) e excluir a conta com senha | `e2e/configuracoes.spec.ts` |
 | `/historico` | resumo do período (treinos feitos, minutos, sono médio), colunas de treinos feitos e de carga semanal (sRPE × minutos), sono por dia, dor registrada (sem o registro "geral"); período de 4, 8 ou 12 semanas; leitura por coluna e tabela equivalente | `e2e/historico.spec.ts` |
 | `/treino/$id` | detalhe do treino agendado: escada da sessão, razão, aquecimento/principal/volta à calma, intensidade, parâmetros do nível do atleta, frequência, limites, progressão/regressão, evidência (com valores provisórios [P] à parte) e fontes com link do DOI; decisão do dia só para hoje | `e2e/treino.spec.ts` |
 | `/painel` e `/configuracoes` (pergunta de saúde) | "Mudou algo na sua saúde?" (R-TRI-11): aparece no painel só quando o servidor manda (`screening.healthCheckDue`, a cada 7 dias) e fica sempre em Configurações enquanto houver liberação; "não" grava a data e adia 7 dias, "sim" pede confirmação, expira a triagem e leva ao resultado para refazer o PAR-Q+ | `e2e/saude.spec.ts` |
+| `/confirmar-novo-email` | abre o link enviado ao endereço novo (`#token=`), confirma uma vez (`POST /auth/email-change/confirm`), mostra o resultado e leva ao login; link inválido ou expirado mostra o aviso | `e2e/configuracoes.spec.ts` |
 | `/privacidade`, `/termos` | Política de Privacidade e Termos de Uso, públicos (sem login e sem chamar a API): índice, data e versão, link para o outro documento; no idioma da tela (português ou inglês), com aviso de que vale o português; os aceites do cadastro ligam aos dois (outra aba) | `e2e/legal.spec.ts` |
 | `/plano` | plano completo: resumo (semana atual, treinos feitos até hoje, término), semana a semana; semana atual aberta, passadas recolhidas com o que foi feito, futuras só com o contorno do modelo (fase, recuperação, polimento, prova, etapa da escada) marcadas como previsão e sem treinos inventados; cada treino leva a `/treino/$id`; atalho no painel e no cabeçalho | `e2e/plano.spec.ts` |
 
@@ -71,20 +72,25 @@ Pendências conhecidas desta parte: o texto do PAR-Q+ fica só em português (é
 | `POST /profile/screening/health-change` | corpo `{ changed, date }`; sim → triagem `EXPIRADO` (`saude_mudou`), o dia do motor trava e o atleta refaz a entrevista; não → só registra a resposta |
 | `GET /plan/overview/:date` | plano inteiro: `plan` (modelo, objetivo, nível, datas), `currentWeek` e `weeks[]` (`state` past/current/upcoming, `projected`, `sessions`); semanas futuras vêm sem sessões porque dependem do que o atleta fizer; na escada, etapa repetida desloca a previsão |
 | `GET /workouts/:id` | detalhe do treino agendado do próprio atleta: sessão, registro, recorte do catálogo (razão, intensidade, blocos, nível, limites, evidência) e referências; de outro atleta: 404 |
-| `GET /account/export` | exportação LGPD (JSON) |
+| `GET /account/export` | exportação LGPD (JSON, inclui a foto em base64) |
+| `PATCH /auth/profile` | nome do perfil |
+| `POST /auth/email-change` | pede a troca de e-mail (senha atual; link no endereço novo; resposta igual exista ou não conta) |
+| `POST /auth/email-change/confirm` | confirma pelo link (sem sessão); troca o e-mail e encerra as sessões |
+| `PUT /profile/photo`, `GET /profile/photo`, `DELETE /profile/photo` | foto de perfil: corpo `image/jpeg` de até 60 KB, só do dono |
+| `GET /plan/review/:date`, `PUT /plan/review/:date` | avaliação do bloco de 2 semanas: `{ due, calendarWeek, felt, advanceSuggested }`; corpo `{ felt: facil|no_ponto|puxado|nao_consegui }` |
 
 `:date` é a data **local** do atleta (`AAAA-MM-DD`); o servidor só aceita hoje ±1 dia. Esquemas de entrada: `packages/shared/src/{auth,interview,training}.ts` (Zod, reutilizáveis no front).
 Erros a tratar com tela própria: `409 INTERVIEW_REQUIRED`, `400 UNDERAGE` (`details.canDeleteAccount`), `429 RATE_LIMITED`, `401`.
 
 ## Estado do front
-`apps/web` é só o esqueleto do Vite (React + TypeScript, `src/main.tsx`). Ainda não há roteador, cliente de API, i18n nem componentes. Decisões a tomar e registrar em ADR curto no início da Fase 6: roteador, biblioteca de formulários, i18n, gerência de estado do servidor.
+`apps/web` está completo para o atleta: React 19, Vite 6, TanStack Router (rotas por arquivo) e Query, React Hook Form com os esquemas Zod de `@passo/shared`, i18next (pt-BR e en), Tailwind 4 (ADR 0007). Moldura das telas logadas em `components/flow-layout.tsx` (menu lateral no desktop, menu hambúrguer no celular). Testes de interface: `pnpm --filter @passo/web e2e`; conferência geral: `pnpm check`.
 
 ## Deploy pendente (fora da Fase 6, mas bloqueia o uso real)
 - Dockerfile da API (multi-stage, usuário não root, arm64) e serviço no `docker-compose.yml` da VPS.
 - Rota nova no túnel Cloudflare (`letsgorun-api.devsaulo.com.br` → container da API; nenhuma porta pública nova).
-- Aplicar na VPS as migrações 0008 e 0009 (ver `ops/README.md`; procedimento: `git archive` para a VPS e `tsx src/migrate-cli.ts` dentro de `node:22-alpine` na rede `app-de-corrida_data`). **Pedir OK do dono antes de mexer no banco de produção.**
+- Aplicar na VPS as migrações 0008 a 0013 (ver `ops/README.md`; procedimento: `git archive` para a VPS e `tsx src/migrate-cli.ts` dentro de `node:22-alpine` na rede `app-de-corrida_data`). **Pedir OK do dono antes de mexer no banco de produção.**
 - Front no Cloudflare Pages (`letsgorun.devsaulo.com.br`).
-- Secrets do Resend (e-mails de auth) ainda não testados em produção.
+- Chave do Resend e verificação do domínio de envio (SPF e DKIM): a API recusa iniciar em produção sem `RESEND_API_KEY`. Lista de verificação completa do deploy em `docs/auditoria-seguranca.md`, seção 4.
 
 ## Pendências do dono
 - Confirmar (ou manter os padrões) dos itens dos ADRs 0004, 0005 e 0006.

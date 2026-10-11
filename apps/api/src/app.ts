@@ -7,7 +7,7 @@ import { sql } from "drizzle-orm";
 import type { Database } from "@passo/db";
 import { rateLimitConfig } from "./config";
 import { AppError, errors } from "./lib/errors";
-import type { Logger } from "./lib/logger";
+import { describeError, type Logger } from "./lib/logger";
 import type { Mailer } from "./lib/mailer";
 import { requireSession, sessionCookie } from "./middleware/session";
 import { apiSecureHeaders, limit, originCheck } from "./middleware/security";
@@ -54,7 +54,7 @@ export function createApp(deps: AppDeps) {
       task().catch((error: unknown) =>
         logger.error("background_task_failed", {
           task: name,
-          error: error instanceof Error ? error.message : "unknown",
+          error: describeError(error),
         }),
       );
     });
@@ -147,7 +147,7 @@ export function createApp(deps: AppDeps) {
     }
     logger.error("unhandled_error", {
       requestId: c.var.requestId,
-      error: err instanceof Error ? err.message : "unknown",
+      error: describeError(err),
       stack: !production && err instanceof Error ? err.stack : undefined,
     });
     return c.json({ error: { code: "INTERNAL_ERROR", message: "Erro interno. Tente de novo." } }, 500);

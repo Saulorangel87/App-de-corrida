@@ -211,3 +211,21 @@ test("celular: o detalhe não rola para o lado", async ({ browser }) => {
   expect(overflow).toBe(false);
   await ctx.close();
 });
+
+test("fonte com endereço que não é https não vira link (javascript:, data:, http:)", async ({ page }) => {
+  await mockApi(page, {
+    workout: workoutBody({
+      references: [
+        { citation: "Fonte com javascript.", doi: null, url: "javascript:alert(1)", studyType: "ensaio" },
+        { citation: "Fonte com data.", doi: null, url: "data:text/html,<script>alert(1)</script>", studyType: "ensaio" },
+        { citation: "Fonte com http simples.", doi: null, url: "http://exemplo.org/x", studyType: "ensaio" },
+        { citation: "Fonte boa.", doi: null, url: "https://exemplo.org/boa", studyType: "ensaio" },
+      ],
+    }),
+  });
+  await page.goto("/treino/s1");
+  const links = page.getByRole("link", { name: "Abrir fonte" });
+  await expect(links).toHaveCount(1);
+  await expect(links.first()).toHaveAttribute("href", "https://exemplo.org/boa");
+  await expect(page.getByText("Fonte com javascript.")).toBeVisible(); // a citação continua à mostra
+});

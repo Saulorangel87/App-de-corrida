@@ -167,6 +167,9 @@ describe("foto de perfil", () => {
     expect(got.headers.get("content-type")).toBe("image/jpeg");
     expect(got.headers.get("cache-control")).toMatch(/private/);
     expect(got.headers.get("x-content-type-options")).toBe("nosniff");
+    // os cabeçalhos de segurança globais também valem para a imagem (nada pode ser executado nem embutido)
+    expect(got.headers.get("content-security-policy")).toContain("default-src 'none'");
+    expect(got.headers.get("content-disposition")).toBe("inline");
     expect(new Uint8Array(await got.arrayBuffer()).byteLength).toBe(3000);
 
     const me = await json(await t.request("GET", "/auth/me", undefined, a.cookie));
