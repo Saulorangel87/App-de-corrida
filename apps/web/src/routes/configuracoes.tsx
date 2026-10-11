@@ -293,7 +293,7 @@ function DevicesCard() {
                 type="button"
                 onClick={() => end.mutate(s.id)}
                 disabled={end.isPending}
-                className="shrink-0 text-sm font-semibold text-gray-600 hover:text-[#FF5A1F]"
+                className="shrink-0 text-sm font-semibold text-gray-600 hover:text-[#C2410C]"
               >
                 {t("settings.endSession")}
               </button>
@@ -335,7 +335,7 @@ function HealthCard({ profile }: { profile: Profile }) {
   return (
     <Card title={t("settings.healthTitle")}>
       <div className="space-y-1">
-        <Link to="/resultado" className="font-semibold text-[#FF5A1F] hover:underline">
+        <Link to="/resultado" className="font-semibold text-[#C2410C] hover:underline">
           {t("settings.screeningLink")}
         </Link>
         <p className="text-sm text-gray-600">{t("settings.nextEvaluation", { date: d(profile.nextEvaluationDate) })}</p>
@@ -403,7 +403,7 @@ function HealthCard({ profile }: { profile: Profile }) {
       <div className="space-y-2 rounded-xl bg-[#F5F6F8] p-4">
         <h3 className="text-sm font-bold text-[#0F172A]">{t("settings.redoTitle")}</h3>
         <p className="text-sm">{t("settings.redoText")}</p>
-        <Link to="/entrevista" className="inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+        <Link to="/entrevista" className="inline-block text-sm font-semibold text-[#C2410C] hover:underline">
           {t("settings.redoCta")}
         </Link>
       </div>

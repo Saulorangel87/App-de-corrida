@@ -65,7 +65,7 @@ function LogPage() {
       <FlowLayout>
         <div className="rounded-2xl border border-gray-200 bg-white p-5">
           <p className="text-gray-700">{t("log.notFound")}</p>
-          <Link to="/painel" className="mt-3 inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+          <Link to="/painel" className="mt-3 inline-block text-sm font-semibold text-[#C2410C] hover:underline">
             {t("log.backToPanel")}
           </Link>
         </div>
@@ -356,7 +356,7 @@ function RegionCard({
     <section className="space-y-4 rounded-xl border border-orange-200 p-4" aria-label={title}>
       <div className="flex items-start justify-between gap-3">
         <h2 className="text-base font-bold text-[#0F172A]">{title}</h2>
-        <button type="button" onClick={onRemove} className="text-xs font-semibold text-gray-500 hover:text-[#FF5A1F]">
+        <button type="button" onClick={onRemove} className="text-xs font-semibold text-gray-500 hover:text-[#C2410C]">
           {t("log.removeRegion")}
         </button>
       </div>
@@ -419,7 +419,7 @@ function Done({ result }: { result: Result }) {
         </div>
         <Link
           to="/painel"
-          className="flex w-full items-center justify-center rounded-xl bg-[#FF5A1F] px-4 py-3 text-[15px] font-bold text-white transition-colors hover:bg-[#e6511a]"
+          className="flex w-full items-center justify-center rounded-xl bg-[#C2410C] px-4 py-3 text-[15px] font-bold text-white transition-colors hover:bg-[#9A3412]"
         >
           {t("log.backToPanel")}
         </Link>

@@ -61,7 +61,7 @@ export function BodyMap({ selected, onToggle, label }: Props) {
             aria-pressed={view === v}
             onClick={() => setView(v)}
             className={`rounded-xl border px-3 py-2 text-sm font-semibold transition-colors ${
-              view === v ? "border-[#FF5A1F] bg-orange-50 text-[#FF5A1F]" : "border-gray-300 bg-white text-[#111827] hover:border-gray-400"
+              view === v ? "border-[#FF5A1F] bg-orange-50 text-[#C2410C]" : "border-gray-300 bg-white text-[#111827] hover:border-gray-400"
             }`}
           >
             {t(v === "front" ? "body.front" : "body.back")}

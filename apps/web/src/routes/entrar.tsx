@@ -117,7 +117,7 @@ function LoginForm({ onGoToRegister }: { onGoToRegister: () => void }) {
           placeholder={t("auth.passwordPlaceholder")}
           error={field(errors.password?.message, t("validation.passwordRequired"))}
           aside={
-            <Link to="/esqueci-a-senha" className="text-xs font-semibold text-[#FF5A1F] hover:underline">
+            <Link to="/esqueci-a-senha" className="text-xs font-semibold text-[#C2410C] hover:underline">
               {t("auth.forgot")}
             </Link>
           }
@@ -128,15 +128,15 @@ function LoginForm({ onGoToRegister }: { onGoToRegister: () => void }) {
         </div>
         <button
           disabled={login.isPending}
-          className="w-full bg-[#FF5A1F] hover:bg-[#e6511a] disabled:opacity-70 text-white font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm flex justify-center items-center"
+          className="w-full bg-[#C2410C] hover:bg-[#9A3412] disabled:opacity-70 text-white font-semibold py-2.5 px-4 rounded-xl transition-colors text-sm flex justify-center items-center"
         >
           {login.isPending ? t("auth.signingIn") : t("auth.signIn")}
         </button>
       </form>
 
       <div className="mt-4 text-center">
-        <button type="button" onClick={onGoToRegister} className="text-sm font-semibold text-[#111827] hover:text-[#FF5A1F] transition-colors">
-          {t("auth.noAccount")} <span className="text-[#FF5A1F]">{t("auth.createFree")}</span>
+        <button type="button" onClick={onGoToRegister} className="text-sm font-semibold text-[#111827] hover:text-[#C2410C] transition-colors">
+          {t("auth.noAccount")} <span className="text-[#C2410C]">{t("auth.createFree")}</span>
         </button>
       </div>
     </div>

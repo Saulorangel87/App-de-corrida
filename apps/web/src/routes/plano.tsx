@@ -51,7 +51,7 @@ function PlanPage() {
         <section className="rounded-2xl border border-gray-200 bg-white p-5">
           <h2 className="text-lg font-bold tracking-tight text-[#0F172A]">{t("panel.noPlanTitle")}</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-gray-700">{t("panel.noPlanText")}</p>
-          <Link to="/resultado" className="mt-4 inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+          <Link to="/resultado" className="mt-4 inline-block text-sm font-semibold text-[#C2410C] hover:underline">
             {t("panel.seeProfile")}
           </Link>
         </section>

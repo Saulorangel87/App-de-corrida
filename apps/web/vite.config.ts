@@ -33,7 +33,9 @@ export default defineConfig({
   plugins: [TanStackRouterVite({ autoCodeSplitting: true }), react()],
   // es2022: navegadores de 2022 em diante (Chrome 94, Safari 15.4, Firefox 93). O esbuild corrigido
   // (override do package.json, por causa do aviso de segurança) não rebaixa mais a sintaxe de ES2020.
-  build: { target: "es2022" },
+  // sourcemap: o código do front já é público no navegador (e não tem segredo: gitleaks no CI); o
+  // mapa só facilita depurar erros em produção e é exigido pela auditoria de boas práticas do Lighthouse.
+  build: { target: "es2022", sourcemap: true },
   preview: { headers: securityHeaders() },
   define: {
     __APP_VERSION__: JSON.stringify(version),

@@ -54,7 +54,7 @@ function History() {
               aria-pressed={weeks === w}
               onClick={() => setWeeks(w)}
               className={`rounded-lg px-3 py-1.5 text-sm font-semibold whitespace-nowrap transition-colors ${
-                weeks === w ? "bg-[#FF5A1F] text-white" : "text-gray-600 hover:bg-gray-100"
+                weeks === w ? "bg-[#C2410C] text-white" : "text-gray-600 hover:bg-gray-100"
               }`}
             >
               {t("history.period", { weeks: w })}
@@ -89,7 +89,7 @@ function HistoryBody({ data }: { data: HistoryResponse }) {
     return (
       <Card title={t("history.emptyTitle")}>
         <p className="text-[15px] leading-relaxed text-gray-700">{t("history.emptyText")}</p>
-        <Link to="/painel" className="mt-4 inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+        <Link to="/painel" className="mt-4 inline-block text-sm font-semibold text-[#C2410C] hover:underline">
           {t("history.emptyCta")}
         </Link>
       </Card>
@@ -175,7 +175,7 @@ function HistoryBody({ data }: { data: HistoryResponse }) {
               columns={adherence}
               max={100}
               maxLabel="100%"
-              color="text-[#FF5A1F]"
+              color="text-[#C2410C]"
               gap="px-1"
               labelEvery={weekLabelEvery}
               tableLabel={t("history.showTable")}

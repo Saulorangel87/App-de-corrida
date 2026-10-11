@@ -1,0 +1,18 @@
+# Let's Go Run: aplicativo com conta. Só entrada, privacidade e termos são públicos.
+User-agent: *
+Allow: /entrar
+Allow: /privacidade
+Allow: /termos
+Disallow: /painel
+Disallow: /checkin
+Disallow: /registro
+Disallow: /treino
+Disallow: /plano
+Disallow: /historico
+Disallow: /entrevista
+Disallow: /resultado
+Disallow: /configuracoes
+Disallow: /esqueci-a-senha
+Disallow: /redefinir-senha
+Disallow: /verificar-email
+Disallow: /confirmar-novo-email

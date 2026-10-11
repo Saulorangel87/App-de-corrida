@@ -13,7 +13,7 @@ export function DecisionSources({ sources, dark = false }: { sources: string[]; 
   if (list.length === 0) return null;
   return (
     <details className="mt-3 text-sm">
-      <summary className="cursor-pointer font-semibold text-[#FF5A1F] hover:underline">{t("workout.sourcesTitle")}</summary>
+      <summary className="cursor-pointer font-semibold text-[#C2410C] hover:underline">{t("workout.sourcesTitle")}</summary>
       <ul className={`mt-2 list-disc space-y-1 pl-5 ${dark ? "text-[#cbd5e1]" : "text-gray-700"}`}>
         {list.map((s) => (
           <li key={s}>{withYear(s)}</li>

@@ -71,7 +71,7 @@ export const CheckField = forwardRef<HTMLInputElement, CheckFieldProps>(function
           type="checkbox"
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          className="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#FF5A1F] focus:ring-[#FF5A1F] cursor-pointer"
+          className="mt-0.5 w-4 h-4 rounded border-gray-300 text-[#C2410C] focus:ring-[#FF5A1F] cursor-pointer"
           {...rest}
         />
         <span className={`text-[13px] font-medium leading-snug ${error ? "text-red-600" : "text-[#111827]"}`}>{label}</span>

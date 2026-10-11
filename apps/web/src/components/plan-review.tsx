@@ -78,7 +78,7 @@ export function PlanReviewCard({ date }: { date: string }) {
             {t("review.suggestTitle")}
           </h2>
           <p className="text-sm leading-relaxed text-gray-700">{t("review.suggestText")}</p>
-          <Link to="/entrevista" className="inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+          <Link to="/entrevista" className="inline-block text-sm font-semibold text-[#C2410C] hover:underline">
             {t("review.suggestCta")}
           </Link>
         </section>

@@ -1,0 +1,11 @@
+# Let's Go Run
+
+> Aplicativo web gratuito de treino de corrida personalizado. A pessoa responde a uma entrevista (com triagem de saúde PAR-Q+) e recebe um plano de treino montado por um motor de regras, com base em pesquisa científica, e ajustado a cada dia pelo check-in de sono, dor e cansaço. Nenhuma IA gera os treinos. O app não faz diagnóstico e não substitui a orientação de um profissional.
+
+O uso exige conta (maiores de 18 anos) e as áreas do atleta não são públicas. Só as páginas abaixo são abertas.
+
+## Páginas públicas
+
+- [Entrar ou criar conta](https://letsgorun.devsaulo.com.br/entrar): acesso e cadastro
+- [Política de Privacidade](https://letsgorun.devsaulo.com.br/privacidade): quais dados são tratados, para quê, e como exportar ou excluir
+- [Termos de Uso](https://letsgorun.devsaulo.com.br/termos): regras de uso do aplicativo

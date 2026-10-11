@@ -16,7 +16,7 @@ const pill =
   "flex min-h-11 cursor-pointer select-none items-center justify-center rounded-xl border px-3 py-2 text-sm font-semibold transition-colors " +
   "peer-focus-visible:ring-2 peer-focus-visible:ring-[#FF5A1F]/40 peer-focus-visible:border-[#FF5A1F]";
 const pillOff = "border-gray-300 bg-white text-[#111827] hover:border-gray-400";
-const pillOn = "border-[#FF5A1F] bg-orange-50 text-[#FF5A1F]";
+const pillOn = "border-[#FF5A1F] bg-orange-50 text-[#C2410C]";
 
 type Option<V extends string | number | boolean> = { value: V; label: string; hint?: string };
 

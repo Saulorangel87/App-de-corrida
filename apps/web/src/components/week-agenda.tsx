@@ -28,7 +28,7 @@ export function WeekAgenda({ weekStart, sessions, today }: { weekStart: string; 
           <li key={date} className={`flex gap-3 py-2 text-sm ${isToday ? "font-semibold" : ""}`}>
             <div className="w-16 shrink-0 text-gray-500">
               {formatDate(date, i18n.language, { weekday: "short", day: "numeric" })}
-              {isToday && <span className="block text-[10px] font-bold uppercase text-[#FF5A1F]">{t("panel.todayTag")}</span>}
+              {isToday && <span className="block text-[10px] font-bold uppercase text-[#C2410C]">{t("panel.todayTag")}</span>}
             </div>
             <div className="min-w-0 flex-1 space-y-0.5">
               {items.length === 0 ? (
@@ -51,7 +51,7 @@ function SessionLine({ s, lang }: { s: SessionView; lang: string }) {
   return (
     <div className="flex items-baseline justify-between gap-2">
       <span className={`min-w-0 ${tone}`}>
-        <Link to="/treino/$id" params={{ id: s.id }} className="hover:text-[#FF5A1F] hover:underline">
+        <Link to="/treino/$id" params={{ id: s.id }} className="hover:text-[#C2410C] hover:underline">
           {localized(s.name, lang, s.slug)}
         </Link>
         {s.optional && <span className="ml-1 text-xs font-normal text-gray-400">({t("panel.optional")})</span>}

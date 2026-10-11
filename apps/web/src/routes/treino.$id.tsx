@@ -49,7 +49,7 @@ function WorkoutPage() {
           <p className="text-gray-700">
             {notFound ? t("workout.notFound") : workout.error ? errorText(workout.error) : t("workout.loadError")}
           </p>
-          <Link to="/painel" className="mt-3 inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+          <Link to="/painel" className="mt-3 inline-block text-sm font-semibold text-[#C2410C] hover:underline">
             {t("workout.back")}
           </Link>
         </div>
@@ -81,7 +81,7 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
 
   return (
     <FlowLayout width="max-w-[760px]">
-      <Link to="/painel" className="mb-3 inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+      <Link to="/painel" className="mb-3 inline-block text-sm font-semibold text-[#C2410C] hover:underline">
         ← {t("workout.back")}
       </Link>
 
@@ -116,7 +116,7 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
             <Link
               to="/registro/$id"
               params={{ id: session.id }}
-              className="mt-4 flex w-full items-center justify-center rounded-xl bg-[#FF5A1F] px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#e6511a]"
+              className="mt-4 flex w-full items-center justify-center rounded-xl bg-[#C2410C] px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#9A3412]"
             >
               {session.log ? t("panel.logEdit") : t("panel.logCta")}
             </Link>
@@ -303,7 +303,7 @@ function Evidence({ evidence, references }: { evidence: WorkoutDetailResponse["d
                           href={href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="whitespace-nowrap font-semibold text-[#FF5A1F] hover:underline"
+                          className="whitespace-nowrap font-semibold text-[#C2410C] hover:underline"
                         >
                           {t("workout.openSource")}
                         </a>

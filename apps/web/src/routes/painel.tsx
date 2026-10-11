@@ -196,7 +196,7 @@ function Panel() {
           <Link
             to="/registro/$id"
             params={{ id: mainSession.id }}
-            className="hidden h-11 items-center justify-center gap-2 rounded-xl bg-[#FF5A1F] px-[18px] text-sm font-semibold text-white transition-colors hover:bg-[#e6511a] sm:inline-flex"
+            className="hidden h-11 items-center justify-center gap-2 rounded-xl bg-[#C2410C] px-[18px] text-sm font-semibold text-white transition-colors hover:bg-[#9A3412] sm:inline-flex"
           >
             <Footprints size={18} aria-hidden="true" />
             {mainSession.log ? t("panel.logEdit") : t("panel.logCta")}
@@ -244,7 +244,7 @@ function NoPlan({ completed }: { completed: { objective: string } | null }) {
           {t("review.completedTitle", { objective: t(`result.objectives.${completed.objective}`, { defaultValue: completed.objective }) })}
         </h2>
         <p className="mt-2 text-[15px] leading-relaxed text-gray-700">{t("review.completedText")}</p>
-        <Link to="/entrevista" className="mt-4 inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+        <Link to="/entrevista" className="mt-4 inline-block text-sm font-semibold text-[#C2410C] hover:underline">
           {t("review.completedCta")}
         </Link>
       </section>
@@ -254,7 +254,7 @@ function NoPlan({ completed }: { completed: { objective: string } | null }) {
     <section className={card}>
       <h2 className="text-lg font-bold tracking-tight text-[#0F172A]">{t("panel.noPlanTitle")}</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-gray-700">{t("panel.noPlanText")}</p>
-      <Link to="/resultado" className="mt-4 inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+      <Link to="/resultado" className="mt-4 inline-block text-sm font-semibold text-[#C2410C] hover:underline">
         {t("panel.seeProfile")}
       </Link>
     </section>
@@ -283,7 +283,7 @@ function CheckinPrompt({ day }: { day: DayResponse }) {
         className={`flex shrink-0 items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold transition-colors ${
           done
             ? "border border-green-300 bg-white text-green-800 hover:bg-green-100"
-            : "bg-[#FF5A1F] text-white hover:bg-[#e6511a]"
+            : "bg-[#C2410C] text-white hover:bg-[#9A3412]"
         }`}
       >
         {done ? t("panel.checkinEdit") : t("panel.checkinCta")}
@@ -312,7 +312,7 @@ function StatsRow({ week, sleep }: { week: WeekResponse; sleep: { hours: number 
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard
         icon={RouteIcon}
-        tone="bg-[#FFEDE5] text-[#FF5A1F]"
+        tone="bg-[#FFEDE5] text-[#C2410C]"
         label={t("dash.stats.distance")}
         value={distance > 0 ? number(distance) : "—"}
         unit={distance > 0 ? "km" : undefined}
@@ -436,7 +436,7 @@ function TodayCard({ day }: { day: DayResponse }) {
           <Link
             to="/registro/$id"
             params={{ id: mainSession.id }}
-            className="flex h-[46px] flex-1 items-center justify-center rounded-xl bg-[#FF5A1F] px-4 text-sm font-bold text-white transition-colors hover:bg-[#e6511a]"
+            className="flex h-[46px] flex-1 items-center justify-center rounded-xl bg-[#C2410C] px-4 text-sm font-bold text-white transition-colors hover:bg-[#9A3412]"
           >
             {mainSession.log ? t("panel.logEdit") : t("panel.logCta")}
           </Link>
@@ -462,7 +462,7 @@ function Complementary({ day }: { day: DayResponse }) {
       <ul className="space-y-2">
         {items.map((s) => (
           <li key={s.id} className="flex items-center justify-between gap-3 text-sm">
-            <Link to="/treino/$id" params={{ id: s.id }} className="font-medium text-[#0F172A] hover:text-[#FF5A1F] hover:underline">
+            <Link to="/treino/$id" params={{ id: s.id }} className="font-medium text-[#0F172A] hover:text-[#C2410C] hover:underline">
               {localized(s.name, i18n.language, s.slug)}
             </Link>
             <span className="text-gray-500">{s.allowed === false ? t("panel.notAllowedToday") : t("panel.minutes", { count: s.minutes })}</span>
@@ -544,7 +544,7 @@ function WeeklyVolume({ week, today }: { week: WeekResponse; today: string }) {
                 )}
                 {hDone > 0 && <rect x="0" y={H - hDone} width="52" height={hDone} rx="7" fill="#FF5A1F" />}
               </svg>
-              <span className={`pb-1 text-xs font-semibold ${isToday ? "text-[#FF5A1F]" : "text-[#94A3B8]"}`}>{capitalize(label)}</span>
+              <span className={`pb-1 text-xs font-semibold ${isToday ? "text-[#C2410C]" : "text-[#94A3B8]"}`}>{capitalize(label)}</span>
             </div>
           );
         })}
@@ -596,7 +596,7 @@ function GoalCard({ goal, today, currentWeek }: { goal: NonNullable<ProfileSumma
             aria-label={t("dash.goal.progress")}
           />
         </div>
-        <Link to="/resultado" className="inline-block text-sm font-semibold text-[#FF5A1F] hover:underline">
+        <Link to="/resultado" className="inline-block text-sm font-semibold text-[#C2410C] hover:underline">
           {t("panel.seeProfile")}
         </Link>
       </div>
@@ -607,7 +607,7 @@ function GoalCard({ goal, today, currentWeek }: { goal: NonNullable<ProfileSumma
 function Tile({ value, label }: { value: number; label: string }) {
   return (
     <div className="rounded-xl bg-[#FFEDE5] px-2 py-3 text-center">
-      <p className="text-[26px] font-extrabold leading-none tracking-tight text-[#FF5A1F]">{value}</p>
+      <p className="text-[26px] font-extrabold leading-none tracking-tight text-[#C2410C]">{value}</p>
       <p className="mt-1 text-[11px] font-semibold text-[#C2410C]">{label}</p>
     </div>
   );
@@ -618,7 +618,7 @@ function Tile({ value, label }: { value: number; label: string }) {
 const KIND_CHIP: Record<string, string> = {
   rodagem: "bg-[#DCFCE7] text-[#16A34A]",
   regenerativo: "bg-[#DCFCE7] text-[#16A34A]",
-  qualidade: "bg-[#FFEDE5] text-[#FF5A1F]",
+  qualidade: "bg-[#FFEDE5] text-[#C2410C]",
   longao: "bg-[#DBEAFE] text-[#2563EB]",
   "caminhada-corrida": "bg-[#EDE9FE] text-[#7C3AED]",
   forca: "bg-[#EDE9FE] text-[#7C3AED]",
@@ -658,7 +658,7 @@ function WeekPlan({ week, today, className = "" }: { week: WeekResponse; today: 
         title={t("dash.weekPlan.title")}
         className={className}
         aside={
-          <Link to="/plano" className="text-[13px] font-semibold text-[#FF5A1F] hover:underline">
+          <Link to="/plano" className="text-[13px] font-semibold text-[#C2410C] hover:underline">
             {t("dash.weekPlan.seeAll")}
           </Link>
         }
@@ -675,7 +675,7 @@ function WeekPlan({ week, today, className = "" }: { week: WeekResponse; today: 
       title={t("dash.weekPlan.title")}
       className={className}
       aside={
-        <Link to="/plano" className="text-[13px] font-semibold text-[#FF5A1F] hover:underline">
+        <Link to="/plano" className="text-[13px] font-semibold text-[#C2410C] hover:underline">
           {t("dash.weekPlan.seeAll")}
         </Link>
       }
@@ -693,8 +693,8 @@ function WeekPlan({ week, today, className = "" }: { week: WeekResponse; today: 
           return (
             <li key={date} className="flex items-start gap-3.5 py-2.5">
               <div className="w-10 shrink-0 text-center">
-                <p className={`text-[11px] font-semibold uppercase ${isToday ? "text-[#FF5A1F]" : "text-[#94A3B8]"}`}>{weekday}</p>
-                <p className={`text-[17px] font-extrabold leading-tight ${isToday ? "text-[#FF5A1F]" : "text-[#0F172A]"}`}>{dayNumber}</p>
+                <p className={`text-[11px] font-semibold uppercase ${isToday ? "text-[#C2410C]" : "text-[#94A3B8]"}`}>{weekday}</p>
+                <p className={`text-[17px] font-extrabold leading-tight ${isToday ? "text-[#C2410C]" : "text-[#0F172A]"}`}>{dayNumber}</p>
               </div>
               <div className="min-w-0 flex-1 space-y-2">
                 {items.length === 0 ? (
@@ -716,7 +716,7 @@ function WeekPlan({ week, today, className = "" }: { week: WeekResponse; today: 
                         <Link
                           to="/treino/$id"
                           params={{ id: s.id }}
-                          className={`block text-sm font-semibold hover:text-[#FF5A1F] hover:underline ${
+                          className={`block text-sm font-semibold hover:text-[#C2410C] hover:underline ${
                             s.log && !s.log.completed ? "text-gray-400 line-through" : "text-[#0F172A]"
                           }`}
                         >
@@ -755,7 +755,7 @@ function RecentWorkouts({ week, className = "" }: { week: WeekResponse; classNam
       title={t("dash.recent.title")}
       className={className}
       aside={
-        <Link to="/historico" className="text-[13px] font-semibold text-[#FF5A1F] hover:underline">
+        <Link to="/historico" className="text-[13px] font-semibold text-[#C2410C] hover:underline">
           {t("dash.recent.seeAll")}
         </Link>
       }
@@ -770,7 +770,7 @@ function RecentWorkouts({ week, className = "" }: { week: WeekResponse; classNam
                 <Footprints size={24} aria-hidden="true" />
               </span>
               <div className="min-w-0 flex-1">
-                <Link to="/treino/$id" params={{ id: s.id }} className="block truncate text-sm font-semibold text-[#0F172A] hover:text-[#FF5A1F] hover:underline">
+                <Link to="/treino/$id" params={{ id: s.id }} className="block truncate text-sm font-semibold text-[#0F172A] hover:text-[#C2410C] hover:underline">
                   {localized(s.name, lang, s.slug)}
                 </Link>
                 <p className="text-xs text-[#475569]">{capitalize(formatDate(s.date, lang, { weekday: "short", day: "numeric" }))}</p>

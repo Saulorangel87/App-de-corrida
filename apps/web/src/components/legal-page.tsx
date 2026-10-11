@@ -60,7 +60,7 @@ export function LegalPage({ kind }: { kind: "privacy" | "terms" }) {
         )}
 
         <article lang={lang}>
-          <p className="text-xs font-bold uppercase tracking-widest text-[#FF5A1F]">{document.kicker}</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#C2410C]">{document.kicker}</p>
           <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-[#0F172A]">{document.title}</h1>
           <p className="mt-2 text-sm text-gray-500">
             {t("legal.updated", { date: updated })} · {t("legal.version", { version: LEGAL_VERSION })}
@@ -72,7 +72,7 @@ export function LegalPage({ kind }: { kind: "privacy" | "terms" }) {
             <ol className="list-decimal space-y-1 pl-5 text-sm">
               {document.sections.map((s) => (
                 <li key={s.id}>
-                  <a href={`#${s.id}`} className="text-gray-700 underline-offset-2 hover:text-[#FF5A1F] hover:underline">
+                  <a href={`#${s.id}`} className="text-gray-700 underline-offset-2 hover:text-[#C2410C] hover:underline">
                     {s.title}
                   </a>
                 </li>
@@ -101,7 +101,7 @@ export function LegalPage({ kind }: { kind: "privacy" | "terms" }) {
         </article>
 
         <p className="mt-6 text-sm">
-          <Link to={other.to} className="font-semibold text-[#FF5A1F] hover:underline">
+          <Link to={other.to} className="font-semibold text-[#C2410C] hover:underline">
             {other.label}
           </Link>
         </p>

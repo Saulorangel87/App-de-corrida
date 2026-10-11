@@ -14,7 +14,7 @@ export function AuthHead({ title, text }: { title: string; text: string }) {
 
 /** Marca de estado (sucesso, erro ou e-mail). Decorativa: o título já diz o que aconteceu. */
 export function StatusBadge({ kind }: { kind: "ok" | "error" | "mail" }) {
-  const tone = kind === "ok" ? "bg-green-100 text-green-600" : kind === "mail" ? "bg-orange-100 text-[#FF5A1F]" : "bg-red-100 text-red-600";
+  const tone = kind === "ok" ? "bg-green-100 text-green-600" : kind === "mail" ? "bg-orange-100 text-[#C2410C]" : "bg-red-100 text-red-600";
   return (
     <div aria-hidden="true" className={`mb-5 grid h-14 w-14 place-items-center rounded-full ${tone}`}>
       {kind === "ok" && (
@@ -47,7 +47,7 @@ export function InfoBox({ children, tone = "neutral" }: { children: ReactNode; t
 }
 
 const primary =
-  "w-full bg-[#FF5A1F] hover:bg-[#e6511a] disabled:opacity-70 text-white font-bold py-3 px-4 rounded-xl transition-colors text-[15px] flex justify-center items-center";
+  "w-full bg-[#C2410C] hover:bg-[#9A3412] disabled:opacity-70 text-white font-bold py-3 px-4 rounded-xl transition-colors text-[15px] flex justify-center items-center";
 const secondary =
   "w-full bg-white hover:bg-gray-50 border border-gray-200 text-[#0F172A] font-bold py-3 px-4 rounded-xl transition-colors text-[15px] flex justify-center items-center";
 
@@ -72,7 +72,7 @@ export function BackToLogin() {
   const { t } = useTranslation();
   return (
     <div className="mt-4 text-center">
-      <Link to="/entrar" className="text-sm font-semibold text-gray-600 hover:text-[#FF5A1F] transition-colors">
+      <Link to="/entrar" className="text-sm font-semibold text-gray-600 hover:text-[#C2410C] transition-colors">
         ← {t("auth.backToLogin")}
       </Link>
     </div>

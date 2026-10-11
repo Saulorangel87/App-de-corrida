@@ -135,7 +135,7 @@ function ResultPage() {
 
       <div className="space-y-4">
         <Card title={t("result.levelTitle")}>
-          <p className="text-2xl font-extrabold text-[#FF5A1F]">{t(`result.levels.${p.level}`)}</p>
+          <p className="text-2xl font-extrabold text-[#C2410C]">{t(`result.levels.${p.level}`)}</p>
           <p>
             <Bold text={p.explanation.text} />
           </p>
@@ -201,11 +201,11 @@ function ResultPage() {
       <div className="mt-6 flex flex-col gap-3 min-[480px]:flex-row min-[480px]:items-center">
         <Link
           to="/painel"
-          className="flex w-full items-center justify-center rounded-xl bg-[#FF5A1F] px-4 py-3 text-[15px] font-bold text-white transition-colors hover:bg-[#e6511a] min-[480px]:w-auto min-[480px]:px-8"
+          className="flex w-full items-center justify-center rounded-xl bg-[#C2410C] px-4 py-3 text-[15px] font-bold text-white transition-colors hover:bg-[#9A3412] min-[480px]:w-auto min-[480px]:px-8"
         >
           {t("result.toPanel")}
         </Link>
-        <Link to="/entrevista" className="text-center text-sm font-semibold text-gray-600 hover:text-[#FF5A1F]">
+        <Link to="/entrevista" className="text-center text-sm font-semibold text-gray-600 hover:text-[#C2410C]">
           {t("result.redo")}
         </Link>
       </div>
@@ -272,7 +272,7 @@ function EvaluationCard() {
     <Card title={t("result.evaluation.title")}>
       <p>{t("result.evaluation.text")}</p>
       <p className="text-sm">
-        <a href="https://www.eparmedx.com" target="_blank" rel="noreferrer" className="font-semibold text-[#FF5A1F] hover:underline">
+        <a href="https://www.eparmedx.com" target="_blank" rel="noreferrer" className="font-semibold text-[#C2410C] hover:underline">
           {t("result.evaluation.eparmedx")}
         </a>
       </p>

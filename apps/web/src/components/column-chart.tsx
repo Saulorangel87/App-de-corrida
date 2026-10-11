@@ -95,7 +95,7 @@ export function ColumnChart({
         ))}
       </div>
       <details className="mt-3 text-sm">
-        <summary className="cursor-pointer font-semibold text-[#FF5A1F] hover:underline">{tableLabel}</summary>
+        <summary className="cursor-pointer font-semibold text-[#C2410C] hover:underline">{tableLabel}</summary>
         <div className="mt-2 max-h-72 overflow-auto rounded-xl border border-gray-200">{table}</div>
       </details>
     </div>
