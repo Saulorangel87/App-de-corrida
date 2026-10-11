@@ -3,7 +3,7 @@ import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import type { z } from "zod";
 import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from "@passo/shared";
 import { AuthLayout } from "../components/auth-layout";
@@ -209,7 +209,19 @@ function RegisterFormView() {
 
         <div className="space-y-1.5 pt-1 pb-1">
           <CheckField label={t("auth.adult")} error={required(errors.confirmAdult?.message)} {...register("confirmAdult")} />
-          <CheckField label={t("auth.acceptTerms")} error={required(errors.acceptTerms?.message)} {...register("acceptTerms")} />
+          <CheckField
+            label={
+              <Trans
+                i18nKey="auth.acceptTerms"
+                components={{
+                  terms: <a href="/termos" target="_blank" rel="noreferrer" className="font-semibold underline" />,
+                  privacy: <a href="/privacidade" target="_blank" rel="noreferrer" className="font-semibold underline" />,
+                }}
+              />
+            }
+            error={required(errors.acceptTerms?.message)}
+            {...register("acceptTerms")}
+          />
           <CheckField
             label={t("auth.acceptHealthData")}
             error={required(errors.acceptHealthData?.message)}

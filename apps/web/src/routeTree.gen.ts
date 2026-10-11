@@ -18,8 +18,10 @@ import { Route as EsqueciASenhaRouteImport } from './routes/esqueci-a-senha'
 import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as PainelRouteImport } from './routes/painel'
 import { Route as PlanoRouteImport } from './routes/plano'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as ResultadoRouteImport } from './routes/resultado'
+import { Route as TermosRouteImport } from './routes/termos'
 import { Route as VerificarEmailRouteImport } from './routes/verificar-email'
 import { Route as RegistroIdRouteImport } from './routes/registro.$id'
 import { Route as TreinoIdRouteImport } from './routes/treino.$id'
@@ -69,6 +71,11 @@ const PlanoRoute = PlanoRouteImport.update({
   path: '/plano',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
   id: '/redefinir-senha',
   path: '/redefinir-senha',
@@ -77,6 +84,11 @@ const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
 const ResultadoRoute = ResultadoRouteImport.update({
   id: '/resultado',
   path: '/resultado',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermosRoute = TermosRouteImport.update({
+  id: '/termos',
+  path: '/termos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VerificarEmailRoute = VerificarEmailRouteImport.update({
@@ -105,8 +117,10 @@ export interface FileRoutesByFullPath {
   '/historico': typeof HistoricoRoute
   '/painel': typeof PainelRoute
   '/plano': typeof PlanoRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
+  '/termos': typeof TermosRoute
   '/verificar-email': typeof VerificarEmailRoute
   '/registro/$id': typeof RegistroIdRoute
   '/treino/$id': typeof TreinoIdRoute
@@ -121,8 +135,10 @@ export interface FileRoutesByTo {
   '/historico': typeof HistoricoRoute
   '/painel': typeof PainelRoute
   '/plano': typeof PlanoRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
+  '/termos': typeof TermosRoute
   '/verificar-email': typeof VerificarEmailRoute
   '/registro/$id': typeof RegistroIdRoute
   '/treino/$id': typeof TreinoIdRoute
@@ -138,8 +154,10 @@ export interface FileRoutesById {
   '/historico': typeof HistoricoRoute
   '/painel': typeof PainelRoute
   '/plano': typeof PlanoRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
+  '/termos': typeof TermosRoute
   '/verificar-email': typeof VerificarEmailRoute
   '/registro/$id': typeof RegistroIdRoute
   '/treino/$id': typeof TreinoIdRoute
@@ -156,8 +174,10 @@ export interface FileRouteTypes {
     | '/historico'
     | '/painel'
     | '/plano'
+    | '/privacidade'
     | '/redefinir-senha'
     | '/resultado'
+    | '/termos'
     | '/verificar-email'
     | '/registro/$id'
     | '/treino/$id'
@@ -172,8 +192,10 @@ export interface FileRouteTypes {
     | '/historico'
     | '/painel'
     | '/plano'
+    | '/privacidade'
     | '/redefinir-senha'
     | '/resultado'
+    | '/termos'
     | '/verificar-email'
     | '/registro/$id'
     | '/treino/$id'
@@ -188,8 +210,10 @@ export interface FileRouteTypes {
     | '/historico'
     | '/painel'
     | '/plano'
+    | '/privacidade'
     | '/redefinir-senha'
     | '/resultado'
+    | '/termos'
     | '/verificar-email'
     | '/registro/$id'
     | '/treino/$id'
@@ -205,8 +229,10 @@ export interface RootRouteChildren {
   HistoricoRoute: typeof HistoricoRoute
   PainelRoute: typeof PainelRoute
   PlanoRoute: typeof PlanoRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   ResultadoRoute: typeof ResultadoRoute
+  TermosRoute: typeof TermosRoute
   VerificarEmailRoute: typeof VerificarEmailRoute
   RegistroIdRoute: typeof RegistroIdRoute
   TreinoIdRoute: typeof TreinoIdRoute
@@ -277,6 +303,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlanoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/redefinir-senha': {
       id: '/redefinir-senha'
       path: '/redefinir-senha'
@@ -289,6 +322,13 @@ declare module '@tanstack/react-router' {
       path: '/resultado'
       fullPath: '/resultado'
       preLoaderRoute: typeof ResultadoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termos': {
+      id: '/termos'
+      path: '/termos'
+      fullPath: '/termos'
+      preLoaderRoute: typeof TermosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/verificar-email': {
@@ -325,8 +365,10 @@ const rootRouteChildren: RootRouteChildren = {
   HistoricoRoute: HistoricoRoute,
   PainelRoute: PainelRoute,
   PlanoRoute: PlanoRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
   ResultadoRoute: ResultadoRoute,
+  TermosRoute: TermosRoute,
   VerificarEmailRoute: VerificarEmailRoute,
   RegistroIdRoute: RegistroIdRoute,
   TreinoIdRoute: TreinoIdRoute,

@@ -52,7 +52,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
 });
 
 type CheckFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
-  label: string;
+  label: ReactNode;
   error?: string;
 };
 

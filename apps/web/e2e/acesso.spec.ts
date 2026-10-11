@@ -113,7 +113,7 @@ test("cadastro exige os três aceites e envia idioma e declaração de 18 anos",
   expect(calls.filter((c) => c.path === "/auth/register")).toHaveLength(0);
 
   await page.getByLabel("Declaro que tenho 18 anos ou mais.").check();
-  await page.getByLabel("Aceito os Termos de Serviço.").check();
+  await page.getByLabel(/Li e aceito os Termos de Uso e a Política de Privacidade/).check();
   await page.getByLabel(/Autorizo o tratamento dos meus dados de saúde/).check();
   await page.getByRole("button", { name: "Criar minha conta" }).click();
   await expect(page.getByRole("status")).toContainText("Enviamos um e-mail");
@@ -140,7 +140,7 @@ test("cadastro: senha recusada pelo servidor mostra o motivo no campo da senha",
   await page.getByLabel("E-mail", { exact: true }).fill("contateste@exemplo.com");
   await page.getByLabel("Senha", { exact: true }).fill("contateste123");
   await page.getByLabel("Declaro que tenho 18 anos ou mais.").check();
-  await page.getByLabel("Aceito os Termos de Serviço.").check();
+  await page.getByLabel(/Li e aceito os Termos de Uso e a Política de Privacidade/).check();
   await page.getByLabel(/Autorizo o tratamento dos meus dados de saúde/).check();
   await page.getByRole("button", { name: "Criar minha conta" }).click();
   await expect(page.getByText("A senha não pode conter partes do seu e-mail.")).toBeVisible();
