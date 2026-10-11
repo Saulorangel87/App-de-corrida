@@ -25,6 +25,7 @@ Escopo: repositório inteiro (código da API, do front e dos pacotes), banco, in
 | Foto de perfil no próprio banco | Miniatura de até 60 KB, só o dono vê (RLS), entra na exportação e na exclusão, e nas cópias de segurança criptografadas. | ADR 0008 |
 | `GET /profile/photo` com cache privado de 1 h | A URL tem a versão da foto; outro usuário no mesmo navegador tem outra URL. | ADR 0008 |
 | Troca de e-mail sem verificar se o atual ainda é do dono | Pede a senha atual e avisa o endereço antigo; o novo só vale com o link. | ADR 0008 |
+| Beacon do Cloudflare Web Analytics injetado pela zona nas páginas do front | A CSP (`script-src 'self'`) o bloqueia: ele não executa e nada é enviado, o que também protege os tokens que vão no fragmento das URLs de confirmação. Custo: um erro de console e 92 em Práticas recomendadas do Lighthouse. Desligar é por hostname em Web Analytics, e hoje a conta tem um site só, da zona inteira, usado por outros apps. | `AGENTS.md` (decisão do dono, 2026-10-11) |
 
 ## 3. O que foi conferido e está certo
 
