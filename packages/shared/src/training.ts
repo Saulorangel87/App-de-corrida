@@ -100,7 +100,13 @@ export const workoutLogSchema = z
 export type WorkoutLogInput = z.infer<typeof workoutLogSchema>;
 
 /** Pausa por dor, lesão ou doença (R-PRG-09). */
-export const pauseSchema = z.object({ cause: z.enum(["dor", "lesao", "doenca"]) }).strict();
+export const pauseSchema = z
+  .object({
+    cause: z.enum(["dor", "lesao", "doenca"]),
+    /** Data local do atleta (hoje ±1 dia). Sem ela, vale a data UTC do servidor. */
+    date: isoDate.optional(),
+  })
+  .strict();
 
 /** Autodeclaração de avaliação e liberação por profissional de saúde (R-DOR-10, R-PRG-09). */
 export const clearanceSchema = z.object({ date: isoDate }).strict();

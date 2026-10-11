@@ -341,12 +341,30 @@ describe("pausa e liberação profissional", () => {
     expect(blocked.body.decision.reasons.map((r: Json) => r.code)).toContain("pausa_aguardando_liberacao");
     expect(blocked.body.questions).toContain("professional_clearance");
     expect(blocked.body.decision.refer).toBe(true);
+    // O perfil informa a pausa para a tela de configurações.
+    const profile = await get(a.cookie, "/profile");
+    expect(profile.body.profile.pause).toMatchObject({ cause: "lesao", clearedByProfessionalOn: null });
 
     const cleared = await send("POST", a.cookie, "/profile/professional-clearance", { date: MONDAY });
     expect(cleared.status).toBe(200);
     const after = await get(a.cookie, `/day/${MONDAY}`);
     expect(after.body.decision.reasons.map((r: Json) => r.code)).not.toContain("pausa_aguardando_liberacao");
     expect(after.body.decision.returnBand).toBe("longa"); // volta gradual (R-PRG-09)
+    expect((await get(a.cookie, "/profile")).body.profile.pause.clearedByProfessionalOn).toBe(MONDAY);
+  });
+
+  it("a pausa usa a data local do atleta, para casar com a liberação no mesmo dia (fuso)", async () => {
+    const a = await onboard(intermediate());
+    onDate(MONDAY);
+    // O cliente está um dia à frente da data UTC do servidor (ex.: noite no fuso -3).
+    const nextDay = addDays(MONDAY, 1);
+    const paused = await send("PUT", a.cookie, "/profile/pause", { cause: "dor", date: nextDay });
+    expect(paused.status).toBe(200);
+    expect(paused.body.pauseDeclaredOn).toBe(nextDay);
+    const cleared = await send("POST", a.cookie, "/profile/professional-clearance", { date: nextDay });
+    expect(cleared.status).toBe(200);
+    // longe demais da data do servidor: recusado
+    expect((await send("PUT", a.cookie, "/profile/pause", { cause: "dor", date: addDays(MONDAY, 5) })).status).toBe(400);
   });
 
   it("não aceita liberação com data futura", async () => {

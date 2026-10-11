@@ -48,7 +48,7 @@ export function trainingRoutes(opts: { training: TrainingService; session: Middl
 
   // Pausa e liberação profissional
   r.put("/profile/pause", session, validate("json", pauseSchema), async (c) =>
-    c.json(await training.declarePause(me(c), c.req.valid("json").cause)),
+    c.json(await training.declarePause(me(c), c.req.valid("json").cause, c.req.valid("json").date)),
   );
   r.post("/profile/professional-clearance", session, validate("json", clearanceSchema), async (c) =>
     c.json(await training.declareClearance(me(c), c.req.valid("json").date)),

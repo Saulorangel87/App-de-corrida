@@ -50,6 +50,8 @@ import type { Logger } from "../lib/logger";
 export const ENGINE_VERSION = "engine-2026.10";
 
 const today = (now: Date) => now.toISOString().slice(0, 10);
+/** O cliente manda a data local (fuso de −12 a +14): aceita até um dia à frente da data UTC. */
+const tomorrow = (iso: string) => new Date(Date.parse(`${iso}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
 
 /**
  * Idade a partir de mês/ano (sem o dia, por minimização de dados).
@@ -396,6 +398,12 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           ruleVersion: profile.rulesVersion,
           explanation: explainClassification(classification, lang),
           nextEvaluationDate: profile.nextEvaluationDate.toISOString().slice(0, 10),
+          // Pausa por dor, lesão ou doença e a liberação profissional declarada (R-PRG-09, R-DOR-10).
+          pause: {
+            cause: profile.pauseCause ?? null,
+            declaredOn: profile.pauseDeclaredOn ?? null,
+            clearedByProfessionalOn: profile.clearedByProfessionalOn ?? null,
+          },
           screening: screening ? {
             state: screening.state,
             maxIntensity: screening.maxIntensity,
@@ -423,7 +431,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
     /** Autodeclaração de avaliação (R-TRI-05); se liberar, atribui o plano. */
     async declareEvaluation(userId: string, input: { result: Evaluation["result"]; date: string; source: Evaluation["source"]; vigorousAllowed: boolean }) {
       const on = today(d.now());
-      if (input.date > on) throw errors.validation([{ path: "date", code: "future_date" }]);
+      if (input.date > tomorrow(on)) throw errors.validation([{ path: "date", code: "future_date" }]);
       return withAthlete(db, userId, async (tx) => {
         const row = await latestScreening(tx, userId);
         const [profile] = await tx.select().from(athleteProfiles).where(eq(athleteProfiles.userId, userId)).limit(1);
@@ -460,7 +468,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
     /** Registro de consulta a profissional de educação física (R-TRI-07). */
     async declareProfessionalConsulted(userId: string, date: string) {
       const on = today(d.now());
-      if (date > on) throw errors.validation([{ path: "date", code: "future_date" }]);
+      if (date > tomorrow(on)) throw errors.validation([{ path: "date", code: "future_date" }]);
       return withAthlete(db, userId, async (tx) => {
         const row = await latestScreening(tx, userId);
         const [profile] = await tx.select().from(athleteProfiles).where(eq(athleteProfiles.userId, userId)).limit(1);

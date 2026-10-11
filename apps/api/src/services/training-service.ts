@@ -766,10 +766,12 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     },
 
     /** Pausa por dor, lesão ou doença: exige liberação profissional para voltar (R-PRG-09). */
-    async declarePause(userId: string, cause: "dor" | "lesao" | "doenca") {
+    async declarePause(userId: string, cause: "dor" | "lesao" | "doenca", date?: string) {
+      if (date !== undefined) assertDate(date);
       return withAthlete(db, userId, async (tx) => {
         await loadContext(tx, userId);
-        const on = todayUtc();
+        // Data do calendário do atleta, para casar com a data da liberação (que ele também informa).
+        const on = date ?? todayUtc();
         await tx
           .update(athleteProfiles)
           .set({ pauseCause: cause, pauseDeclaredOn: on, clearedByProfessionalOn: null, updatedAt: d.now() })
