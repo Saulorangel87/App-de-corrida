@@ -17,6 +17,7 @@ coverage/
 # Testes
 playwright-report/
 test-results/
+reports/
 
 # Backups do banco (migrations .sql do Drizzle continuam versionadas)
 backups/

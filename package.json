@@ -10,6 +10,7 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test",
     "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "check": "node scripts/check.mjs",
     "prepare": "lefthook install"
   },
   "devDependencies": {
