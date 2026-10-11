@@ -10,6 +10,10 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # Os tipos acompanham a versão do Node que roda em produção (22 LTS); subir só junto com o runtime.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: "/"
@@ -22,3 +26,8 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      # Produção usa só versão LTS do Node (par); as versões ímpares não têm suporte longo.
+      # A troca de LTS (22 para 24) é decidida à mão, junto com @types/node.
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
