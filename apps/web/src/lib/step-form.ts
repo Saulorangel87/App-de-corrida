@@ -24,12 +24,15 @@ export function stepResolver<TForm extends FieldValues>(
   fieldOf: (path: string) => string = (path) => path,
 ): Resolver<TForm> {
   return async (values) => {
-    const parsed = schema.safeParse(toPayload(values));
+    const payload = toPayload(values);
+    const parsed = schema.safeParse(payload);
     if (parsed.success) return { values, errors: {} };
     const errors: Record<string, unknown> = {};
     for (const issue of parsed.error.issues) {
       const name = fieldOf(issue.path.join("."));
-      const required = issue.code === "invalid_type" && issue.received === "undefined";
+      // O Zod 4 não informa o valor recebido na issue: "faltou responder" é o campo estar undefined no payload.
+      const received = issue.path.reduce<unknown>((o, k) => (o as Record<PropertyKey, unknown> | undefined)?.[k], payload);
+      const required = issue.code === "invalid_type" && received === undefined;
       set(errors, name, { type: issue.code, message: required ? "required" : "invalid" });
     }
     return { values: {}, errors: errors as never };
