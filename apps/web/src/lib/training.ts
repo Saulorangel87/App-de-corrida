@@ -6,6 +6,10 @@ import { fetchApi } from "./api";
 
 export type Localized = { "pt-BR": string; en: string };
 
+/** Nome do catálogo no idioma do app; sem nome, o texto de reserva. */
+export const localized = (name: Localized | null | undefined, lang: string, fallback: string) =>
+  name ? (lang === "en" ? name.en : name["pt-BR"]) : fallback;
+
 export type SessionView = {
   id: string;
   date: string;
@@ -131,6 +135,46 @@ export function useHistory(days: number, enabled = true) {
   return useQuery({
     queryKey: historyKey(days),
     queryFn: () => fetchApi<HistoryResponse>(`/history?days=${days}`),
+    enabled,
+    retry: false,
+  });
+}
+
+/** Plano completo: semanas criadas (com sessões) e o contorno das que ainda não existem. */
+export type OverviewWeek = {
+  calendarWeek: number;
+  templateWeek: number;
+  startDate: string;
+  endDate: string;
+  phase: string;
+  isRecovery: boolean;
+  isTaper: boolean;
+  isRaceWeek: boolean;
+  ladderStage: string | null;
+  state: "past" | "current" | "upcoming";
+  projected: boolean;
+  sessions: SessionView[];
+};
+
+export type PlanOverviewResponse = {
+  plan: {
+    template: string;
+    objective: string;
+    level: string;
+    durationWeeks: number;
+    startDate: string;
+    endDate: string;
+  } | null;
+  currentWeek: number | null;
+  weeks: OverviewWeek[];
+};
+
+export const overviewKey = (date: string) => ["overview", date] as const;
+
+export function usePlanOverview(date: string, enabled = true) {
+  return useQuery({
+    queryKey: overviewKey(date),
+    queryFn: () => fetchApi<PlanOverviewResponse>(`/plan/overview/${date}`),
     enabled,
     retry: false,
   });

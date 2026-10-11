@@ -129,6 +129,7 @@ function LogForm({ session }: { session: SessionView }) {
       setResult(data);
       void queryClient.invalidateQueries({ queryKey: ["day"] });
       void queryClient.invalidateQueries({ queryKey: ["week"] });
+      void queryClient.invalidateQueries({ queryKey: ["overview"] });
     },
   });
 

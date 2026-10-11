@@ -20,6 +20,9 @@ export function FlowLayout({ children, width = "max-w-[640px]" }: { children: Re
             {t("common.appName")}
           </Link>
           <div className="flex items-center gap-3 sm:gap-6">
+            <Link to="/plano" className="hidden font-medium text-gray-500 transition-colors hover:text-[#111827] min-[420px]:inline">
+              {t("plan.link")}
+            </Link>
             <Link to="/historico" className="hidden font-medium text-gray-500 transition-colors hover:text-[#111827] min-[420px]:inline">
               {t("history.link")}
             </Link>

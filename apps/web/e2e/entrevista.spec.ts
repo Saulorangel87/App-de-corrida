@@ -194,7 +194,7 @@ test("entrevista completa: 8 etapas, cada uma salva, e o envio leva ao resultado
   await answer(page, /aparelho para medir a frequência/, "Relógio");
   await answer(page, /pista de corrida/, "Não");
   await answer(page, /esteira/, "Sim");
-  await page.getByText("Plano", { exact: true }).click();
+  await page.getByRole("main").getByText("Plano", { exact: true }).click();
   await page.getByRole("button", { name: "Concluir entrevista" }).click();
   expect(putBody(calls, "recursos")).toEqual({ hrDevice: "relogio", track: false, treadmill: true, terrain: ["plano"] });
 

@@ -513,6 +513,81 @@ describe("detalhe do treino", () => {
   });
 });
 
+describe("plano completo", () => {
+  it("sem entrevista: 409; data inválida ou longe de hoje: 400", async () => {
+    onDate(MONDAY);
+    const novice = await signUpAndLogin(t);
+    expect((await get(novice.cookie, `/plan/overview/${MONDAY}`)).status).toBe(409);
+    const a = await onboard(intermediate());
+    expect((await get(a.cookie, `/plan/overview/ontem`)).status).toBe(400);
+    expect((await get(a.cookie, `/plan/overview/${addDays(MONDAY, 5)}`)).status).toBe(400);
+  });
+
+  it("semana atual com sessões; as seguintes só com o contorno do modelo, sem sessão inventada", async () => {
+    const a = await onboard(intermediate());
+    const ov = await get(a.cookie, `/plan/overview/${MONDAY}`);
+    expect(ov.status).toBe(200);
+    expect(ov.body.plan).toMatchObject({ template: "10k-intermediario", objective: "10k", level: "intermediario", startDate: MONDAY });
+    expect(ov.body.currentWeek).toBe(1);
+    const weeks = ov.body.weeks as Json[];
+    expect(weeks).toHaveLength(ov.body.plan.durationWeeks);
+
+    expect(weeks[0]).toMatchObject({ calendarWeek: 1, templateWeek: 1, state: "current", projected: false, startDate: MONDAY, endDate: addDays(MONDAY, 6) });
+    expect(runs(weeks[0]!.sessions).length).toBeGreaterThanOrEqual(3);
+    weeks.slice(1).forEach((w, i) => {
+      expect(w, `semana ${i + 2}`).toMatchObject({
+        calendarWeek: i + 2, templateWeek: i + 2, state: "upcoming", projected: true, startDate: addDays(MONDAY, 7 * (i + 1)), sessions: [],
+      });
+    });
+    // o contorno vem do modelo: a última semana é a da prova e há semana de recuperação no meio
+    expect(weeks.at(-1)!.isRaceWeek || weeks.at(-1)!.isTaper).toBe(true);
+    expect(weeks.some((w) => w.isRecovery)).toBe(true);
+
+    // consultar de novo não cria sessões nem semanas
+    const [{ before }] = await admin`select count(*)::int as before from scheduled_workouts where user_id = ${a.userId}`;
+    await get(a.cookie, `/plan/overview/${MONDAY}`);
+    const [{ after }] = await admin`select count(*)::int as after from scheduled_workouts where user_id = ${a.userId}`;
+    expect(after).toBe(before);
+    const [{ nWeeks }] = await admin`select count(*)::int as "nWeeks" from athlete_plan_weeks where user_id = ${a.userId}`;
+    expect(nWeeks).toBe(1);
+  });
+
+  it("semanas passadas trazem o que foi feito; a atual vira a semana corrente", async () => {
+    const a = await onboard(intermediate());
+    await advanceToWeek(a.cookie, 2);
+    const ov = await get(a.cookie, `/plan/overview/${addDays(MONDAY, 14)}`);
+    const weeks = ov.body.weeks as Json[];
+    expect(ov.body.currentWeek).toBe(3);
+    expect(weeks.slice(0, 2).map((w) => w.state)).toEqual(["past", "past"]);
+    expect(weeks[2]).toMatchObject({ state: "current", projected: false });
+    expect(weeks[3]).toMatchObject({ state: "upcoming", projected: true });
+    for (const w of weeks.slice(0, 2)) {
+      const main = runs(w.sessions);
+      expect(main.length).toBeGreaterThan(0);
+      expect(main.every((s) => s.status === "completed" && s.log?.completed === true)).toBe(true);
+    }
+  });
+
+  it("escada: etapa repetida empurra a previsão em uma semana", async () => {
+    const a = await onboard(beginner());
+    const w1 = await get(a.cookie, `/plan/week/${MONDAY}`);
+    for (const s of runs(w1.body.sessions).filter((x) => x.ladder)) {
+      onDate(s.date);
+      await send("PUT", a.cookie, `/workouts/${s.id}/log`, {
+        completed: true, durationMinutes: s.minutes, srpe: 3, pain: [{ region: "canela", intensity: 3, moment: "treino" }],
+      });
+    }
+    const w2Start = addDays(MONDAY, 7);
+    onDate(w2Start);
+    const ov = await get(a.cookie, `/plan/overview/${w2Start}`);
+    const weeks = ov.body.weeks as Json[];
+    // semana 2 repete a etapa da 1; a previsão continua do modelo a partir daí
+    expect(weeks[1]).toMatchObject({ calendarWeek: 2, templateWeek: 1, ladderStage: "1", state: "current", projected: false });
+    expect(weeks[2]).toMatchObject({ calendarWeek: 3, templateWeek: 2, projected: true });
+    expect(weeks).toHaveLength(ov.body.plan.durationWeeks + 1);
+  });
+});
+
 describe("isolamento entre atletas (A tenta acessar B)", () => {
   it("B não vê, não registra e não consulta nada de A", async () => {
     const a = await onboard(intermediate());
@@ -531,6 +606,12 @@ describe("isolamento entre atletas (A tenta acessar B)", () => {
     // B tenta abrir o detalhe do treino de A: 404 (igual a um id que não existe)
     expect((await get(b.cookie, `/workouts/${aSession.id}`)).status).toBe(404);
 
+    // O plano completo de B só tem sessões de B
+    const overview = await get(b.cookie, `/plan/overview/${aSession.date}`);
+    const ids = (overview.body.weeks as Json[]).flatMap((w) => (w.sessions as Json[]).map((s) => s.id));
+    expect(ids.length).toBeGreaterThan(0);
+    expect(ids).not.toContain(aSession.id);
+
     // O dia e o histórico de B não contêm o check-in de A
     const day = await get(b.cookie, `/day/${aSession.date}`);
     expect(day.body.checkin).toBeNull();
@@ -540,7 +621,7 @@ describe("isolamento entre atletas (A tenta acessar B)", () => {
   });
 
   it("sem sessão, tudo é 401", async () => {
-    for (const [m, p] of [["GET", `/day/${MONDAY}`], ["GET", `/plan/week/${MONDAY}`], ["PUT", `/checkins/${MONDAY}`], ["POST", `/pain/${MONDAY}`], ["PUT", `/workouts/${crypto.randomUUID()}/log`], ["GET", `/workouts/${crypto.randomUUID()}`], ["PUT", "/profile/pause"], ["POST", "/profile/professional-clearance"], ["GET", "/history"]] as const) {
+    for (const [m, p] of [["GET", `/day/${MONDAY}`], ["GET", `/plan/week/${MONDAY}`], ["GET", `/plan/overview/${MONDAY}`], ["PUT", `/checkins/${MONDAY}`], ["POST", `/pain/${MONDAY}`], ["PUT", `/workouts/${crypto.randomUUID()}/log`], ["GET", `/workouts/${crypto.randomUUID()}`], ["PUT", "/profile/pause"], ["POST", "/profile/professional-clearance"], ["GET", "/history"]] as const) {
       const res = await t.request(m, p, m === "GET" ? undefined : {});
       expect(res.status, `${m} ${p}`).toBe(401);
     }

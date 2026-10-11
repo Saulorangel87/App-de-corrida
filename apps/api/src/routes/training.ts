@@ -31,6 +31,9 @@ export function trainingRoutes(opts: { training: TrainingService; session: Middl
   // Semana do plano que contém a data
   r.get("/plan/week/:date", session, async (c) => c.json(await training.week(me(c), dateParam(c))));
 
+  // Plano inteiro: semanas criadas com as sessões e o contorno das que faltam
+  r.get("/plan/overview/:date", session, async (c) => c.json(await training.overview(me(c), dateParam(c))));
+
   // Detalhe de um treino agendado (catálogo, referências, registro): só do próprio atleta
   r.get("/workouts/:id", session, async (c) => c.json(await training.workout(me(c), idParam(c))));
 

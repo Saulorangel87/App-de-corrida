@@ -17,6 +17,7 @@ import { Route as EntrevistaRouteImport } from './routes/entrevista'
 import { Route as EsqueciASenhaRouteImport } from './routes/esqueci-a-senha'
 import { Route as HistoricoRouteImport } from './routes/historico'
 import { Route as PainelRouteImport } from './routes/painel'
+import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as ResultadoRouteImport } from './routes/resultado'
 import { Route as VerificarEmailRouteImport } from './routes/verificar-email'
@@ -63,6 +64,11 @@ const PainelRoute = PainelRouteImport.update({
   path: '/painel',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlanoRoute = PlanoRouteImport.update({
+  id: '/plano',
+  path: '/plano',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
   id: '/redefinir-senha',
   path: '/redefinir-senha',
@@ -98,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/historico': typeof HistoricoRoute
   '/painel': typeof PainelRoute
+  '/plano': typeof PlanoRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
   '/verificar-email': typeof VerificarEmailRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/historico': typeof HistoricoRoute
   '/painel': typeof PainelRoute
+  '/plano': typeof PlanoRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
   '/verificar-email': typeof VerificarEmailRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/historico': typeof HistoricoRoute
   '/painel': typeof PainelRoute
+  '/plano': typeof PlanoRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
   '/verificar-email': typeof VerificarEmailRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/esqueci-a-senha'
     | '/historico'
     | '/painel'
+    | '/plano'
     | '/redefinir-senha'
     | '/resultado'
     | '/verificar-email'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/esqueci-a-senha'
     | '/historico'
     | '/painel'
+    | '/plano'
     | '/redefinir-senha'
     | '/resultado'
     | '/verificar-email'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/esqueci-a-senha'
     | '/historico'
     | '/painel'
+    | '/plano'
     | '/redefinir-senha'
     | '/resultado'
     | '/verificar-email'
@@ -192,6 +204,7 @@ export interface RootRouteChildren {
   EsqueciASenhaRoute: typeof EsqueciASenhaRoute
   HistoricoRoute: typeof HistoricoRoute
   PainelRoute: typeof PainelRoute
+  PlanoRoute: typeof PlanoRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   ResultadoRoute: typeof ResultadoRoute
   VerificarEmailRoute: typeof VerificarEmailRoute
@@ -257,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PainelRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/plano': {
+      id: '/plano'
+      path: '/plano'
+      fullPath: '/plano'
+      preLoaderRoute: typeof PlanoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/redefinir-senha': {
       id: '/redefinir-senha'
       path: '/redefinir-senha'
@@ -304,6 +324,7 @@ const rootRouteChildren: RootRouteChildren = {
   EsqueciASenhaRoute: EsqueciASenhaRoute,
   HistoricoRoute: HistoricoRoute,
   PainelRoute: PainelRoute,
+  PlanoRoute: PlanoRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
   ResultadoRoute: ResultadoRoute,
   VerificarEmailRoute: VerificarEmailRoute,

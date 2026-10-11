@@ -171,6 +171,7 @@ function HealthCard({ profile }: { profile: Profile }) {
     void queryClient.invalidateQueries({ queryKey: PROFILE_KEY });
     void queryClient.invalidateQueries({ queryKey: ["day"] });
     void queryClient.invalidateQueries({ queryKey: ["week"] });
+    void queryClient.invalidateQueries({ queryKey: ["overview"] });
   };
   const declarePause = useMutation({
     mutationFn: (c: Cause) => fetchApi("/profile/pause", { method: "PUT", body: JSON.stringify({ cause: c, date: localToday() }) }),

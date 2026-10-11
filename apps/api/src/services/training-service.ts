@@ -97,6 +97,23 @@ export type SessionView = {
   log: { completed: boolean; durationMinutes: number | null; distanceKm: number | null; srpe: number | null; notes: string | null } | null;
 };
 
+/** Uma semana do plano completo: criada (com sessões) ou prevista pelo modelo (sem sessões). */
+export type OverviewWeek = {
+  calendarWeek: number;
+  templateWeek: number;
+  startDate: string;
+  endDate: string;
+  phase: string;
+  isRecovery: boolean;
+  isTaper: boolean;
+  isRaceWeek: boolean;
+  ladderStage: string | null;
+  state: "past" | "current" | "upcoming";
+  /** Semana ainda não criada: a posição no modelo é uma previsão e pode mudar. */
+  projected: boolean;
+  sessions: SessionView[];
+};
+
 const view = (s: SessionRow, log: LogRow | undefined): SessionView => ({
   id: s.id,
   date: s.scheduledDate,
@@ -739,6 +756,75 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
             weekEnd: addDays(current.startDate, 6),
           },
           sessions: rows.map((r) => view(r, logs.get(r.id))),
+        };
+      });
+    },
+
+    /**
+     * Plano inteiro do atleta: as semanas já criadas (com sessões e registros) e, para as que faltam,
+     * só o contorno do modelo (fase, recuperação, polimento, etapa da escada). As sessões das semanas
+     * futuras não existem ainda: dependem do que o atleta fizer até lá, então não são inventadas.
+     */
+    async overview(userId: string, date: string) {
+      assertDate(date);
+      return withAthlete(db, userId, async (tx) => {
+        const ctx = await loadContext(tx, userId);
+        const { plan, template } = ctx;
+        if (!plan || !template) return { plan: null, currentWeek: null as number | null, weeks: [] as OverviewWeek[] };
+
+        const c = weekFor(ctx, date);
+        const created = c ? await ensureWeeks(tx, ctx, c) : await weeksOf(tx, plan.id);
+        const rows = await sessionsOf(tx, userId, eq(scheduledWorkouts.athletePlanId, plan.id));
+        const logs = await logsByWorkout(tx, userId, rows.map((r) => r.id));
+
+        const shape = (w: { calendarWeek: number; templateWeek: number; startDate: string }, projected: boolean, sessions: SessionView[]): OverviewWeek => {
+          const tw = template.weeks[w.templateWeek - 1]!;
+          return {
+            calendarWeek: w.calendarWeek,
+            templateWeek: w.templateWeek,
+            startDate: w.startDate,
+            endDate: addDays(w.startDate, 6),
+            phase: tw.phase,
+            isRecovery: tw.isRecovery,
+            isTaper: tw.isTaper,
+            isRaceWeek: tw.isRaceWeek,
+            ladderStage: tw.ladderStage ?? null,
+            state: c === null ? "upcoming" : w.calendarWeek < c ? "past" : w.calendarWeek === c ? "current" : "upcoming",
+            projected,
+            sessions,
+          };
+        };
+
+        const weeks = created.map((w) =>
+          shape(
+            w,
+            false,
+            rows.filter((r) => r.athletePlanWeekId === w.id).map((r) => view(r, logs.get(r.id))),
+          ),
+        );
+
+        // Semanas que ainda não existem: seguem o modelo a partir da última criada. Na escada, repetir
+        // uma etapa empurra tudo uma semana, por isso é só uma previsão ("se tudo correr como o previsto").
+        const last = created[created.length - 1];
+        let templateWeek = last ? (last.status === "closed" && last.ladderAction === "repetir" ? last.templateWeek : last.templateWeek + 1) : 1;
+        let calendarWeek = (last?.calendarWeek ?? 0) + 1;
+        while (templateWeek <= template.durationWeeks) {
+          weeks.push(shape({ calendarWeek, templateWeek, startDate: addDays(plan.startDate, 7 * (calendarWeek - 1)) }, true, []));
+          templateWeek += 1;
+          calendarWeek += 1;
+        }
+
+        return {
+          plan: {
+            template: template.slug,
+            objective: template.objective,
+            level: template.level,
+            durationWeeks: template.durationWeeks,
+            startDate: plan.startDate,
+            endDate: plan.endDate,
+          },
+          currentWeek: c,
+          weeks,
         };
       });
     },
