@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { Code2, ContactRound, Mail } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -24,12 +25,12 @@ export function AppFooter() {
           aria-label={t('footer.legalNav')}
           className="col-start-1 row-start-2 flex flex-wrap gap-x-3 whitespace-nowrap @min-[700px]:gap-x-3.5"
         >
-          <a href="/privacidade" className="py-0.5 underline underline-offset-[3px] hover:text-[#111827]">
+          <Link to="/privacidade" className="py-0.5 underline underline-offset-[3px] hover:text-[#111827]">
             {t('footer.privacy')}
-          </a>
-          <a href="/termos" className="py-0.5 underline underline-offset-[3px] hover:text-[#111827]">
+          </Link>
+          <Link to="/termos" className="py-0.5 underline underline-offset-[3px] hover:text-[#111827]">
             {t('footer.terms')}
-          </a>
+          </Link>
         </nav>
 
         <div className="col-start-2 row-span-2 row-start-1 flex items-center">

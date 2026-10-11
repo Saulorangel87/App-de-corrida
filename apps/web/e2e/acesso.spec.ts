@@ -52,7 +52,8 @@ test("login em português, com rótulos ligados aos campos e sem erro no console
   await expect(page.getByLabel("Senha", { exact: true })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Entrar" })).toHaveAttribute("aria-selected", "true");
   await expect(page.locator("html")).toHaveAttribute("lang", "pt-BR");
-  expect(errors).toEqual([]);
+  // A raiz pergunta ao servidor quem está logado; o 401 de quem não entrou é esperado.
+  expect(errors.filter((e) => !/status of 401/.test(e))).toEqual([]);
 });
 
 test("troca para inglês e lembra a escolha", async ({ page }) => {

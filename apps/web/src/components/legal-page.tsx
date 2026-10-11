@@ -1,4 +1,5 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LEGAL_UPDATED_LABEL, LEGAL_VERSION, PRIVACY_POLICY, TERMS_OF_USE, type LegalDocument } from "../lib/legal";
 import { LEGAL_UPDATED_LABEL_EN, PRIVACY_POLICY_EN, TERMS_OF_USE_EN } from "../lib/legal.en";
@@ -16,6 +17,14 @@ const DOCS: Record<"privacy" | "terms", Record<"pt-BR" | "en", LegalDocument>> =
  */
 export function LegalPage({ kind }: { kind: "privacy" | "terms" }) {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const router = useRouter();
+  // Voltar à tela de onde veio no app; se a página foi aberta direto (ou em outra aba), vai para o
+  // início ("/" leva ao painel de quem entrou e ao login de quem não entrou). Não chama a API.
+  const goBack = () => {
+    if (router.history.canGoBack()) router.history.back();
+    else void navigate({ to: "/" });
+  };
   const lang = i18n.language === "en" ? "en" : "pt-BR";
   const document = DOCS[kind][lang];
   const otherKind = kind === "privacy" ? "terms" : "privacy";
@@ -25,9 +34,20 @@ export function LegalPage({ kind }: { kind: "privacy" | "terms" }) {
     <div className="min-h-dvh flex flex-col bg-[#F5F6F8] text-[#111827]">
       <header className="w-full border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-[960px] items-center justify-between gap-4 px-5 py-2 text-sm">
-          <Link to="/" className="shrink-0 whitespace-nowrap text-lg font-bold tracking-tight">
-            {t("common.appName")}
-          </Link>
+          <div className="flex min-w-0 items-center gap-3">
+            <button
+              type="button"
+              onClick={goBack}
+              aria-label={t("legal.back")}
+              className="-ml-2 inline-flex h-10 items-center gap-1.5 rounded-lg px-2 font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-[#111827]"
+            >
+              <ArrowLeft size={18} aria-hidden="true" />
+              {t("legal.back")}
+            </button>
+            <Link to="/" className="shrink-0 whitespace-nowrap text-lg font-bold tracking-tight">
+              {t("common.appName")}
+            </Link>
+          </div>
           <LanguageSwitch />
         </div>
       </header>

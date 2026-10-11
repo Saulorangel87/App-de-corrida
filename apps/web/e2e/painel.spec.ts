@@ -282,3 +282,43 @@ test("check-in: com bloqueio por dor o app pergunta a dor ao caminhar", async ({
   const put = calls.find((c) => c.method === "PUT");
   expect(put?.body).toMatchObject({ dailyPainWalking: 3 });
 });
+
+test("celular: o menu abre com as áreas do app, navega e fecha", async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 780 }, locale: "pt-BR" });
+  const page = await ctx.newPage();
+  await mockApi(page);
+  await page.goto("/painel");
+  await expect(page.getByRole("complementary")).toBeHidden(); // menu lateral só no desktop
+
+  const toggle = page.getByRole("button", { name: "Abrir menu" });
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await toggle.click();
+  const menu = page.getByRole("navigation", { name: "Navegação principal" });
+  for (const name of ["Painel", "Plano de treino", "Histórico", "Perfil e plano", "Configurações"]) {
+    await expect(menu.getByRole("link", { name })).toBeVisible();
+  }
+  await expect(menu.getByRole("link", { name: "Painel" })).toHaveAttribute("aria-current", "page");
+  await expect(menu.getByRole("button", { name: "Sair" })).toBeVisible();
+  await expect(menu.getByRole("button", { name: "EN" })).toBeVisible();
+
+  // Esc fecha
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: "Abrir menu" })).toHaveAttribute("aria-expanded", "false");
+  await expect(menu).toHaveCount(0);
+
+  // escolher uma área navega e fecha o menu
+  await page.getByRole("button", { name: "Abrir menu" }).click();
+  await page.getByRole("navigation", { name: "Navegação principal" }).getByRole("link", { name: "Configurações" }).click();
+  await expect(page).toHaveURL(/\/configuracoes$/);
+  await expect(page.getByRole("navigation", { name: "Navegação principal" })).toHaveCount(0);
+
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
+  expect(overflow).toBe(false);
+  await ctx.close();
+});
+
+test("raiz do app: quem já entrou vai para o painel", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/");
+  await expect(page).toHaveURL(/\/painel$/);
+});

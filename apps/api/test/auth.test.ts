@@ -144,6 +144,18 @@ describe("login", () => {
     expect(remember.headers.get("set-cookie")).toMatch(/Max-Age=2592000/);
   });
 
+  it("'manter conectado': o cookie é renovado a cada uso; sem ele, nunca vira cookie persistente", async () => {
+    const remembered = await signUpAndLogin(t, uniqueEmail(), true);
+    const me = await t.request("GET", "/auth/me", undefined, remembered.cookie);
+    expect(me.status).toBe(200);
+    expect(me.headers.get("set-cookie")).toMatch(/Max-Age=(2591\d{3}|2592000)/);
+
+    const plain = await signUpAndLogin(t);
+    const plainMe = await t.request("GET", "/auth/me", undefined, plain.cookie);
+    expect(plainMe.status).toBe(200);
+    expect(plainMe.headers.get("set-cookie")).toBeNull();
+  });
+
   it("rotação: o login invalida a sessão que veio no cookie", async () => {
     const { email, cookie } = await signUpAndLogin(t);
     const again = await t.request("POST", "/auth/login", { email, password: PASSWORD }, cookie);

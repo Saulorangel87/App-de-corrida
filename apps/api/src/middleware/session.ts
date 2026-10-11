@@ -41,6 +41,9 @@ export function requireSession(auth: AuthService, cookie: SessionCookie): Middle
       throw errors.unauthorized();
     }
     c.set("auth", result);
+    // "Manter conectado": o prazo da sessão no servidor corre desde o último uso; o cookie
+    // acompanha, senão o navegador o descartaria 30 dias depois do login mesmo com uso diário.
+    if (result.session.rememberMe && token) cookie.write(c, token, result.session);
     await next();
   };
 }

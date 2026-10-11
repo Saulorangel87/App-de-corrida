@@ -112,7 +112,7 @@ test("celular: o cabeçalho cabe e a tela não rola para o lado", async ({ brows
   await mockApi(page);
   await page.goto("/configuracoes");
   await expect(page.getByRole("heading", { name: "Perfil e configurações" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Configurações" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Abrir menu" })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
   expect(overflow).toBe(false);
   await ctx.close();

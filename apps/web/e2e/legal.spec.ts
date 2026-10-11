@@ -106,3 +106,21 @@ test("celular: as páginas legais não rolam para o lado", async ({ browser }) =
   }
   await ctx.close();
 });
+
+test("páginas legais têm botão Voltar: volta à tela anterior; aberta direto, vai para o início", async ({ page, browser }) => {
+  await page.goto("/entrar");
+  await page.goto("/privacidade");
+  await page.getByRole("button", { name: "Voltar" }).click();
+  await expect(page).toHaveURL(/\/entrar$/);
+
+  // aberta direto (sem tela anterior): o botão e o nome do app levam ao início, que decide login ou painel
+  const ctx = await browser.newContext({ locale: "pt-BR" });
+  const direct = await ctx.newPage();
+  await direct.goto("/termos");
+  await direct.getByRole("button", { name: "Voltar" }).click();
+  await expect(direct).toHaveURL(/\/entrar$/);
+  await direct.goto("/termos");
+  await direct.getByRole("banner").getByRole("link", { name: /Let.s Go Run/ }).click();
+  await expect(direct).toHaveURL(/\/entrar$/);
+  await ctx.close();
+});

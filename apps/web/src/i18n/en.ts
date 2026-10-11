@@ -502,6 +502,7 @@ export const en: Translation = {
     updated: "Last updated: {{date}}",
     version: "version {{version}}",
     toc: "On this page",
+    back: "Back",
     enNotice: "This is a translation of the Portuguese version. If there is any difference between the two, the Portuguese version prevails.",
   },
   nav: {
@@ -514,6 +515,8 @@ export const en: Translation = {
     profile: "Profile and plan",
     settings: "Settings",
     level: "{{level}} level",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
   },
   dash: {
     greetMorning: "Good morning, {{name}}",

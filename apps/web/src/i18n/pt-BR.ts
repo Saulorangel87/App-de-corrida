@@ -502,6 +502,7 @@ export const ptBR = {
     updated: "Última atualização: {{date}}",
     version: "versão {{version}}",
     toc: "Nesta página",
+    back: "Voltar",
     enNotice: "Este texto é uma tradução da versão em português. Se houver diferença entre as duas, vale a versão em português.",
   },
   nav: {
@@ -514,6 +515,8 @@ export const ptBR = {
     profile: "Perfil e plano",
     settings: "Configurações",
     level: "Nível {{level}}",
+    openMenu: "Abrir menu",
+    closeMenu: "Fechar menu",
   },
   dash: {
     greetMorning: "Bom dia, {{name}}",
