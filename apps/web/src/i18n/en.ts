@@ -628,6 +628,7 @@ export const en: Translation = {
     checkinTitle: "Do today's check-in",
     checkinText: "It takes less than 30 seconds and helps adjust the day's workout.",
     checkinDone: "Today's check-in is done.",
+    checkinDoneText: "Today's answers are saved. If something changed, you can edit them.",
     checkinCta: "Do check-in",
     checkinEdit: "Edit check-in",
     urgent: "In an emergency (chest pain that does not go away, fainting or severe shortness of breath), call 192 (SAMU).",

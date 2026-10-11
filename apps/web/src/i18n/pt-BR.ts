@@ -628,6 +628,7 @@ export const ptBR = {
     checkinTitle: "Faça o check-in de hoje",
     checkinText: "Leva menos de 30 segundos e ajuda a ajustar o treino do dia.",
     checkinDone: "Check-in de hoje feito.",
+    checkinDoneText: "Suas respostas de hoje já estão salvas. Se algo mudou, você pode alterá-las.",
     checkinCta: "Fazer check-in",
     checkinEdit: "Alterar check-in",
     urgent: "Em emergência (dor no peito que não passa, desmaio ou falta de ar intensa), ligue 192 (SAMU).",

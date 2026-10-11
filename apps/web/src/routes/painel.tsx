@@ -179,7 +179,6 @@ function Panel() {
         : dateLabel;
 
   const mainSession = day.data.sessions.find((s) => !s.optional);
-  const checkinDone = day.data.checkin !== null;
 
   return (
     <FlowLayout width="max-w-[1112px]">
@@ -188,25 +187,18 @@ function Panel() {
           <h1 className="text-[28px] font-extrabold tracking-tight text-[#0F172A]">{t(`dash.${greetKey}`, { name: firstName })}</h1>
           <p className="mt-1 text-sm text-[#475569]">{subtitle}</p>
         </div>
-        {planInfo &&
-          (mainSession ? (
-            <Link
-              to="/registro/$id"
-              params={{ id: mainSession.id }}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#FF5A1F] px-[18px] text-sm font-semibold text-white transition-colors hover:bg-[#e6511a]"
-            >
-              <Footprints size={18} aria-hidden="true" />
-              {mainSession.log ? t("panel.logEdit") : t("panel.logCta")}
-            </Link>
-          ) : (
-            <Link
-              to="/checkin"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#FF5A1F] px-[18px] text-sm font-semibold text-white transition-colors hover:bg-[#e6511a]"
-            >
-              <Check size={18} aria-hidden="true" />
-              {checkinDone ? t("panel.checkinEdit") : t("panel.checkinCta")}
-            </Link>
-          ))}
+        {/* Atalho só no desktop: no celular o mesmo botão já aparece no cartão do treino de hoje.
+            O check-in tem um único botão, no aviso abaixo. */}
+        {planInfo && mainSession && (
+          <Link
+            to="/registro/$id"
+            params={{ id: mainSession.id }}
+            className="hidden h-11 items-center justify-center gap-2 rounded-xl bg-[#FF5A1F] px-[18px] text-sm font-semibold text-white transition-colors hover:bg-[#e6511a] sm:inline-flex"
+          >
+            <Footprints size={18} aria-hidden="true" />
+            {mainSession.log ? t("panel.logEdit") : t("panel.logCta")}
+          </Link>
+        )}
       </div>
 
       {planInfo === null ? (
@@ -262,12 +254,20 @@ function CheckinPrompt({ day }: { day: DayResponse }) {
       }`}
     >
       <div>
-        <p className="font-bold text-[#0F172A]">{done ? t("panel.checkinDone") : t("panel.checkinTitle")}</p>
-        {!done && <p className="text-sm text-gray-700">{t("panel.checkinText")}</p>}
+        <p className="flex items-center gap-2 font-bold text-[#0F172A]">
+          {done && <Check size={18} className="shrink-0 text-green-700" aria-hidden="true" />}
+          {done ? t("panel.checkinDone") : t("panel.checkinTitle")}
+        </p>
+        <p className="text-sm text-gray-700">{done ? t("panel.checkinDoneText") : t("panel.checkinText")}</p>
       </div>
+      {/* Único botão de check-in da tela: principal enquanto falta fazer, secundário depois de feito. */}
       <Link
         to="/checkin"
-        className="flex items-center justify-center rounded-xl bg-[#FF5A1F] px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#e6511a]"
+        className={`flex shrink-0 items-center justify-center rounded-xl px-5 py-2.5 text-sm font-bold transition-colors ${
+          done
+            ? "border border-green-300 bg-white text-green-800 hover:bg-green-100"
+            : "bg-[#FF5A1F] text-white hover:bg-[#e6511a]"
+        }`}
       >
         {done ? t("panel.checkinEdit") : t("panel.checkinCta")}
       </Link>

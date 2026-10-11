@@ -137,6 +137,7 @@ test("painel: treino de hoje, motivo do motor, resumo da semana e convite ao che
   await expect(hoje.getByRole("link", { name: "Ver o treino completo" })).toHaveAttribute("href", "/treino/s1");
 
   await expect(page.getByText("Faça o check-in de hoje")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Fazer check-in" })).toHaveCount(1);
   await expect(page.getByRole("heading", { name: "Complementares de hoje" })).toBeVisible();
   await expect(page.getByText("Mobilidade básica")).toBeVisible();
 
@@ -182,6 +183,12 @@ test("painel: treino feito entra no resumo, no volume e nos treinos recentes", a
   const recentes = page.locator("section", { has: page.getByRole("heading", { name: "Treinos recentes" }) });
   await expect(recentes.getByText("7 km")).toBeVisible();
   await expect(page.getByRole("img", { name: "Feito", exact: true })).toBeVisible();
+
+  // check-in já feito: aviso e um único botão para alterar (sem repetir no topo da tela)
+  await expect(page.getByText("Check-in de hoje feito.")).toBeVisible();
+  await expect(page.getByText("Suas respostas de hoje já estão salvas.")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Alterar check-in" })).toHaveCount(1);
+  await expect(page.getByRole("link", { name: "Fazer check-in" })).toHaveCount(0);
 });
 
 test("painel: com o app em inglês, o menu e o resumo mudam de idioma", async ({ page }) => {
@@ -258,6 +265,7 @@ test("check-in: salva só o que foi respondido e volta ao painel já marcado com
 
   await expect(page).toHaveURL(/\/painel$/);
   await expect(page.getByText("Check-in de hoje feito.")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Alterar check-in" })).toHaveCount(1);
   await expect(page.getByText("Treino mantido depois do check-in.")).toBeVisible();
   const put = calls.find((c) => c.method === "PUT" && c.path === `/checkins/${today}`);
   expect(put?.body).toEqual({ sleepHours: 7.5, sleepQuality: 4, mood: 5, acuteIllness: false });
