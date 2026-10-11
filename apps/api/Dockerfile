@@ -3,7 +3,7 @@
 # Imagem multi-arquitetura (a VPS é arm64). Roda sem root; os segredos entram só por variável de ambiente.
 # syntax=docker/dockerfile:1
 
-FROM node:22-bookworm-slim AS build
+FROM node:25-bookworm-slim AS build
 RUN corepack enable
 WORKDIR /repo
 
@@ -24,7 +24,7 @@ RUN pnpm --filter @passo/api build
 # O argon2 traz o binário pronto (prebuilds) para x64 e arm64; não precisa compilar na imagem final.
 RUN pnpm --filter @passo/api deploy --prod --ignore-scripts /out
 
-FROM node:22-bookworm-slim
+FROM node:25-bookworm-slim
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=build /out/node_modules ./node_modules
