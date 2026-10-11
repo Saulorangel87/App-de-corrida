@@ -91,10 +91,9 @@ Feito, com OK do dono:
 - Migrações 0008 a 0013 e seed aplicados no banco de produção (backup criptografado antes).
 - Chave do Resend no `.env` da VPS; domínio de envio verificado pelo dono.
 - Rota `letsgorun-api.devsaulo.com.br` no túnel Cloudflare; API no ar e saudável; nenhuma porta pública nova.
+- Front no Cloudflare Pages com domínio `letsgorun.devsaulo.com.br` e SSL ativo; `letsgorun` e `letsgorun-api` excluídos da regra de cabeçalhos da zona; cabeçalhos, recarga de rotas, CORS e login genérico conferidos pela internet.
 
 Falta:
-- **Regra de cabeçalhos da zona `devsaulo.com.br`:** hoje ela sobrescreve CSP, HSTS, Referrer-Policy e Permissions-Policy das respostas, inclusive da API. Excluir `letsgorun.devsaulo.com.br` e `letsgorun-api.devsaulo.com.br` (ou trocar para "só adicionar se ausente") antes de abrir o front; conferir com `curl -I` nas duas origens.
-- Front no Cloudflare Pages (`letsgorun.devsaulo.com.br`) com `VITE_API_URL`.
 - Primeiro envio real de e-mail (cadastro de teste) para exercitar a chave do Resend.
 - Teste de restauração depois das novas tabelas (`ops/restore-test.sh`) e data anotada em `ops/README.md`.
 - Resto da lista de verificação em `docs/auditoria-seguranca.md`, seção 4.

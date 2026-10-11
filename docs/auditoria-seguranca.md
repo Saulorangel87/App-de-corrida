@@ -74,6 +74,23 @@ Escopo: repositório inteiro (código da API, do front e dos pacotes), banco, in
 | Primeiro backup criptografado e teste de restauração depois das novas tabelas | `ops/backup.sh` e `ops/restore-test.sh`; anotar a data em `ops/README.md` |
 | Rota do túnel `letsgorun-api.devsaulo.com.br` | `curl https://letsgorun-api.devsaulo.com.br/health` |
 
+### Resultado da verificação no deploy (2026-10-11)
+
+| Item | Resultado |
+|---|---|
+| API sem porta publicada; banco sem porta publicada | ok (a porta 3000 do host é de outro app da VPS) |
+| Container da API: sem root, somente leitura, `no-new-privileges`, sem capacidades, 512 MB | ok |
+| `.env` com permissão 600, fora do Git | ok |
+| `/health` pela internet; origem estranha 403; rota de atleta sem sessão 401; login de conta inexistente com resposta genérica | ok |
+| CORS: só a origem `https://letsgorun.devsaulo.com.br` | ok (a de `pages.dev` não recebe `allow-origin`) |
+| Cabeçalhos da API e do front no domínio final | ok **depois** de excluir os dois hosts da regra "Cabeçalho de segurança" da zona, que sobrescrevia CSP, Referrer-Policy e Permissions-Policy |
+| Recarga de rotas do front (SPA) | ok |
+| `VITE_API_URL` no build; nenhum `localhost` no JavaScript publicado | ok |
+| Envio real de e-mail (chave do Resend) | **pendente**: exercitar com um cadastro de teste |
+| Teste de restauração do backup com as 23 tabelas | **pendente** |
+
+Observação: o HSTS sai com 6 meses (`max-age=15552000`) porque a zona tem HSTS próprio na Cloudflare, que prevalece sobre o valor do código.
+
 ## 5. O que esta auditoria **não** fez
 
 - Teste de invasão dinâmico (varredura com ZAP ou Burp, fuzzing de rotas). Recomendado depois do deploy, contra o ambiente real.
