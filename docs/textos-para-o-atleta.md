@@ -246,3 +246,38 @@ Você não precisa de mais que isso. Nada é aplicado antes da sua resposta.
 **Limites do que eu consigo garantir:** as frases propostas mantêm os mesmos fatos e números dos textos atuais e das regras citadas. Onde a pesquisa marca um valor como `[P]` (ponto de partida aceito por você em 2026-10-10), o texto diz "valor inicial do app, ainda sem estudo direto". Isso é intencional.
 
 Depois da sua aprovação, a sequência é: bloco `atleta` no seed e na API, testes que bloqueiam código e marcador técnico no texto do atleta, mensagem do dia sem colchetes, ajuste dos rótulos do painel, e então a tradução para inglês.
+
+## 6. Proposta: "Como fazer" em linguagem simples (2026-10-11, aguardando aprovação do dono)
+
+Motivo: o dono achou a explicação dos treinos confusa (exemplo: "N x (corrida / caminhada), minutos de corrida e de caminhada por repetição"). Regras: frases curtas, sem sigla (Z1, Z2, Z3 viram "ritmo leve", "moderado", "forte"), sem fonte ou regra dentro do "Como fazer" (isso fica em "Por que" e "Base científica"), e os números vêm do motor, nunca escritos à mão.
+
+### 6.1 Caminhada e corrida (montado com os números de cada sessão)
+
+| Parte | Texto |
+|---|---|
+| Quando | "Esta é a sessão {n} de 3 da etapa {etapa}." |
+| Aquecimento | "Caminhe 5 minutos em passo rápido, para o corpo esquentar." |
+| Principal (com repetições) | "Corra {corrida} e depois caminhe {caminhada}. Repita {n} vezes." |
+| Principal (corrida contínua) | "Corra {corrida} seguidos, bem devagar, sem parar." |
+| Volta à calma | "Caminhe 5 minutos devagar, para o corpo desacelerar." |
+| Ritmo | "Corra num ritmo em que você consiga conversar, falando frases completas. Se ficar sem ar, diminua o ritmo." |
+
+Exemplo (etapa 3): "Caminhe 5 minutos em passo rápido. Corra 3 minutos e depois caminhe 2 minutos. Repita 4 vezes. Caminhe 5 minutos devagar para terminar."
+Saem do "Como fazer" (continuam em "Por que" e "Base científica"): "A escada tem 12 etapas, mais um degrau extra (10b)…", "Fonte: Buist (2007)…".
+
+### 6.2 Demais treinos (texto fixo)
+
+| Treino | Aquecimento | Principal | Volta à calma |
+|---|---|---|---|
+| Rodagem leve | "Caminhe rápido por 5 minutos (quem está começando) ou comece correndo bem devagar." | "Corra sem parar, em ritmo leve: você deve conseguir conversar." | "Termine com uma volta à calma. Quem está começando: 5 minutos de caminhada rápida." |
+| Longão | "Faça sempre um aquecimento antes de correr." | "Corra sem parar, em ritmo leve. É o treino mais longo da semana." | "Termine sempre com uma volta à calma." |
+| Regenerativo | "Faça sempre um aquecimento antes de correr." | "Corra pouco e bem devagar, no ritmo mais leve (quem está começando pode só caminhar rápido)." | "Termine sempre com uma volta à calma." |
+| Variação de ritmo (fartlek) | "10 minutos em ritmo leve." | "Alterne trechos de 1 a 3 minutos em ritmo moderado com 2 a 3 minutos leves para recuperar. Avançados podem chegar ao ritmo forte." | "5 a 10 minutos em ritmo leve." |
+| Tiros curtos | "10 a 15 minutos em ritmo leve, mais 2 a 4 acelerações curtas." | "Repita tiros de 15 a 30 segundos em ritmo forte, com recuperação leve entre eles (do mesmo tempo do tiro, ou o dobro se precisar)." | "10 minutos em ritmo leve." |
+| Tiros longos | "10 a 15 minutos em ritmo leve." | "Repita tiros de 3 a 4 minutos em ritmo forte, com 2 a 3 minutos de recuperação leve entre eles." | "10 minutos em ritmo leve." |
+| Ritmo constante (limiar) | "10 a 15 minutos em ritmo leve." | "Corra em blocos no ritmo moderado mais forte, com 2 minutos de trote leve entre os blocos." | "10 minutos em ritmo leve." |
+| Subidas | "10 a 15 minutos em ritmo leve." | "Repita subidas de 30 a 60 segundos numa subida moderada, mantendo a postura. Desça caminhando ou em trote leve até a base." | "10 minutos em ritmo leve." |
+| Força do corredor | — | "Faça de 2 a 4 exercícios para as pernas e o tronco." | — |
+| Mobilidade | — | "Faça exercícios para quadril, parte de trás da coxa, panturrilha, tornozelo, parte da frente da coxa e parte de cima das costas: cerca de 1 minuto em cada, sem alongar até doer." | — |
+
+Tradução para o inglês: feita depois da aprovação, uma frase por vez, como as demais.
