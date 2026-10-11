@@ -194,7 +194,7 @@ export const ptBR = {
     triagem: {
       intro: "Sobre este questionário",
       note: "Este é o PAR-Q+ oficial. Você não precisa escrever suas condições nem seus medicamentos: guardamos só as respostas Sim e Não. Isto não é diagnóstico e não substitui avaliação profissional.",
-      english: "O texto do PAR-Q+ é a tradução oficial em português do Brasil e não é traduzido para o inglês.",
+      english: "O PAR-Q+ é mostrado na versão original em inglês, publicada pela PAR-Q+ Collaboration, sem alterações.",
       pregnant: "Você está grávida neste momento?",
       pregnantHint: "Pergunta do app, fora do PAR-Q+. Com gravidez, o treino fica adiado até a orientação de um profissional de saúde.",
       attribution: "Fonte",
@@ -300,6 +300,7 @@ export const ptBR = {
     validUntil: "A liberação vale até {{date}}.",
     disclaimer: "Isto não é diagnóstico nem substitui avaliação profissional.",
     officialText: "Recomendações do PAR-Q+",
+    officialEnglish: "O texto acima é a versão original em inglês do PAR-Q+ (PAR-Q+ Collaboration, 2025), sem alterações.",
     states: {
       LIBERADO: { title: "Triagem concluída", text: "Pelas suas respostas, você pode começar a treinar, de forma gradual." },
       LIBERADO_APOS_AVALIACAO: {

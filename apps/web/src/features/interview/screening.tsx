@@ -1,6 +1,15 @@
 import { useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { PARQ_FOLLOW_UP, PARQ_GENERAL, PARQ_INSTRUMENT, PARQ_TEXT_PT_BR, screeningStep } from "@passo/shared";
+import {
+  PARQ_FOLLOW_UP,
+  PARQ_GENERAL,
+  PARQ_INSTRUMENT,
+  PARQ_INSTRUMENT_EN,
+  parqTextFor,
+  screeningStep,
+  toParqLang,
+  type ParqLang,
+} from "@passo/shared";
 import { YesNoField } from "../../components/choice";
 import { StepActions, StepFields, savedObject, useStepForm, type StepProps } from "./common";
 
@@ -9,8 +18,6 @@ import { StepActions, StepFields, savedObject, useStepForm, type StepProps } fro
 
 type Form = Record<string, boolean | undefined>;
 const SECTIONS = Object.entries(PARQ_FOLLOW_UP) as [string, readonly string[]][];
-
-const parq = (key: string) => PARQ_TEXT_PT_BR[key] ?? "";
 
 function toPayload(v: Form) {
   const general = Object.fromEntries(PARQ_GENERAL.map((q) => [String(q), v[`g${q}`]]));
@@ -61,10 +68,16 @@ function splitQuestion({ number, text }: { number: string; text: string }) {
 
 export function ScreeningStep({ saved, all, onSubmit, ...actions }: StepProps) {
   const { t, i18n } = useTranslation();
+  // O PAR-Q+ aparece na versão oficial brasileira (tela em português) ou no original em inglês (tela
+  // em inglês). Nenhuma tradução é nossa; o idioma lido vai junto das respostas para o registro.
+  const textLang: ParqLang = toParqLang(i18n.language);
+  const texts = parqTextFor(textLang);
+  const parq = (key: string) => texts[key] ?? "";
+  const instrument = textLang === "en" ? PARQ_INSTRUMENT_EN : PARQ_INSTRUMENT;
   const sex = savedObject(all.basicos).sex;
   const { form, submit } = useStepForm<Form>({
     schema: screeningStep,
-    toPayload,
+    toPayload: (v) => ({ ...toPayload(v), textLang }),
     fieldOf,
     defaults: defaultsFrom(saved, sex),
     onSubmit,
@@ -79,7 +92,7 @@ export function ScreeningStep({ saved, all, onSubmit, ...actions }: StepProps) {
       <StepFields>
         <details className="rounded-xl bg-[#F5F6F8] px-4 py-3 text-sm text-gray-700">
           <summary className="cursor-pointer font-semibold text-[#111827]">{t("interview.triagem.intro")}</summary>
-          <p lang="pt-BR" className="mt-3 whitespace-pre-line leading-relaxed">
+          <p lang={textLang} className="mt-3 whitespace-pre-line leading-relaxed">
             {parq("pagina1.introducao")}
           </p>
         </details>
@@ -88,7 +101,7 @@ export function ScreeningStep({ saved, all, onSubmit, ...actions }: StepProps) {
           {i18n.language === "en" && <span className="mt-1 block">{t("interview.triagem.english")}</span>}
         </p>
 
-        <div lang="pt-BR" className="space-y-6">
+        <div lang={textLang} className="space-y-6">
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wide text-[#111827]">{headTitle}</h3>
             <p className="text-xs text-gray-600">{headText}</p>
@@ -126,7 +139,7 @@ export function ScreeningStep({ saved, all, onSubmit, ...actions }: StepProps) {
         )}
 
         <p className="text-[11px] leading-snug text-gray-500">
-          {t("interview.triagem.attribution")}: {PARQ_INSTRUMENT.attribution}
+          {t("interview.triagem.attribution")}: {instrument.attribution}
         </p>
       </StepFields>
       <StepActions {...actions} />

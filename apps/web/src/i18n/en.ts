@@ -194,7 +194,7 @@ export const en: Translation = {
     triagem: {
       intro: "About this questionnaire",
       note: "This is the official PAR-Q+. You do not need to write your conditions or medications: we only keep the Yes and No answers. This is not a diagnosis and does not replace a professional assessment.",
-      english: "The PAR-Q+ text is the official Brazilian Portuguese translation and is not translated into English.",
+      english: "The PAR-Q+ is shown in its original English version, published by the PAR-Q+ Collaboration, without changes.",
       pregnant: "Are you pregnant right now?",
       pregnantHint: "App question, outside the PAR-Q+. If pregnant, training is postponed until a health professional gives guidance.",
       attribution: "Source",
@@ -299,6 +299,7 @@ export const en: Translation = {
     validUntil: "The clearance is valid until {{date}}.",
     disclaimer: "This is not a diagnosis and does not replace a professional assessment.",
     officialText: "PAR-Q+ recommendations",
+    officialEnglish: "The text above is the original English version of the PAR-Q+ (PAR-Q+ Collaboration, 2025), without changes.",
     states: {
       LIBERADO: { title: "Screening complete", text: "From your answers, you can start training, gradually." },
       LIBERADO_APOS_AVALIACAO: {

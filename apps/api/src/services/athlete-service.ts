@@ -38,7 +38,7 @@ import {
 import {
   INTERVIEW_STEPS,
   INTERVIEW_VERSION,
-  PARQ_INSTRUMENT,
+  parqInstrumentFor,
   interviewSchema,
   interviewSteps,
   type Interview,
@@ -336,7 +336,8 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           .insert(healthScreenings)
           .values({
             userId,
-            instrumentVersion: PARQ_INSTRUMENT.version,
+            // Versão do texto que a pessoa leu (brasileiro oficial ou original em inglês).
+            instrumentVersion: parqInstrumentFor(iv.triagem.textLang).version,
             answers: { general: iv.triagem.general, followUp: iv.triagem.followUp ?? null },
             pregnant: iv.triagem.pregnant,
             regularExercise3m: iv.historico.regularExercise3m,

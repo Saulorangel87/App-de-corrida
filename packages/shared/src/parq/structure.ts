@@ -1,7 +1,10 @@
 // Estrutura do PAR-Q+ (7 perguntas gerais e 10 seções de seguimento), igual ao
-// formulário oficial. O texto em si fica em text.pt-BR.ts, gerado a partir de
-// docs/parq/parq-plus-pt-br.txt (copiado do PDF oficial, sem alteração; R-TRI-02).
+// formulário oficial. O texto em si fica em text.pt-BR.ts e text.en.ts, gerados a partir de
+// docs/parq/parq-plus-pt-br.txt e parq-plus-en.txt (copiados dos PDFs oficiais, sem alteração;
+// R-TRI-02). Nenhuma tradução é feita por nós: o português é a versão oficial brasileira e o
+// inglês é o original.
 
+/** Versão oficial em português do Brasil (a padrão). */
 export const PARQ_INSTRUMENT = {
   name: "PAR-Q+",
   version: "pt-BR 2023",
@@ -9,6 +12,20 @@ export const PARQ_INSTRUMENT = {
   attribution:
     "PAR-Q+ © PAR-Q+ Collaboration; tradução de Bianca Bold e Juliano Schwartz; Schwartz et al., 2021; eparmedx.com",
 } as const;
+
+/** Texto original em inglês (a estrutura de perguntas é a mesma da versão brasileira). */
+export const PARQ_INSTRUMENT_EN = {
+  name: "PAR-Q+",
+  version: "en 2025",
+  officialPdf: "https://eparmedx.com/wp-content/uploads/2025/01/PARQPlus2025Fillable.pdf",
+  attribution: "PAR-Q+ © 2025 PAR-Q+ Collaboration; Warburton et al., 2011; eparmedx.com",
+} as const;
+
+/** Idioma em que o texto do PAR-Q+ é mostrado (e registrado na triagem). */
+export type ParqLang = "pt-BR" | "en";
+
+/** Versão do instrumento registrada na triagem, conforme o texto que a pessoa leu. */
+export const parqInstrumentFor = (lang: ParqLang | undefined) => (lang === "en" ? PARQ_INSTRUMENT_EN : PARQ_INSTRUMENT);
 
 export const PARQ_GENERAL = [1, 2, 3, 4, 5, 6, 7] as const;
 

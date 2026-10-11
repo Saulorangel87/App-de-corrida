@@ -119,6 +119,7 @@ test("entrevista completa: 8 etapas, cada uma salva, e o envio leva ao resultado
   expect(putBody(calls, "triagem")).toEqual({
     general: { "1": false, "2": false, "3": false, "4": false, "5": false, "6": false, "7": false },
     pregnant: false,
+    textLang: "pt-BR",
   });
 
   await expect(page.getByRole("heading", { name: "Sua corrida até agora" })).toBeVisible();
@@ -256,12 +257,40 @@ test("triagem: um Sim abre as perguntas adicionais e o envio leva a estrutura do
 
   await expect(page.getByRole("heading", { name: "Sua corrida até agora" })).toBeVisible();
   const body = putBody(calls, "triagem") as { general: Record<string, boolean>; followUp: Record<string, { has: boolean; answers: Record<string, boolean> }>; pregnant: boolean };
+  expect((body as { textLang?: string }).textLang).toBe("pt-BR");
   expect(body.general["6"]).toBe(true);
   expect(body.general["1"]).toBe(false);
   expect(body.pregnant).toBe(false);
   expect(body.followUp["1"]).toEqual({ has: true, answers: { "1a": true, "1b": false, "1c": false } });
   expect(body.followUp["2"]).toEqual({ has: false, answers: {} });
   expect(Object.keys(body.followUp)).toHaveLength(10);
+});
+
+test("triagem em inglês mostra o PAR-Q+ original (sem tradução nossa) e envia o idioma lido", async ({ page }) => {
+  const calls = await mockApi(page, { completed: ["basicos"], responses: { basicos: { birthMonth: 5, birthYear: 1990, sex: "M", heightCm: 170 } } });
+  await page.goto("/entrevista");
+  await page.getByRole("button", { name: "EN", exact: true }).click();
+  await expect(page.getByText("GENERAL HEALTH QUESTIONS")).toBeVisible();
+  await expect(page.getByText("Has your doctor ever said that you have a heart condition OR high blood pressure?")).toBeVisible();
+  await expect(page.getByText(/Source: PAR-Q\+ © 2025 PAR-Q\+ Collaboration/)).toBeVisible();
+  await expect(page.getByText(/original English version/)).toBeVisible();
+  // Nada do questionário em português nesta tela.
+  await expect(page.getByText("O médico alguma vez disse")).toHaveCount(0);
+  await expect(page.locator('[lang="en"]').getByText("PAR-Q+")).not.toHaveCount(0);
+
+  for (let q = 1; q <= 7; q++) await answer(page, new RegExp(`^${q}[.] `), "No");
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect.poll(() => putBody(calls, "triagem")).toMatchObject({ pregnant: false, textLang: "en" });
+});
+
+test("resultado em inglês mostra as recomendações do PAR-Q+ no original e avisa", async ({ page }) => {
+  await mockApi(page, { profile: { status: 200, body: profileOk } });
+  await page.goto("/resultado");
+  await page.getByRole("button", { name: "EN", exact: true }).click();
+  const box = page.locator('[lang="en"]').filter({ hasText: "PAR-Q+ recommendations" });
+  await expect(box.getByText("It is advised that you consult a qualified exercise professional")).toBeVisible();
+  await expect(page.getByText(/original English version of the PAR-Q\+/)).toBeVisible();
+  await expect(page.getByText("É aconselhável que você consulte")).toHaveCount(0);
 });
 
 test("volta de onde parou: abre na primeira etapa que falta, com as respostas salvas", async ({ page }) => {

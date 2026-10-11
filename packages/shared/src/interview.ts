@@ -27,6 +27,8 @@ export const screeningStep = z
     general: z.object(Object.fromEntries(PARQ_GENERAL.map((q) => [String(q), z.boolean()])) as Record<string, z.ZodBoolean>),
     followUp: z.record(z.string(), followUpSection).optional(),
     pregnant: z.boolean(),
+    /** Idioma do texto do PAR-Q+ que a pessoa leu; define a versão do instrumento registrada. */
+    textLang: z.enum(["pt-BR", "en"]).optional(),
   })
   .superRefine((v, ctx) => {
     const anyYes = Object.values(v.general).some(Boolean);

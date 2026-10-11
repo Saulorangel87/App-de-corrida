@@ -49,6 +49,8 @@ Dos Termos e Condições (eparmedx.com/?page_id=746) [PARQ+ Termos]:
 
 Consequência: **este arquivo não reproduz o questionário**; registra apenas a estrutura e onde está o texto oficial.
 
+**Idiomas no app (decisão do dono, 2026-10-11):** tela em português mostra a versão oficial brasileira (PDF de 2023); tela em inglês mostra o **original em inglês** (PDF de 2025, `docs/parq/parq-plus-en.txt`). O inglês é o texto-fonte do instrumento, não uma tradução; nenhuma tradução é feita pelo projeto, porque os termos dizem que os instrumentos "may not under any circumstances, be changed in any way" e que qualquer outro uso exige permissão escrita (conferido em eparmedx.com/?page_id=746). A versão que a pessoa leu fica em `health_screenings.instrument_version`. **Ressalva:** as duas versões têm datas diferentes (2023 e 2025); a estrutura é a mesma e a redação das perguntas segue a mesma ordem, mas não foi auditada diferença a diferença.
+
 ### 5. Algoritmo de triagem do ACSM (Riebe 2015)
 
 - Origem: mesa-redonda científica do ACSM (junho/2014) que atualizou a triagem de 2009 porque o modelo anterior gerava encaminhamentos excessivos a médicos, o que pode desestimular a prática; exercício é geralmente seguro, os eventos cardíacos relacionados ao exercício são raros e muitas vezes precedidos de sinais de alerta, e o risco cai com o condicionamento [Riebe 2015] [ACSM Roundtable 2015].

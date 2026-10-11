@@ -74,6 +74,28 @@ describe("entrevista", () => {
     expect(ir!.responses.triagem).toEqual({ screeningId: expect.any(String) });
   });
 
+  it("registra a versão do PAR-Q+ conforme o texto que a pessoa leu (brasileiro ou original em inglês)", async () => {
+    const pt = await signUpAndLogin(t);
+    await fill(pt.cookie, interview());
+    expect((await submit(pt.cookie)).status).toBe(201);
+
+    const en = await signUpAndLogin(t);
+    const iv = interview();
+    await fill(en.cookie, { ...iv, triagem: { ...iv.triagem, textLang: "en" } });
+    expect((await submit(en.cookie)).status).toBe(201);
+
+    const [a] = await admin`select instrument_version from health_screenings where user_id = ${pt.userId}`;
+    const [b] = await admin`select instrument_version from health_screenings where user_id = ${en.userId}`;
+    expect(a!.instrument_version).toBe("pt-BR 2023");
+    expect(b!.instrument_version).toBe("en 2025");
+  });
+
+  it("idioma do texto do PAR-Q+ fora da lista é recusado", async () => {
+    const a = await signUpAndLogin(t);
+    const res = await t.request("PUT", "/interview/triagem", { general: allNo, pregnant: false, textLang: "fr" }, a.cookie);
+    expect(res.status).toBe(400);
+  });
+
   it("salvar e continuar depois; envio incompleto lista o que falta", async () => {
     const a = await signUpAndLogin(t);
     const iv = interview();

@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import type { z } from "zod";
-import { PARQ_TEXT_PT_BR, evaluationSchema } from "@passo/shared";
+import { evaluationSchema, parqTextFor, toParqLang, type ParqLang } from "@passo/shared";
 import { PrimaryButton } from "../components/auth-ui";
 import { CheckField, TextField } from "../components/field";
 import { SelectField } from "../components/choice";
@@ -61,8 +61,8 @@ function Bold({ text }: { text: string }) {
 }
 
 /** Linhas de lista ("- ...") do texto oficial; o PAR-Q+ é mostrado sem reescrever. */
-function parqBullets(key: string): string[] {
-  return (PARQ_TEXT_PT_BR[key] ?? "")
+function parqBullets(texts: Record<string, string>, key: string): string[] {
+  return (texts[key] ?? "")
     .split("\n")
     .filter((l) => l.startsWith("- "))
     .map((l) => l.slice(2));
@@ -80,6 +80,9 @@ function Card({ title, children, tone = "neutral" }: { title: string; children: 
 
 function ResultPage() {
   const { t, i18n } = useTranslation();
+  // Texto oficial do PAR-Q+: a versão brasileira na tela em português, o original na tela em inglês.
+  const textLang = toParqLang(i18n.language);
+  const texts = parqTextFor(textLang);
   const errorText = useErrorText();
   const navigate = useNavigate();
   const { loading } = useRequireUser();
@@ -157,9 +160,14 @@ function ResultPage() {
           )}
           {s?.validUntil && <p className="text-sm text-gray-500">{t("result.validUntil", { date: date(s.validUntil) })}</p>}
 
-          {(state === "LIBERADO" || state === "LIBERADO_APOS_AVALIACAO") && <OfficialList title={t("result.officialText")} items={parqBullets("pagina4.todas_nao")} />}
-          {blocked && <OfficialBlock title={t("result.officialText")} text={PARQ_TEXT_PT_BR["pagina4.algum_sim"] ?? ""} />}
-          {state === "ADIADO" && <OfficialBlock title={t("result.officialText")} text={PARQ_TEXT_PT_BR["pagina4.adiar"] ?? ""} />}
+          {(state === "LIBERADO" || state === "LIBERADO_APOS_AVALIACAO") && (
+            <OfficialList title={t("result.officialText")} lang={textLang} items={parqBullets(texts, "pagina4.todas_nao")} />
+          )}
+          {blocked && <OfficialBlock title={t("result.officialText")} lang={textLang} text={texts["pagina4.algum_sim"] ?? ""} />}
+          {state === "ADIADO" && <OfficialBlock title={t("result.officialText")} lang={textLang} text={texts["pagina4.adiar"] ?? ""} />}
+          {(state === "LIBERADO" || state === "LIBERADO_APOS_AVALIACAO" || blocked || state === "ADIADO") && textLang === "en" && (
+            <p className="text-xs text-gray-500">{t("result.officialEnglish")}</p>
+          )}
 
           <p className="text-xs text-gray-500">{t("result.disclaimer")}</p>
         </Card>
@@ -222,9 +230,9 @@ function Fact({ label, value }: { label: string; value: string }) {
   );
 }
 
-function OfficialList({ title, items }: { title: string; items: string[] }) {
+function OfficialList({ title, items, lang }: { title: string; items: string[]; lang: ParqLang }) {
   return (
-    <div lang="pt-BR" className="rounded-xl bg-[#F5F6F8] p-4 text-sm">
+    <div lang={lang} className="rounded-xl bg-[#F5F6F8] p-4 text-sm">
       <p className="mb-2 font-semibold text-[#111827]">{title}</p>
       <ul className="list-disc space-y-1 pl-5">
         {items.map((i) => (
@@ -235,9 +243,9 @@ function OfficialList({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-function OfficialBlock({ title, text }: { title: string; text: string }) {
+function OfficialBlock({ title, text, lang }: { title: string; text: string; lang: ParqLang }) {
   return (
-    <div lang="pt-BR" className="rounded-xl bg-[#F5F6F8] p-4 text-sm">
+    <div lang={lang} className="rounded-xl bg-[#F5F6F8] p-4 text-sm">
       <p className="mb-2 font-semibold text-[#111827]">{title}</p>
       <p className="whitespace-pre-line">{text}</p>
     </div>
