@@ -74,7 +74,7 @@ type Ctx = {
   baseWeekly: number;
 };
 
-type SessionRow = typeof scheduledWorkouts.$inferSelect & { slug: string };
+type SessionRow = typeof scheduledWorkouts.$inferSelect & { slug: string; namePt?: string; nameEn?: string };
 type WeekRow = typeof athletePlanWeeks.$inferSelect;
 type LogRow = typeof workoutLogs.$inferSelect;
 
@@ -82,6 +82,8 @@ export type SessionView = {
   id: string;
   date: string;
   slug: string;
+  /** Nome do treino no catálogo, nos dois idiomas. */
+  name: { "pt-BR": string; en: string } | null;
   kind: string;
   minutes: number;
   maxZone: string;
@@ -97,6 +99,7 @@ const view = (s: SessionRow, log: LogRow | undefined): SessionView => ({
   id: s.id,
   date: s.scheduledDate,
   slug: s.slug,
+  name: s.namePt && s.nameEn ? { "pt-BR": s.namePt, en: s.nameEn } : null,
   kind: s.kind,
   minutes: s.plannedMinutes,
   maxZone: s.maxZone,
@@ -181,12 +184,12 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
 
   const sessionsOf = async (tx: Transaction, userId: string, filter: ReturnType<typeof and>): Promise<SessionRow[]> => {
     const rows = await tx
-      .select({ s: scheduledWorkouts, slug: workouts.slug })
+      .select({ s: scheduledWorkouts, slug: workouts.slug, namePt: workouts.namePt, nameEn: workouts.nameEn })
       .from(scheduledWorkouts)
       .innerJoin(workouts, eq(scheduledWorkouts.workoutId, workouts.id))
       .where(and(eq(scheduledWorkouts.userId, userId), filter))
       .orderBy(asc(scheduledWorkouts.scheduledDate), asc(scheduledWorkouts.slot));
-    return rows.map((r) => ({ ...r.s, slug: r.slug }));
+    return rows.map((r) => ({ ...r.s, slug: r.slug, namePt: r.namePt, nameEn: r.nameEn }));
   };
 
   const logsByWorkout = async (tx: Transaction, userId: string, ids: string[]) => {
@@ -571,6 +574,16 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     const allowedComplementary = (kind: string) =>
       kind === "forca" ? decision.action === "manter" || decision.action === "reduzir" : decision.action !== "interromper_e_encaminhar";
 
+    // Nome do que o motor mandou fazer hoje (pode ser diferente do planejado: regenerativo, mobilidade).
+    const [decided] = decision.session.slug
+      ? await tx
+          .select({ namePt: workouts.namePt, nameEn: workouts.nameEn })
+          .from(workouts)
+          .where(eq(workouts.slug, decision.session.slug))
+          .limit(1)
+      : [];
+    const todayName = decided ? { "pt-BR": decided.namePt, en: decided.nameEn } : null;
+
     const questions: string[] = [];
     if (decision.needsCheckin) questions.push("checkin");
     if (decision.levels.painBlock) questions.push("daily_pain_walking");
@@ -615,6 +628,8 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           }
         : null,
       decision,
+      /** Nome (pt/en) do treino indicado pela decisão; `null` no descanso. */
+      todayName,
       questions,
     };
   }
@@ -744,7 +759,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
 
         const sameDay = await dayView(tx, ctx, userId, row.scheduledDate);
         const nextDay = await dayView(tx, ctx, userId, addDays(row.scheduledDate, 1));
-        return { session: view({ ...updated!, slug: row.slug }, log), day: sameDay, nextDay };
+        return { session: view({ ...updated!, slug: row.slug, namePt: row.namePt, nameEn: row.nameEn }, log), day: sameDay, nextDay };
       });
     },
 

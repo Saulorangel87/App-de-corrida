@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as EntrevistaRouteImport } from './routes/entrevista'
 import { Route as EsqueciASenhaRouteImport } from './routes/esqueci-a-senha'
@@ -21,6 +22,11 @@ import { Route as VerificarEmailRouteImport } from './routes/verificar-email'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckinRoute = CheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EntrarRoute = EntrarRouteImport.update({
@@ -61,6 +67,7 @@ const VerificarEmailRoute = VerificarEmailRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
   '/entrar': typeof EntrarRoute
   '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
   '/entrar': typeof EntrarRoute
   '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
@@ -82,6 +90,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
   '/entrar': typeof EntrarRoute
   '/entrevista': typeof EntrevistaRoute
   '/esqueci-a-senha': typeof EsqueciASenhaRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/checkin'
     | '/entrar'
     | '/entrevista'
     | '/esqueci-a-senha'
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/checkin'
     | '/entrar'
     | '/entrevista'
     | '/esqueci-a-senha'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/checkin'
     | '/entrar'
     | '/entrevista'
     | '/esqueci-a-senha'
@@ -125,6 +137,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckinRoute: typeof CheckinRoute
   EntrarRoute: typeof EntrarRoute
   EntrevistaRoute: typeof EntrevistaRoute
   EsqueciASenhaRoute: typeof EsqueciASenhaRoute
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkin': {
+      id: '/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof CheckinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entrar': {
@@ -197,6 +217,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckinRoute: CheckinRoute,
   EntrarRoute: EntrarRoute,
   EntrevistaRoute: EntrevistaRoute,
   EsqueciASenhaRoute: EsqueciASenhaRoute,

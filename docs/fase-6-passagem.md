@@ -41,11 +41,12 @@ Pendências do arquivo do Figma: **encerradas por decisão do dono** (o Figma se
 | `/entrar`, `/esqueci-a-senha`, `/redefinir-senha`, `/verificar-email` | acesso e recuperação de conta | `e2e/acesso.spec.ts`, `e2e/recuperar-conta.spec.ts` |
 | `/entrevista` | 8 etapas, salva cada uma (`PUT /interview/:step`), retoma de onde parou, envia (`POST /interview/submit`); triagem PAR-Q+ com o texto oficial inteiro; menor de 18 mostra aviso e exclusão da conta | `e2e/entrevista.spec.ts` |
 | `/resultado` | nível e explicação, triagem (texto oficial do PAR-Q+ conforme o estado), autodeclaração de avaliação (R-TRI-05), plano atribuído | `e2e/entrevista.spec.ts` |
-| `/painel` | esqueleto; sem perfil (404) leva à entrevista | `e2e/acesso.spec.ts` |
+| `/painel` | treino de hoje (decisão do motor, nome do catálogo, motivo com fontes), convite ao check-in, complementares, semana do plano (agenda, treinos feitos, minutos), objetivo; sem perfil (404) leva à entrevista; sem plano mostra o motivo | `e2e/painel.spec.ts` |
+| `/checkin` | check-in do dia (< 30 s, tudo opcional); pergunta a dor ao caminhar só quando o motor pede (`questions`); grava com `PUT /checkins/:date` e volta ao painel com o dia recalculado | `e2e/painel.spec.ts` |
 
 Padrões para as próximas telas: moldura `FlowLayout` (cabeçalho com idioma e sair); campos de escolha em `components/choice.tsx`; formulário por etapa com `stepResolver` (valida com o esquema compartilhado e mapeia o erro para o campo; o texto vem do i18n); `useRequireUser()` redireciona sem sessão; nada de `style=""` inline (a CSP bloqueia).
 
-Pendências conhecidas desta parte: `/privacidade` e `/termos` ainda não existem; o texto do PAR-Q+ aparece só em português (é a tradução oficial; no app em inglês há um aviso); o formulário de "mudança de saúde" (R-TRI-11) e o refazer a triagem expirada entram com o perfil/configurações.
+Pendências conhecidas desta parte: a mensagem do motor (`decision.message`, com as fontes entre colchetes) aparece só em português, mesmo com o app em inglês, porque é um texto calculado; traduzir por `reasons[].code` fica para depois; `/privacidade` e `/termos` ainda não existem; o texto do PAR-Q+ aparece só em português (é a tradução oficial; no app em inglês há um aviso); o formulário de "mudança de saúde" (R-TRI-11) e o refazer a triagem expirada entram com o perfil/configurações.
 
 ## Contrato da API (prefixo `/api/v1`, tudo com sessão; erros `{error:{code,message,details?}}`)
 | Rota | Uso |

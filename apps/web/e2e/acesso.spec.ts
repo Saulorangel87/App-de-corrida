@@ -28,7 +28,9 @@ async function mockApi(page: Page, opts: { login?: Mock; register?: Mock } = {})
       const res = opts.register ?? { status: 202, body: { message: "Enviamos um e-mail para confirmar o cadastro." } };
       return json(res.status, res.body);
     }
-    if (path === "/profile") return json(200, { profile: {} }); // quem já fez a entrevista vê o painel
+    if (path === "/profile") return json(200, { profile: { plan: null } }); // quem já fez a entrevista vê o painel
+    if (path.startsWith("/day/")) return json(200, { plan: null, sessions: [], checkin: null, decision: {}, questions: [] });
+    if (path.startsWith("/plan/week/")) return json(200, { plan: null, sessions: [] });
     if (path === "/auth/logout") {
       signedIn = false;
       return route.fulfill({ status: 204 });
@@ -80,7 +82,7 @@ test("entra e chega ao painel; sair volta ao login", async ({ page }) => {
   await page.getByLabel("Manter conectado neste dispositivo").check();
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page).toHaveURL(/\/painel$/);
-  await expect(page.getByText("Bem-vindo, Ana Corredora!")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Olá, Ana Corredora" })).toBeVisible();
   expect(calls.find((c) => c.path === "/auth/login")?.body).toMatchObject({ email: "ana@exemplo.com", rememberMe: true });
 
   await page.getByRole("button", { name: "Sair" }).click();
