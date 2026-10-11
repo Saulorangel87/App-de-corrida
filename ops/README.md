@@ -39,7 +39,7 @@ docker build -f apps/api/Dockerfile -t app-de-corrida-api:latest .
 docker compose up -d api
 ```
 
-Rede do túnel (uma vez; em 2026-10-11 ela ainda **não existia** na VPS e o `cloudflared-tunnel` estava só na rede `bridge`):
+Rede do túnel (uma vez; criada e ligada ao `cloudflared-tunnel` em 2026-10-11, que antes estava só na rede `bridge`):
 
 ```
 docker network create app-de-corrida_edge

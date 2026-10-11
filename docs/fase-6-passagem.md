@@ -85,12 +85,19 @@ Erros a tratar com tela própria: `409 INTERVIEW_REQUIRED`, `400 UNDERAGE` (`det
 ## Estado do front
 `apps/web` está completo para o atleta: React 19, Vite 6, TanStack Router (rotas por arquivo) e Query, React Hook Form com os esquemas Zod de `@passo/shared`, i18next (pt-BR e en), Tailwind 4 (ADR 0007). Moldura das telas logadas em `components/flow-layout.tsx` (menu lateral no desktop, menu hambúrguer no celular). Testes de interface: `pnpm --filter @passo/web e2e`; conferência geral: `pnpm check`.
 
-## Deploy pendente (fora da Fase 6, mas bloqueia o uso real)
+## Deploy (estado em 2026-10-11)
+Feito, com OK do dono:
 - Dockerfile da API (multi-stage, usuário não root, arm64) e serviço no `docker-compose.yml` da VPS.
-- Rota nova no túnel Cloudflare (`letsgorun-api.devsaulo.com.br` → container da API; nenhuma porta pública nova).
-- Aplicar na VPS as migrações 0008 a 0013 (ver `ops/README.md`; procedimento: `git archive` para a VPS e `tsx src/migrate-cli.ts` dentro de `node:22-alpine` na rede `app-de-corrida_data`). **Pedir OK do dono antes de mexer no banco de produção.**
-- Front no Cloudflare Pages (`letsgorun.devsaulo.com.br`).
-- Chave do Resend e verificação do domínio de envio (SPF e DKIM): a API recusa iniciar em produção sem `RESEND_API_KEY`. Lista de verificação completa do deploy em `docs/auditoria-seguranca.md`, seção 4.
+- Migrações 0008 a 0013 e seed aplicados no banco de produção (backup criptografado antes).
+- Chave do Resend no `.env` da VPS; domínio de envio verificado pelo dono.
+- Rota `letsgorun-api.devsaulo.com.br` no túnel Cloudflare; API no ar e saudável; nenhuma porta pública nova.
+
+Falta:
+- **Regra de cabeçalhos da zona `devsaulo.com.br`:** hoje ela sobrescreve CSP, HSTS, Referrer-Policy e Permissions-Policy das respostas, inclusive da API. Excluir `letsgorun.devsaulo.com.br` e `letsgorun-api.devsaulo.com.br` (ou trocar para "só adicionar se ausente") antes de abrir o front; conferir com `curl -I` nas duas origens.
+- Front no Cloudflare Pages (`letsgorun.devsaulo.com.br`) com `VITE_API_URL`.
+- Primeiro envio real de e-mail (cadastro de teste) para exercitar a chave do Resend.
+- Teste de restauração depois das novas tabelas (`ops/restore-test.sh`) e data anotada em `ops/README.md`.
+- Resto da lista de verificação em `docs/auditoria-seguranca.md`, seção 4.
 
 ## Pendências do dono
 - Confirmar (ou manter os padrões) dos itens dos ADRs 0004, 0005 e 0006.
