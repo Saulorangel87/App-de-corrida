@@ -138,7 +138,7 @@ As fases 0 a 6 (pesquisa, banco, autenticação, entrevista, motor, acompanhamen
 
 ## In English
 
-Let's Go Run is a personal, free web app that builds running plans from a health screening (PAR-Q+) and a **rules engine grounded in published research**, then adjusts each day from sleep, pain and fatigue check-ins. No AI generates workouts. Every limit and rule traces back to a source in `docs/pesquisa/`. The stack is a TypeScript pnpm monorepo: React + Vite, Hono, PostgreSQL with Row-Level Security, a pure-TypeScript engine, and 619 automated tests. The interface is available in Portuguese and English; the PAR-Q+ appears in its original English text on the English screens, unaltered. This is not a medical device and does not replace professional advice.
+Let's Go Run is a personal, free web app that builds running plans from a health screening (PAR-Q+) and a **rules engine grounded in published research**, then adjusts each day from sleep, pain and fatigue check-ins. No AI generates workouts. Every limit and rule traces back to a source in `docs/pesquisa/`. The stack is a TypeScript pnpm monorepo: React + Vite, Hono, PostgreSQL with Row-Level Security, a pure-TypeScript engine, and 621 automated tests. The interface is available in Portuguese and English; the PAR-Q+ appears in its original English text on the English screens, unaltered. This is not a medical device and does not replace professional advice.
 
 ## Licença e créditos
 
