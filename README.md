@@ -5,7 +5,7 @@
 [![CI](https://github.com/Saulorangel87/App-de-corrida/actions/workflows/ci.yml/badge.svg)](https://github.com/Saulorangel87/App-de-corrida/actions/workflows/ci.yml)
 [![Licença: MIT](https://img.shields.io/badge/c%C3%B3digo-MIT-blue.svg)](LICENSE)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6)
-![Testes](https://img.shields.io/badge/testes-621%20passando-brightgreen)
+![Testes](https://img.shields.io/badge/testes-626%20passando-brightgreen)
 
 **App no ar:** <https://letsgorun.devsaulo.com.br> · **Português e inglês**
 
@@ -81,8 +81,8 @@ Há uma auditoria documentada em [`docs/auditoria-seguranca.md`](docs/auditoria-
 | Verificação | Resultado |
 |---|---|
 | Motor (Vitest) | 365 testes |
-| API (Vitest, banco real) | 160 testes |
-| Telas (Playwright) | 96 testes |
+| API (Vitest, banco real) | 163 testes |
+| Telas (Playwright) | 98 testes |
 | Lighthouse (celular) | desempenho 96, acessibilidade 100, SEO 100, práticas recomendadas 92 |
 | Conferência por funcionalidade | `pnpm check` gera `reports/relatorio-testes.md` em português |
 
@@ -138,7 +138,7 @@ As fases 0 a 6 (pesquisa, banco, autenticação, entrevista, motor, acompanhamen
 
 ## In English
 
-Let's Go Run is a personal, free web app that builds running plans from a health screening (PAR-Q+) and a **rules engine grounded in published research**, then adjusts each day from sleep, pain and fatigue check-ins. No AI generates workouts. Every limit and rule traces back to a source in `docs/pesquisa/`. The stack is a TypeScript pnpm monorepo: React + Vite, Hono, PostgreSQL with Row-Level Security, a pure-TypeScript engine, and 621 automated tests. The interface is available in Portuguese and English; the PAR-Q+ appears in its original English text on the English screens, unaltered. This is not a medical device and does not replace professional advice.
+Let's Go Run is a personal, free web app that builds running plans from a health screening (PAR-Q+) and a **rules engine grounded in published research**, then adjusts each day from sleep, pain and fatigue check-ins. No AI generates workouts. Every limit and rule traces back to a source in `docs/pesquisa/`. The stack is a TypeScript pnpm monorepo: React + Vite, Hono, PostgreSQL with Row-Level Security, a pure-TypeScript engine, and 626 automated tests. The interface is available in Portuguese and English; the PAR-Q+ appears in its original English text on the English screens, unaltered. This is not a medical device and does not replace professional advice.
 
 ## Licença e créditos
 

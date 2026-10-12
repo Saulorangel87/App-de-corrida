@@ -197,6 +197,52 @@ describe("triagem com risco (R-TRI-04, R-TRI-05, R-TRI-06)", () => {
   });
 });
 
+describe("prova perto demais (R-PLN-05)", () => {
+  const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
+
+  it("sem plano por falta de prazo: o perfil explica quantas semanas faltam e que data ou distância cabem", async () => {
+    const a = await signUpAndLogin(t);
+    const iv: Iv = interview();
+    await fill(a.cookie, { ...iv, objetivo: { goal: "primeira_prova", raceDistance: "21k", raceDate: inDays(14) } });
+    const { status, body } = await submit(a.cookie);
+    expect(status).toBe(201);
+    expect(body.planSelection).toMatchObject({ status: "prazo_insuficiente", objective: "21k" });
+    expect(body.profile.plan).toBeNull();
+
+    // A mesma explicação volta em GET /profile (é o que o painel e o resultado leem).
+    const res = await t.request("GET", "/profile", undefined, a.cookie);
+    const { profile } = (await res.json()) as { profile: Record<string, any> }; // eslint-disable-line @typescript-eslint/no-explicit-any
+    expect(profile.plan).toBeNull();
+    expect(profile.screening).toMatchObject({ state: "LIBERADO", allowsTraining: true });
+    expect(profile.planNotice).toMatchObject({ reason: "prazo_insuficiente", objective: "21k" });
+    expect(profile.planNotice.weeksNeeded).toBeGreaterThan(profile.planNotice.weeksAvailable);
+    expect(profile.planNotice.weeksAvailable).toBe(2);
+    expect(profile.planNotice.earliestRaceDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(Array.isArray(profile.planNotice.smallerThatFit)).toBe(true);
+  });
+
+  it("com plano atribuído não há aviso", async () => {
+    const a = await signUpAndLogin(t);
+    await fill(a.cookie, interview());
+    await submit(a.cookie);
+    const res = await t.request("GET", "/profile", undefined, a.cookie);
+    const { profile } = (await res.json()) as { profile: Record<string, any> }; // eslint-disable-line @typescript-eslint/no-explicit-any
+    expect(profile.plan).not.toBeNull();
+    expect(profile.planNotice).toBeNull();
+  });
+
+  it("sem plano por outro motivo (dor atual) não mostra o aviso de prazo", async () => {
+    const a = await signUpAndLogin(t);
+    const iv: Iv = interview();
+    await fill(a.cookie, { ...iv, lesoes: { ...iv.lesoes, currentPain: { intensity: 4, bodyPart: "joelho" } } });
+    await submit(a.cookie);
+    const res = await t.request("GET", "/profile", undefined, a.cookie);
+    const { profile } = (await res.json()) as { profile: Record<string, any> }; // eslint-disable-line @typescript-eslint/no-explicit-any
+    expect(profile.plan).toBeNull();
+    expect(profile.planNotice).toBeNull();
+  });
+});
+
 describe("mudança de saúde (R-TRI-11)", () => {
   const addDays = (d: string, n: number) => new Date(Date.parse(`${d}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
   const post = async (cookie: string, body: unknown) => {

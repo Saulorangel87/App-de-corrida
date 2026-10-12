@@ -258,6 +258,32 @@ test("painel: sem plano ativo aponta para o resultado da triagem", async ({ page
   await expect(page).toHaveURL(/\/resultado$/);
 });
 
+test("painel: prova perto demais explica o porquê, o que fazer e leva direto à etapa do objetivo", async ({ page }) => {
+  const earliest = plusDays(63);
+  await mockApi(page, {
+    day: dayBody({ plan: null, sessions: [] }),
+    week: { plan: null, sessions: [] },
+    profile: {
+      plan: null,
+      screening: { healthCheckDue: false },
+      planNotice: {
+        reason: "prazo_insuficiente", objective: "21k", weeksNeeded: 9, weeksAvailable: 2,
+        earliestRaceDate: earliest, smallerThatFit: ["5k", "10k"],
+      },
+    },
+  });
+  await page.goto("/painel");
+  await expect(page.getByRole("heading", { name: "Sua prova está perto demais para este plano" })).toBeVisible();
+  await expect(page.getByText("Esta distância pede cerca de 9 semanas de preparo.")).toBeVisible();
+  await expect(page.getByText("Faltam 2 semanas até a prova.")).toBeVisible();
+  await expect(page.getByText("o app não encurta o plano")).toBeVisible();
+  await expect(page.getByText("ou uma distância menor: 5 km ou 10 km.")).toBeVisible();
+  // O texto genérico "o plano será montado automaticamente" não aparece mais para este caso.
+  await expect(page.getByText("Ainda não há plano ativo")).toHaveCount(0);
+  await page.getByRole("link", { name: "Refazer a entrevista com outra data" }).click();
+  await expect(page).toHaveURL(/\/entrevista\?etapa=objetivo$/);
+});
+
 test("painel: sem perfil leva à entrevista", async ({ page }) => {
   await mockApi(page, { hasProfile: false });
   await page.goto("/painel");

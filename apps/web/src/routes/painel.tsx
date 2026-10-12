@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { FlowLayout } from "../components/flow-layout";
 import { DecisionSources } from "../components/decision-sources";
 import { HealthChangeCard } from "../components/health-change";
+import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { PlanReviewCard } from "../components/plan-review";
 import { weekStats } from "../components/week-agenda";
 import { ApiError, fetchApi } from "../lib/api";
@@ -32,6 +33,8 @@ type ProfileSummary = {
   plan: { objective: string; startDate: string; endDate: string; durationWeeks: number } | null;
   /** Último plano concluído, quando não há plano ativo: alimenta o cartão do próximo objetivo. */
   completedPlan?: { objective: string } | null;
+  /** Por que ainda não há plano com a triagem liberada (prova perto demais); vem pronto do servidor. */
+  planNotice?: PlanNotice | null;
   /** `healthCheckDue`: o servidor diz quando a pergunta semanal de saúde (R-TRI-11) deve aparecer. */
   screening: { healthCheckDue: boolean } | null;
 };
@@ -205,7 +208,7 @@ function Panel() {
       </div>
 
       {planInfo === null ? (
-        <NoPlan completed={profile.data?.completedPlan ?? null} />
+        <NoPlan completed={profile.data?.completedPlan ?? null} notice={profile.data?.planNotice ?? null} />
       ) : (
         <div className="space-y-5">
           {(profile.data?.screening?.healthCheckDue || healthAnswered) && (
@@ -235,8 +238,9 @@ function Panel() {
   );
 }
 
-function NoPlan({ completed }: { completed: { objective: string } | null }) {
+function NoPlan({ completed, notice }: { completed: { objective: string } | null; notice: PlanNotice | null }) {
   const { t } = useTranslation();
+  if (notice && !completed) return <PlanNoticeCard notice={notice} />;
   if (completed) {
     return (
       <section className={card}>

@@ -12,6 +12,7 @@ import { SelectField } from "../components/choice";
 import { FlowLayout } from "../components/flow-layout";
 import { ApiError, fetchApi } from "../lib/api";
 import { useRequireUser } from "../lib/queries";
+import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { useErrorText } from "../lib/use-error-text";
 
 export const Route = createFileRoute("/resultado")({
@@ -29,6 +30,8 @@ type Profile = {
     reasons: string[];
     allowsTraining: boolean;
   } | null;
+  /** Por que não há plano com a triagem liberada: prova perto demais (R-PLN-05). */
+  planNotice?: PlanNotice | null;
   plan: {
     objective: "saude" | "5k" | "10k" | "21k" | "42k";
     level: "iniciante" | "intermediario" | "avancado";
@@ -200,6 +203,8 @@ function ResultPage() {
                 value={t("result.planDates", { start: date(p.plan.startDate), end: date(p.plan.endDate) })}
               />
             </dl>
+          ) : p.planNotice ? (
+            <PlanNoticeCard notice={p.planNotice} />
           ) : (
             <p>{t("result.planNone")}</p>
           )}

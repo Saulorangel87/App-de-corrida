@@ -385,3 +385,12 @@ test("resultado: avaliação necessária bloqueia, mostra o texto oficial e regi
     vigorousAllowed: false,
   });
 });
+
+test("?etapa=objetivo abre direto na etapa do objetivo, mesmo com a entrevista já concluída", async ({ page }) => {
+  await mockApi(page, { completed: STEPS });
+  await page.goto("/entrevista?etapa=objetivo");
+  await expect(page.getByText("Etapa 5 de 8")).toBeVisible();
+  // Valor desconhecido na URL é ignorado: abre onde a entrevista normalmente abriria (a última etapa).
+  await page.goto("/entrevista?etapa=qualquer-coisa");
+  await expect(page.getByText("Etapa 8 de 8")).toBeVisible();
+});

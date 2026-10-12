@@ -459,6 +459,31 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
               .where(and(eq(athletePlans.userId, userId), eq(athletePlans.status, "completed")))
               .orderBy(desc(athletePlans.updatedAt))
               .limit(1);
+        // Quem nunca teve plano porque a prova está perto demais (R-PLN-05): o motor já sabe quantas
+        // semanas faltam e que data ou distância caberiam; a tela só precisa mostrar isso. Calculado
+        // na hora, com as entradas guardadas, então vale também para quem respondeu antes desta tela.
+        const [anyPlan] = await tx.select({ id: athletePlans.id }).from(athletePlans).where(eq(athletePlans.userId, userId)).limit(1);
+        let planNotice: {
+          reason: "prazo_insuficiente";
+          objective: string;
+          weeksNeeded: number;
+          weeksAvailable: number;
+          earliestRaceDate: string;
+          smallerThatFit: string[];
+        } | null = null;
+        if (!anyPlan && screening) {
+          const sel = selectPlan(planInput(stored, profile.calculatedLevel as LevelName, (profile.flags ?? []) as string[], screening, on));
+          if (sel.status === "prazo_insuficiente") {
+            planNotice = {
+              reason: sel.status,
+              objective: sel.objective,
+              weeksNeeded: sel.weeksNeeded,
+              weeksAvailable: Math.max(0, sel.weeksAvailable),
+              earliestRaceDate: sel.earliestRaceDate,
+              smallerThatFit: sel.smallerThatFit,
+            };
+          }
+        }
         return {
           level: profile.calculatedLevel,
           flags: profile.flags,
@@ -497,6 +522,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
             selection: plan.plan.selection,
           } : null,
           completedPlan: finished ?? null,
+          planNotice,
         };
       });
     },

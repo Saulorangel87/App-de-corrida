@@ -1,9 +1,11 @@
 import { useEffect, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { FlowLayout } from "../components/flow-layout";
+import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { WeekAgenda, weekStats } from "../components/week-agenda";
-import { ApiError } from "../lib/api";
+import { ApiError, fetchApi } from "../lib/api";
 import { formatDate, localToday } from "../lib/dates";
 import { useRequireUser } from "../lib/queries";
 import { usePlanOverview, type OverviewWeek, type PlanOverviewResponse } from "../lib/training";
@@ -29,6 +31,14 @@ function PlanPage() {
   const { user, loading } = useRequireUser();
   const today = localToday();
   const overview = usePlanOverview(today, !loading && !!user);
+  // Mesma chave do painel e do resultado: o cache é compartilhado, então não custa outra chamada.
+  const profile = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => fetchApi<{ profile: { planNotice?: PlanNotice | null } }>("/profile").then((r) => r.profile),
+    enabled: !loading && !!user,
+    retry: false,
+  });
+  const notice = profile.data?.planNotice ?? null;
 
   // Sem entrevista concluída ainda não há plano: segue para ela, como o painel.
   const needsInterview = overview.error instanceof ApiError && overview.error.status === 409;
@@ -47,6 +57,8 @@ function PlanPage() {
         <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
           {overview.error ? errorText(overview.error) : t("plan.loadError")}
         </div>
+      ) : overview.data.plan === null && notice ? (
+        <PlanNoticeCard notice={notice} />
       ) : overview.data.plan === null ? (
         <section className="rounded-2xl border border-gray-200 bg-white p-5">
           <h2 className="text-lg font-bold tracking-tight text-[#0F172A]">{t("panel.noPlanTitle")}</h2>

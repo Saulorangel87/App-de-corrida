@@ -16,6 +16,11 @@ import { AvailabilityStep, GoalStep, InjuriesStep, RecoveryStep, ResourcesStep }
 import { ScreeningStep } from "../features/interview/screening";
 
 export const Route = createFileRoute("/entrevista")({
+  // `?etapa=objetivo` abre direto numa etapa (usado pelo aviso de prova perto demais).
+  validateSearch: (search: Record<string, unknown>): { etapa?: InterviewStep } => {
+    const etapa = typeof search.etapa === "string" ? search.etapa : undefined;
+    return etapa && (INTERVIEW_STEPS as string[]).includes(etapa) ? { etapa: etapa as InterviewStep } : {};
+  },
   component: InterviewPage,
 });
 
@@ -46,6 +51,7 @@ function InterviewPage() {
   const queryClient = useQueryClient();
   const { loading } = useRequireUser();
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const { etapa } = Route.useSearch();
   const [index, setIndex] = useState<number | null>(null);
 
   const interview = useQuery({
@@ -95,7 +101,8 @@ function InterviewPage() {
 
   const data = interview.data;
   const firstIncomplete = data ? INTERVIEW_STEPS.findIndex((s) => !data.completed.includes(s)) : 0;
-  const current = index ?? (firstIncomplete === -1 ? INTERVIEW_STEPS.length - 1 : firstIncomplete);
+  const fromLink = etapa ? INTERVIEW_STEPS.indexOf(etapa) : -1;
+  const current = index ?? (fromLink >= 0 ? fromLink : firstIncomplete === -1 ? INTERVIEW_STEPS.length - 1 : firstIncomplete);
   const step = INTERVIEW_STEPS[current] ?? INTERVIEW_STEPS[0]!;
 
   // Leitor de tela e teclado: o foco vai para o título da etapa nova.
