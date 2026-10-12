@@ -663,6 +663,15 @@ export const ptBR = {
     projected: "Previsão",
     noSessions: "Nenhum treino nesta semana.",
   },
+  news: {
+    bannerTitle: "Novidades do app",
+    understood: "Entendi",
+    seeAll: "Ver todas as novidades",
+    pageTitle: "Novidades",
+    pageIntro: "Correções de erros, limitações do app e avisos que valem a pena conhecer.",
+    empty: "Ainda não há novidades para você.",
+    kind: { correcao: "Correção", limitacao: "Limitação do app", novidade: "Novidade" },
+  },
   planNotice: {
     title: "Sua prova está perto demais para este plano",
     needs_one: "Esta distância pede cerca de {{count}} semana de preparo.",

@@ -64,6 +64,7 @@ const FEATURES = {
     plano: "Tela: plano completo",
     "recuperar-conta": "Tela: recuperar senha e e-mail",
     registro: "Tela: registro do treino",
+    novidades: "Tela: novidades do app",
     saude: "Pergunta semanal de saúde",
     treino: "Tela: detalhe do treino",
   },

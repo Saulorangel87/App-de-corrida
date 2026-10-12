@@ -3,7 +3,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { ApiError, fetchApi } from "./api";
 
-export type AuthUser = { id: string; name: string; email: string; language: "pt-BR" | "en"; photoVersion: number | null };
+export type AuthUser = {
+  id: string;
+  name: string;
+  email: string;
+  language: "pt-BR" | "en";
+  photoVersion: number | null;
+  /** Dia em que a conta foi criada (AAAA-MM-DD). */
+  createdOn?: string;
+};
 
 export const AUTH_KEY = ["auth", "me"] as const;
 
