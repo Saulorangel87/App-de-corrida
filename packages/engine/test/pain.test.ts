@@ -6,8 +6,18 @@ import type { PainReport } from "../src/day/types";
 const TODAY = "2026-10-20";
 const d = (n: number) => new Date(Date.parse(`${TODAY}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
 const rep = (n: number, o: Partial<PainReport>): PainReport => ({ date: d(n), moment: "treino", intensity: 0, ...o });
-const run = (reports: PainReport[], o: { walking?: number | null; cleared?: string | null; today?: string } = {}) =>
-  evaluatePain({ today: o.today ?? TODAY, reports, dailyPainWalking: o.walking, clearedAt: o.cleared });
+// Por padrão a dor ao caminhar foi informada no check-in do próprio dia avaliado.
+const run = (
+  reports: PainReport[],
+  o: { walking?: number | null; walkingOn?: string | null; cleared?: string | null; today?: string } = {},
+) =>
+  evaluatePain({
+    today: o.today ?? TODAY,
+    reports,
+    dailyPainWalking: o.walking,
+    dailyPainWalkingOn: o.walkingOn === undefined ? (o.today ?? TODAY) : o.walkingOn,
+    clearedAt: o.cleared,
+  });
 const codes = (r: ReturnType<typeof run>) => r.findings.map((f) => f.code);
 
 describe("sinais de alerta (R-DOR-01 a R-DOR-03)", () => {
@@ -77,6 +87,18 @@ describe("faixas de dor durante o treino (R-DOR-04)", () => {
     expect(run(r, { today: d(1) }).blockRunning).toBe(true); // sem informar a dor ao caminhar
     expect(run(r, { today: d(1), walking: 2 }).blockRunning).toBe(false);
     expect(run(r, { today: d(1), walking: 3 }).blockRunning).toBe(true);
+  });
+
+  it("R-DOR-10: dor ao caminhar informada antes da dor nova não libera a corrida", () => {
+    const r = [rep(-1, { intensity: 5, region: "joelho" })];
+    // check-in antigo, de antes da lesão nova: não diz nada sobre ela
+    expect(run(r, { today: d(1), walking: 0, walkingOn: d(-10) }).blockRunning).toBe(true);
+    // check-in do mesmo dia do relato (feito de manhã, antes do treino que doeu): também não
+    expect(run(r, { today: d(1), walking: 0, walkingOn: d(-1) }).blockRunning).toBe(true);
+    // sem data da resposta: não libera
+    expect(run(r, { today: d(1), walking: 0, walkingOn: null }).blockRunning).toBe(true);
+    // resposta dada depois do relato: libera
+    expect(run(r, { today: d(1), walking: 0, walkingOn: d(0) }).blockRunning).toBe(false);
   });
 
   it("2 ocorrências ≥ 5 em 14 dias → encaminhar", () => {

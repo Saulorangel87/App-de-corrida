@@ -660,7 +660,9 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     const ageMax = ageRange(ctx.stored.birth.year, ctx.stored.birth.month, date).max;
     const screening = screeningRow[0] ? screen(screeningInputFrom(screeningRow[0], ageMax, date)) : null;
 
-    const dailyPainWalking = [...checkinRows].reverse().find((r) => r.dailyPainWalking !== null)?.dailyPainWalking ?? null;
+    // A data vai junto: o motor só aceita a resposta dada depois do relato de dor (R-DOR-10).
+    const walkingRow = [...checkinRows].reverse().find((r) => r.dailyPainWalking !== null);
+    const dailyPainWalking = walkingRow?.dailyPainWalking ?? null;
 
     const input: DayInput = {
       today: date,
@@ -682,6 +684,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
       isRecoveryWeek: !!tw?.isRecovery,
       inLadder: !!primary?.ladder,
       dailyPainWalking,
+      dailyPainWalkingOn: walkingRow?.date ?? null,
       pauseReturnStartedOn: episodeOpen && firstAfterClearance ? firstAfterClearance : pauseReturnStartedOn(runDates, date, lastRunOnInterview),
     };
     return { input, current, tw, sessionsToday: sessions.filter((s) => s.scheduledDate === date), logBySession };

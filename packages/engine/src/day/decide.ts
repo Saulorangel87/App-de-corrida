@@ -258,7 +258,8 @@ export function decideDay(i: DayInput): DayDecision {
     checkins: i.checkins, today: i.today, todayKind: planned?.kind, highLoadWeek: i.highLoadWeek,
   });
   const pain = evaluatePain({
-    today: i.today, reports: i.pain, dailyPainWalking: i.dailyPainWalking, clearedAt: i.clearedByProfessionalAt,
+    today: i.today, reports: i.pain, dailyPainWalking: i.dailyPainWalking, dailyPainWalkingOn: i.dailyPainWalkingOn,
+    clearedAt: i.clearedByProfessionalAt,
   });
   const longest30 = longestSessionLast30(i.logs, i.today);
   const ret = returnFromPause({

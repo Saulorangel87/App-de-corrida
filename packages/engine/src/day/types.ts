@@ -121,6 +121,8 @@ export type DayInput = {
   weekStartedOn?: string;
   /** Dor ao caminhar no dia a dia, 0–10, do último check-in (R-DOR-10). */
   dailyPainWalking?: number | null;
+  /** Data do check-in de `dailyPainWalking`; só vale para dor relatada antes dela (R-DOR-10). */
+  dailyPainWalkingOn?: string | null;
   /** Data da primeira corrida depois de uma pausa de 15 dias ou mais (sem Z3 por 2 semanas). */
   pauseReturnStartedOn?: string | null;
 };

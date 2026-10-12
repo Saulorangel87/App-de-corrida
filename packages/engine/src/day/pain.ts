@@ -82,6 +82,11 @@ export function evaluatePain(input: {
   reports: PainReport[];
   /** Dor ao caminhar no dia a dia, 0–10, no último check-in (R-DOR-10). */
   dailyPainWalking?: number | null;
+  /**
+   * Data do check-in em que `dailyPainWalking` foi informada. Só libera um bloqueio a resposta
+   * dada DEPOIS do relato de dor que o causou: uma resposta anterior não diz nada sobre a lesão nova.
+   */
+  dailyPainWalkingOn?: string | null;
   /** Data da autodeclaração de liberação profissional (R-DOR-10). */
   clearedAt?: string | null;
 }): PainResult {
@@ -297,7 +302,13 @@ export function evaluatePain(input: {
 
   // ---- Quais bloqueios ainda valem hoje (R-DOR-10) ----
   const cleared = input.clearedAt ?? null;
-  const walkingOk = input.dailyPainWalking !== null && input.dailyPainWalking !== undefined && input.dailyPainWalking <= cfg.pain.returnWalkingMax;
+  const walkingOn = input.dailyPainWalkingOn ?? null;
+  const walkingOk = (f: PainFinding) =>
+    input.dailyPainWalking !== null &&
+    input.dailyPainWalking !== undefined &&
+    input.dailyPainWalking <= cfg.pain.returnWalkingMax &&
+    walkingOn !== null &&
+    walkingOn > f.reportDate;
   const isActive = (f: PainFinding): boolean => {
     const blocks = f.outputs.includes("BLOQUEAR_CORRIDA") || f.outputs.includes("URGENTE") || f.outputs.includes("INTERROMPER");
     const refers = f.outputs.includes("ENCAMINHAR");
@@ -307,7 +318,7 @@ export function evaluatePain(input: {
     if (!blocks) return age(f.reportDate, today) <= 14; // só orientação de procurar profissional
     // Bloqueio comum: vale pelo prazo mínimo e depois até a dor ao caminhar ficar ≤ 2/10 (R-DOR-10).
     if (f.blockThrough && today <= f.blockThrough) return true;
-    return !walkingOk;
+    return !walkingOk(f);
   };
   const active = findings.filter(isActive);
 
