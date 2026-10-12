@@ -29,6 +29,8 @@ export type PublicUser = {
   emailVerified: boolean;
   /** Versão da foto de perfil (para o cache do navegador); null = sem foto. */
   photoVersion: number | null;
+  /** Dia em que a conta foi criada (AAAA-MM-DD); a tela de novidades não repete avisos de antes dela. */
+  createdOn: string;
 };
 
 export const toPublicUser = (u: User): PublicUser => ({
@@ -38,6 +40,7 @@ export const toPublicUser = (u: User): PublicUser => ({
   language: u.language,
   emailVerified: u.emailVerifiedAt !== null,
   photoVersion: u.avatarUpdatedAt ? u.avatarUpdatedAt.getTime() : null,
+  createdOn: u.createdAt.toISOString().slice(0, 10),
 });
 
 const lang = (u: Pick<User, "language">): Lang => (u.language === "en" ? "en" : "pt-BR");

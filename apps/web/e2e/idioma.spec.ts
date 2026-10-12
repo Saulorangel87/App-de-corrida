@@ -64,7 +64,7 @@ test("trocar o idioma refaz as consultas e mostra o texto do servidor no idioma 
   await expect(page.getByText(MESSAGES["pt-BR"])).toBeVisible();
   expect(seen).toEqual(["pt-BR"]);
 
-  await page.getByRole("button", { name: "EN" }).click();
+  await page.getByRole("button", { name: "EN", exact: true }).click();
   await expect(page.getByText(MESSAGES.en)).toBeVisible();
   await expect(page.getByText(MESSAGES["pt-BR"])).toHaveCount(0);
   expect(seen.at(-1)).toBe("en");

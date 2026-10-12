@@ -156,6 +156,12 @@ describe("login", () => {
     expect(plainMe.headers.get("set-cookie")).toBeNull();
   });
 
+  it("/auth/me informa o dia em que a conta foi criada (a tela de novidades usa)", async () => {
+    const a = await signUpAndLogin(t);
+    const me = (await (await t.request("GET", "/auth/me", undefined, a.cookie)).json()) as { user: { createdOn: string } };
+    expect(me.user.createdOn).toBe(new Date().toISOString().slice(0, 10));
+  });
+
   it("rotação: o login invalida a sessão que veio no cookie", async () => {
     const { email, cookie } = await signUpAndLogin(t);
     const again = await t.request("POST", "/auth/login", { email, password: PASSWORD }, cookie);

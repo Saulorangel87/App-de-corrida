@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { FlowLayout } from "../components/flow-layout";
 import { DecisionSources } from "../components/decision-sources";
 import { HealthChangeCard } from "../components/health-change";
+import { NewsBanner } from "../components/news";
 import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { PlanReviewCard } from "../components/plan-review";
 import { weekStats } from "../components/week-agenda";
@@ -206,6 +207,8 @@ function Panel() {
           </Link>
         )}
       </div>
+
+      {user && <NewsBanner user={user} />}
 
       {planInfo === null ? (
         <NoPlan completed={profile.data?.completedPlan ?? null} notice={profile.data?.planNotice ?? null} />

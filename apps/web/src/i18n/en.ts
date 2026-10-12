@@ -662,6 +662,15 @@ export const en: Translation = {
     projected: "Forecast",
     noSessions: "No workouts this week.",
   },
+  news: {
+    bannerTitle: "App news",
+    understood: "Got it",
+    seeAll: "See all news",
+    pageTitle: "News",
+    pageIntro: "Bug fixes, app limitations and notices worth knowing.",
+    empty: "There is no news for you yet.",
+    kind: { correcao: "Fix", limitacao: "App limitation", novidade: "News" },
+  },
   planNotice: {
     title: "Your race is too close for this plan",
     needs_one: "This distance needs about {{count}} week of preparation.",
