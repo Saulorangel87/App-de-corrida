@@ -1,0 +1,8 @@
+[Unit]
+Description=Rotação do log da API do Let's Go Run (30 dias)
+
+[Service]
+Type=oneshot
+User=ubuntu
+UMask=0027
+ExecStart=/home/ubuntu/apps/app-de-corrida/api-logs-rotate.sh

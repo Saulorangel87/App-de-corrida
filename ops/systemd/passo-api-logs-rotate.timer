@@ -1,0 +1,9 @@
+[Unit]
+Description=Rotação diária do log da API do Let's Go Run
+
+[Timer]
+OnCalendar=*-*-* 00:10:00 UTC
+Persistent=true
+
+[Install]
+WantedBy=timers.target

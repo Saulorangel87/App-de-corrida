@@ -75,3 +75,13 @@ MIGRATION_DATABASE_URL=postgres://passo_migrator:...@host:5432/passo pnpm --filt
 Último teste de restauração: **2026-10-12, OK**, a partir do bucket novo (`letsgorun/`), num container descartável sem rede: `pg_restore` sem erros e as 24 tabelas (as 23 do app mais a de controle das migrações) com as mesmas contagens do banco de produção (1.550 linhas). O anterior foi em 2026-10-10 (18 tabelas).
 
 Chaves do crypt (`password` e `password2` do remote `corrida-run`): guardadas no gerenciador de senhas do dono, fora da VPS.
+
+## Logs da API (persistem entre deploys)
+
+Cada deploy recria o container e o Docker apaga o log dele. Para não perder o histórico, um serviço segue o log e grava em arquivo:
+
+- `api-logs.sh` + `systemd/passo-api-logs.service`: segue `docker logs` e grava em `/var/log/passo-api/api.log` (JSON, uma linha por evento, sem dados pessoais). Ao reiniciar, retoma do último `ts`; no máximo uma linha repete (mesmo `requestId`).
+- `api-logs-rotate.sh` + `systemd/passo-api-logs-rotate.{service,timer}`: todo dia 00:10 UTC compacta o log do dia (`api.log.<data>.gz`) e apaga o que passou de 30 dias. Sem `logrotate` de propósito (não está instalado na VPS).
+- Instalação (desde 2026-10-12): copiar os dois scripts para `~/apps/app-de-corrida/`, as unidades para `/etc/systemd/system/` e `sudo systemctl enable --now passo-api-logs.service passo-api-logs-rotate.timer`.
+- Consulta: `grep -a '"status":5' /var/log/passo-api/api.log` (erros 5xx) ou `zcat /var/log/passo-api/api.log.*.gz | grep ...` para dias anteriores.
+- O arquivo é `640` (dono `ubuntu`) em pasta `750`. Como o log não tem dado pessoal, os 30 dias seguem a mesma janela dos backups.
