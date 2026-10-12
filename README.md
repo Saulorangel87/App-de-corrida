@@ -5,7 +5,7 @@
 [![CI](https://github.com/Saulorangel87/App-de-corrida/actions/workflows/ci.yml/badge.svg)](https://github.com/Saulorangel87/App-de-corrida/actions/workflows/ci.yml)
 [![Licença: MIT](https://img.shields.io/badge/c%C3%B3digo-MIT-blue.svg)](LICENSE)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6)
-![Testes](https://img.shields.io/badge/testes-619%20passando-brightgreen)
+![Testes](https://img.shields.io/badge/testes-621%20passando-brightgreen)
 
 **App no ar:** <https://letsgorun.devsaulo.com.br> · **Português e inglês**
 
@@ -52,7 +52,7 @@ flowchart LR
   D -.->|dump criptografado<br/>diário| B[(Backup externo)]
 ```
 
-O **motor** (`packages/engine`) é TypeScript puro, sem I/O: recebe perfil, plano e check-in e devolve uma decisão com a regra aplicada e as fontes. Por isso é testado com 364 casos, incluindo uma verificação de coerência: seguir o plano à risca nunca gera ajuste em nenhum dos 13 modelos.
+O **motor** (`packages/engine`) é TypeScript puro, sem I/O: recebe perfil, plano e check-in e devolve uma decisão com a regra aplicada e as fontes. Por isso é testado com 365 casos, incluindo uma verificação de coerência: seguir o plano à risca nunca gera ajuste em nenhum dos 13 modelos.
 
 ## Stack
 
@@ -80,9 +80,9 @@ Há uma auditoria documentada em [`docs/auditoria-seguranca.md`](docs/auditoria-
 
 | Verificação | Resultado |
 |---|---|
-| Motor (Vitest) | 364 testes |
+| Motor (Vitest) | 365 testes |
 | API (Vitest, banco real) | 160 testes |
-| Telas (Playwright) | 95 testes |
+| Telas (Playwright) | 96 testes |
 | Lighthouse (celular) | desempenho 96, acessibilidade 100, SEO 100, práticas recomendadas 92 |
 | Conferência por funcionalidade | `pnpm check` gera `reports/relatorio-testes.md` em português |
 
