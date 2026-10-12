@@ -3,8 +3,8 @@
 // (novo provedor, novo dado coletado, nova integração) deve atualizar estes textos e LEGAL_VERSION
 // no mesmo commit, e manter `termsVersion` da API (apps/api/src/config.ts) igual a LEGAL_VERSION.
 
-export const LEGAL_VERSION = "2026-10-11";
-export const LEGAL_UPDATED_LABEL = "11 de outubro de 2026";
+export const LEGAL_VERSION = "2026-10-12";
+export const LEGAL_UPDATED_LABEL = "12 de outubro de 2026";
 export const LEGAL_CONTACT_EMAIL = "sauloleonardo1987@gmail.com";
 
 export type LegalSection = {
@@ -80,7 +80,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         "Cópia de segurança: cópias do banco de dados, criptografadas antes de sair do servidor, em armazenamento externo da Oracle. A Oracle guarda apenas o conteúdo já criptografado.",
       ],
       after: [
-        "Cloudflare, Resend e Oracle podem tratar dados fora do Brasil. Nesses casos, a transferência é necessária para prestar o serviço (LGPD, art. 33, IX).",
+        "O banco de dados e as cópias de segurança ficam no Brasil. A Cloudflare e o Resend podem tratar dados fora do Brasil. Nesses casos, a transferência é necessária para prestar o serviço (LGPD, art. 33, IX).",
         "Não compartilhamos seus dados com anunciantes nem com outros usuários. Só os divulgamos a autoridades quando a lei exigir.",
       ],
     },

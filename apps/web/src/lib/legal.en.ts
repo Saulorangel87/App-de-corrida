@@ -2,7 +2,7 @@
 // sync: whoever changes one changes the other in the same commit (and LEGAL_VERSION in legal.ts).
 import { LEGAL_CONTACT_EMAIL, type LegalDocument } from "./legal";
 
-export const LEGAL_UPDATED_LABEL_EN = "October 11, 2026";
+export const LEGAL_UPDATED_LABEL_EN = "October 12, 2026";
 
 export const PRIVACY_POLICY_EN: LegalDocument = {
   kicker: "PRIVACY",
@@ -62,7 +62,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         "Backup: copies of the database, encrypted before leaving the server, in external Oracle storage. Oracle keeps only the already-encrypted content.",
       ],
       after: [
-        "Cloudflare, Resend and Oracle may process data outside Brazil. In those cases, the transfer is necessary to provide the service (LGPD, art. 33, IX).",
+        "The database and the backups are kept in Brazil. Cloudflare and Resend may process data outside Brazil. In those cases, the transfer is necessary to provide the service (LGPD, art. 33, IX).",
         "We do not share your data with advertisers or with other users. We only disclose it to authorities when the law requires.",
       ],
     },

@@ -15,7 +15,7 @@
 | # | Decisão | Minha sugestão |
 |---|---|---|
 | D1 | **E-mail de contato** que aparece nos textos. No Cadência é `sauloleonardo1987@gmail.com` (o mesmo que já está no rodapé). | Manter. |
-| D2 | **Onde ficam os servidores** (VPS e bucket da Oracle): não sei a região. O texto diz que Cloudflare, Resend e Oracle "podem tratar dados fora do Brasil". Se a VPS e o bucket forem no Brasil, vale dizer; se forem fora, o texto já cobre. | Você confirma a região. |
+| D2 | **Onde ficam os servidores** (VPS e bucket da Oracle): não sei a região. O texto diz que Cloudflare, Resend e Oracle "podem tratar dados fora do Brasil". Se a VPS e o bucket forem no Brasil, vale dizer; se forem fora, o texto já cobre. | **Resolvido em 2026-10-12:** VPS e bucket em Vinhedo (SP), conferido na VPS (`sa-vinhedo-1`); o texto agora diz que banco e cópias ficam no Brasil e deixa a Oracle fora da frase de transferência (versão 2026-10-12). |
 | D3 | **Frase da tela de cadastro:** hoje diz "Seus dados de treino e saúde são criptografados e nunca são vendidos." Conferi: há criptografia na conexão (HTTPS) e nas cópias de segurança, mas **não** confirmei criptografia do disco do banco. Para não prometer o que não conferi, proponho trocar por: "Seus dados de treino e saúde trafegam criptografados, ficam em cópias de segurança criptografadas e nunca são vendidos." | Trocar. |
 | D4 | **Nome do documento:** o cadastro diz "Termos de Serviço", o rodapé diz "Termos de uso". | Padronizar em **Termos de Uso**. |
 | D5 | **Gratuito para sempre?** O texto diz que o app é gratuito e que o PAR-Q+ é usado sob licença gratuita e não comercial. Se um dia cobrar, os termos mudam e a PAR-Q+ Collaboration precisa autorizar (R-TRI-14). | Manter como está. |
@@ -51,7 +51,7 @@
 
 ## 3. Política de Privacidade (texto proposto)
 
-**Versão:** 2026-10-11 (data da aprovação). **Última atualização:** 11 de outubro de 2026.
+**Versão:** 2026-10-12 (a de 2026-10-11 foi a aprovação inicial). **Última atualização:** 12 de outubro de 2026.
 
 > Esta política explica quais dados o Let's Go Run guarda sobre você, para que usa cada um, com quem compartilha e como você os controla. Ela segue a Lei Geral de Proteção de Dados (Lei 13.709/2018).
 
@@ -92,7 +92,7 @@ Usamos prestadores de serviço (operadores) que tratam dados em nosso nome e só
 - **E-mail transacional (Resend):** recebe seu e-mail, seu nome e o texto das mensagens de confirmação de e-mail, de redefinição de senha e de aviso de segurança.
 - **Cópia de segurança:** cópias do banco de dados, criptografadas antes de sair do servidor, em armazenamento externo da Oracle. A Oracle guarda apenas o conteúdo já criptografado.
 
-Cloudflare, Resend e Oracle podem tratar dados fora do Brasil. Nesses casos, a transferência é necessária para prestar o serviço (LGPD, art. 33, IX).
+O banco de dados e as cópias de segurança ficam no Brasil. A Cloudflare e o Resend podem tratar dados fora do Brasil. Nesses casos, a transferência é necessária para prestar o serviço (LGPD, art. 33, IX).
 
 Não compartilhamos seus dados com anunciantes nem com outros usuários. Só os divulgamos a autoridades quando a lei exigir.
 
@@ -139,7 +139,7 @@ Quando mudarmos algo que afete seus dados, como um novo provedor ou um novo tipo
 
 ## 4. Termos de Uso (texto proposto)
 
-**Versão:** 2026-10-11. **Última atualização:** 11 de outubro de 2026.
+**Versão:** 2026-10-12. **Última atualização:** 12 de outubro de 2026.
 
 > Estes termos valem para o uso do Let's Go Run, um aplicativo de planejamento de treino de corrida. Ao criar uma conta, você declara que leu e concorda com eles e com a Política de Privacidade.
 

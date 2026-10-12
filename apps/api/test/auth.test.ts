@@ -42,7 +42,7 @@ describe("cadastro", () => {
     const rows = await admin`select u.email, c.terms_version, c.health_data_accepted
       from users u join consents c on c.user_id = u.id where u.email = ${email.toLowerCase()}`;
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ terms_version: "2026-10-11", health_data_accepted: true });
+    expect(rows[0]).toMatchObject({ terms_version: "2026-10-12", health_data_accepted: true });
   });
 
   it("exige a declaração de 18 anos ou mais e a registra no consentimento", async () => {
