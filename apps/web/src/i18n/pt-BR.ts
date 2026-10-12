@@ -785,7 +785,7 @@ export const ptBR = {
     submit: "Salvar registro",
     saving: "Salvando...",
     cancel: "Cancelar",
-    notFound: "Não encontramos este treino na sua semana.",
+    notFound: "Não encontramos este treino.",
     backToPanel: "Voltar ao painel",
     doneTitle: "Registro salvo",
     nextDayTitle: "O que muda para amanhã",

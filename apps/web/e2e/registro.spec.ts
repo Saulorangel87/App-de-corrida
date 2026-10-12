@@ -14,6 +14,8 @@ const run = {
   id: "s1", date: today, slug: "rodagem-leve", name: { "pt-BR": "Rodagem leve", en: "Easy run" },
   kind: "rodagem", minutes: 40, maxZone: "Z2", targetRpe: 4, optional: false, note: null, status: "pending", log: null,
 };
+const yesterday = iso(new Date(Date.now() - 86_400_000));
+const lastWeekRun = { ...run, id: "s0", date: yesterday, slug: "longao", name: { "pt-BR": "Longão de domingo", en: "Sunday long run" } };
 const decision = (over: Record<string, unknown> = {}) => ({
   action: "manter", session: { slug: "rodagem-leve", minutes: 40, maxZone: "Z2", changed: false },
   blockRunning: false, refer: false, urgent: false, sameDayMedical: false, needsEvaluation: false, needsCheckin: false,
@@ -35,6 +37,9 @@ async function mockApi(page: Page, opts: { logReply?: Record<string, unknown> } 
     if (path === "/profile") return json(200, { profile: { plan: { objective: "10k", endDate: today } } });
     if (path.startsWith("/day/")) return json(200, dayBody());
     if (path.startsWith("/plan/week/")) return json(200, { plan: planInfo, sessions: [run] });
+    if (path === "/workouts/s1" && req.method() === "GET") return json(200, { session: { ...run, ladder: null } });
+    // Treino de ontem, que já pertence à semana anterior do plano (não aparece em /plan/week).
+    if (path === "/workouts/s0" && req.method() === "GET") return json(200, { session: { ...lastWeekRun, ladder: null } });
     if (path === "/workouts/s1/log" && req.method() === "PUT") {
       const nextDay = dayBody({ decision: decision({ message: "Amanhã: rodagem leve." }) });
       return json(200, opts.logReply ?? { session: run, day: dayBody(), nextDay });
@@ -173,10 +178,17 @@ test("mapa do corpo: vista de costas tem as regiões de trás", async ({ page })
   await expect(page.getByRole("region", { name: "Lombar / sacro" })).toBeVisible();
 });
 
-test("treino que não está na semana mostra aviso e volta ao painel", async ({ page }) => {
+test("treino que não existe mostra aviso e volta ao painel", async ({ page }) => {
   await mockApi(page);
   await page.goto("/registro/outro-id");
-  await expect(page.getByText("Não encontramos este treino na sua semana.")).toBeVisible();
+  await expect(page.getByText("Não encontramos este treino.")).toBeVisible();
   await page.getByRole("link", { name: "Voltar ao painel" }).click();
   await expect(page).toHaveURL(/\/painel$/);
+});
+
+test("treino da semana anterior do plano continua registrável (virada de semana)", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/registro/s0");
+  await expect(page.getByRole("heading", { name: "Longão de domingo" })).toBeVisible();
+  await expect(page.getByText("Não encontramos este treino.")).toHaveCount(0);
 });

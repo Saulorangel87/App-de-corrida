@@ -784,7 +784,7 @@ export const en: Translation = {
     submit: "Save log",
     saving: "Saving...",
     cancel: "Cancel",
-    notFound: "We could not find this workout in your week.",
+    notFound: "We could not find this workout.",
     backToPanel: "Back to dashboard",
     doneTitle: "Log saved",
     nextDayTitle: "What changes for tomorrow",

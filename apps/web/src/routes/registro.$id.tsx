@@ -9,10 +9,9 @@ import { ChoiceGroup } from "../components/choice";
 import { CheckField, TextField } from "../components/field";
 import { FlowLayout } from "../components/flow-layout";
 import { fetchApi } from "../lib/api";
-import { localToday } from "../lib/dates";
 import { useRequireUser } from "../lib/queries";
 import { toNumber, toText } from "../lib/step-form";
-import { useWeek, type DayResponse, type SessionView } from "../lib/training";
+import { useWorkout, workoutKey, type DayResponse, type SessionView } from "../lib/training";
 import { useErrorText } from "../lib/use-error-text";
 import { zoneUpTo } from "../lib/zone";
 
@@ -47,10 +46,11 @@ function LogPage() {
   const { id } = Route.useParams();
   const { t } = useTranslation();
   const { loading } = useRequireUser();
-  const today = localToday();
-  const week = useWeek(today, !loading);
+  // Busca o treino pelo id, e não pela semana atual: o treino de domingo à noite
+  // continua registrável na segunda-feira, quando a semana do plano já virou.
+  const workout = useWorkout(id, !loading);
 
-  if (loading || week.isLoading) {
+  if (loading || workout.isLoading) {
     return (
       <FlowLayout>
         <p role="status" className="text-gray-600">
@@ -59,7 +59,7 @@ function LogPage() {
       </FlowLayout>
     );
   }
-  const session = week.data?.sessions.find((s) => s.id === id);
+  const session = workout.data?.session;
   if (!session) {
     return (
       <FlowLayout>
@@ -130,6 +130,7 @@ function LogForm({ session }: { session: SessionView }) {
       void queryClient.invalidateQueries({ queryKey: ["day"] });
       void queryClient.invalidateQueries({ queryKey: ["week"] });
       void queryClient.invalidateQueries({ queryKey: ["overview"] });
+      void queryClient.invalidateQueries({ queryKey: workoutKey(session.id) });
     },
   });
 
