@@ -88,7 +88,7 @@ Escopo: repositório inteiro (código da API, do front e dos pacotes), banco, in
 | Recarga de rotas do front (SPA) | ok |
 | `VITE_API_URL` no build; nenhum `localhost` no JavaScript publicado | ok |
 | Envio real de e-mail (chave do Resend) | **pendente**: exercitar com um cadastro de teste |
-| Teste de restauração do backup com as 23 tabelas | **pendente** |
+| Teste de restauração do backup com as 23 tabelas | feito em 2026-10-12: restaurado do bucket `backups-vps` num container sem rede, mesmas contagens da produção |
 
 Observação: o HSTS sai com 6 meses (`max-age=15552000`) porque a zona tem HSTS próprio na Cloudflare, que prevalece sobre o valor do código.
 

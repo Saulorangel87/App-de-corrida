@@ -94,8 +94,8 @@ Feito, com OK do dono:
 - Front no Cloudflare Pages com domínio `letsgorun.devsaulo.com.br` e SSL ativo; `letsgorun` e `letsgorun-api` excluídos da regra de cabeçalhos da zona; cabeçalhos, recarga de rotas, CORS e login genérico conferidos pela internet.
 
 Falta:
-- Primeiro envio real de e-mail (cadastro de teste) para exercitar a chave do Resend.
-- Teste de restauração depois das novas tabelas (`ops/restore-test.sh`) e data anotada em `ops/README.md`.
+- ~~Primeiro envio real de e-mail~~: confirmado pelo dono em 2026-10-11.
+- ~~Teste de restauração depois das novas tabelas~~: feito em 2026-10-12 (data em `ops/README.md`).
 - Resto da lista de verificação em `docs/auditoria-seguranca.md`, seção 4.
 
 ## Pendências do dono

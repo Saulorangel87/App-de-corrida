@@ -13,7 +13,7 @@ Pasta na VPS: `~/apps/app-de-corrida` (copie para lá `docker-compose.yml` e os 
 | `FRONTEND_URL` | origem exata do front, com https (`https://letsgorun.devsaulo.com.br`): CORS, verificação de `Origin` e links dos e-mails |
 | `SESSION_SECRET` | 32+ caracteres aleatórios (`openssl rand -hex 32`); troca derruba todas as sessões e invalida os links pendentes |
 | `RESEND_API_KEY`, `EMAIL_FROM` | e-mails de conta; a API não inicia em produção sem a chave; o domínio do remetente precisa estar verificado no Resend (SPF e DKIM) |
-| `BACKUP_RCLONE_REMOTE` | remote `crypt` do rclone: `corrida-run:` (sobre `cadencia-oos:cadencia-backups/corrida-run`) |
+| `BACKUP_RCLONE_REMOTE` | remote `crypt` do rclone: `corrida-run:` (sobre `cadencia-oos:backups-vps/letsgorun`) |
 
 Gere senhas com `openssl rand -hex 32`.
 
@@ -66,11 +66,12 @@ MIGRATION_DATABASE_URL=postgres://passo_migrator:...@host:5432/passo pnpm --filt
 ## Backup
 
 - `backup.sh`: `pg_dump -Fc` enviado direto para o remote `crypt` do rclone (Oracle Object Storage); conteúdo e nomes criptografados antes de sair da VPS.
-- Retenção de 30 dias por regra de ciclo de vida no bucket `cadencia-backups` (prefixo `corrida-run/`, apagar após 30 dias), configurada no console da Oracle (regra `corrida-run-30-dias`, ativa desde 2026-10-10; o bucket também tem `apagar-60-dias` sem filtro, do Cadência, e vale a que vence primeiro). Controle de versão do bucket: desativado. A VPS não tem permissão de apagar objetos, de propósito.
+- Destino: bucket `backups-vps` (Oracle, `sa-vinhedo-1`), pasta `letsgorun/`; os outros projetos usam as pastas `cadencia/`, `despesas/`, `estoque/` e `rotas/` do mesmo bucket. Desde 2026-10-12 (antes: bucket `cadencia-backups`, prefixo `corrida-run/`).
+- Retenção de 30 dias por **uma única regra de ciclo de vida do bucket inteiro** (`expirar-30-dias`, sem filtro de prefixo), configurada no console da Oracle; projeto novo já nasce coberto. Isso cumpre o que o texto de Privacidade promete ("até 30 dias"). Controle de versão do bucket: desativado. A VPS não tem permissão de apagar objetos, de propósito (a política `backup-vm-object-storage` só permite criar, listar e ler).
 - Timer: copie `systemd/passo-backup.{service,timer}` para `/etc/systemd/system/` e rode `sudo systemctl enable --now passo-backup.timer`.
 - `restore-test.sh`: restaura o backup mais recente num container descartável sem rede. Rodar ao menos 1x por mês e anotar a data aqui.
-- **Guarde a senha do remote crypt fora da VPS** (gerenciador de senhas): sem ela, os backups não abrem.
+- **Guarde a senha do remote crypt fora da VPS** (gerenciador de senhas): sem ela, os backups não abrem. Atenção: `rclone config show` mascara as senhas; para guardá-las, copie o bloco do remote direto de `~/.config/rclone/rclone.conf`.
 
-Último teste de restauração: 2026-10-10, OK (18 tabelas, 9 com RLS, 11 treinos). **Refazer depois do primeiro deploy com as migrações 0011 a 0013** (agora são 23 tabelas, 13 com RLS) e anotar a data aqui.
+Último teste de restauração: **2026-10-12, OK**, a partir do bucket novo (`letsgorun/`), num container descartável sem rede: `pg_restore` sem erros e as 24 tabelas (as 23 do app mais a de controle das migrações) com as mesmas contagens do banco de produção (1.550 linhas). O anterior foi em 2026-10-10 (18 tabelas).
 
 Chaves do crypt (`password` e `password2` do remote `corrida-run`): guardadas no gerenciador de senhas do dono, fora da VPS.
