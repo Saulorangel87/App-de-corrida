@@ -108,7 +108,7 @@ function StatCard({
       </div>
       {progress !== undefined && (
         <progress
-          className="h-1.5 w-full overflow-hidden rounded-full bg-[#F5F6F8] [&::-moz-progress-bar]:bg-[#FF5A1F] [&::-webkit-progress-bar]:bg-[#F5F6F8] [&::-webkit-progress-value]:bg-[#FF5A1F]"
+          className="progress-reveal h-1.5 w-full overflow-hidden rounded-full bg-[#F5F6F8] [&::-moz-progress-bar]:bg-[#FF5A1F] [&::-webkit-progress-bar]:bg-[#F5F6F8] [&::-webkit-progress-value]:bg-[#FF5A1F]"
           max={100}
           value={Math.max(0, Math.min(100, progress))}
           aria-label={label}
@@ -527,7 +527,7 @@ function WeeklyVolume({ week, today }: { week: WeekResponse; today: string }) {
         {km > 0 && <Figure label={t("dash.volume.distance")} value={`${new Intl.NumberFormat(lang, { maximumFractionDigits: 1 }).format(km)} km`} />}
       </dl>
 
-      <div role="group" aria-label={t("dash.volume.chartLabel")} className="grid grid-cols-7 gap-2 border-b border-[#E5E7EB] pb-1 sm:gap-3.5">
+      <div role="group" aria-label={t("dash.volume.chartLabel")} className="bars-stagger grid grid-cols-7 gap-2 border-b border-[#E5E7EB] pb-1 sm:gap-3.5">
         {days.map((x) => {
           const label = formatDate(x.date, lang, { weekday: "short" }).replace(".", "");
           const isToday = x.date === today;
@@ -546,9 +546,9 @@ function WeeklyVolume({ week, today }: { week: WeekResponse; today: string }) {
               <svg viewBox={`0 0 52 ${H}`} className="h-[150px] w-full max-w-[52px]" aria-hidden="true">
                 {x.planned === 0 && x.done === 0 && <rect x="0" y={H - 6} width="52" height="6" rx="3" fill="#F5F6F8" />}
                 {hPlanned > 0 && hPlanned >= hDone && (
-                  <rect x="1" y={H - hPlanned + 1} width="50" height={hPlanned - 2} rx="7" fill="#FFF4EF" stroke="#FFB394" strokeWidth="2" strokeDasharray="5 4" />
+                  <rect className="bar-grow" x="1" y={H - hPlanned + 1} width="50" height={hPlanned - 2} rx="7" fill="#FFF4EF" stroke="#FFB394" strokeWidth="2" strokeDasharray="5 4" />
                 )}
-                {hDone > 0 && <rect x="0" y={H - hDone} width="52" height={hDone} rx="7" fill="#FF5A1F" />}
+                {hDone > 0 && <rect className="bar-grow" x="0" y={H - hDone} width="52" height={hDone} rx="7" fill="#FF5A1F" />}
               </svg>
               <span className={`pb-1 text-xs font-semibold ${isToday ? "text-[#C2410C]" : "text-[#94A3B8]"}`}>{capitalize(label)}</span>
             </div>
@@ -596,7 +596,7 @@ function GoalCard({ goal, today, currentWeek }: { goal: NonNullable<ProfileSumma
             <span className="font-bold text-[#0F172A]">{pct}%</span>
           </div>
           <progress
-            className="h-1.5 w-full overflow-hidden rounded-full bg-[#F5F6F8] [&::-moz-progress-bar]:bg-[#FF5A1F] [&::-webkit-progress-bar]:bg-[#F5F6F8] [&::-webkit-progress-value]:bg-[#FF5A1F]"
+            className="progress-reveal h-1.5 w-full overflow-hidden rounded-full bg-[#F5F6F8] [&::-moz-progress-bar]:bg-[#FF5A1F] [&::-webkit-progress-bar]:bg-[#F5F6F8] [&::-webkit-progress-value]:bg-[#FF5A1F]"
             max={100}
             value={pct}
             aria-label={t("dash.goal.progress")}

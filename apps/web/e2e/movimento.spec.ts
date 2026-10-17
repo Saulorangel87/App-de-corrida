@@ -128,6 +128,28 @@ test.describe("com movimento", () => {
     // O teto do atraso evita que cartões lá embaixo demorem a aparecer.
     expect(timing.at(-1)!.delay).toBeLessThanOrEqual(0.35);
   });
+
+  test("painel: as barras do volume semanal crescem da base, uma depois da outra, e o progresso é revelado", async ({ page }) => {
+    await mockPanel(page);
+    await page.goto("/painel");
+    await expect(page.getByRole("heading", { name: "Volume semanal" })).toBeVisible();
+
+    const bars = await page.locator(".bar-grow").evaluateAll((els) =>
+      els.map((el) => {
+        const style = getComputedStyle(el);
+        return { name: style.animationName, delay: parseFloat(style.animationDelay), origin: style.transformOrigin };
+      }),
+    );
+    // Hoje e daqui a 2 dias têm treino; as barras seguem a ordem das colunas.
+    expect(bars.length).toBeGreaterThanOrEqual(2);
+    expect(bars.every((b) => b.name === "grow-y")).toBe(true);
+    expect(bars[0]!.delay).toBeGreaterThanOrEqual(0.35);
+    expect(bars.at(-1)!.delay).toBeGreaterThan(bars[0]!.delay);
+
+    const progress = await page.locator("progress.progress-reveal").evaluateAll((els) => els.map((el) => getComputedStyle(el).animationName));
+    expect(progress.length).toBeGreaterThanOrEqual(2);
+    expect(progress.every((name) => name === "reveal-x")).toBe(true);
+  });
 });
 
 test.describe("pedindo menos movimento", () => {
@@ -157,6 +179,24 @@ test.describe("pedindo menos movimento", () => {
     for (const t of timing) {
       expect(t.duration).toBeLessThan(0.001);
       expect(t.delay).toBe(0);
+    }
+  });
+
+  test("painel: barras e progresso já aparecem prontos", async ({ page }) => {
+    await mockPanel(page);
+    await page.goto("/painel");
+    await expect(page.getByRole("heading", { name: "Volume semanal" })).toBeVisible();
+
+    const animated = await page.locator(".bar-grow, progress.progress-reveal").evaluateAll((els) =>
+      els.map((el) => {
+        const style = getComputedStyle(el);
+        return { duration: parseFloat(style.animationDuration), delay: parseFloat(style.animationDelay) };
+      }),
+    );
+    expect(animated.length).toBeGreaterThanOrEqual(4);
+    for (const a of animated) {
+      expect(a.duration).toBeLessThan(0.001);
+      expect(a.delay).toBe(0);
     }
   });
 });
