@@ -4,6 +4,7 @@ import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { FlowLayout } from "../components/flow-layout";
 import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
+import { PlanSkeleton } from "../components/skeletons";
 import { WeekAgenda, weekStats } from "../components/week-agenda";
 import { ApiError, fetchApi } from "../lib/api";
 import { formatDate, localToday } from "../lib/dates";
@@ -50,9 +51,7 @@ function PlanPage() {
     <FlowLayout width="max-w-[960px]">
       <h1 className="mb-5 text-2xl font-extrabold tracking-tight text-[#0F172A]">{t("plan.title")}</h1>
       {loading || !user || overview.isLoading || needsInterview ? (
-        <p role="status" className="text-gray-600">
-          {t("common.loading")}
-        </p>
+        <PlanSkeleton />
       ) : overview.error || !overview.data ? (
         <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
           {overview.error ? errorText(overview.error) : t("plan.loadError")}

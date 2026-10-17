@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { baseRegionId, GENERAL_REGION } from "@passo/shared";
 import { ColumnChart, type Column } from "../components/column-chart";
 import { FlowLayout } from "../components/flow-layout";
+import { HistorySkeleton } from "../components/skeletons";
 import { addDays, formatDate } from "../lib/dates";
 import { useRequireUser } from "../lib/queries";
 import { useHistory, type HistoryResponse } from "../lib/training";
@@ -64,9 +65,7 @@ function History() {
       </div>
 
       {loading || !user || history.isLoading ? (
-        <p role="status" className="text-gray-600">
-          {t("common.loading")}
-        </p>
+        <HistorySkeleton />
       ) : history.error || !history.data ? (
         <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
           {history.error ? errorText(history.error) : t("history.loadError")}

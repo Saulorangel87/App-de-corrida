@@ -9,6 +9,7 @@ import { HealthChangeCard } from "../components/health-change";
 import { NewsBanner } from "../components/news";
 import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { PlanReviewCard } from "../components/plan-review";
+import { PanelSkeleton } from "../components/skeletons";
 import { weekStats } from "../components/week-agenda";
 import { ApiError, fetchApi } from "../lib/api";
 import { addDays, formatDate, localToday } from "../lib/dates";
@@ -148,9 +149,7 @@ function Panel() {
   if (loading || !user || profile.isLoading || noProfile || (ready && (day.isLoading || week.isLoading))) {
     return (
       <FlowLayout width="max-w-[1112px]">
-        <p role="status" className="text-gray-600">
-          {t("common.loading")}
-        </p>
+        <PanelSkeleton />
       </FlowLayout>
     );
   }
