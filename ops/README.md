@@ -39,6 +39,8 @@ docker build -f apps/api/Dockerfile -t app-de-corrida-api:latest .
 docker compose up -d api
 ```
 
+Rotina de atualização (feita em 2026-10-11, 2026-10-12 e 2026-10-17): 1) `./backup.sh`; 2) do computador, `git archive --format=tar HEAD | ssh vps "cd ~/apps/app-de-corrida && mkdir repo.new && tar -x -C repo.new"` (só com o commit enviado e a árvore limpa); 3) na VPS, renomear `repo` para `repo.old-AAAAMMDD` e `repo.new` para `repo`; 4) `docker tag app-de-corrida-api:latest app-de-corrida-api:previous`; 5) `docker build` e `docker compose up -d api`; 6) conferir `docker inspect` (healthy), `/health` pela internet, uma rota de atleta sem sessão (401), origem estranha (403) e `systemctl is-active passo-api-logs.service`. Voltar atrás: `docker tag app-de-corrida-api:previous app-de-corrida-api:latest && docker compose up -d api`. Atenção: o `compose up` pode recriar também o container do banco se a configuração dele mudou desde a criação (aconteceu em 2026-10-17, cerca de 1 s de parada); os dados ficam no volume `app-de-corrida_data`, mas confira a contagem de migrações e de usuários depois. Sem migração nova, não há nada a rodar no banco.
+
 Rede do túnel (uma vez; criada e ligada ao `cloudflared-tunnel` em 2026-10-11, que antes estava só na rede `bridge`):
 
 ```

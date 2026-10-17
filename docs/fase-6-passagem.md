@@ -93,6 +93,8 @@ Feito, com OK do dono:
 - Rota `letsgorun-api.devsaulo.com.br` no túnel Cloudflare; API no ar e saudável; nenhuma porta pública nova.
 - Front no Cloudflare Pages com domínio `letsgorun.devsaulo.com.br` e SSL ativo; `letsgorun` e `letsgorun-api` excluídos da regra de cabeçalhos da zona; cabeçalhos, recarga de rotas, CORS e login genérico conferidos pela internet.
 
+- **Atualização de 2026-10-17 (OK do dono):** API refeita na VPS com o ritmo no histórico e as dependências novas (PRs #13 e #14, tsup 9). Sem migração nova. Backup antes, imagem anterior em `app-de-corrida-api:previous`, `/health` 200 e rota nova sem sessão 401. Detalhes e como voltar atrás em `ops/README.md`.
+
 Falta:
 - ~~Primeiro envio real de e-mail~~: confirmado pelo dono em 2026-10-11.
 - ~~Teste de restauração depois das novas tabelas~~: feito em 2026-10-12 (data em `ops/README.md`).
@@ -103,7 +105,6 @@ Falta:
 - Avisar a PAR-Q+ Collaboration (R-TRI-14, não bloqueia).
 - Revisar os textos `razao` do catálogo no seed.
 - Aprovar a redação dos textos novos do ritmo (2026-10-17): "Ritmo médio", "Ritmo (min/km)" e "Ritmo médio deste treino: … por km. É só uma referência: não é meta." (em inglês, "Average pace", "Pace (min/km)" e "Average pace for this workout: … per km. It is only a reference, not a target."). Já estão no ar; ajustar se preferir outra redação.
-- Deploy da API na VPS (precisa do OK do dono): a API com `paceKm`/`paceMinutes` no histórico, as dependências atualizadas (PRs #13 e #14 do Dependabot, com tsup 9, que exige Node 22.18 ou mais novo na imagem) ainda não estão em produção. Até lá o ritmo do histórico aparece como "—".
 
 ## Dicas de ambiente (Windows)
 - Parar o ambiente local: fechar a API (porta 3000) e o Vite (5173) e rodar `docker stop passo-test-db`. Se uma porta continuar aberta, sobrou um processo filho do Node.
