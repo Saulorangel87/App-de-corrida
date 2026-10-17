@@ -128,6 +128,9 @@ export type HistoryResponse = {
     adherencePct: number | null;
     minutes: number;
     srpeLoad: number;
+    /** Km e minutos dos treinos com distância e duração informadas (0 se nenhum). */
+    paceKm: number;
+    paceMinutes: number;
   }[];
 };
 

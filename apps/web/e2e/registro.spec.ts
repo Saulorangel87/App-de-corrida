@@ -68,7 +68,9 @@ test("pós-treino sem dor: registra duração e esforço e mostra o que muda ama
   await expect(page.getByText("Responda este campo.")).toHaveCount(1);
   const top = async (label: string) => (await page.getByLabel(label).boundingBox())!.y;
   expect(await top("Duração real (minutos)")).toBe(await top("Distância (km) — opcional"));
+  await expect(page.getByText(/Ritmo médio deste treino/)).toHaveCount(0); // sem distância ainda
   await page.getByLabel("Distância (km) — opcional").fill("6,5");
+  await expect(page.getByText("Ritmo médio deste treino: 6:28 por km. É só uma referência: não é meta.")).toBeVisible(); // 42 ÷ 6,5
   await page.getByRole("group", { name: "Como foi o esforço do treino todo?" }).getByText("4", { exact: true }).click();
   await page.getByRole("button", { name: "Salvar registro" }).click();
 

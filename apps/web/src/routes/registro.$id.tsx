@@ -10,6 +10,7 @@ import { CheckField, TextField } from "../components/field";
 import { FlowLayout } from "../components/flow-layout";
 import { fetchApi } from "../lib/api";
 import { useRequireUser } from "../lib/queries";
+import { paceMinPerKm, paceText } from "../lib/pace";
 import { toNumber, toText } from "../lib/step-form";
 import { useWorkout, workoutKey, type DayResponse, type SessionView } from "../lib/training";
 import { useErrorText } from "../lib/use-error-text";
@@ -86,6 +87,7 @@ function LogForm({ session }: { session: SessionView }) {
   const [distance, setDistance] = useState(log?.distanceKm != null ? String(log.distanceKm).replace(".", ",") : "");
   const [srpe, setSrpe] = useState<number | undefined>(log?.srpe ?? undefined);
   const [notes, setNotes] = useState(log?.notes ?? "");
+  const pace = paceMinPerKm(toNumber(distance), toNumber(duration));
   const [regions, setRegions] = useState<string[]>([]);
   const [pain, setPain] = useState<Record<string, PainDetail>>({});
   const [cardio, setCardio] = useState<Record<string, boolean>>({});
@@ -240,6 +242,11 @@ function LogForm({ session }: { session: SessionView }) {
                   error={errors.distance}
                 />
                 <p className="text-xs text-gray-500 min-[480px]:col-span-2">{t("log.durationHint")}</p>
+                {pace !== null && (
+                  <p className="text-sm font-semibold text-[#0F172A] min-[480px]:col-span-2">
+                    {t("log.paceLive", { pace: paceText(pace) })}
+                  </p>
+                )}
               </div>
               <ChoiceGroup
                 name="srpe"

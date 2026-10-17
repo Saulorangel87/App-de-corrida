@@ -11,7 +11,7 @@ Registrado em 2026-10-12, a pedido do dono, depois da pergunta "o app consegue m
 - **Tiros existem.** O catálogo tem Intervalado curto, Intervalado longo, Fartlek, Limiar contínuo e Subidas, só para os níveis intermediário e avançado. Os blocos de qualidade crescem ao longo do plano (por exemplo, +1 repetição a cada 2 semanas até o teto do nível).
 - **Iniciante não faz tiros.** A pesquisa não sustenta esses treinos para quem está começando.
 - **Intensidade é por zona e esforço, não por ritmo.** O controle é teste da fala, esforço percebido (CR-10) e zona de frequência cardíaca (R-INT-02). `targetPaceRelative` é `null` em todos os treinos do catálogo; o app nunca prescreve "5:10/km".
-- **Pace só aparece como média da semana.** O painel mostra o "Ritmo médio" da semana (distância e duração dos treinos que têm os dois). Falta o pace por treino, no histórico e no registro, e a comparação com o passado. O registro do treino guarda duração, distância, esforço percebido, dor e observações (`workoutLogSchema`). (Atualizado em 2026-10-17: antes dizia que o app não calculava pace.)
+- **Pace é só informativo (2026-10-17).** O painel mostra o "Ritmo médio" da semana e o ritmo de cada treino recente; o registro mostra o ritmo enquanto o atleta digita distância e duração; o histórico mostra o ritmo médio do período e por semana (na tabela da carga). Tudo é minutos ÷ km dos treinos que têm os dois dados, rotulado como referência, sem meta nem comparação com o passado. O registro do treino guarda duração, distância, esforço percebido, dor e observações (`workoutLogSchema`). (Atualizado em 2026-10-17: antes dizia que o app não calculava pace.)
 - **Intensidade não sobe por desempenho.** A avaliação a cada 2 semanas só pode repetir a etapa (puxado, não consegui). "Fácil" não muda o plano, porque ele nunca passa do molde (R-PLN-18).
 - **Tempos de 5 km e 10 km só classificam o nível** (CLS-v1). Não viram ritmos de treino.
 
@@ -26,8 +26,8 @@ A pesquisa de controle de intensidade (`docs/pesquisa/04-controle-intensidade.md
 
 ### O que seria preciso para entregar
 
-1. **Cálculo e exibição de pace** nos registros e no histórico (duração e distância já existem). Não exige regra nova.
-2. **Pace médio no registro** (R-INT-10) e uso da zona realizada na distribuição.
+1. ~~**Cálculo e exibição de pace** nos registros e no histórico~~ **Feito em 2026-10-17** (sem regra nova, sem dado novo no banco).
+2. **Pace médio no registro** (R-INT-10): a exibição está feita; **falta guardar FC média e máxima** e usar a zona realizada na distribuição de intensidade (dado novo: exige texto de Privacidade com versão nova).
 3. **Entrada de prova ou teste recente** na entrevista e no perfil, com data, para a janela de 8 a 12 semanas (hoje os tempos de 5 km e 10 km são opcionais e servem só à classificação, com validade de 6 meses).
 4. **Ritmo de referência por prova recente** (R-INT-08), com o rótulo de estimativa e as restrições acima.
 5. **Progressão baseada em desempenho** (por exemplo, subir a intensidade quando o treino fica "fácil" de forma consistente). Isso **é regra nova** e hoje contraria R-PLN-18; exigiria pesquisa, decisão do dono e uma versão nova do motor, com testes por regra.
@@ -61,7 +61,7 @@ Registrado em 2026-10-17, a pedido do dono, depois de analisar o app Runna (Andr
 
 ### 2.1 Pace (área do Runna: ritmo e tempo estimado de prova)
 
-É a ideia com mais pesquisa pronta. Já está detalhada na seção 1; o que a análise acrescenta é a prioridade. Os passos 1 e 2 da seção 1 (pace por treino e no histórico, e pace médio no registro) **não exigem regra nova**. O ritmo de referência por prova recente (R-INT-08) só espera as decisões do dono listadas na seção 1.
+É a ideia com mais pesquisa pronta. Já está detalhada na seção 1. **A parte que não exigia regra nova foi entregue em 2026-10-17** (pace por treino, no registro e no histórico). O ritmo de referência por prova recente (R-INT-08) continua esperando as decisões do dono listadas na seção 1.
 
 ### 2.2 Reduzir a carga a pedido (áreas do Runna: "não estou 100%", redução de treino, modo Lifestyle)
 

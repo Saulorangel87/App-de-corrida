@@ -7,6 +7,7 @@ import { FlowLayout } from "../components/flow-layout";
 import { HistorySkeleton } from "../components/skeletons";
 import { useMinDuration } from "../lib/use-min-duration";
 import { addDays, formatDate } from "../lib/dates";
+import { paceMinPerKm, paceText } from "../lib/pace";
 import { useRequireUser } from "../lib/queries";
 import { useHistory, type HistoryResponse } from "../lib/training";
 import { useErrorText } from "../lib/use-error-text";
@@ -103,6 +104,11 @@ function HistoryBody({ data }: { data: HistoryResponse }) {
   const minutes = data.weekly.reduce((s, w) => s + w.minutes, 0);
   const sleepHours = data.sleep.flatMap((s) => (s.hours === null ? [] : [s.hours]));
   const sleepAvg = sleepHours.length ? sleepHours.reduce((s, h) => s + h, 0) / sleepHours.length : null;
+  // Ritmo do período: soma dos minutos ÷ soma dos km dos treinos que têm os dois dados.
+  const periodPace = paceMinPerKm(
+    data.weekly.reduce((s, w) => s + w.paceKm, 0),
+    data.weekly.reduce((s, w) => s + w.paceMinutes, 0),
+  );
 
   // Colunas semanais
   const weekLabelEvery = data.weekly.length > 8 ? 2 : 1;
@@ -157,12 +163,16 @@ function HistoryBody({ data }: { data: HistoryResponse }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 md:grid-cols-4">
         <Tile
           label={t("history.summaryDone")}
           value={planned > 0 ? t("history.summaryDoneValue", { done, total: planned }) : t("history.summaryNone")}
         />
         <Tile label={t("history.summaryMinutes")} value={planned > 0 ? t("panel.minutes", { count: minutes }) : t("history.summaryNone")} />
+        <Tile
+          label={t("history.summaryPace")}
+          value={periodPace === null ? t("history.summaryNone") : t("pace.value", { pace: paceText(periodPace) })}
+        />
         <Tile
           label={t("history.summarySleep")}
           value={sleepAvg === null ? t("history.summaryNone") : t("history.summarySleepValue", { hours: number(sleepAvg, 1) })}
@@ -204,8 +214,11 @@ function HistoryBody({ data }: { data: HistoryResponse }) {
               tableLabel={t("history.showTable")}
               table={
                 <DataTable
-                  head={[t("history.tableWeek"), t("history.tableLoad"), t("history.tableMinutes")]}
-                  rows={data.weekly.map((w) => [shortDate(w.weekStart), number(w.srpeLoad), number(w.minutes)])}
+                  head={[t("history.tableWeek"), t("history.tableLoad"), t("history.tableMinutes"), t("history.tablePace")]}
+                  rows={data.weekly.map((w) => {
+                    const pace = paceMinPerKm(w.paceKm, w.paceMinutes);
+                    return [shortDate(w.weekStart), number(w.srpeLoad), number(w.minutes), pace === null ? "—" : paceText(pace)];
+                  })}
                 />
               }
             />

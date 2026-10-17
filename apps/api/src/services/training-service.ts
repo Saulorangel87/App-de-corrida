@@ -1130,6 +1130,8 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           const done = due.filter((r) => r.log?.completed);
           const minutes = done.reduce((s, r) => s + (r.log?.durationMinutes ?? 0), 0);
           const load = done.reduce((s, r) => s + (r.log?.durationMinutes ?? 0) * (r.log?.srpe ?? 0), 0);
+          // Ritmo: só dos treinos em que o atleta informou distância e duração (mesma conta do painel).
+          const paced = done.filter((r) => (num(r.log?.distanceKm) ?? 0) > 0 && (r.log?.durationMinutes ?? 0) > 0);
           return {
             weekStart: w.startDate,
             plannedSessions: due.length,
@@ -1138,6 +1140,9 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
             minutes,
             /** Carga interna em unidades arbitrárias (sRPE CR-10 × minutos, Foster). */
             srpeLoad: load,
+            /** Quilômetros e minutos dos treinos com os dois dados; o ritmo da semana é minutos ÷ km. */
+            paceKm: paced.reduce((s, r) => s + (num(r.log?.distanceKm) ?? 0), 0),
+            paceMinutes: paced.reduce((s, r) => s + (r.log?.durationMinutes ?? 0), 0),
           };
         });
 

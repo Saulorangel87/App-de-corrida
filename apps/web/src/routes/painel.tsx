@@ -10,6 +10,7 @@ import { NewsBanner } from "../components/news";
 import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { PlanReviewCard } from "../components/plan-review";
 import { PanelSkeleton } from "../components/skeletons";
+import { paceMinPerKm, paceText } from "../lib/pace";
 import { useMinDuration } from "../lib/use-min-duration";
 import { weekStats } from "../components/week-agenda";
 import { ApiError, fetchApi } from "../lib/api";
@@ -54,12 +55,6 @@ function duration(minutes: number): string {
   const h = Math.floor(minutes / 60);
   const m = Math.round(minutes % 60);
   return h > 0 ? `${h}h ${String(m).padStart(2, "0")} min` : `${m} min`;
-}
-
-/** Minutos por km em "5:41". */
-function paceText(minutesPerKm: number): string {
-  const total = Math.round(minutesPerKm * 60);
-  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
 }
 
 // ---------------------------------------------------------------- cartões
@@ -773,7 +768,9 @@ function RecentWorkouts({ week, className = "" }: { week: WeekResponse; classNam
         <p className="text-sm text-gray-600">{t("dash.recent.empty")}</p>
       ) : (
         <ul className="divide-y divide-[#E5E7EB]">
-          {done.map((s) => (
+          {done.map((s) => {
+            const pace = paceMinPerKm(s.log?.distanceKm, s.log?.durationMinutes);
+            return (
             <li key={s.id} className="flex items-center gap-3 py-3">
               <span className="grid size-12 shrink-0 place-items-center rounded-[10px] bg-[#F1F5F9] text-[#475569]">
                 <Footprints size={24} aria-hidden="true" />
@@ -788,10 +785,16 @@ function RecentWorkouts({ week, className = "" }: { week: WeekResponse; classNam
                 <p className="text-[15px] font-extrabold text-[#0F172A]">
                   {s.log?.distanceKm ? `${new Intl.NumberFormat(lang, { maximumFractionDigits: 1 }).format(s.log.distanceKm)} km` : t("panel.minutes", { count: s.log?.durationMinutes ?? s.minutes })}
                 </p>
-                {s.log?.distanceKm ? <p className="text-xs text-[#94A3B8]">{t("panel.minutes", { count: s.log.durationMinutes ?? s.minutes })}</p> : null}
+                {s.log?.distanceKm ? (
+                  <p className="text-xs text-[#94A3B8]">
+                    {t("panel.minutes", { count: s.log.durationMinutes ?? s.minutes })}
+                    {pace !== null && ` · ${t("pace.value", { pace: paceText(pace) })}`}
+                  </p>
+                ) : null}
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </Card>

@@ -193,10 +193,11 @@ test("painel: treino feito entra no resumo, no volume e nos treinos recentes", a
   await page.goto("/painel");
   await expect(page.getByText("1 de 2 treinos feitos")).toBeVisible();
   await expect(page.getByText("42 min").first()).toBeVisible();
-  await expect(page.getByText("6:00")).toBeVisible(); // 42 min / 7 km
+  await expect(page.getByText("6:00", { exact: true })).toBeVisible(); // 42 min / 7 km
   await expect(page.getByText("Dos treinos com distância e duração")).toBeVisible();
   const recentes = page.locator("section", { has: page.getByRole("heading", { name: "Treinos recentes" }) });
   await expect(recentes.getByText("7 km")).toBeVisible();
+  await expect(recentes.getByText("42 min · 6:00 /km")).toBeVisible();
   await expect(page.getByRole("img", { name: "Feito", exact: true })).toBeVisible();
 
   // check-in já feito: aviso e um único botão para alterar (sem repetir no topo da tela)

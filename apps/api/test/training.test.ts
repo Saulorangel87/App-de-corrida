@@ -452,7 +452,7 @@ describe("histórico", () => {
     onDate(s.date);
     await send("PUT", a.cookie, `/checkins/${s.date}`, { sleepHours: 7, sleepQuality: 4 });
     await send("PUT", a.cookie, `/workouts/${s.id}/log`, {
-      completed: true, durationMinutes: 40, srpe: 5, pain: [{ region: "gluteo", intensity: 2 }],
+      completed: true, durationMinutes: 40, distanceKm: 5, srpe: 5, pain: [{ region: "gluteo", intensity: 2 }],
     });
     onDate(addDays(MONDAY, 6));
     const h = await get(a.cookie, "/history?days=28");
@@ -460,7 +460,7 @@ describe("histórico", () => {
     expect(h.body.sleep).toEqual([{ date: s.date, hours: 7, quality: 4 }]);
     expect(h.body.pain).toEqual([{ date: s.date, region: "gluteo", intensity: 2, moment: "treino" }]);
     expect(h.body.weekly).toHaveLength(1);
-    expect(h.body.weekly[0]).toMatchObject({ weekStart: MONDAY, completedSessions: 1, minutes: 40, srpeLoad: 200 });
+    expect(h.body.weekly[0]).toMatchObject({ weekStart: MONDAY, completedSessions: 1, minutes: 40, srpeLoad: 200, paceKm: 5, paceMinutes: 40 });
     expect(h.body.weekly[0].adherencePct).toBeGreaterThan(0);
     expect(h.body.weekly[0].adherencePct).toBeLessThan(100);
   });

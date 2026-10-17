@@ -10,7 +10,7 @@ type Hist = {
   to: string;
   sleep: { date: string; hours: number | null; quality: number | null }[];
   pain: { date: string; region: string; intensity: number | null; moment: string | null }[];
-  weekly: { weekStart: string; plannedSessions: number; completedSessions: number; adherencePct: number | null; minutes: number; srpeLoad: number }[];
+  weekly: { weekStart: string; plannedSessions: number; completedSessions: number; adherencePct: number | null; minutes: number; srpeLoad: number; paceKm: number; paceMinutes: number }[];
 };
 
 async function mockApi(page: Page, build: (days: number) => Hist) {
@@ -42,8 +42,8 @@ const full = (days: number): Hist => ({
     { date: day(-1), region: "geral", intensity: 0, moment: "treino" },
   ],
   weekly: [
-    { weekStart: day(-14), plannedSessions: 4, completedSessions: 3, adherencePct: 75, minutes: 120, srpeLoad: 800 },
-    { weekStart: day(-7), plannedSessions: 4, completedSessions: 4, adherencePct: 100, minutes: 150, srpeLoad: 1000 },
+    { weekStart: day(-14), plannedSessions: 4, completedSessions: 3, adherencePct: 75, minutes: 120, srpeLoad: 800, paceKm: 20, paceMinutes: 120 },
+    { weekStart: day(-7), plannedSessions: 4, completedSessions: 4, adherencePct: 100, minutes: 150, srpeLoad: 1000, paceKm: 30, paceMinutes: 150 },
   ],
 });
 
@@ -61,8 +61,17 @@ test("histórico: resumo, gráficos, leitura por coluna, tabela e dor", async ({
   await page.getByRole("button", { name: /: 3 de 4 treinos \(75%\)\./ }).hover();
   await expect(page.locator("p[aria-live=polite]").first()).toHaveText(/3 de 4 treinos \(75%\)/);
 
+  // ritmo do período: (120 + 150) min ÷ (20 + 30) km = 5:24 /km
+  await expect(page.getByText("Ritmo médio")).toBeVisible();
+  await expect(page.getByText("5:24 /km")).toBeVisible();
+
   await page.getByText("Ver como tabela").first().click();
   await expect(page.getByRole("columnheader", { name: "Aderência" })).toBeVisible();
+  // ritmo por semana na tabela da carga: 6:00 e 5:00
+  await page.getByText("Ver como tabela").nth(1).click();
+  await expect(page.getByRole("columnheader", { name: "Ritmo (min/km)" })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "6:00", exact: true })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "5:00", exact: true })).toBeVisible();
 
   // dor: só regiões com local; o registro "geral" não vira linha
   await expect(page.getByText(/Joelho direito/)).toBeVisible();
@@ -100,7 +109,7 @@ test("gráficos lado a lado ficam com a linha de base alinhada, mesmo com uma se
     to: day(0),
     sleep: [{ date: day(0), hours: 7, quality: 4 }],
     pain: [],
-    weekly: [{ weekStart: day(-1), plannedSessions: 1, completedSessions: 1, adherencePct: 100, minutes: 30, srpeLoad: 90 }],
+    weekly: [{ weekStart: day(-1), plannedSessions: 1, completedSessions: 1, adherencePct: 100, minutes: 30, srpeLoad: 90, paceKm: 0, paceMinutes: 0 }],
   }));
   await page.goto("/historico");
   const groups = page.getByRole("group").filter({ has: page.locator("button[aria-label]") });
