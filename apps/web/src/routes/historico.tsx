@@ -5,6 +5,7 @@ import { baseRegionId, GENERAL_REGION } from "@passo/shared";
 import { ColumnChart, type Column } from "../components/column-chart";
 import { FlowLayout } from "../components/flow-layout";
 import { HistorySkeleton } from "../components/skeletons";
+import { useMinDuration } from "../lib/use-min-duration";
 import { addDays, formatDate } from "../lib/dates";
 import { useRequireUser } from "../lib/queries";
 import { useHistory, type HistoryResponse } from "../lib/training";
@@ -42,6 +43,7 @@ function History() {
   const { user, loading } = useRequireUser();
   const [weeks, setWeeks] = useState<number>(DEFAULT_WEEKS);
   const history = useHistory(weeks * 7, !loading && !!user);
+  const showSkeleton = useMinDuration(loading || !user || history.isLoading);
 
   return (
     <FlowLayout width="max-w-[960px]">
@@ -64,7 +66,7 @@ function History() {
         </div>
       </div>
 
-      {loading || !user || history.isLoading ? (
+      {showSkeleton ? (
         <HistorySkeleton />
       ) : history.error || !history.data ? (
         <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">

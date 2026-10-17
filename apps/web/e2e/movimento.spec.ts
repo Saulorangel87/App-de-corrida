@@ -108,6 +108,36 @@ async function mockInterview(page: Page) {
   });
 }
 
+/** Registra, dentro da página, quando o primeiro esqueleto apareceu e quando o último saiu. */
+async function watchSkeleton(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as unknown as { __sk: { first?: number; gone?: number } };
+    w.__sk = {};
+    new MutationObserver(() => {
+      const present = !!document.querySelector(".skeleton");
+      if (present && w.__sk.first === undefined) w.__sk.first = performance.now();
+      if (!present && w.__sk.first !== undefined && w.__sk.gone === undefined) w.__sk.gone = performance.now();
+    }).observe(document, { childList: true, subtree: true });
+  });
+}
+const skeletonSpan = (page: Page) =>
+  page.evaluate(() => {
+    const sk = (window as unknown as { __sk: { first?: number; gone?: number } }).__sk;
+    return sk.first !== undefined && sk.gone !== undefined ? sk.gone - sk.first : null;
+  });
+
+/** Conta quantas vezes a página pediu uma transição entre telas. */
+async function countViewTransitions(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as unknown as { __vt: number };
+    w.__vt = 0;
+    const doc = document as unknown as { startViewTransition?: (...a: unknown[]) => unknown };
+    const original = doc.startViewTransition?.bind(document);
+    if (original) doc.startViewTransition = (...a: unknown[]) => ((w.__vt += 1), original(...a));
+  });
+}
+const viewTransitions = (page: Page) => page.evaluate(() => (window as unknown as { __vt: number }).__vt);
+
 const animationName = (page: Page, selector: string) =>
   page.locator(selector).first().evaluate((el) => getComputedStyle(el).animationName);
 
@@ -146,7 +176,7 @@ test.describe("com movimento", () => {
     for (let i = 1; i < timing.length; i++) expect(timing[i]!.delay).toBeGreaterThanOrEqual(timing[i - 1]!.delay);
     expect(timing.at(-1)!.delay).toBeGreaterThan(0.1);
     // O teto do atraso evita que cartões lá embaixo demorem a aparecer.
-    expect(timing.at(-1)!.delay).toBeLessThanOrEqual(0.35);
+    expect(timing.at(-1)!.delay).toBeLessThanOrEqual(0.5);
   });
 
   test("painel: as barras do volume semanal crescem da base, uma depois da outra, e o progresso é revelado", async ({ page }) => {
@@ -163,12 +193,31 @@ test.describe("com movimento", () => {
     // Hoje e daqui a 2 dias têm treino; as barras seguem a ordem das colunas.
     expect(bars.length).toBeGreaterThanOrEqual(2);
     expect(bars.every((b) => b.name === "grow-y")).toBe(true);
-    expect(bars[0]!.delay).toBeGreaterThanOrEqual(0.35);
+    expect(bars[0]!.delay).toBeGreaterThanOrEqual(0.5);
     expect(bars.at(-1)!.delay).toBeGreaterThan(bars[0]!.delay);
 
     const progress = await page.locator("progress.progress-reveal").evaluateAll((els) => els.map((el) => getComputedStyle(el).animationName));
     expect(progress.length).toBeGreaterThanOrEqual(2);
     expect(progress.every((name) => name === "reveal-x")).toBe(true);
+  });
+
+  test("painel: o esqueleto fica pelo menos 300 ms, mesmo com a resposta imediata", async ({ page }) => {
+    await watchSkeleton(page);
+    await mockPanel(page);
+    await page.goto("/painel");
+    await expect(page.getByRole("heading", { name: "Treino de hoje" })).toBeVisible();
+    expect(await skeletonSpan(page)).toBeGreaterThanOrEqual(250);
+  });
+
+  test("trocar de página pede uma transição entre telas", async ({ page }) => {
+    await countViewTransitions(page);
+    await mockPanel(page);
+    await page.goto("/painel");
+    await expect(page.getByRole("heading", { name: "Treino de hoje" })).toBeVisible();
+    const before = await viewTransitions(page);
+    await page.getByRole("navigation", { name: "Navegação principal" }).getByRole("link", { name: "Histórico" }).click();
+    await expect(page).toHaveURL(/\/historico$/);
+    expect(await viewTransitions(page)).toBeGreaterThan(before);
   });
 
   test("entrevista: a etapa entra deslizando e o progresso muda de cor com transição", async ({ page }) => {
@@ -204,6 +253,24 @@ test.describe("pedindo menos movimento", () => {
     await expect(page.getByRole("status")).toContainText("Carregando...");
     await expect(page.locator(".skeleton").first()).toBeVisible();
     await expect.poll(() => animationName(page, ".skeleton")).toBe("none");
+  });
+
+  test("painel: o esqueleto não segura a tela quando os dados já chegaram", async ({ page }) => {
+    await watchSkeleton(page);
+    await mockPanel(page);
+    await page.goto("/painel");
+    await expect(page.getByRole("heading", { name: "Treino de hoje" })).toBeVisible();
+    expect(await skeletonSpan(page)).toBeLessThan(250);
+  });
+
+  test("trocar de página não usa transição", async ({ page }) => {
+    await countViewTransitions(page);
+    await mockPanel(page);
+    await page.goto("/painel");
+    await expect(page.getByRole("heading", { name: "Treino de hoje" })).toBeVisible();
+    await page.getByRole("navigation", { name: "Navegação principal" }).getByRole("link", { name: "Histórico" }).click();
+    await expect(page).toHaveURL(/\/historico$/);
+    expect(await viewTransitions(page)).toBe(0);
   });
 
   test("painel: os cartões aparecem na hora, sem atraso nem transição", async ({ page }) => {

@@ -21,6 +21,9 @@ const router = createRouter({
   // Since we're using React Query, we don't want loader calls to ever be stale
   // This will ensure that the loader is always called when the route is preloaded or visited
   defaultPreloadStaleTime: 0,
+  // Troca de página com fade (View Transitions); quem pede menos movimento fica sem. Navegador sem
+  // suporte simplesmente troca a página, como antes.
+  defaultViewTransition: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
 });
 
 declare module "@tanstack/react-router" {

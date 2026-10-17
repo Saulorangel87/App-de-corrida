@@ -25,14 +25,14 @@ body {
 :root {
   --motion-fast: 150ms;
   --motion-base: 250ms;
-  --motion-slow: 400ms;
+  --motion-slow: 560ms;
   --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -73,7 +73,7 @@ body {
 @keyframes slide-in {
   from {
     opacity: 0;
-    transform: translateX(16px);
+    transform: translateX(24px);
   }
   to {
     opacity: 1;
@@ -85,7 +85,7 @@ body {
 @keyframes drop-in {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-12px);
   }
   to {
     opacity: 1;
@@ -100,25 +100,25 @@ body {
     animation: rise var(--motion-slow) var(--motion-ease) backwards;
   }
   .stagger > :nth-child(2) {
-    animation-delay: 50ms;
+    animation-delay: 70ms;
   }
   .stagger > :nth-child(3) {
-    animation-delay: 100ms;
+    animation-delay: 140ms;
   }
   .stagger > :nth-child(4) {
-    animation-delay: 150ms;
+    animation-delay: 210ms;
   }
   .stagger > :nth-child(5) {
-    animation-delay: 200ms;
+    animation-delay: 280ms;
   }
   .stagger > :nth-child(6) {
-    animation-delay: 250ms;
+    animation-delay: 350ms;
   }
   .stagger > :nth-child(7) {
-    animation-delay: 300ms;
+    animation-delay: 420ms;
   }
   .stagger > :nth-child(n + 8) {
-    animation-delay: 350ms;
+    animation-delay: 490ms;
   }
 
   /* Espaço reservado enquanto a tela carrega. Claro por padrão; `skeleton-dark` junto,
@@ -135,30 +135,30 @@ body {
     background-image: linear-gradient(90deg, transparent 0, rgb(255 255 255 / 0.12) 50%, transparent 100%);
   }
 
-  /* As barras esperam o cartão que as contém terminar de entrar (350 ms) e sobem uma
+  /* As barras esperam o cartão que as contém terminar de entrar (490 ms) e sobem uma
      depois da outra; `bars-stagger` vai no contêiner, `bar-grow` em cada <rect>. */
   .bar-grow {
     transform-box: fill-box;
     transform-origin: 50% 100%;
-    animation: grow-y var(--motion-slow) var(--motion-ease) 350ms backwards;
+    animation: grow-y var(--motion-slow) var(--motion-ease) 500ms backwards;
   }
   .bars-stagger > :nth-child(2) .bar-grow {
-    animation-delay: 390ms;
+    animation-delay: 560ms;
   }
   .bars-stagger > :nth-child(3) .bar-grow {
-    animation-delay: 430ms;
+    animation-delay: 620ms;
   }
   .bars-stagger > :nth-child(4) .bar-grow {
-    animation-delay: 470ms;
+    animation-delay: 680ms;
   }
   .bars-stagger > :nth-child(5) .bar-grow {
-    animation-delay: 510ms;
+    animation-delay: 740ms;
   }
   .bars-stagger > :nth-child(6) .bar-grow {
-    animation-delay: 550ms;
+    animation-delay: 800ms;
   }
   .bars-stagger > :nth-child(7) .bar-grow {
-    animation-delay: 590ms;
+    animation-delay: 860ms;
   }
 
   .step-enter {
@@ -166,15 +166,43 @@ body {
   }
 
   .menu-enter {
-    animation: drop-in var(--motion-base) var(--motion-ease) backwards;
+    animation: drop-in 320ms var(--motion-ease) backwards;
   }
 
   .progress-reveal {
-    animation: reveal-x 600ms var(--motion-ease) 250ms backwards;
+    animation: reveal-x 800ms var(--motion-ease) 300ms backwards;
   }
 }
 
+/* Troca de página: a tela antiga some e a nova aparece com fade. O restante da animação (cartões
+   subindo) é de cada tela. Só funciona onde o navegador tem View Transitions. */
+@keyframes vt-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-in {
+  from {
+    opacity: 0;
+  }
+}
+
+::view-transition-old(root) {
+  animation: vt-out 160ms ease-in both;
+}
+
+::view-transition-new(root) {
+  animation: vt-in 320ms var(--motion-ease) 100ms both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+
   *,
   ::before,
   ::after {

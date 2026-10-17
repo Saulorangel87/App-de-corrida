@@ -10,6 +10,7 @@ import { NewsBanner } from "../components/news";
 import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { PlanReviewCard } from "../components/plan-review";
 import { PanelSkeleton } from "../components/skeletons";
+import { useMinDuration } from "../lib/use-min-duration";
 import { weekStats } from "../components/week-agenda";
 import { ApiError, fetchApi } from "../lib/api";
 import { addDays, formatDate, localToday } from "../lib/dates";
@@ -146,7 +147,9 @@ function Panel() {
   const week = useWeek(today, ready);
   const history = useHistory(7, ready);
 
-  if (loading || !user || profile.isLoading || noProfile || (ready && (day.isLoading || week.isLoading))) {
+  const loadingPanel = loading || !user || profile.isLoading || noProfile || (ready && (day.isLoading || week.isLoading));
+  const showSkeleton = useMinDuration(loadingPanel);
+  if (loadingPanel || showSkeleton) {
     return (
       <FlowLayout width="max-w-[1112px]">
         <PanelSkeleton />
