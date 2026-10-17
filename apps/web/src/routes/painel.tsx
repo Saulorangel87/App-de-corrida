@@ -212,7 +212,7 @@ function Panel() {
       {planInfo === null ? (
         <NoPlan completed={profile.data?.completedPlan ?? null} notice={profile.data?.planNotice ?? null} />
       ) : (
-        <div className="space-y-5">
+        <div className="stagger space-y-5">
           {(profile.data?.screening?.healthCheckDue || healthAnswered) && (
             <HealthChangeCard variant="banner" onAnswered={() => setHealthAnswered(true)} />
           )}

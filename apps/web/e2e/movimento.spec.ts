@@ -108,6 +108,26 @@ test.describe("com movimento", () => {
     await expect(page.getByRole("heading", { name: /^(Bom dia|Boa tarde|Boa noite), Ana$/ })).toBeVisible();
     await expect(page.locator(".skeleton")).toHaveCount(0);
   });
+
+  test("painel: os cartões entram em sequência, cada um um pouco depois do anterior", async ({ page }) => {
+    await mockPanel(page);
+    await page.goto("/painel");
+    await expect(page.getByRole("heading", { name: "Treino de hoje" })).toBeVisible();
+
+    const timing = await page.locator(".stagger").first().evaluate((box) =>
+      [...box.children].map((el) => {
+        const style = getComputedStyle(el);
+        return { name: style.animationName, delay: parseFloat(style.animationDelay) };
+      }),
+    );
+    expect(timing.length).toBeGreaterThan(3);
+    expect(timing.every((t) => t.name === "rise")).toBe(true);
+    expect(timing[0]?.delay).toBe(0);
+    for (let i = 1; i < timing.length; i++) expect(timing[i]!.delay).toBeGreaterThanOrEqual(timing[i - 1]!.delay);
+    expect(timing.at(-1)!.delay).toBeGreaterThan(0.1);
+    // O teto do atraso evita que cartões lá embaixo demorem a aparecer.
+    expect(timing.at(-1)!.delay).toBeLessThanOrEqual(0.35);
+  });
 });
 
 test.describe("pedindo menos movimento", () => {
@@ -120,5 +140,23 @@ test.describe("pedindo menos movimento", () => {
     await expect(page.getByRole("status")).toContainText("Carregando...");
     await expect(page.locator(".skeleton").first()).toBeVisible();
     await expect.poll(() => animationName(page, ".skeleton")).toBe("none");
+  });
+
+  test("painel: os cartões aparecem na hora, sem atraso nem transição", async ({ page }) => {
+    await mockPanel(page);
+    await page.goto("/painel");
+    await expect(page.getByRole("heading", { name: "Treino de hoje" })).toBeVisible();
+
+    const timing = await page.locator(".stagger").first().evaluate((box) =>
+      [...box.children].map((el) => {
+        const style = getComputedStyle(el);
+        return { duration: parseFloat(style.animationDuration), delay: parseFloat(style.animationDelay) };
+      }),
+    );
+    expect(timing.length).toBeGreaterThan(3);
+    for (const t of timing) {
+      expect(t.duration).toBeLessThan(0.001);
+      expect(t.delay).toBe(0);
+    }
   });
 });
