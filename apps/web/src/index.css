@@ -16,3 +16,125 @@
 body {
   @apply bg-passo-gray-100 text-passo-gray-900 font-sans antialiased;
 }
+
+/* ------------------------------------------------------------------ movimento
+   Só CSS, sem biblioteca e sem estilo inline (a CSP do front proíbe). O movimento é
+   apoio visual: nunca carrega informação e nunca atrasa uma ação. Quem pede menos
+   movimento no sistema recebe a tela sem animação (bloco `prefers-reduced-motion`). */
+
+:root {
+  --motion-fast: 150ms;
+  --motion-base: 250ms;
+  --motion-slow: 400ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Barra do gráfico cresce a partir da base (SVG: a origem é a caixa do próprio elemento). */
+@keyframes grow-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* Revela a barra de progresso da esquerda para a direita; mantém o <progress> nativo. */
+@keyframes reveal-x {
+  from {
+    clip-path: inset(0 100% 0 0 round 9999px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 9999px);
+  }
+}
+
+@layer components {
+  /* Filhos diretos entram em sequência. `backwards` não deixa estado final no elemento
+     (sem `transform` residual, que criaria um novo contexto de posicionamento). */
+  .stagger > * {
+    animation: rise var(--motion-slow) var(--motion-ease) backwards;
+  }
+  .stagger > :nth-child(2) {
+    animation-delay: 50ms;
+  }
+  .stagger > :nth-child(3) {
+    animation-delay: 100ms;
+  }
+  .stagger > :nth-child(4) {
+    animation-delay: 150ms;
+  }
+  .stagger > :nth-child(5) {
+    animation-delay: 200ms;
+  }
+  .stagger > :nth-child(6) {
+    animation-delay: 250ms;
+  }
+  .stagger > :nth-child(7) {
+    animation-delay: 300ms;
+  }
+  .stagger > :nth-child(n + 8) {
+    animation-delay: 350ms;
+  }
+
+  /* Espaço reservado enquanto a tela carrega. Claro por padrão; `skeleton-dark` junto,
+     para fundo escuro. */
+  .skeleton {
+    background-color: #e5e7eb;
+    background-image: linear-gradient(90deg, transparent 0, rgb(255 255 255 / 0.65) 50%, transparent 100%);
+    background-repeat: no-repeat;
+    background-size: 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+  .skeleton-dark {
+    background-color: rgb(255 255 255 / 0.1);
+    background-image: linear-gradient(90deg, transparent 0, rgb(255 255 255 / 0.12) 50%, transparent 100%);
+  }
+
+  .bar-grow {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: grow-y var(--motion-slow) var(--motion-ease) backwards;
+  }
+
+  .progress-reveal {
+    animation: reveal-x 600ms var(--motion-ease) backwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* O brilho do esqueleto é só movimento: sem ele, o bloco fica estático. */
+  .skeleton {
+    animation: none !important;
+    background-image: none !important;
+  }
+}
