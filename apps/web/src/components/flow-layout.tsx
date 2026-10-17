@@ -86,7 +86,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
     { to: "/configuracoes", icon: Settings, label: t("nav.settings") },
   ] as const;
   return (
-    <div id="mobile-menu" className="absolute inset-x-0 top-full z-30 border-b border-gray-200 bg-white shadow-lg">
+    <div id="mobile-menu" className="menu-enter absolute inset-x-0 top-full z-30 border-b border-gray-200 bg-white shadow-lg">
       <nav aria-label={t("nav.label")} className="mx-auto flex max-w-[960px] flex-col gap-1 px-3 py-3">
         {user && <p className="truncate px-3 pb-2 text-sm font-semibold text-gray-500">{user.name}</p>}
         {items.map(({ to, icon: Icon, label }) => (

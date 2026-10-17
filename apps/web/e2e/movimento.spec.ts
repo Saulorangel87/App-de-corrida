@@ -88,6 +88,26 @@ async function mockPanel(page: Page, delayMs = 0) {
   });
 }
 
+/** API simulada da entrevista, parada na primeira etapa. */
+async function mockInterview(page: Page) {
+  await page.route(`${API}/**`, async (route) => {
+    const path = new URL(route.request().url()).pathname.replace("/api/v1", "");
+    const json = (status: number, data: unknown) => route.fulfill({ status, contentType: "application/json", body: JSON.stringify(data) });
+    if (path === "/auth/me") return json(200, { user });
+    if (path === "/interview") {
+      return json(200, {
+        version: "ENT-v1",
+        steps: ["basicos", "triagem", "historico", "lesoes", "objetivo", "disponibilidade", "recuperacao", "recursos"],
+        completed: [],
+        responses: {},
+        updatedAt: null,
+        parq: { name: "PAR-Q+" },
+      });
+    }
+    return json(404, { error: { code: "NOT_FOUND", message: "x" } });
+  });
+}
+
 const animationName = (page: Page, selector: string) =>
   page.locator(selector).first().evaluate((el) => getComputedStyle(el).animationName);
 
@@ -150,6 +170,28 @@ test.describe("com movimento", () => {
     expect(progress.length).toBeGreaterThanOrEqual(2);
     expect(progress.every((name) => name === "reveal-x")).toBe(true);
   });
+
+  test("entrevista: a etapa entra deslizando e o progresso muda de cor com transição", async ({ page }) => {
+    await mockInterview(page);
+    await page.goto("/entrevista");
+    await expect(page.getByRole("heading", { name: "Vamos começar por você" })).toBeVisible();
+
+    await expect.poll(() => animationName(page, ".step-enter")).toBe("slide-in");
+    const segment = await page.getByRole("progressbar").locator("span").first().evaluate((el) => parseFloat(getComputedStyle(el).transitionDuration));
+    expect(segment).toBeGreaterThan(0.1);
+  });
+
+  test.describe("celular", () => {
+    test.use({ viewport: { width: 390, height: 780 } });
+
+    test("menu: desce a partir do cabeçalho ao abrir", async ({ page }) => {
+      await mockPanel(page);
+      await page.goto("/painel");
+      await page.getByRole("button", { name: "Abrir menu" }).click();
+      await expect(page.getByRole("navigation", { name: "Navegação principal" })).toBeVisible();
+      await expect.poll(() => animationName(page, "#mobile-menu")).toBe("drop-in");
+    });
+  });
 });
 
 test.describe("pedindo menos movimento", () => {
@@ -198,5 +240,12 @@ test.describe("pedindo menos movimento", () => {
       expect(a.duration).toBeLessThan(0.001);
       expect(a.delay).toBe(0);
     }
+  });
+  test("entrevista: a etapa aparece na hora", async ({ page }) => {
+    await mockInterview(page);
+    await page.goto("/entrevista");
+    await expect(page.getByRole("heading", { name: "Vamos começar por você" })).toBeVisible();
+    const duration = await page.locator(".step-enter").first().evaluate((el) => parseFloat(getComputedStyle(el).animationDuration));
+    expect(duration).toBeLessThan(0.001);
   });
 });

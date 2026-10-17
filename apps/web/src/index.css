@@ -69,6 +69,30 @@ body {
   }
 }
 
+/* Etapa nova da entrevista: entra deslizando um pouco da direita. */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Menu do celular: desce a partir do cabeçalho. */
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @layer components {
   /* Filhos diretos entram em sequência. `backwards` não deixa estado final no elemento
      (sem `transform` residual, que criaria um novo contexto de posicionamento). */
@@ -135,6 +159,14 @@ body {
   }
   .bars-stagger > :nth-child(7) .bar-grow {
     animation-delay: 590ms;
+  }
+
+  .step-enter {
+    animation: slide-in var(--motion-slow) var(--motion-ease) backwards;
+  }
+
+  .menu-enter {
+    animation: drop-in var(--motion-base) var(--motion-ease) backwards;
   }
 
   .progress-reveal {

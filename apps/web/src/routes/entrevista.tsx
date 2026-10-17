@@ -169,7 +169,7 @@ function InterviewPage() {
           className="flex gap-1.5"
         >
           {INTERVIEW_STEPS.map((s, i) => (
-            <span key={s} className={`h-1.5 flex-1 rounded-full ${i <= current ? "bg-[#FF5A1F]" : "bg-gray-200"}`} />
+            <span key={s} className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${i <= current ? "bg-[#FF5A1F]" : "bg-gray-200"}`} />
           ))}
         </div>
       </div>
@@ -180,19 +180,20 @@ function InterviewPage() {
         </h1>
         <p className="mt-1 mb-4 text-[15px] leading-snug text-gray-600">{t(`interview.steps.${step}.text`)}</p>
         {/* A chave refaz o formulário (e seus valores iniciais) a cada etapa. */}
-        <View
-          key={step}
-          saved={data.responses[step]}
-          all={data.responses}
-          pending={save.isPending}
-          last={last}
-          error={save.isError ? errorText(save.error) : undefined}
-          onBack={current > 0 ? () => setIndex(current - 1) : undefined}
-          onSubmit={(payload) => {
-            save.reset();
-            save.mutate({ step, payload, last, nextIndex: current + 1 });
-          }}
-        />
+        <div key={step} className="step-enter">
+          <View
+            saved={data.responses[step]}
+            all={data.responses}
+            pending={save.isPending}
+            last={last}
+            error={save.isError ? errorText(save.error) : undefined}
+            onBack={current > 0 ? () => setIndex(current - 1) : undefined}
+            onSubmit={(payload) => {
+              save.reset();
+              save.mutate({ step, payload, last, nextIndex: current + 1 });
+            }}
+          />
+        </div>
       </section>
       <p className="mt-2 text-center text-xs text-gray-500">{t("interview.saveNote")}</p>
     </FlowLayout>
