@@ -50,6 +50,8 @@ A pesquisa de controle de intensidade (`docs/pesquisa/04-controle-intensidade.md
 
 Registrado em 2026-10-17, a pedido do dono, depois de analisar o app Runna (Android, versão 8.55.0). **Nada aqui está aprovado nem implementado.**
 
+O registro completo da análise (método, limites e cuidados) está em `docs/analise-runna.md`.
+
 **O que a análise permite afirmar.** A lógica de planos do Runna roda no servidor e não está no APK. O que se viu foram nomes de telas, recursos e textos do aplicativo. Estas ideias vêm de áreas de produto, **não de algoritmo copiado**, e nenhum texto, imagem ou código do Runna deve ser reaproveitado (são protegidos). Toda regra nova segue valendo o que o projeto exige: fonte verificada em `docs/pesquisa/`, decisão do dono, versão nova do motor e teste por regra.
 
 ### O que o motor já cobre (não é melhoria nova)
