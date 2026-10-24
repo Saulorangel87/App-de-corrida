@@ -10,7 +10,7 @@ import { TextField } from "./field";
 import { fetchApi } from "../lib/api";
 import { formatDate } from "../lib/dates";
 import { toNumber } from "../lib/step-form";
-import { localized, workoutKey, type DayResponse, type SessionView } from "../lib/training";
+import { isRunSession, localized, workoutKey, type DayResponse, type SessionView } from "../lib/training";
 import { useErrorText } from "../lib/use-error-text";
 
 type Step = "choose" | "done" | "skipped" | "saved";
@@ -91,6 +91,7 @@ function QuickLogBody({
   const [unwell, setUnwell] = useState<boolean | undefined>(undefined);
   const [errors, setErrors] = useState<{ duration?: string; srpe?: string; unwell?: string }>({});
   const [result, setResult] = useState<Result | null>(null);
+  const isRun = isRunSession(session);
 
   const save = useMutation({
     mutationFn: (payload: unknown) => fetchApi<Result>(`/workouts/${session.id}/log`, { method: "PUT", body: JSON.stringify(payload) }),
@@ -108,7 +109,9 @@ function QuickLogBody({
   const submit = () => {
     const found: typeof errors = {};
     if (unwell === undefined) found.unwell = t("interview.errors.required");
-    const payload = step === "done" ? { completed: true, durationMinutes: toNumber(duration), srpe, pain: [] } : { completed: false, pain: [] };
+    // Força e mobilidade: vale o tempo do plano, sem perguntar.
+    const minutes = isRun ? toNumber(duration) : session.minutes;
+    const payload = step === "done" ? { completed: true, durationMinutes: minutes, srpe, pain: [] } : { completed: false, pain: [] };
     const parsed = workoutLogSchema.safeParse(JSON.parse(JSON.stringify(payload)));
     if (!parsed.success) {
       for (const issue of parsed.error.issues) {
@@ -236,17 +239,21 @@ function QuickLogBody({
       <p className="text-sm font-semibold text-[#0F172A]">{step === "done" ? t("quickLog.markedDone") : t("quickLog.markedSkipped")}</p>
       {step === "done" && (
         <>
-          <TextField
-            label={t("log.duration")}
-            hint={t("log.durationHint")}
-            inputMode="numeric"
-            value={duration}
-            onChange={(e) => {
-              setDuration(e.target.value);
-              setErrors((p) => ({ ...p, duration: undefined }));
-            }}
-            error={errors.duration}
-          />
+          {isRun ? (
+            <TextField
+              label={t("log.duration")}
+              hint={t("log.durationHint")}
+              inputMode="numeric"
+              value={duration}
+              onChange={(e) => {
+                setDuration(e.target.value);
+                setErrors((p) => ({ ...p, duration: undefined }));
+              }}
+              error={errors.duration}
+            />
+          ) : (
+            <p className="text-sm text-gray-600">{t("log.plannedTime", { count: session.minutes })}</p>
+          )}
           <ChoiceGroup
             name={`srpe-${session.id}`}
             legend={t("log.srpe")}

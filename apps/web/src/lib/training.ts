@@ -10,6 +10,9 @@ export type Localized = { "pt-BR": string; en: string };
 export const localized = (name: Localized | null | undefined, lang: string, fallback: string) =>
   name ? (lang === "en" ? name.en : name["pt-BR"]) : fallback;
 
+/** Força e mobilidade não são corrida: o registro não pede distância nem tempo (vale o tempo do plano). */
+export const isRunSession = (s: { kind: string }) => s.kind !== "forca" && s.kind !== "mobilidade";
+
 export type SessionView = {
   id: string;
   date: string;

@@ -765,6 +765,8 @@ export const en: Translation = {
     didIt: "Did you do this workout?",
     duration: "Actual duration (minutes)",
     durationHint: "Include warm-up, walking breaks and intervals.",
+    plannedTime_one: "The planned time is logged: {{count}} minute.",
+    plannedTime_other: "The planned time is logged: {{count}} minutes.",
     paceLive: "Average pace for this workout: {{pace}} per km. It is only a reference, not a target.",
     distance: "Distance (km) — optional",
     srpe: "How hard was the whole workout?",

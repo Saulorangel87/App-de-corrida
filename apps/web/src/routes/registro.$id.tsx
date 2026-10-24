@@ -12,7 +12,7 @@ import { fetchApi } from "../lib/api";
 import { useRequireUser } from "../lib/queries";
 import { paceMinPerKm, paceText } from "../lib/pace";
 import { toNumber, toText } from "../lib/step-form";
-import { useWorkout, workoutKey, type DayResponse, type LoggedPain, type SessionView } from "../lib/training";
+import { isRunSession, useWorkout, workoutKey, type DayResponse, type LoggedPain, type SessionView } from "../lib/training";
 import { useErrorText } from "../lib/use-error-text";
 import { zoneUpTo } from "../lib/zone";
 
@@ -105,6 +105,7 @@ function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain
   const [distance, setDistance] = useState(log?.distanceKm != null ? String(log.distanceKm).replace(".", ",") : "");
   const [srpe, setSrpe] = useState<number | undefined>(log?.srpe ?? undefined);
   const [notes, setNotes] = useState(log?.notes ?? "");
+  const isRun = isRunSession(session);
   const pace = paceMinPerKm(toNumber(distance), toNumber(duration));
   const [initial] = useState(() => fromLogged(logged));
   const [regions, setRegions] = useState<string[]>(initial.regions);
@@ -178,8 +179,8 @@ function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain
       completed === true
         ? {
             completed: true,
-            durationMinutes: toNumber(duration),
-            distanceKm: toNumber(distance),
+            durationMinutes: isRun ? toNumber(duration) : session.minutes,
+            distanceKm: isRun ? toNumber(distance) : undefined,
             srpe,
             notes: toText(notes),
             pain: cleaned,
@@ -239,34 +240,38 @@ function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain
 
           {completed === true && (
             <>
-              <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
-                <TextField
-                  label={t("log.duration")}
-                  inputMode="numeric"
-                  value={duration}
-                  onChange={(e) => {
-                    setDuration(e.target.value);
-                    clear("duration");
-                  }}
-                  error={errors.duration}
-                />
-                <TextField
-                  label={t("log.distance")}
-                  inputMode="decimal"
-                  value={distance}
-                  onChange={(e) => {
-                    setDistance(e.target.value);
-                    clear("distance");
-                  }}
-                  error={errors.distance}
-                />
-                <p className="text-xs text-gray-500 min-[480px]:col-span-2">{t("log.durationHint")}</p>
-                {pace !== null && (
-                  <p className="text-sm font-semibold text-[#0F172A] min-[480px]:col-span-2">
-                    {t("log.paceLive", { pace: paceText(pace) })}
-                  </p>
-                )}
-              </div>
+              {isRun ? (
+                <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
+                  <TextField
+                    label={t("log.duration")}
+                    inputMode="numeric"
+                    value={duration}
+                    onChange={(e) => {
+                      setDuration(e.target.value);
+                      clear("duration");
+                    }}
+                    error={errors.duration}
+                  />
+                  <TextField
+                    label={t("log.distance")}
+                    inputMode="decimal"
+                    value={distance}
+                    onChange={(e) => {
+                      setDistance(e.target.value);
+                      clear("distance");
+                    }}
+                    error={errors.distance}
+                  />
+                  <p className="text-xs text-gray-500 min-[480px]:col-span-2">{t("log.durationHint")}</p>
+                  {pace !== null && (
+                    <p className="text-sm font-semibold text-[#0F172A] min-[480px]:col-span-2">
+                      {t("log.paceLive", { pace: paceText(pace) })}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-600">{t("log.plannedTime", { count: session.minutes })}</p>
+              )}
               <ChoiceGroup
                 name="srpe"
                 legend={t("log.srpe")}

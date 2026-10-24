@@ -167,3 +167,38 @@ test("plano completo: o círculo também registra", async ({ page }) => {
   await page.getByRole("button", { name: "Registrar: Longão de domingo" }).click();
   await expect(page.getByRole("dialog", { name: "Longão de domingo" }).getByRole("button", { name: "Fiz", exact: true })).toBeVisible();
 });
+
+const mobility = session("m0", yesterday, {
+  slug: "mobilidade-basica", name: { "pt-BR": "Mobilidade básica", en: "Basic mobility" }, kind: "mobilidade", minutes: 15, optional: true,
+});
+const strength = session("f0", yesterday, {
+  slug: "forca-corredor", name: { "pt-BR": "Força para corredores", en: "Strength for runners" }, kind: "forca", minutes: 30, optional: true,
+});
+
+test("mobilidade no registro rápido: não pede tempo nem km e grava o tempo do plano", async ({ page }) => {
+  const calls = await mockApi(page, [mobility, run, future]);
+  await page.goto("/painel");
+  await page.getByRole("button", { name: "Registrar: Mobilidade básica" }).click();
+  const dialog = page.getByRole("dialog", { name: "Mobilidade básica" });
+  await dialog.getByRole("button", { name: "Fiz", exact: true }).click();
+  await expect(dialog.getByLabel("Duração real (minutos)")).toHaveCount(0);
+  await expect(dialog.getByText("Fica registrado o tempo do plano: 15 minutos.")).toBeVisible();
+  await dialog.getByRole("group", { name: "Como foi o esforço do treino todo?" }).getByText("2", { exact: true }).click();
+  await dialog.getByRole("group", { name: "Sentiu dor ou algum mal-estar?" }).getByText("Não", { exact: true }).click();
+  await dialog.getByRole("button", { name: "Salvar registro" }).click();
+  await expect(dialog.getByText("Registro salvo")).toBeVisible();
+  expect(putBody(calls)).toEqual({ completed: true, durationMinutes: 15, srpe: 2, pain: [] });
+});
+
+test("força no registro completo: sem tempo e sem km, só o esforço", async ({ page }) => {
+  const calls = await mockApi(page, [strength, run, future]);
+  await page.goto("/registro/f0");
+  await page.getByRole("group", { name: "Você fez este treino?" }).getByText("Sim", { exact: true }).click();
+  await expect(page.getByLabel("Duração real (minutos)")).toHaveCount(0);
+  await expect(page.getByLabel("Distância (km) — opcional")).toHaveCount(0);
+  await expect(page.getByText("Fica registrado o tempo do plano: 30 minutos.")).toBeVisible();
+  await page.getByRole("group", { name: "Como foi o esforço do treino todo?" }).getByText("5", { exact: true }).click();
+  await page.getByRole("button", { name: "Salvar registro" }).click();
+  await expect(page.getByRole("heading", { name: "Registro salvo" })).toBeVisible();
+  expect(putBody(calls)).toEqual({ completed: true, durationMinutes: 30, srpe: 5, pain: [] });
+});

@@ -766,6 +766,8 @@ export const ptBR = {
     didIt: "Você fez este treino?",
     duration: "Duração real (minutos)",
     durationHint: "Some aquecimento, trechos de caminhada e intervalos.",
+    plannedTime_one: "Fica registrado o tempo do plano: {{count}} minuto.",
+    plannedTime_other: "Fica registrado o tempo do plano: {{count}} minutos.",
     paceLive: "Ritmo médio deste treino: {{pace}} por km. É só uma referência: não é meta.",
     distance: "Distância (km) — opcional",
     srpe: "Como foi o esforço do treino todo?",
