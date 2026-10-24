@@ -16,7 +16,7 @@
     ".": "./src/index.ts"
   },
   "devDependencies": {
-    "vitest": "^5.0.4",
+    "vitest": "^5.0.5",
     "typescript": "^6.0.3"
   }
 }
