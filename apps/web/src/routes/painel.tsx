@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Check, Clock, Footprints, Gauge, Moon, Route as RouteIcon, X, Zap, type LucideIcon } from "lucide-react";
+import { Check, Clock, Footprints, Gauge, Moon, Route as RouteIcon, Zap, type LucideIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FlowLayout } from "../components/flow-layout";
 import { DecisionSources } from "../components/decision-sources";
@@ -9,6 +9,7 @@ import { HealthChangeCard } from "../components/health-change";
 import { NewsBanner } from "../components/news";
 import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { PlanReviewCard } from "../components/plan-review";
+import { QuickLog, unlogged } from "../components/quick-log";
 import { PanelSkeleton } from "../components/skeletons";
 import { paceMinPerKm, paceText } from "../lib/pace";
 import { useMinDuration } from "../lib/use-min-duration";
@@ -25,7 +26,6 @@ import {
   useWeek,
   type DayAction,
   type DayResponse,
-  type SessionView,
   type WeekResponse,
 } from "../lib/training";
 
@@ -629,29 +629,6 @@ const KIND_CHIP: Record<string, string> = {
   mobilidade: "bg-[#F5F6F8] text-[#475569]",
 };
 
-function StatusDot({ s, isToday }: { s: SessionView; isToday: boolean }) {
-  const { t } = useTranslation();
-  if (s.log?.completed)
-    return (
-      <span role="img" aria-label={t("dash.weekPlan.done")} className="grid size-[26px] shrink-0 place-items-center rounded-full bg-[#16A34A] text-white">
-        <Check size={14} aria-hidden="true" />
-      </span>
-    );
-  if (s.log)
-    return (
-      <span role="img" aria-label={t("dash.weekPlan.skipped")} className="grid size-[26px] shrink-0 place-items-center rounded-full bg-[#F5F6F8] text-[#94A3B8]">
-        <X size={14} aria-hidden="true" />
-      </span>
-    );
-  return (
-    <span
-      role="img"
-      aria-label={isToday ? t("dash.weekPlan.today") : t("dash.weekPlan.pending")}
-      className={`size-[26px] shrink-0 rounded-full border-2 ${isToday ? "border-[#FF5A1F]" : "border-[#E5E7EB]"}`}
-    />
-  );
-}
-
 function WeekPlan({ week, today, className = "" }: { week: WeekResponse; today: string; className?: string }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
@@ -672,6 +649,7 @@ function WeekPlan({ week, today, className = "" }: { week: WeekResponse; today: 
     );
   }
   const days = Array.from({ length: 7 }, (_, i) => addDays(plan.weekStart, i));
+  const missing = unlogged(week.sessions, today).length;
   const tag = plan.isRaceWeek ? t("panel.raceWeek") : plan.isTaper ? t("panel.taperWeek") : plan.isRecovery ? t("panel.recoveryWeek") : null;
 
   return (
@@ -688,6 +666,7 @@ function WeekPlan({ week, today, className = "" }: { week: WeekResponse; today: 
         {t("panel.weekNumber", { n: plan.calendarWeek })} · {t(`panel.phases.${plan.phase}`, { defaultValue: plan.phase })}
         {tag ? ` · ${tag}` : ""}
       </p>
+      {missing > 0 && <p className="mb-2 rounded-xl bg-orange-50 p-3 text-sm text-gray-800">{t("quickLog.missing", { count: missing })}</p>}
       <ol className="divide-y divide-[#E5E7EB]">
         {days.map((date) => {
           const items = week.sessions.filter((s) => s.date === date);
@@ -732,7 +711,7 @@ function WeekPlan({ week, today, className = "" }: { week: WeekResponse; today: 
                           {s.maxZone ? ` · ${zoneUpTo(t, s.maxZone)}` : ""}
                         </p>
                       </div>
-                      <StatusDot s={s} isToday={isToday} />
+                      <QuickLog session={s} today={today} />
                     </div>
                   ))
                 )}

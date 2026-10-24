@@ -84,8 +84,20 @@ export type Fact = { label: string; value: string };
 export type StepView = { minutes: string | null; text: string | null; facts: Fact[] };
 
 /** Detalhe do treino agendado: sessão + texto do atleta do catálogo publicado (em português). */
+export type LoggedPain = {
+  region: string;
+  moment: string;
+  intensity: number;
+  type?: "pontada" | "difusa" | "outra";
+  cardio?: Record<string, boolean>;
+  heat?: Record<string, boolean>;
+  [flag: string]: unknown;
+};
+
 export type WorkoutDetailResponse = {
   session: SessionView & { ladder: { etapa: string; corridaMin: number; caminhadaMin: number; repeticoes: number; continua: boolean } | null };
+  /** Dores já registradas neste treino, no formato de entrada: a edição reabre com elas para não apagá-las. */
+  logPain?: LoggedPain[];
   detail: {
     summary: string | null;
     intensity: {

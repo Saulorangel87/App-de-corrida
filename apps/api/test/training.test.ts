@@ -294,6 +294,36 @@ describe("registro pós-treino e dor", () => {
     expect(pain).toMatchObject({ body_part: "joelho", intensity: 6, altered_stride: true, reported_on: s.date });
   });
 
+  it("editar o registro não apaga a dor: o detalhe devolve as dores do registro e reenviá-las mantém o bloqueio", async () => {
+    const a = await onboard(intermediate());
+    const s = await firstRun(a);
+    onDate(s.date);
+    await send("PUT", a.cookie, `/workouts/${s.id}/log`, {
+      completed: true, durationMinutes: 20, srpe: 7,
+      pain: [
+        { region: "joelho", intensity: 6, type: "pontada", changedStride: true, moment: "treino" },
+        { region: "geral", intensity: 0, moment: "treino", cardio: { palpitations: true } },
+      ],
+    });
+    const detail = await get(a.cookie, `/workouts/${s.id}`);
+    expect(detail.status).toBe(200);
+    expect(detail.body.logPain).toEqual([
+      { region: "joelho", intensity: 6, type: "pontada", changedStride: true, moment: "treino" },
+      { region: "geral", intensity: 0, moment: "treino", cardio: { palpitations: true } },
+    ]);
+
+    // A tela de edição reenvia o que recebeu, só trocando a duração.
+    const edited = await send("PUT", a.cookie, `/workouts/${s.id}/log`, { completed: true, durationMinutes: 25, srpe: 7, pain: detail.body.logPain });
+    expect(edited.status).toBe(200);
+    expect(edited.body.nextDay.decision.blockRunning).toBe(true);
+    const [{ n }] = await admin`select count(*)::int as n from pain_reports where user_id = ${a.userId}`;
+    expect(n).toBe(2);
+
+    // Sem registro, a lista vem vazia.
+    const other = runs((await get(a.cookie, `/plan/week/${MONDAY}`)).body.sessions)[1] as Json;
+    expect((await get(a.cookie, `/workouts/${other.id}`)).body.logPain).toEqual([]);
+  });
+
   it("ponto doloroso no osso em sítio de alto risco bloqueia a corrida mesmo com dor baixa (o servidor aplica o mapa, não o cliente)", async () => {
     const a = await onboard(intermediate());
     const s = await firstRun(a);

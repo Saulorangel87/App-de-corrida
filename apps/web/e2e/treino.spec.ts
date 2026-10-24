@@ -172,7 +172,7 @@ test("glossário: definições dos termos técnicos, fechado por padrão", async
   await expect(glossary.getByText("Teste da fala")).toBeVisible();
 });
 
-test("treino de outro dia não mostra a decisão de hoje, e complementar não tem registro", async ({ page }) => {
+test("treino de outro dia não mostra a decisão de hoje, e treino futuro (mesmo complementar) não tem registro", async ({ page }) => {
   await mockApi(page, {
     workout: workoutBody({
       session: { ...baseSession, date: plusDays(3), optional: true, kind: "mobilidade", ladder: null },

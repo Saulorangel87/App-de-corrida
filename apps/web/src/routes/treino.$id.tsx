@@ -68,7 +68,7 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
   const state = session.log ? (session.log.completed ? "completed" : "skipped") : "pending";
   const stateTone =
     state === "completed" ? "bg-green-100 text-green-700" : state === "skipped" ? "bg-gray-100 text-gray-600" : "bg-orange-100 text-orange-800";
-  const canLog = !session.optional && session.date <= today;
+  const canLog = session.date <= today;
   const ladder = session.ladder;
   const isRun = session.kind !== "forca" && session.kind !== "mobilidade";
 

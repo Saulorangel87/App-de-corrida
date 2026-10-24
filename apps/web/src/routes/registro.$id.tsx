@@ -12,7 +12,7 @@ import { fetchApi } from "../lib/api";
 import { useRequireUser } from "../lib/queries";
 import { paceMinPerKm, paceText } from "../lib/pace";
 import { toNumber, toText } from "../lib/step-form";
-import { useWorkout, workoutKey, type DayResponse, type SessionView } from "../lib/training";
+import { useWorkout, workoutKey, type DayResponse, type LoggedPain, type SessionView } from "../lib/training";
 import { useErrorText } from "../lib/use-error-text";
 import { zoneUpTo } from "../lib/zone";
 
@@ -73,10 +73,28 @@ function LogPage() {
       </FlowLayout>
     );
   }
-  return <LogForm session={session} />;
+  return <LogForm session={session} logged={workout.data?.logPain ?? []} />;
 }
 
-function LogForm({ session }: { session: SessionView }) {
+/** O que já foi registrado volta para o formulário: salvar substitui as dores do registro, então nada pode ficar de fora. */
+function fromLogged(logged: LoggedPain[]) {
+  const sites = logged.filter((p) => p.region !== "geral");
+  const general = logged.filter((p) => p.region === "geral");
+  const pick = (m: Record<string, boolean> | undefined) => Object.fromEntries(Object.entries(m ?? {}).filter(([, v]) => v === true));
+  return {
+    regions: sites.map((p) => p.region),
+    pain: Object.fromEntries(
+      sites.map((p) => [
+        p.region,
+        { intensity: p.intensity, type: p.type, flags: Object.fromEntries(REGION_FLAGS.filter((f) => p[f] === true).map((f) => [f, true])) },
+      ]),
+    ) as Record<string, PainDetail>,
+    cardio: Object.assign({}, ...general.map((p) => pick(p.cardio))) as Record<string, boolean>,
+    heat: Object.assign({}, ...general.map((p) => pick(p.heat))) as Record<string, boolean>,
+  };
+}
+
+function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain[] }) {
   const { t, i18n } = useTranslation();
   const errorText = useErrorText();
   const queryClient = useQueryClient();
@@ -88,10 +106,11 @@ function LogForm({ session }: { session: SessionView }) {
   const [srpe, setSrpe] = useState<number | undefined>(log?.srpe ?? undefined);
   const [notes, setNotes] = useState(log?.notes ?? "");
   const pace = paceMinPerKm(toNumber(distance), toNumber(duration));
-  const [regions, setRegions] = useState<string[]>([]);
-  const [pain, setPain] = useState<Record<string, PainDetail>>({});
-  const [cardio, setCardio] = useState<Record<string, boolean>>({});
-  const [heat, setHeat] = useState<Record<string, boolean>>({});
+  const [initial] = useState(() => fromLogged(logged));
+  const [regions, setRegions] = useState<string[]>(initial.regions);
+  const [pain, setPain] = useState<Record<string, PainDetail>>(initial.pain);
+  const [cardio, setCardio] = useState<Record<string, boolean>>(initial.cardio);
+  const [heat, setHeat] = useState<Record<string, boolean>>(initial.heat);
   const [errors, setErrors] = useState<{ completed?: string; duration?: string; srpe?: string; distance?: string; pain?: string }>({});
   const [result, setResult] = useState<Result | null>(null);
   /** Apaga o erro de um campo assim que a pessoa mexe nele. */

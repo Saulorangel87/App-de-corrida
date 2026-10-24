@@ -198,7 +198,8 @@ test("painel: treino feito entra no resumo, no volume e nos treinos recentes", a
   const recentes = page.locator("section", { has: page.getByRole("heading", { name: "Treinos recentes" }) });
   await expect(recentes.getByText("7 km")).toBeVisible();
   await expect(recentes.getByText("42 min · 6:00 /km")).toBeVisible();
-  await expect(page.getByRole("img", { name: "Feito", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Ver o registro: Rodagem leve" })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Planejado", exact: true })).toBeVisible(); // longão daqui a 2 dias: sem botão
 
   // check-in já feito: aviso e um único botão para alterar (sem repetir no topo da tela)
   await expect(page.getByText("Check-in de hoje feito.")).toBeVisible();

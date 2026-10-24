@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { addDays, formatDate } from "../lib/dates";
 import { localized, type SessionView } from "../lib/training";
+import { QuickLog } from "./quick-log";
 
 /** Contagem exibida da semana: só soma o que a API devolveu (treinos principais; complementares ficam de fora). */
 export function weekStats(sessions: SessionView[]) {
@@ -34,7 +35,7 @@ export function WeekAgenda({ weekStart, sessions, today }: { weekStart: string; 
               {items.length === 0 ? (
                 <span className="text-gray-400">—</span>
               ) : (
-                items.map((s) => <SessionLine key={s.id} s={s} lang={i18n.language} />)
+                items.map((s) => <SessionLine key={s.id} s={s} lang={i18n.language} today={today} />)
               )}
             </div>
           </li>
@@ -44,21 +45,22 @@ export function WeekAgenda({ weekStart, sessions, today }: { weekStart: string; 
   );
 }
 
-function SessionLine({ s, lang }: { s: SessionView; lang: string }) {
+function SessionLine({ s, lang, today }: { s: SessionView; lang: string; today?: string }) {
   const { t } = useTranslation();
   const state = s.log ? (s.log.completed ? "completed" : "skipped") : "pending";
   const tone = state === "completed" ? "text-green-700" : state === "skipped" ? "text-gray-400 line-through" : "text-[#0F172A]";
   return (
-    <div className="flex items-baseline justify-between gap-2">
+    <div className="flex items-center justify-between gap-2">
       <span className={`min-w-0 ${tone}`}>
         <Link to="/treino/$id" params={{ id: s.id }} className="hover:text-[#C2410C] hover:underline">
           {localized(s.name, lang, s.slug)}
         </Link>
         {s.optional && <span className="ml-1 text-xs font-normal text-gray-400">({t("panel.optional")})</span>}
       </span>
-      <span className="shrink-0 text-xs text-gray-500">
+      <span className="ml-auto shrink-0 text-xs text-gray-500">
         {state === "completed" ? t("panel.status.completed") : t("panel.minutes", { count: s.minutes })}
       </span>
+      {today && <QuickLog session={s} today={today} />}
     </div>
   );
 }

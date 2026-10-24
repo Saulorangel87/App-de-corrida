@@ -219,6 +219,20 @@ const painToRow = (p: PainReportInput) => {
   };
 };
 
+/** Dor gravada de volta no formato de entrada: a edição de um registro reabre o que já foi relatado. */
+const rowToPainInput = (r: typeof painReports.$inferSelect) => {
+  // O sítio de alto risco é do servidor (painToRow o refaz pelo mapa): não volta para o cliente.
+  const { highRiskBoneSite: _, ...extra } = (r.extraSymptoms ?? {}) as Record<string, unknown>;
+  return {
+    ...extra,
+    moment: r.moment,
+    region: r.bodyPart,
+    intensity: r.intensity,
+    ...(r.painType ? { type: r.painType } : {}),
+    ...(r.alteredStride ? { changedStride: true } : {}),
+  };
+};
+
 const rowToPain = (r: typeof painReports.$inferSelect): PainReport => ({
   ...((r.extraSymptoms ?? {}) as Partial<PainReport>),
   date: r.reportedOn,
@@ -968,6 +982,17 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           .where(eq(athleteProfiles.userId, userId))
           .limit(1);
         const logs = await logsByWorkout(tx, userId, [row.id]);
+        const log = logs.get(row.id);
+        // O registro substitui as dores dele (logWorkout): a tela de edição precisa recebê-las para não apagá-las.
+        const logPain = log
+          ? (
+              await tx
+                .select()
+                .from(painReports)
+                .where(and(eq(painReports.userId, userId), eq(painReports.workoutLogId, log.id)))
+                .orderBy(asc(painReports.createdAt))
+            ).map(rowToPainInput)
+          : [];
         const refs = await tx
           .select({
             citation: referencesTable.citation,
@@ -980,7 +1005,8 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           .where(eq(workoutReferences.workoutId, row.workoutId))
           .orderBy(asc(referencesTable.citation));
         return {
-          session: view(row, logs.get(row.id)),
+          session: view(row, log),
+          logPain,
           detail: withLadderText(workoutDetail(catalog?.structure, profile?.level ?? "", lang), row, lang),
           catalogVersion: catalog?.version ?? null,
           references: refs,
