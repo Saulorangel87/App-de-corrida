@@ -65,6 +65,7 @@ const FEATURES = {
     "recuperar-conta": "Tela: recuperar senha e e-mail",
     registro: "Tela: registro do treino",
     "registro-rapido": "Tela: registro rápido pelo círculo da semana",
+    "resumo-semana": "Tela: resumo da semana passada no painel",
     novidades: "Tela: novidades do app",
     saude: "Pergunta semanal de saúde",
     treino: "Tela: detalhe do treino",

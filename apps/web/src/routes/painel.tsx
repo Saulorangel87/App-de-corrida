@@ -10,6 +10,7 @@ import { NewsBanner } from "../components/news";
 import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { PlanReviewCard } from "../components/plan-review";
 import { QuickLog, unlogged } from "../components/quick-log";
+import { WeekSummaryCard } from "../components/week-summary";
 import { PanelSkeleton } from "../components/skeletons";
 import { paceMinPerKm, paceText } from "../lib/pace";
 import { useMinDuration } from "../lib/use-min-duration";
@@ -216,6 +217,9 @@ function Panel() {
           )}
           <CheckinPrompt day={day.data} />
           <PlanReviewCard date={today} />
+          {week.data.plan && (
+            <WeekSummaryCard userId={user.id} weekStart={week.data.plan.weekStart} calendarWeek={week.data.plan.calendarWeek} today={today} />
+          )}
 
           <StatsRow week={week.data} sleep={history.data?.sleep ?? null} />
 
