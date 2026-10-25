@@ -34,7 +34,9 @@ Aplicativos de corrida costumam prometer um plano "inteligente" sem mostrar de o
 | **Plano** | 13 modelos (5 km, 10 km, 21 km, 42 km e saúde). Quem já corre não começa do zero: a entrada na escada de caminhada e corrida vem do que a pessoa declara, nunca pulando etapas |
 | **Dia a dia** | Check-in de sono, cansaço e dor; o motor decide manter, reduzir, fazer regenerativo, descansar ou interromper e encaminhar a um profissional, e mostra o porquê com as fontes |
 | **Treino** | Detalhe de cada sessão, como fazer, zonas de esforço e glossário, sem termos técnicos soltos |
-| **Acompanhamento** | Registro do treino (duração, esforço, dor com mapa do corpo), histórico e plano completo |
+| **Acompanhamento** | Registro do treino (duração, esforço, dor com mapa do corpo), registro rápido pelo círculo da semana, resumo da semana anterior, histórico e plano completo |
+| **Mudanças no treino** | Trocar o dia de um treino dentro da semana (só para dias que mantêm o descanso do plano), "não estou 100%" (treino 20% mais curto e sem trechos fortes) e pausa planejada (viagem, férias) com a prévia da volta |
+| **Lembrete e celular** | Lembrete do treino por notificação, no horário escolhido; app instalável no celular, que abre sem internet |
 | **Avaliação do bloco** | A cada 2 semanas pergunta "como foi?"; o plano repete a etapa se foi puxado e só *sugere* reavaliar se foi fácil |
 | **Conta** | Perfil com foto, troca de e-mail com confirmação, dispositivos, pausa, exportar e excluir dados |
 | **Acessibilidade** | Lighthouse 100; português e inglês; layout de celular e de computador |
@@ -52,7 +54,7 @@ flowchart LR
   D -.->|dump criptografado<br/>diário| B[(Backup externo)]
 ```
 
-O **motor** (`packages/engine`) é TypeScript puro, sem I/O: recebe perfil, plano e check-in e devolve uma decisão com a regra aplicada e as fontes. Por isso é testado com 365 casos, incluindo uma verificação de coerência: seguir o plano à risca nunca gera ajuste em nenhum dos 13 modelos.
+O **motor** (`packages/engine`) é TypeScript puro, sem I/O: recebe perfil, plano e check-in e devolve uma decisão com a regra aplicada e as fontes. Por isso é testado com 378 casos, incluindo uma verificação de coerência: seguir o plano à risca nunca gera ajuste em nenhum dos 13 modelos.
 
 ## Stack
 
@@ -80,9 +82,9 @@ Há uma auditoria documentada em [`docs/auditoria-seguranca.md`](docs/auditoria-
 
 | Verificação | Resultado |
 |---|---|
-| Motor (Vitest) | 365 testes |
-| API (Vitest, banco real) | 164 testes |
-| Telas (Playwright) | 101 testes |
+| Motor (Vitest) | 378 testes |
+| API (Vitest, banco real) | 187 testes |
+| Telas (Playwright) | 140 testes |
 | Lighthouse (celular) | desempenho 96, acessibilidade 100, SEO 100, práticas recomendadas 92 |
 | Conferência por funcionalidade | `pnpm check` gera `reports/relatorio-testes.md` em português |
 
@@ -134,11 +136,11 @@ Testes de tela: `pnpm --filter @passo/web e2e` (na primeira vez, `pnpm --filter 
 
 ## Estado e próximos passos
 
-As fases 0 a 6 (pesquisa, banco, autenticação, entrevista, motor, acompanhamento e telas) estão implementadas e em produção. Ficaram de fora do MVP, por decisão: integração com Strava, Garmin e arquivos FIT/GPX, notificações e lembretes, PWA offline, painel administrativo do catálogo, plano pago e calendário de provas.
+As fases 0 a 6 (pesquisa, banco, autenticação, entrevista, motor, acompanhamento e telas) estão implementadas e em produção. Ficaram de fora do MVP, por decisão: integração com Strava, Garmin e arquivos FIT/GPX, painel administrativo do catálogo, plano pago e calendário de provas. Depois do MVP entraram o lembrete do treino por notificação, o app instalável (PWA), o registro rápido, o resumo da semana e as mudanças no treino (trocar o dia, "não estou 100%" e pausa planejada). O ajuste ao calor ficou para depois: precisa de pesquisa nova e da localização do atleta.
 
 ## In English
 
-Let's Go Run is a personal, free web app that builds running plans from a health screening (PAR-Q+) and a **rules engine grounded in published research**, then adjusts each day from sleep, pain and fatigue check-ins. No AI generates workouts. Every limit and rule traces back to a source in `docs/pesquisa/`. The stack is a TypeScript pnpm monorepo: React + Vite, Hono, PostgreSQL with Row-Level Security, a pure-TypeScript engine, and 630 automated tests. The interface is available in Portuguese and English; the PAR-Q+ appears in its original English text on the English screens, unaltered. This is not a medical device and does not replace professional advice.
+Let's Go Run is a personal, free web app that builds running plans from a health screening (PAR-Q+) and a **rules engine grounded in published research**, then adjusts each day from sleep, pain and fatigue check-ins. No AI generates workouts. Every limit and rule traces back to a source in `docs/pesquisa/`. The stack is a TypeScript pnpm monorepo: React + Vite, Hono, PostgreSQL with Row-Level Security, a pure-TypeScript engine, and 705 automated tests. The interface is available in Portuguese and English; the PAR-Q+ appears in its original English text on the English screens, unaltered. This is not a medical device and does not replace professional advice.
 
 ## Licença e créditos
 

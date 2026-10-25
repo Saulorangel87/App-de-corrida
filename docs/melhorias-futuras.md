@@ -67,6 +67,8 @@ O registro completo da análise (método, limites e cuidados) está em `docs/ana
 
 ### 2.2 Reduzir a carga a pedido (áreas do Runna: "não estou 100%", redução de treino, modo Lifestyle)
 
+**Entregue em 2026-10-25** como "não estou 100%" (R-PRG-13, DEC-51): o dono aprovou reaproveitar o corte de 20% de R-PRG-12, só para o treino de hoje. A redução por uma semana inteira não foi feita.
+
 - **Hoje:** só o check-in reduz o treino (sono, dor, DOMS), com o corte reativo de 20% (R-PRG-12).
 - **Ideia:** o atleta poder pedir um dia ou uma semana mais leve sem relatar sintoma, **só para baixo**, o que respeita R-PLN-18 (o plano nunca passa do molde).
 - **Precisa de regra nova?** Quase não: pode reaproveitar o corte de 20% que já existe. A decisão é do dono: aceitar esse reaproveitamento ou pedir pesquisa para um valor próprio.
@@ -74,11 +76,15 @@ O registro completo da análise (método, limites e cuidados) está em `docs/ana
 
 ### 2.3 Pausa planejada (área do Runna: férias e viagem)
 
+**Entregue em 2026-10-25** (R-PRG-14, DEC-52): datas de início e de volta, sem treino nem lembrete nesses dias, sem contar como treinos perdidos, e volta pela tabela de R-PRG-08. Privacidade na versão `2026-10-25`. Junto entrou "trocar o dia do treino" dentro da semana (DEC-53, sem regra nova).
+
 - **Hoje:** o único fluxo de pausa é por dor, lesão ou doença (`pauseSchema`, R-PRG-09). Quem viaja e fica dias sem correr volta pela tabela de R-PRG-08, calculada pelos dias desde a última corrida.
 - **Ideia:** deixar o atleta avisar antes uma pausa com data de volta, para o app mostrar o que vai acontecer na volta (por exemplo, "volta com 70% do volume, sem treino forte por 2 semanas").
 - **Precisa de regra nova?** Não nos números: a tabela de R-PRG-08 já decide. É uma mudança de tela e de API, e entra dado novo (datas da pausa), o que leva a texto de Privacidade com versão nova.
 
 ### 2.4 Adaptar ao clima (área do Runna: adaptação ao tempo)
+
+**Adiado pelo dono em 2026-10-25** (DEC-53).
 
 - **Hoje:** só existem os sinais de calor ligados à dor (R-DOR-02, Casa 2015). A pesquisa deixa a regra de temperatura para "o tema ambiental, se houver", que **não foi pesquisado**.
 - **O que seria preciso:** pesquisa nova (calor, hidratação, ajuste de esforço) com fonte verificada; uma API externa de tempo; e localização do atleta, que é dado pessoal e entra na LGPD e na Privacidade.
@@ -92,7 +98,7 @@ O registro completo da análise (método, limites e cuidados) está em `docs/ana
 
 ### Ordem sugerida
 
-1. Pace (2.1), começando pelos passos que não pedem regra.
-2. Redução a pedido (2.2).
-3. Pausa planejada (2.3).
-4. Clima (2.4), só se houver interesse e pesquisa.
+1. ~~Pace (2.1), começando pelos passos que não pedem regra~~ (parte informativa entregue em 2026-10-17).
+2. ~~Redução a pedido (2.2)~~ (entregue em 2026-10-25).
+3. ~~Pausa planejada (2.3)~~ (entregue em 2026-10-25).
+4. Clima (2.4), só se houver interesse e pesquisa (adiado pelo dono em 2026-10-25).

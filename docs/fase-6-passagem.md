@@ -1,6 +1,6 @@
 # Fase 6 — Telas: passagem de contexto
 
-Estado em 2026-10-11: Fases 0 a 5 aprovadas pelo dono; as telas da Fase 6 estão todas em código e passaram por auditoria de segurança (`docs/auditoria-seguranca.md`); faltam a revisão final do dono e o deploy. Quem continuar (Claude, agy ou outro agente) deve ler, nesta ordem: `AGENTS.md`, `docs/especificacao.md` (seções 9 e 10), `docs/adr/0006-acompanhamento-diario.md` e este arquivo.
+Estado em 2026-10-25: Fases 0 a 5 aprovadas pelo dono; as telas da Fase 6 estão todas em código, passaram por auditoria de segurança (`docs/auditoria-seguranca.md`) e estão em produção; falta a revisão final do dono. Depois do MVP entraram registro rápido, resumo da semana, app instalável, lembrete do treino e as mudanças no treino (trocar o dia, "não estou 100%", pausa planejada). Quem continuar (Claude, agy ou outro agente) deve ler, nesta ordem: `AGENTS.md`, `docs/especificacao.md` (seções 9 e 10), `docs/adr/0006-acompanhamento-diario.md` e este arquivo.
 
 ## Regras que valem para toda tela
 1. **Figma é só referência de estilo (decisão do dono, 2026-10-10).** Não é mais necessário desenhar nem manter o Figma em dia: as telas novas são feitas direto em código, na mesma linha visual das telas de acesso já implementadas (`apps/web/src/components/auth-*.tsx`, tokens da seção 9 da especificação). Arquivo de referência: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd0 (frames: Painel `2:2`, Login `6:2`). O dono revisa o resultado rodando o app; ajustes pedidos por ele valem mais que o desenho.
@@ -50,6 +50,11 @@ Pendências do arquivo do Figma: **encerradas por decisão do dono** (o Figma se
 | `/painel` e `/configuracoes` (pergunta de saúde) | "Mudou algo na sua saúde?" (R-TRI-11): aparece no painel só quando o servidor manda (`screening.healthCheckDue`, a cada 7 dias) e fica sempre em Configurações enquanto houver liberação; "não" grava a data e adia 7 dias, "sim" pede confirmação, expira a triagem e leva ao resultado para refazer o PAR-Q+ | `e2e/saude.spec.ts` |
 | `/confirmar-novo-email` | abre o link enviado ao endereço novo (`#token=`), confirma uma vez (`POST /auth/email-change/confirm`), mostra o resultado e leva ao login; link inválido ou expirado mostra o aviso | `e2e/configuracoes.spec.ts` |
 | `/privacidade`, `/termos` | Política de Privacidade e Termos de Uso, públicos (sem login e sem chamar a API): índice, data e versão, link para o outro documento; no idioma da tela (português ou inglês), com aviso de que vale o português; os aceites do cadastro ligam aos dois (outra aba) | `e2e/legal.spec.ts` |
+| `/painel` (registro rápido e resumo) | o círculo de cada treino da semana registra "fiz" ou "não fiz" com a pergunta de dor (`components/quick-log.tsx`); o painel conta os treinos sem registro (os da pausa planejada não contam); nos 3 primeiros dias da semana, "Como foi a semana N" (`components/week-summary.tsx`) | `e2e/registro-rapido.spec.ts`, `e2e/resumo-semana.spec.ts` |
+| `/painel` (não estou 100%) | botão no cartão do treino de hoje, só com treino a fazer e dia ainda sem redução (`components/lighter-day.tsx`); pede ou desfaz o dia mais leve (R-PRG-13) | `e2e/pausa-e-dia-leve.spec.ts` |
+| `/treino/$id` (trocar o dia) | "Trocar o dia" com os dias que a API oferece (`moveTo`); recusa traduzida pelo motivo (`components/move-workout.tsx`) | `e2e/treino.spec.ts` |
+| `/plano#pausa` e aviso no painel | pausa planejada: datas de início e de volta, prévia da volta pela tabela de R-PRG-08, mudar ou cancelar; treinos dos dias da pausa marcados como pausa (`components/planned-pause.tsx`) | `e2e/pausa-e-dia-leve.spec.ts` |
+| `/configuracoes` (lembrete e instalação) | lembrete do treino por notificação, por aparelho e com horário (`components/reminder.tsx`); "Instalar no celular" e aviso sem internet (`components/install-app.tsx`, `public/sw.js`) | `e2e/configuracoes.spec.ts`, `e2e/pwa.spec.ts` |
 | `/plano` | plano completo: resumo (semana atual, treinos feitos até hoje, término), semana a semana; semana atual aberta, passadas recolhidas com o que foi feito, futuras só com o contorno do modelo (fase, recuperação, polimento, prova, etapa da escada) marcadas como previsão e sem treinos inventados; cada treino leva a `/treino/$id`; atalho no painel e no cabeçalho | `e2e/plano.spec.ts` |
 
 O mapa do corpo usa os ids de `BODY_REGIONS` (`packages/shared/src/body-map.ts`); o servidor marca `highRiskBoneSite` pela região (R-DOR-03), não confia no cliente. Datas: o cliente sempre manda a data local do atleta (`localToday()`); pausa e liberação usam esse calendário, o servidor aceita hoje ±1 dia (fuso). Padrões para as próximas telas: moldura `FlowLayout` (cabeçalho com idioma e sair); campos de escolha em `components/choice.tsx`; formulário por etapa com `stepResolver` (valida com o esquema compartilhado e mapeia o erro para o campo; o texto vem do i18n); `useRequireUser()` redireciona sem sessão; nada de `style=""` inline (a CSP bloqueia).
@@ -62,7 +67,7 @@ Pendências conhecidas desta parte: o texto do PAR-Q+ fica só em português (é
 | `POST /auth/register`, `/auth/verify-email`, `/auth/login`, `/auth/logout`, `/auth/forgot-password`, `/auth/reset-password`, `GET /auth/me`, `DELETE /auth/account` | conta (ver `packages/shared/src/auth.ts`) |
 | `GET /interview`, `PUT /interview/:step`, `POST /interview/submit` | entrevista (`packages/shared/src/interview.ts`; `GET` inclui `parq` com o texto) |
 | `GET /profile`, `POST /profile/screening/evaluation`, `POST /profile/screening/professional-consulted` | perfil e triagem |
-| `GET /day/:date` | sessões do dia, `decision`, `checkin` e `questions` |
+| `GET /day/:date` | sessões do dia (com `paused`), `decision`, `checkin`, `questions`, `lighterRequested` e `plannedPause` |
 | `GET /plan/week/:date` | semana do plano que contém a data |
 | `PUT /checkins/:date` | check-in (substitui); devolve o dia recalculado |
 | `POST /pain/:date` | dor ou sintoma avulso |
@@ -71,7 +76,11 @@ Pendências conhecidas desta parte: o texto do PAR-Q+ fica só em português (é
 | `GET /history?days=7..180` | sono, dor, carga semanal, aderência e, por semana, `paceKm` e `paceMinutes` (km e minutos dos treinos com distância e duração; o ritmo é minutos ÷ km) |
 | `POST /profile/screening/health-change` | corpo `{ changed, date }`; sim → triagem `EXPIRADO` (`saude_mudou`), o dia do motor trava e o atleta refaz a entrevista; não → só registra a resposta |
 | `GET /plan/overview/:date` | plano inteiro: `plan` (modelo, objetivo, nível, datas), `currentWeek` e `weeks[]` (`state` past/current/upcoming, `projected`, `sessions`); semanas futuras vêm sem sessões porque dependem do que o atleta fizer; na escada, etapa repetida desloca a previsão |
-| `GET /workouts/:id` | detalhe do treino agendado do próprio atleta: sessão, registro, recorte do catálogo (razão, intensidade, blocos, nível, limites, evidência) e referências; de outro atleta: 404 |
+| `GET /workouts/:id?today=` | detalhe do treino agendado do próprio atleta: sessão, registro (com `logPain`), recorte do catálogo (razão, intensidade, blocos, nível, limites, evidência), referências e `moveTo` (dias para onde o treino pode ir); de outro atleta: 404 |
+| `PUT /workouts/:id/date` | trocar o dia: corpo `{ date, today }`; regra quebrada dá `409 MOVE_NOT_ALLOWED` com `details.reason` |
+| `PUT /day/:date/lighter` | "não estou 100%": corpo `{ on }`; devolve o dia recalculado (`lighterRequested`) |
+| `GET /plan/pause?today=`, `PUT /plan/pause`, `DELETE /plan/pause` | pausa planejada: `{ pause, returnBand }`; corpo `{ startDate, endDate, today }` (uma aberta por vez, até o fim do plano) e `{ today }` para cancelar ou encerrar |
+| `GET /push/config`, `GET /push/subscriptions`, `PUT /push/subscription`, `DELETE /push/subscription` | lembrete do treino (Web Push): chave pública, aparelhos do atleta, ligar ou mudar o horário, desligar (endereço sempre no corpo) |
 | `GET /account/export` | exportação LGPD (JSON, inclui a foto em base64) |
 | `PATCH /auth/profile` | nome do perfil |
 | `POST /auth/email-change` | pede a troca de e-mail (senha atual; link no endereço novo; resposta igual exista ou não conta) |
@@ -85,7 +94,7 @@ Erros a tratar com tela própria: `409 INTERVIEW_REQUIRED`, `400 UNDERAGE` (`det
 ## Estado do front
 `apps/web` está completo para o atleta: React 19, Vite 6, TanStack Router (rotas por arquivo) e Query, React Hook Form com os esquemas Zod de `@passo/shared`, i18next (pt-BR e en), Tailwind 4 (ADR 0007). Moldura das telas logadas em `components/flow-layout.tsx` (menu lateral no desktop, menu hambúrguer no celular). Testes de interface: `pnpm --filter @passo/web e2e`; conferência geral: `pnpm check`. **Movimento (2026-10-17):** esqueletos de carregamento (`components/skeletons.tsx`, mínimo de 300 ms por `lib/use-min-duration.ts`), cartões do painel em sequência, barras do volume que crescem, entrevista que desliza entre etapas, menu do celular que desce e troca de página com View Transitions; tudo em CSS (`index.css`), sem biblioteca, e parado para quem pede menos movimento. Testes em `e2e/movimento.spec.ts`; os demais testes rodam com `reducedMotion: "reduce"`.
 
-## Deploy (estado em 2026-10-11)
+## Deploy (estado em 2026-10-25)
 Feito, com OK do dono:
 - Dockerfile da API (multi-stage, usuário não root, arm64) e serviço no `docker-compose.yml` da VPS.
 - Migrações 0008 a 0013 e seed aplicados no banco de produção (backup criptografado antes).
@@ -94,8 +103,8 @@ Feito, com OK do dono:
 - Front no Cloudflare Pages com domínio `letsgorun.devsaulo.com.br` e SSL ativo; `letsgorun` e `letsgorun-api` excluídos da regra de cabeçalhos da zona; cabeçalhos, recarga de rotas, CORS e login genérico conferidos pela internet.
 
 - **Atualização de 2026-10-17 (OK do dono):** API refeita na VPS com o ritmo no histórico e as dependências novas (PRs #13 e #14, tsup 9). Sem migração nova. Backup antes, imagem anterior em `app-de-corrida-api:previous`, `/health` 200 e rota nova sem sessão 401. Detalhes e como voltar atrás em `ops/README.md`.
-- **Atualização de 2026-10-25 (OK do dono):** trocar o dia do treino, "não estou 100%" e pausa planejada (migração 0015, Privacidade `2026-10-25`). Backup `passo_20261025T145926Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
 - **Atualização de 2026-10-24 (OK do dono):** registro rápido, força e mobilidade sem tempo e km, resumo da semana, app instalável, lembrete do treino (migração 0014, chaves VAPID no `.env` da VPS) e mensagens de erro mais claras. Backup `passo_20261025T003019Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front publicado pela branch `producao`.
+- **Atualização de 2026-10-25 (OK do dono):** trocar o dia do treino, "não estou 100%" e pausa planejada (migração 0015, Privacidade `2026-10-25`). Backup `passo_20261025T145926Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
 
 Falta:
 - ~~Primeiro envio real de e-mail~~: confirmado pelo dono em 2026-10-11.
@@ -106,6 +115,7 @@ Falta:
 - Confirmar (ou manter os padrões) dos itens dos ADRs 0004, 0005 e 0006.
 - Avisar a PAR-Q+ Collaboration (R-TRI-14, não bloqueia).
 - Revisar os textos `razao` do catálogo no seed.
+- Reler os textos novos de 2026-10-24 e 2026-10-25, já no ar: registro rápido (`quickLog.*`), resumo da semana (`weekSummary.*`), instalar no celular (`install.*`), lembrete (`reminder.*`), aviso de registro não salvo (`log.notSaved`), trocar o dia (`move.*`), não estou 100% (`lighter.*`), pausa planejada (`pause.*`) e a Política de Privacidade `2026-10-25`.
 - Aprovar a redação dos textos novos do ritmo (2026-10-17): "Ritmo médio", "Ritmo (min/km)" e "Ritmo médio deste treino: … por km. É só uma referência: não é meta." (em inglês, "Average pace", "Pace (min/km)" e "Average pace for this workout: … per km. It is only a reference, not a target."). Já estão no ar; ajustar se preferir outra redação.
 
 ## Dicas de ambiente (Windows)
