@@ -131,7 +131,7 @@ test("pós-treino com dor: mapa do corpo, perguntas do local e sintoma de peito"
 
   // sem intensidade, não envia
   await page.getByRole("button", { name: "Salvar registro" }).click();
-  await expect(page.getByText("Informe a intensidade da dor de cada local marcado.")).toBeVisible();
+  await expect(page.getByText("Informe a intensidade da dor de cada local marcado.")).toHaveCount(2); // no local e no aviso junto do botão
   expect(putBody(calls)).toBeUndefined();
 
   await card.getByRole("group", { name: "Qual a intensidade da dor?" }).getByText("6", { exact: true }).click();
@@ -193,4 +193,32 @@ test("treino da semana anterior do plano continua registrável (virada de semana
   await page.goto("/registro/s0");
   await expect(page.getByRole("heading", { name: "Longão de domingo" })).toBeVisible();
   await expect(page.getByText("Não encontramos este treino.")).toHaveCount(0);
+});
+
+test("salvar com dados faltando: diz junto do botão o que falta e leva ao primeiro campo", async ({ page }) => {
+  const calls = await mockApi(page);
+  await page.goto("/registro/s1");
+  await page.getByRole("button", { name: "Salvar registro" }).click();
+  const summary = page.getByRole("alert").filter({ hasText: "Ainda não salvamos. Falta responder:" });
+  await expect(summary).toBeVisible();
+  await expect(summary.getByRole("listitem")).toHaveText(["Você fez este treino?"]);
+  await expect(page.getByRole("group", { name: "Você fez este treino?" }).getByRole("radio").first()).toBeFocused();
+
+  await page.getByRole("group", { name: "Você fez este treino?" }).getByText("Sim", { exact: true }).click();
+  await page.getByLabel("Duração real (minutos)").fill("");
+  await page.getByRole("button", { name: "Canela esquerda" }).click();
+  await page.getByRole("button", { name: "Salvar registro" }).click();
+  await expect(summary.getByRole("listitem")).toHaveText([
+    "Duração real (minutos)",
+    "Como foi o esforço do treino todo?",
+    "Informe a intensidade da dor de cada local marcado.",
+  ]);
+  await expect(page.getByLabel("Duração real (minutos)")).toBeFocused();
+  expect(putBody(calls)).toBeUndefined();
+
+  // Respondeu tudo: o aviso some.
+  await page.getByLabel("Duração real (minutos)").fill("30");
+  await page.getByRole("group", { name: "Como foi o esforço do treino todo?" }).getByText("3", { exact: true }).click();
+  await page.getByRole("region", { name: "Canela esquerda" }).getByRole("group", { name: /intensidade/ }).getByText("2", { exact: true }).click();
+  await expect(summary).toHaveCount(0);
 });

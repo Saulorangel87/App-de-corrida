@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -114,6 +114,7 @@ function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain
   const [heat, setHeat] = useState<Record<string, boolean>>(initial.heat);
   const [errors, setErrors] = useState<{ completed?: string; duration?: string; srpe?: string; distance?: string; pain?: string }>({});
   const [result, setResult] = useState<Result | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   /** Apaga o erro de um campo assim que a pessoa mexe nele. */
   const clear = (...keys: (keyof typeof errors)[]) =>
     setErrors((prev) => (keys.some((k) => prev[k]) ? { ...prev, ...Object.fromEntries(keys.map((k) => [k, undefined])) } : prev));
@@ -187,8 +188,9 @@ function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain
           }
         : { completed: false, notes: toText(notes), pain: cleaned };
 
-    if (completed !== undefined && !found.pain) {
-      const parsed = workoutLogSchema.safeParse(JSON.parse(JSON.stringify(payload)));
+    if (completed !== undefined) {
+      // Confere o resto mesmo com a dor incompleta: a pessoa vê tudo o que falta de uma vez.
+      const parsed = workoutLogSchema.safeParse(JSON.parse(JSON.stringify(found.pain ? { ...payload, pain: [] } : payload)));
       if (!parsed.success) {
         for (const issue of parsed.error.issues) {
           const key = String(issue.path[0]);
@@ -200,11 +202,29 @@ function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain
       }
     }
     setErrors(found);
-    if (Object.keys(found).length > 0) return;
+    if (Object.keys(found).length > 0) {
+      // O aviso fica junto do botão, mas o campo pode estar lá em cima: leva a pessoa até ele.
+      requestAnimationFrame(() => {
+        const first = formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"], [data-error="true"]');
+        first?.scrollIntoView({ block: "center" });
+        first?.querySelector<HTMLElement>("input, button")?.focus({ preventScroll: true });
+        if (first?.matches("input")) first.focus({ preventScroll: true });
+      });
+      return;
+    }
     save.mutate(JSON.parse(JSON.stringify(payload)));
   };
 
   if (result) return <Done result={result} />;
+
+  // O que falta, em texto, junto do botão Salvar.
+  const missing = [
+    errors.completed && t("log.didIt"),
+    errors.duration && t("log.duration"),
+    errors.distance && t("log.distanceInvalid"),
+    errors.srpe && t("log.srpe"),
+    errors.pain,
+  ].filter((x): x is string => !!x);
 
   return (
     <FlowLayout>
@@ -216,6 +236,7 @@ function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain
         </p>
 
         <form
+          ref={formRef}
           noValidate
           className="space-y-6"
           onSubmit={(e) => {
@@ -290,7 +311,7 @@ function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain
 
           {completed !== undefined && (
             <>
-              <fieldset className="space-y-3 rounded-xl bg-[#F5F6F8] p-4">
+              <fieldset data-error={errors.pain ? true : undefined} className="space-y-3 rounded-xl bg-[#F5F6F8] p-4">
                 <legend className="px-1 text-sm font-semibold text-[#111827]">{t("log.painTitle")}</legend>
                 <p className="text-xs text-gray-600">{t("log.painHelp")}</p>
                 <BodyMap selected={regions} onToggle={toggleRegion} label={regionLabel} />
@@ -341,6 +362,16 @@ function LogForm({ session, logged }: { session: SessionView; logged: LoggedPain
             </>
           )}
 
+          {missing.length > 0 && (
+            <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              <p className="font-semibold">{t("log.notSaved")}</p>
+              <ul className="mt-1 list-disc pl-5">
+                {missing.map((m) => (
+                  <li key={m}>{m}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           {save.isError && (
             <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
               {errorText(save.error)}

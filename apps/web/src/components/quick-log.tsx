@@ -284,6 +284,16 @@ function QuickLogBody({
           { value: false, label: t("interview.no") },
         ]}
       />
+      {(errors.duration || errors.srpe || errors.unwell) && (
+        <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <p className="font-semibold">{t("log.notSaved")}</p>
+          <ul className="mt-1 list-disc pl-5">
+            {errors.duration && <li>{t("log.duration")}</li>}
+            {errors.srpe && <li>{t("log.srpe")}</li>}
+            {errors.unwell && <li>{step === "done" ? t("quickLog.unwell") : t("quickLog.unwellSkipped")}</li>}
+          </ul>
+        </div>
+      )}
       {unwell ? (
         <div className="space-y-3">
           <p className="rounded-xl bg-orange-50 p-3 text-sm text-gray-800">{t("quickLog.goFull")}</p>

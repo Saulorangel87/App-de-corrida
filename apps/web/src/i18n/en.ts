@@ -812,6 +812,8 @@ export const en: Translation = {
     },
     notes: "Comment (optional)",
     submit: "Save log",
+    notSaved: "Not saved yet. Still to answer:",
+    distanceInvalid: "Distance (numbers only, like 5.2)",
     saving: "Saving...",
     cancel: "Cancel",
     notFound: "We could not find this workout.",

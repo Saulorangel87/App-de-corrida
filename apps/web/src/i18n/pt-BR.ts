@@ -813,6 +813,8 @@ export const ptBR = {
     },
     notes: "Comentário (opcional)",
     submit: "Salvar registro",
+    notSaved: "Ainda não salvamos. Falta responder:",
+    distanceInvalid: "Distância (use só números, como 5,2)",
     saving: "Salvando...",
     cancel: "Cancelar",
     notFound: "Não encontramos este treino.",
