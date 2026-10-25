@@ -118,6 +118,17 @@ export const pauseSchema = z
 export const workoutMoveSchema = z.object({ date: isoDate, today: isoDate }).strict();
 export type WorkoutMoveInput = z.infer<typeof workoutMoveSchema>;
 
+/** "Não estou 100%" no treino do dia (R-PRG-13): liga ou desfaz o pedido de dia mais leve. */
+export const lighterDaySchema = z.object({ on: z.boolean() }).strict();
+
+/** Pausa planejada (R-PRG-14): datas de início e de volta; `today` é a data local do atleta. */
+export const plannedPauseSchema = z
+  .object({ startDate: isoDate, endDate: isoDate, today: isoDate })
+  .strict()
+  .refine((v) => v.endDate >= v.startDate, { path: ["endDate"], message: "a volta vem depois do início" });
+export type PlannedPauseInput = z.infer<typeof plannedPauseSchema>;
+export const plannedPauseCancelSchema = z.object({ today: isoDate }).strict();
+
 /** Autodeclaração de avaliação e liberação por profissional de saúde (R-DOR-10, R-PRG-09). */
 export const clearanceSchema = z.object({ date: isoDate }).strict();
 

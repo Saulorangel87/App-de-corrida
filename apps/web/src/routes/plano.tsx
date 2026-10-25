@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { FlowLayout } from "../components/flow-layout";
+import { PlannedPauseCard } from "../components/planned-pause";
 import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { PlanSkeleton } from "../components/skeletons";
 import { useMinDuration } from "../lib/use-min-duration";
@@ -118,6 +119,8 @@ function PlanBody({ data, plan, today }: { data: PlanOverviewResponse; plan: Non
         {t("plan.note")}
         {hasLadder && <> {t("plan.noteLadder")}</>}
       </p>
+
+      {!finished && <PlannedPauseCard />}
 
       <section aria-labelledby="plan-weeks">
         <h2 id="plan-weeks" className="mb-3 text-lg font-bold tracking-tight text-[#0F172A]">

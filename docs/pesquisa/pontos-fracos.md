@@ -120,6 +120,8 @@ Consolida, por tema, (1) os pontos de evidência fraca ou conflitante de cada ar
 | R-PRG-09 | [P]; DEC-06, DEC-18 | *pausa por dor, lesão ou doença.* O app não retoma sozinho: autodeclaração datada "fui avaliado por um profissional e liberado"; volta gradual pela tabela de R-PRG-08 com volume inicial no máximo de 50% (ou fase inicial do nível, o menor) e sem Z3 por 2 semanas. |
 | R-PRG-11 | [P]; DEC-23 | *precedência e composição.* Ordem: (1) triagem e sinais de alerta; (2) dor; (3) sono e bem-estar; (4) congelamentos; (5) tetos. Decisão do dia = a mais restritiva entre dor e sono, sem somar percentuais; (4) e (5) só impedem aumento. |
 | R-PRG-12 | [P]; DEC-22 | *`reducao_reativa_volume` = 20%.* Parâmetro único de redução reativa de volume da sessão (sono L1, dor 3–4, aumento da dor no dia seguinte, DOMS), junto com a troca da sessão de qualidade por Z1; não se somam reduções de módulos diferentes. |
+| R-PRG-13 | [P]; DEC-51 | *dia mais leve a pedido.* O atleta pede um dia mais leve sem sintoma; o motor reduz como R-PRG-12 (20% e qualidade vira Z1), nunca aumenta e não soma com dor ou sono. |
+| R-PRG-14 | [P]; DEC-52 | *pausa planejada.* Dias avisados antes sem treino e sem contar como não feitos (R-PRG-06); a volta segue a tabela de R-PRG-08, sem valor novo. |
 
 ## 6. Carga interna (sRPE, monotonia, strain) (`06-carga-interna.md`)
 

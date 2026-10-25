@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import { FlowLayout } from "../components/flow-layout";
 import { DecisionSources } from "../components/decision-sources";
 import { HealthChangeCard } from "../components/health-change";
+import { LighterDay } from "../components/lighter-day";
+import { PlannedPauseNotice } from "../components/planned-pause";
 import { NewsBanner } from "../components/news";
 import { PlanNoticeCard, type PlanNotice } from "../components/plan-notice";
 import { PlanReviewCard } from "../components/plan-review";
@@ -215,6 +217,7 @@ function Panel() {
           {(profile.data?.screening?.healthCheckDue || healthAnswered) && (
             <HealthChangeCard variant="banner" onAnswered={() => setHealthAnswered(true)} />
           )}
+          <PlannedPauseNotice pause={day.data.plannedPause ?? null} today={today} />
           <CheckinPrompt day={day.data} />
           <PlanReviewCard date={today} />
           {week.data.plan && (
@@ -438,6 +441,8 @@ function TodayCard({ day }: { day: DayResponse }) {
         </p>
         <DecisionSources sources={d.sources ?? []} dark />
       </div>
+
+      <LighterDay day={day} />
 
       {mainSession && (
         <div className="mt-4 flex flex-col gap-2.5 min-[480px]:flex-row">
@@ -711,8 +716,14 @@ function WeekPlan({ week, today, className = "" }: { week: WeekResponse; today: 
                           {s.optional && <span className="ml-1 text-xs font-normal text-gray-400">({t("panel.optional")})</span>}
                         </Link>
                         <p className="text-xs text-[#475569]">
-                          {t("panel.minutes", { count: s.log?.completed && s.log.durationMinutes ? s.log.durationMinutes : s.minutes })}
-                          {s.maxZone ? ` · ${zoneUpTo(t, s.maxZone)}` : ""}
+                          {s.paused && !s.log ? (
+                            t("pause.tag")
+                          ) : (
+                            <>
+                              {t("panel.minutes", { count: s.log?.completed && s.log.durationMinutes ? s.log.durationMinutes : s.minutes })}
+                              {s.maxZone ? ` · ${zoneUpTo(t, s.maxZone)}` : ""}
+                            </>
+                          )}
                         </p>
                       </div>
                       <QuickLog session={s} today={today} />

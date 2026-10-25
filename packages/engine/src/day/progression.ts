@@ -102,6 +102,15 @@ export type ReturnPlan = {
   waitingProfessional: boolean;
 };
 
+/** Faixa de R-PRG-08 para quem volta depois de `days` dias sem correr (prévia da pausa planejada, R-PRG-14). */
+export function returnBandForDays(days: number): ReturnBand {
+  const r = cfg.returnFromPause;
+  if (days > r.reducedMaxDays) return "longa";
+  if (days > r.freezeMaxDays) return "reduzido";
+  if (days > r.keepPlanMaxDays) return "congela";
+  return "segue";
+}
+
 /** R-PRG-08 (tabela única) e R-PRG-09 (pausa por dor, lesão ou doença). */
 export function returnFromPause(i: {
   level: LevelName;

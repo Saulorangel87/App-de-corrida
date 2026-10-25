@@ -2,7 +2,7 @@
 // sync: whoever changes one changes the other in the same commit (and LEGAL_VERSION in legal.ts).
 import { LEGAL_CONTACT_EMAIL, type LegalDocument } from "./legal";
 
-export const LEGAL_UPDATED_LABEL_EN = "October 24, 2026";
+export const LEGAL_UPDATED_LABEL_EN = "October 25, 2026";
 
 export const PRIVACY_POLICY_EN: LegalDocument = {
   kicker: "PRIVACY",
@@ -29,7 +29,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         "Running history and routine: time spent running, workouts and volume per week, longest recent run, 5 km and 10 km times when you provide them, goal (distance and race date), weekly availability, usual sleep and stress, type of work, other sports, strength training and resources (heart rate watch, track, treadmill, type of terrain).",
         "Health, which is sensitive personal data: the Yes or No answers to the PAR-Q+ questionnaire, pregnancy, injuries and current pain, the screening result, the professional evaluation you declare (result, date and who evaluated; we do not ask for documents), pauses due to pain, injury or illness, and the notice of a change in health. We do not keep the free text of the PAR-Q+ (conditions and medications).",
         "Daily follow-up: check-ins (hours and quality of sleep, energy, mood, stress, muscle soreness, resting heart rate, acute illness, pain when walking), recorded pain (body location, intensity, type and associated symptoms) and your assessment of each 2-week block (whether it was easy, just right, hard, or you could not keep up).",
-        "Workouts: plan, sessions, whether they were done, duration, distance, perceived effort and comment.",
+        "Workouts: plan, sessions, whether they were done, duration, distance, perceived effort and comment, moving a workout to another day, the days you asked for a lighter workout and the planned breaks you set (only the start and return dates, not the reason).",
         "App decisions: for each workout adjustment, we keep the rule applied and its version, so that you can see why the workout was kept, reduced or replaced with rest.",
         "Consent record: the date and version of the Terms of Use and the Privacy Policy you accepted, the consent to process health data and the declaration that you are 18 or older.",
         "Workout reminder (optional): if you turn it on, we keep the notification address the browser gives your device, the keys to encrypt the notice, the time you chose, the time zone and the last day the notice was sent. Turning the reminder off or logging out on that device deletes this data.",

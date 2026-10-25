@@ -4,9 +4,12 @@ import {
   clearanceSchema,
   historyQuerySchema,
   isoDate,
+  lighterDaySchema,
   painReportSchema,
   pauseSchema,
   planReviewSchema,
+  plannedPauseCancelSchema,
+  plannedPauseSchema,
   workoutLogSchema,
   workoutMoveSchema,
 } from "@passo/shared";
@@ -38,6 +41,24 @@ export function trainingRoutes(opts: { training: TrainingService; session: Middl
 
   // Decisão e sessões do dia
   r.get("/day/:date", session, async (c) => c.json(await training.day(me(c), dateParam(c), requestLang(c))));
+
+  // "Não estou 100%": pedido de dia mais leve (R-PRG-13)
+  r.put("/day/:date/lighter", session, validate("json", lighterDaySchema), async (c) =>
+    c.json(await training.setLighter(me(c), dateParam(c), c.req.valid("json").on, requestLang(c))),
+  );
+
+  // Pausa planejada (R-PRG-14): consultar, marcar ou mudar, cancelar
+  r.get("/plan/pause", session, async (c) => {
+    const parsed = isoDate.safeParse(c.req.query("today"));
+    if (!parsed.success) throw errors.validation([{ path: "today", code: "invalid_date" }]);
+    return c.json(await training.plannedPause(me(c), parsed.data));
+  });
+  r.put("/plan/pause", session, validate("json", plannedPauseSchema), async (c) =>
+    c.json(await training.savePlannedPause(me(c), c.req.valid("json"))),
+  );
+  r.delete("/plan/pause", session, validate("json", plannedPauseCancelSchema), async (c) =>
+    c.json(await training.cancelPlannedPause(me(c), c.req.valid("json").today)),
+  );
 
   // Semana do plano que contém a data
   r.get("/plan/week/:date", session, async (c) => c.json(await training.week(me(c), dateParam(c))));

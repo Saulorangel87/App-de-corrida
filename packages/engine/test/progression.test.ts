@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   freezeReasons,
+  returnBandForDays,
   levelAfterPause,
   longestSessionLast30,
   ranOverCap,
@@ -129,5 +130,11 @@ describe("volta de pausa (R-PRG-08, tabela única)", () => {
   it("sem Z3 por 2 semanas depois da primeira corrida de volta", () => {
     expect(r(2, { pauseReturnStartedOn: d(-13) }).noZ3).toBe(true);
     expect(r(2, { pauseReturnStartedOn: d(-14) }).noZ3).toBe(false);
+  });
+});
+
+describe("prévia da volta de uma pausa planejada (R-PRG-14 usa a tabela de R-PRG-08)", () => {
+  it("cortes de 7, 14 e 28 dias", () => {
+    expect([1, 7, 8, 14, 15, 28, 29, 90].map(returnBandForDays)).toEqual(["segue", "segue", "congela", "congela", "reduzido", "reduzido", "longa", "longa"]);
   });
 });

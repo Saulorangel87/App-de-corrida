@@ -58,7 +58,7 @@ function SessionLine({ s, lang, today }: { s: SessionView; lang: string; today?:
         {s.optional && <span className="ml-1 text-xs font-normal text-gray-400">({t("panel.optional")})</span>}
       </span>
       <span className="ml-auto shrink-0 text-xs text-gray-500">
-        {state === "completed" ? t("panel.status.completed") : t("panel.minutes", { count: s.minutes })}
+        {state === "completed" ? t("panel.status.completed") : s.paused && !s.log ? t("pause.tag") : t("panel.minutes", { count: s.minutes })}
       </span>
       {today && <QuickLog session={s} today={today} />}
     </div>

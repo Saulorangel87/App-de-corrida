@@ -1,6 +1,6 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, gte, lte, sql } from "drizzle-orm";
 import webpush from "web-push";
-import { athleteProfiles, pushSubscriptions, scheduledWorkouts, users, withAthlete, type Database } from "@passo/db";
+import { athleteProfiles, plannedPauses, pushSubscriptions, scheduledWorkouts, users, withAthlete, type Database } from "@passo/db";
 import type { PushSubscriptionInput } from "@passo/shared";
 import { errors } from "../lib/errors";
 import { describeError, type Logger } from "../lib/logger";
@@ -145,7 +145,13 @@ export function pushService(d: { db: Database; logger: Logger; vapid: VapidConfi
                 .from(scheduledWorkouts)
                 .where(and(eq(scheduledWorkouts.userId, userId), eq(scheduledWorkouts.scheduledDate, local.date), eq(scheduledWorkouts.optional, false)))
                 .limit(1);
-              out.push({ sub, date: local.date, notify: !!planned && !paused && late <= LATE_LIMIT_MINUTES });
+              // Pausa planejada (R-PRG-14): sem treino, sem lembrete.
+              const [onBreak] = await tx
+                .select({ id: plannedPauses.id })
+                .from(plannedPauses)
+                .where(and(eq(plannedPauses.userId, userId), lte(plannedPauses.startDate, local.date), gte(plannedPauses.endDate, local.date)))
+                .limit(1);
+              out.push({ sub, date: local.date, notify: !!planned && !paused && !onBreak && late <= LATE_LIMIT_MINUTES });
             }
             return { out, lang: account?.language === "en" ? ("en" as const) : ("pt-BR" as const) };
           });

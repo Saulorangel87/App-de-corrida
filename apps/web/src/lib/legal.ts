@@ -3,8 +3,8 @@
 // (novo provedor, novo dado coletado, nova integração) deve atualizar estes textos e LEGAL_VERSION
 // no mesmo commit, e manter `termsVersion` da API (apps/api/src/config.ts) igual a LEGAL_VERSION.
 
-export const LEGAL_VERSION = "2026-10-24";
-export const LEGAL_UPDATED_LABEL = "24 de outubro de 2026";
+export const LEGAL_VERSION = "2026-10-25";
+export const LEGAL_UPDATED_LABEL = "25 de outubro de 2026";
 export const LEGAL_CONTACT_EMAIL = "sauloleonardo1987@gmail.com";
 
 export type LegalSection = {
@@ -47,7 +47,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         "Histórico de corrida e rotina: tempo de prática, treinos e volume por semana, maior corrida recente, tempos de 5 km e 10 km quando você informa, objetivo (distância e data de prova), disponibilidade na semana, sono e estresse habituais, tipo de trabalho, outros esportes, treino de força e recursos (relógio de frequência cardíaca, pista, esteira, tipo de terreno).",
         "Saúde, que são dados pessoais sensíveis: as respostas Sim ou Não do questionário PAR-Q+, gravidez, lesões e dor atual, o resultado da triagem, a avaliação profissional que você declarar (resultado, data e quem avaliou; não pedimos documentos), pausas por dor, lesão ou doença, e o aviso de mudança de saúde. Não guardamos o texto livre do PAR-Q+ (condições e medicamentos).",
         "Acompanhamento diário: check-ins (horas e qualidade do sono, energia, humor, estresse, dor muscular, frequência cardíaca de repouso, doença aguda, dor ao caminhar), dores registradas (local do corpo, intensidade, tipo e sintomas associados) e a avaliação de cada bloco de 2 semanas (se foi fácil, no ponto, puxado ou se você não conseguiu acompanhar).",
-        "Treinos: plano, sessões, se foram feitas, duração, distância, esforço percebido e comentário.",
+        "Treinos: plano, sessões, se foram feitas, duração, distância, esforço percebido e comentário, a troca de dia de um treino, os dias em que você pediu um treino mais leve e as pausas planejadas que você marcar (só as datas de início e de volta, sem o motivo).",
         "Decisões do app: para cada ajuste de treino, guardamos a regra aplicada e a versão dela, para que você possa ver por que o treino foi mantido, reduzido ou trocado por descanso.",
         "Registro do aceite: a data e a versão dos Termos de Uso e da Política de Privacidade que você aceitou, o consentimento para tratar dados de saúde e a declaração de que tem 18 anos ou mais.",
         "Lembrete do treino (opcional): se você ligar, guardamos o endereço de notificação que o navegador dá ao seu aparelho, as chaves para cifrar o aviso, o horário escolhido, o fuso horário e o último dia em que o aviso saiu. Desligar o lembrete ou sair da conta naquele aparelho apaga esses dados.",

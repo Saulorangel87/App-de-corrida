@@ -125,6 +125,10 @@ export type DayInput = {
   dailyPainWalkingOn?: string | null;
   /** Data da primeira corrida depois de uma pausa de 15 dias ou mais (sem Z3 por 2 semanas). */
   pauseReturnStartedOn?: string | null;
+  /** O atleta pediu um dia mais leve hoje, sem sintoma ("não estou 100%", R-PRG-13). */
+  lighterRequested?: boolean;
+  /** Hoje está dentro de uma pausa planejada (R-PRG-14): sem treino; `planned` vem nulo. */
+  inPlannedPause?: boolean;
 };
 
 export type Rank = 0 | 1 | 2 | 3;

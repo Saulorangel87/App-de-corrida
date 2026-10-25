@@ -123,6 +123,15 @@ describe("lembrete do treino (Web Push)", () => {
     expect(sent.filter((s) => s.endpoint === e.endpoint)).toHaveLength(0);
   });
 
+  it("pausa planejada (R-PRG-14): sem lembrete nos dias da pausa", async () => {
+    const a = await onboard();
+    const d = device("viagem", "07:00");
+    await t.request("PUT", "/push/subscription", d, a.cookie);
+    expect((await t.request("PUT", "/plan/pause", { startDate: a.runDay, endDate: a.runDay, today: MONDAY }, a.cookie)).status).toBe(200);
+    await t.app.push.sendDue(at(a.runDay, "07:01"));
+    expect(sent.filter((s) => s.endpoint === d.endpoint)).toHaveLength(0);
+  });
+
   it("aparelho que cancelou a inscrição (410) é apagado", async () => {
     const a = await onboard();
     const d = device("sumiu", "07:00");

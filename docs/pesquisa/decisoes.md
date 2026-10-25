@@ -67,6 +67,12 @@ Registro único das decisões do dono do projeto e das decisões de projeto toma
 
 50. **DEC-50. Avaliação a cada 2 semanas e sugestão de avanço — decisão do dono [P] (2026-10-11).** O dono pediu que o atleta diga como se sente a cada 2 semanas e que o plano possa sugerir um pequeno avanço, sem pular etapa. Como R-PLN-18 proíbe o plano de passar do molde e a escada não pula etapa, "avançar" vira **sugestão de reavaliação** (nova entrevista, R-PLN-21), e "puxado" repete a etapa. Regra: R-PLN-22 (nova). Arquivo: 10.
 
+51. **DEC-51. Dia mais leve a pedido ("não estou 100%") — decisão do dono [P] (2026-10-25).** O dono aprovou que o atleta peça um treino mais leve sem relatar sintoma, reaproveitando o corte de 20% e a troca da qualidade por Z1 de R-PRG-12, em vez de pesquisar um valor próprio. Só reduz (respeita R-PLN-18) e não soma com dor ou sono (R-PRG-11). Regra: R-PRG-13 (nova). Arquivo: 05.
+
+52. **DEC-52. Pausa planejada — decisão do dono [P] (2026-10-25).** O dono aprovou que o atleta avise antes uma pausa (viagem, férias). Os dias da pausa não contam como treinos não feitos e a volta usa a tabela de R-PRG-08 já existente, sem número novo. As datas da pausa são dado novo do atleta: entram na exportação, somem com a exclusão e a Política de Privacidade ganhou versão nova. Regra: R-PRG-14 (nova). Arquivo: 05.
+
+53. **DEC-53. Trocar o dia do treino — decisão do dono (2026-10-25).** O atleta pode passar um treino para outro dia da mesma semana do plano, de hoje em diante, se a semana continuar dentro das regras do agendador (R-DIS-04, R-PLN-09, R-SES-10, R-SES-70). Nenhuma regra nem valor novo. O ajuste ao calor (2.4 de `docs/melhorias-futuras.md`) ficou para depois: precisa de pesquisa nova, serviço de previsão do tempo e localização do atleta.
+
 ## D. Correções à especificação (`docs/especificacao.md`)
 
 Aprovadas pelo dono em 2026-10-10; o texto da especificação ainda não foi alterado e deve ser atualizado na revisão da especificação.

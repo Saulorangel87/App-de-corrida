@@ -17,7 +17,7 @@ type Step = "choose" | "done" | "skipped" | "saved";
 type Result = { session: SessionView; day: DayResponse; nextDay: DayResponse };
 
 /** Treinos de antes de hoje sem registro: o motor conta como não feitos, então vale lembrar o atleta. */
-export const unlogged = (sessions: SessionView[], today: string) => sessions.filter((s) => !s.optional && !s.log && s.date < today);
+export const unlogged = (sessions: SessionView[], today: string) => sessions.filter((s) => !s.optional && !s.paused && !s.log && s.date < today);
 
 /**
  * Círculo de situação do treino que também registra: "fiz" ou "não fiz" sem sair da lista.
@@ -33,6 +33,8 @@ export function QuickLog({ session, today }: { session: SessionView; today: stri
 
   // Treino futuro: a API não aceita registro; o círculo só mostra a situação.
   if (session.date > today) return <Dot s={session} isToday={false} />;
+  // Dia de pausa planejada sem registro: nada a marcar (não conta como perdido).
+  if (session.paused && !session.log) return <Dot s={session} isToday={false} />;
 
   const open = () => {
     setStep("choose");

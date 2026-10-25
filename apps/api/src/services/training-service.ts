@@ -8,8 +8,10 @@ import {
   healthScreenings,
   interviewResponses,
   ladderHow,
+  lighterDayRequests,
   painReports,
   planReviews,
+  plannedPauses,
   planTemplates,
   references as referencesTable,
   scheduledWorkouts,
@@ -23,6 +25,7 @@ import {
 import {
   DIA_VERSION,
   checkMove,
+  returnBandForDays,
   moveOptions,
   ESCADA_CAMINHADA_CORRIDA,
   buildAthleteWeek,
@@ -51,7 +54,7 @@ import {
   type WorkoutLog,
   type Zone,
 } from "@passo/engine";
-import { isHighRiskBoneRegion, type CheckinInput, type PainReportInput, type PlanReviewInput, type WorkoutLogInput } from "@passo/shared";
+import { isHighRiskBoneRegion, type CheckinInput, type PainReportInput, type PlanReviewInput, type PlannedPauseInput, type WorkoutLogInput } from "@passo/shared";
 import { AppError, errors } from "../lib/errors";
 import type { Logger } from "../lib/logger";
 import { ENGINE_VERSION, ageRange, screeningInputFrom, type StoredInputs } from "./athlete-service";
@@ -88,6 +91,9 @@ type Ctx = {
 type SessionRow = typeof scheduledWorkouts.$inferSelect & { slug: string; namePt?: string; nameEn?: string };
 type WeekRow = typeof athletePlanWeeks.$inferSelect;
 type LogRow = typeof workoutLogs.$inferSelect;
+type PauseRow = Pick<typeof plannedPauses.$inferSelect, "startDate" | "endDate">;
+
+const pausedOn = (pauses: PauseRow[], date: string) => pauses.some((p) => p.startDate <= date && date <= p.endDate);
 
 export type SessionView = {
   id: string;
@@ -104,6 +110,8 @@ export type SessionView = {
   note: string | null;
   status: string;
   log: { completed: boolean; durationMinutes: number | null; distanceKm: number | null; srpe: number | null; notes: string | null } | null;
+  /** Dia dentro de uma pausa planejada (R-PRG-14): sem treino e sem contar como não feito. */
+  paused: boolean;
 };
 
 /** Uma semana do plano completo: criada (com sessões) ou prevista pelo modelo (sem sessões). */
@@ -123,7 +131,7 @@ export type OverviewWeek = {
   sessions: SessionView[];
 };
 
-const view = (s: SessionRow, log: LogRow | undefined): SessionView => ({
+const view = (s: SessionRow, log: LogRow | undefined, pauses: PauseRow[] = []): SessionView => ({
   id: s.id,
   date: s.scheduledDate,
   slug: s.slug,
@@ -139,6 +147,7 @@ const view = (s: SessionRow, log: LogRow | undefined): SessionView => ({
   log: log
     ? { completed: log.completed, durationMinutes: log.durationMinutes, distanceKm: num(log.distanceKm) ?? null, srpe: log.srpe, notes: log.notes }
     : null,
+  paused: pausedOn(pauses, s.scheduledDate),
 });
 
 // ---- Detalhe do treino: só o bloco `atleta` do catálogo (texto sem código de regra, gerado no seed).
@@ -312,6 +321,38 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
       .where(and(eq(workoutLogs.userId, userId), inArray(workoutLogs.scheduledWorkoutId, ids)));
     return new Map(rows.map((r) => [r.scheduledWorkoutId, r]));
   };
+
+  const pausesOf = (tx: Transaction, userId: string): Promise<PauseRow[]> =>
+    tx
+      .select({ startDate: plannedPauses.startDate, endDate: plannedPauses.endDate })
+      .from(plannedPauses)
+      .where(eq(plannedPauses.userId, userId))
+      .orderBy(asc(plannedPauses.startDate));
+
+  /** A pausa planejada ainda aberta (termina hoje ou depois); há no máximo uma. */
+  async function openPause(tx: Transaction, userId: string, today: string) {
+    const [row] = await tx
+      .select()
+      .from(plannedPauses)
+      .where(and(eq(plannedPauses.userId, userId), gte(plannedPauses.endDate, today)))
+      .orderBy(asc(plannedPauses.startDate))
+      .limit(1);
+    return row;
+  }
+
+  /**
+   * Estado da pausa planejada e a prévia da volta (R-PRG-14 com a tabela de R-PRG-08): conta os dias
+   * sem correr como se o atleta treinasse até a véspera da pausa.
+   */
+  async function pauseState(tx: Transaction, userId: string, today: string) {
+    const open = await openPause(tx, userId, today);
+    if (!open) return { pause: null, returnBand: null };
+    const daysOff = diff(open.startDate, open.endDate) + 2;
+    return {
+      pause: { startDate: open.startDate, endDate: open.endDate, started: open.startDate <= today },
+      returnBand: returnBandForDays(daysOff),
+    };
+  }
 
   /** Dados para trocar o dia de uma sessão: a semana dela e as sessões dos dias vizinhos (move.ts). */
   async function moveInput(tx: Transaction, ctx: Ctx, userId: string, row: SessionRow, today: string) {
@@ -568,7 +609,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
   /** Monta a entrada do motor (DayInput) a partir do que está no banco. */
   async function buildDayInput(tx: Transaction, ctx: Ctx, userId: string, date: string, weeks: WeekRow[]) {
     const since = addDays(date, -42);
-    const [checkinRows, painRows, logRows, sessions, screeningRow] = await Promise.all([
+    const [checkinRows, painRows, logRows, sessions, screeningRow, pauses, lighter] = await Promise.all([
       tx
         .select()
         .from(dailyCheckins)
@@ -590,6 +631,12 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
         .from(healthScreenings)
         .where(eq(healthScreenings.userId, userId))
         .orderBy(desc(healthScreenings.createdAt))
+        .limit(1),
+      pausesOf(tx, userId),
+      tx
+        .select({ id: lighterDayRequests.id })
+        .from(lighterDayRequests)
+        .where(and(eq(lighterDayRequests.userId, userId), eq(lighterDayRequests.date, date)))
         .limit(1),
     ]);
 
@@ -617,6 +664,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     for (const s of runSessions.filter((x) => !RUN_KINDS_EXCLUDED.has(x.kind))) {
       const log = logBySession.get(s.id);
       if (s.scheduledDate >= date) continue;
+      if (!log && pausedOn(pauses, s.scheduledDate)) continue; // R-PRG-14: pausa avisada não é treino perdido
       logs.push({
         date: s.scheduledDate,
         completed: log?.completed ?? false,
@@ -676,7 +724,8 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     const inLadderWeek = !!tw?.ladderStage;
     const highLoadWeek = !!current && !inLadderWeek && !tw?.isRecovery && target !== null && weekPlanned >= target;
 
-    const primary = runSessions.find((s) => s.scheduledDate === date);
+    const inPlannedPause = pausedOn(pauses, date);
+    const primary = inPlannedPause ? undefined : runSessions.find((s) => s.scheduledDate === date);
     const planned: PlannedSession | null = primary
       ? {
           slug: primary.slug,
@@ -731,8 +780,15 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
       dailyPainWalking,
       dailyPainWalkingOn: walkingRow?.date ?? null,
       pauseReturnStartedOn: episodeOpen && firstAfterClearance ? firstAfterClearance : pauseReturnStartedOn(runDates, date, lastRunOnInterview),
+      lighterRequested: lighter.length > 0,
+      inPlannedPause,
     };
-    return { input, current, tw, sessionsToday: sessions.filter((s) => s.scheduledDate === date), logBySession };
+    // Houve pausa planejada desde a última corrida: a volta já está explicada, não se pergunta o motivo.
+    const lastRun = runDates.filter((x) => x < date).sort().pop() ?? "";
+    const pauseSinceLastRun = pauses.some((p) => p.startDate > lastRun && p.startDate <= date);
+    return {
+      input, current, tw, sessionsToday: sessions.filter((s) => s.scheduledDate === date), logBySession, pauses, pauseSinceLastRun,
+    };
   }
 
   const decisionLabel = (dec: DayDecision) => `${dec.action}|${dec.session.slug ?? "descanso"}|${dec.session.minutes}`;
@@ -794,7 +850,8 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
     if (decision.reasons.some((r) => r.code === "pausa_aguardando_liberacao") || (decision.refer && decision.levels.painBlock)) {
       questions.push("professional_clearance");
     }
-    if (!ctx.profile.pauseCause && (decision.returnBand === "reduzido" || decision.returnBand === "longa")) questions.push("pause_cause");
+    if (!ctx.profile.pauseCause && !built.pauseSinceLastRun && (decision.returnBand === "reduzido" || decision.returnBand === "longa"))
+      questions.push("pause_cause");
 
     return {
       date,
@@ -815,7 +872,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
             }
           : null,
       sessions: built.sessionsToday.map((s) => ({
-        ...view(s, built.logBySession.get(s.id)),
+        ...view(s, built.logBySession.get(s.id), built.pauses),
         allowed: s.optional ? allowedComplementary(s.kind) : true,
       })),
       checkin: checkin
@@ -832,6 +889,10 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           }
         : null,
       decision,
+      /** "Não estou 100%" pedido para este dia (R-PRG-13). */
+      lighterRequested: built.input.lighterRequested ?? false,
+      /** Pausa planejada que contém o dia ou a próxima (R-PRG-14). */
+      plannedPause: built.pauses.find((p) => p.endDate >= date) ?? null,
       /** Nome (pt/en) do treino indicado pela decisão; `null` no descanso. */
       todayName,
       questions,
@@ -868,6 +929,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
         if (!current || !ctx.template) return { plan: null, sessions: [] as SessionView[] };
         const rows = await sessionsOf(tx, userId, eq(scheduledWorkouts.athletePlanWeekId, current.id));
         const logs = await logsByWorkout(tx, userId, rows.map((r) => r.id));
+        const pauses = await pausesOf(tx, userId);
         const tw = ctx.template.weeks[current.templateWeek - 1]!;
         return {
           plan: {
@@ -883,7 +945,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
             weekStart: current.startDate,
             weekEnd: addDays(current.startDate, 6),
           },
-          sessions: rows.map((r) => view(r, logs.get(r.id))),
+          sessions: rows.map((r) => view(r, logs.get(r.id), pauses)),
         };
       });
     },
@@ -904,6 +966,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
         const created = c ? await ensureWeeks(tx, ctx, c) : await weeksOf(tx, plan.id);
         const rows = await sessionsOf(tx, userId, eq(scheduledWorkouts.athletePlanId, plan.id));
         const logs = await logsByWorkout(tx, userId, rows.map((r) => r.id));
+        const pauses = await pausesOf(tx, userId);
 
         const shape = (w: { calendarWeek: number; templateWeek: number; startDate: string }, projected: boolean, sessions: SessionView[]): OverviewWeek => {
           const tw = template.weeks[w.templateWeek - 1]!;
@@ -927,7 +990,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           shape(
             w,
             false,
-            rows.filter((r) => r.athletePlanWeekId === w.id).map((r) => view(r, logs.get(r.id))),
+            rows.filter((r) => r.athletePlanWeekId === w.id).map((r) => view(r, logs.get(r.id), pauses)),
           ),
         );
 
@@ -1039,7 +1102,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
           .where(eq(workoutReferences.workoutId, row.workoutId))
           .orderBy(asc(referencesTable.citation));
         return {
-          session: view(row, log),
+          session: view(row, log, await pausesOf(tx, userId)),
           logPain,
           moveTo,
           detail: withLadderText(workoutDetail(catalog?.structure, profile?.level ?? "", lang), row, lang),
@@ -1068,6 +1131,64 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
         logger.info("workout_moved", { userId, kind: row.kind, from: row.scheduledDate, to });
       });
       return service.workout(userId, scheduledWorkoutId, lang, today);
+    },
+
+    /** "Não estou 100%" (R-PRG-13): liga ou desfaz o pedido de dia mais leve e devolve o dia recalculado. */
+    async setLighter(userId: string, date: string, on: boolean, lang: Lang = "pt-BR") {
+      assertDate(date);
+      return withAthlete(db, userId, async (tx) => {
+        const ctx = await loadContext(tx, userId, lang);
+        if (on) await tx.insert(lighterDayRequests).values({ userId, date }).onConflictDoNothing();
+        else await tx.delete(lighterDayRequests).where(and(eq(lighterDayRequests.userId, userId), eq(lighterDayRequests.date, date)));
+        logger.info("lighter_day", { userId, on });
+        return dayView(tx, ctx, userId, date);
+      });
+    },
+
+    /** Pausa planejada em curso ou a próxima (R-PRG-14), com a faixa de volta de R-PRG-08. */
+    async plannedPause(userId: string, today: string) {
+      assertDate(today);
+      return withAthlete(db, userId, async (tx) => pauseState(tx, userId, today));
+    },
+
+    /**
+     * Marca ou muda a pausa planejada (uma aberta por vez). Antes de começar, as duas datas mudam;
+     * já em curso, só a data de volta. Não passa do fim do plano.
+     */
+    async savePlannedPause(userId: string, input: PlannedPauseInput) {
+      const { startDate, endDate, today } = input;
+      assertDate(today);
+      return withAthlete(db, userId, async (tx) => {
+        const ctx = await loadContext(tx, userId);
+        if (!ctx.plan) throw errors.validation([{ path: "startDate", code: "no_plan" }]);
+        const open = await openPause(tx, userId, today);
+        const started = !!open && open.startDate <= today;
+        if (started && startDate !== open.startDate) throw errors.validation([{ path: "startDate", code: "pause_started" }]);
+        if (!started && startDate < today) throw errors.validation([{ path: "startDate", code: "date_in_past" }]);
+        if (endDate < today) throw errors.validation([{ path: "endDate", code: "date_in_past" }]);
+        if (endDate > ctx.plan.endDate) throw errors.validation([{ path: "endDate", code: "after_plan_end" }]);
+        if (open) await tx.delete(plannedPauses).where(and(eq(plannedPauses.id, open.id), eq(plannedPauses.userId, userId)));
+        await tx.insert(plannedPauses).values({ userId, startDate, endDate });
+        logger.info("planned_pause_saved", { userId, days: diff(startDate, endDate) + 1 });
+        return pauseState(tx, userId, today);
+      });
+    },
+
+    /** Cancela a pausa que não começou ou encerra hoje a que está em curso (volta a valer o plano). */
+    async cancelPlannedPause(userId: string, today: string) {
+      assertDate(today);
+      return withAthlete(db, userId, async (tx) => {
+        const open = await openPause(tx, userId, today);
+        if (!open) throw errors.notFound();
+        if (open.startDate >= today) await tx.delete(plannedPauses).where(and(eq(plannedPauses.id, open.id), eq(plannedPauses.userId, userId)));
+        else
+          await tx
+            .update(plannedPauses)
+            .set({ endDate: addDays(today, -1), updatedAt: d.now() })
+            .where(and(eq(plannedPauses.id, open.id), eq(plannedPauses.userId, userId)));
+        logger.info("planned_pause_cancelled", { userId });
+        return pauseState(tx, userId, today);
+      });
     },
 
     /** Check-in do dia: grava (um por dia) e devolve a decisão recalculada. */

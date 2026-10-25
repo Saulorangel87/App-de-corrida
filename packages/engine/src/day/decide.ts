@@ -316,6 +316,16 @@ export function decideDay(i: DayInput): DayDecision {
   if (pg) gates.push(pg);
   const sg = sleepGate(wellbeing, planned?.kind, todayCheckin?.sleepHours);
   if (sg) gates.push(sg);
+  // R-PRG-13: o pedido do atleta só reduz, como R-PRG-12; entra por último para não sobrepor dor nem sono.
+  if (i.lighterRequested && planned)
+    gates.push({
+      rank: 1,
+      text: m(
+        "Você pediu um dia mais leve: o treino de hoje ficou 20% mais curto e sem trechos fortes. Se aparecer dor ou mal-estar, registre.",
+        "You asked for a lighter day: today's workout is 20% shorter and has no hard parts. If pain or discomfort shows up, log it.",
+      ),
+      sources: [], reasons: [{ rule: "R-PRG-13", code: "dia_mais_leve_a_pedido", sources: [] }],
+    });
 
   // R-PRG-11: a mais restritiva, sem somar; empate pela ordem de precedência.
   let rank: Rank = 0;
@@ -423,13 +433,19 @@ export function decideDay(i: DayInput): DayDecision {
   // ---- Monta a saída ----
   const reasons: DayReason[] = [...gates.flatMap((g) => g.reasons), ...capReasons];
   if (wellbeing.persistentSleepIssue) reasons.push(...wellbeing.reasons.filter((r) => r.rule === "R-SON-12"));
+  if (!base && i.inPlannedPause) reasons.push({ rule: "R-PRG-14", code: "pausa_planejada", sources: [] });
   if (freezes.length > 0) reasons.push({ rule: "R-PRG-06", code: "progressao_congelada", detail: freezes.join(","), sources: [] });
   if (wellbeing.needsCheckin && !wellbeing.acuteIllnessToday)
     reasons.push({ rule: "R-SON-13", code: "pedir_checkin", sources: [] });
 
   let text: Msg | undefined = primary?.text;
   if (!text) {
-    if (!base) text = m("Hoje é dia de descanso no seu plano.", "Today is a rest day in your plan.");
+    if (!base && i.inPlannedPause)
+      text = m(
+        "Você está em uma pausa planejada: hoje não tem treino. Na volta, o plano retoma com cuidado, conforme os dias sem correr.",
+        "You are on a planned break: no workout today. When you come back, the plan resumes carefully, based on the days without running.",
+      );
+    else if (!base) text = m("Hoje é dia de descanso no seu plano.", "Today is a rest day in your plan.");
     else if (capReasons.length > 0) {
       const why = capReasons.map(capSentence).filter((x): x is Msg => x !== null);
       const distinct = why.filter((x, idx) => why.findIndex((y) => y.pt === x.pt) === idx);

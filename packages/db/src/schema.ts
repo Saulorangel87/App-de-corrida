@@ -563,6 +563,39 @@ export const pushSubscriptions = pgTable(
   ],
 );
 
+/** "Não estou 100%": o atleta pediu um dia mais leve (R-PRG-13). Um por dia; desfazer apaga a linha. */
+export const lighterDayRequests = pgTable(
+  "lighter_day_requests",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    date: date("date").notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [uniqueIndex("lighter_day_requests_user_date_idx").on(t.userId, t.date)],
+);
+
+/** Pausa planejada (viagem, férias), avisada antes (R-PRG-14). Sem motivo: só as datas. */
+export const plannedPauses = pgTable(
+  "planned_pauses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    startDate: date("start_date").notNull(),
+    endDate: date("end_date").notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    index("planned_pauses_user_id_idx").on(t.userId),
+    check("planned_pauses_dates", sql`${t.endDate} >= ${t.startDate}`),
+  ],
+);
+
 /** Tabelas com dados do atleta: RLS por user_id (ver 0001_rls.sql). */
 export const athleteTables = [
   "consents",
@@ -578,5 +611,7 @@ export const athleteTables = [
   "plan_reviews",
   "user_photos",
   "push_subscriptions",
+  "lighter_day_requests",
+  "planned_pauses",
   "engine_decisions",
 ] as const;

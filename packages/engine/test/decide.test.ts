@@ -356,3 +356,37 @@ describe("semana do plano como janela do teto semanal", () => {
     expect(r.session).toMatchObject({ slug: "caminhada-corrida", minutes: 30, changed: false });
   });
 });
+
+describe("dia mais leve a pedido (R-PRG-13) e pausa planejada (R-PRG-14)", () => {
+  it("o pedido reduz 20% e troca o treino forte por leve, sem aumentar nada", () => {
+    const r = decideDay(base({ planned: interval, lighterRequested: true }));
+    expect(r.action).toBe("reduzir");
+    expect(r.session).toMatchObject({ slug: "rodagem-leve", minutes: 40, maxZone: "Z1", changed: true });
+    expect(r.reasons.map((x) => x.rule)).toContain("R-PRG-13");
+    expect(r.message).toContain("Você pediu um dia mais leve");
+    const easyDay = decideDay(base({ lighterRequested: true }));
+    expect(easyDay.session).toMatchObject({ slug: "rodagem-leve", minutes: 32 });
+  });
+
+  it("não soma com dor ou sono: vale a mais restritiva, e o motivo principal é o deles (R-PRG-11)", () => {
+    const withPain = base({ pain: [pain(-1, { intensity: 3, region: "joelho" } as Partial<PainReport>)] });
+    const painOnly = decideDay(withPain);
+    expect(painOnly.action).toBe("reduzir");
+    const both = decideDay({ ...withPain, lighterRequested: true });
+    expect(both.session.minutes).toBe(painOnly.session.minutes);
+    expect(both.message).toBe(painOnly.message);
+  });
+
+  it("dia sem treino ou bloqueado: o pedido não muda nada", () => {
+    expect(decideDay(base({ planned: null, lighterRequested: true })).action).toBe("manter");
+    const ill = decideDay(base({ lighterRequested: true, checkins: [...good(-6, -1), ck(0, 7.5, { acuteIllness: true })] }));
+    expect(ill.action).toBe("descanso_ou_mobilidade");
+  });
+
+  it("pausa planejada: sem treino e com a explicação da volta", () => {
+    const r = decideDay(base({ planned: null, inPlannedPause: true }));
+    expect(r.session).toMatchObject({ slug: null, minutes: 0 });
+    expect(r.message).toContain("pausa planejada");
+    expect(r.reasons.map((x) => x.rule)).toContain("R-PRG-14");
+  });
+});

@@ -10,6 +10,8 @@ import {
   interviewResponses,
   painReports,
   planReviews,
+  plannedPauses,
+  lighterDayRequests,
   planTemplates,
   pushSubscriptions,
   scheduledWorkouts,
@@ -189,7 +191,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           .from(users)
           .where(eq(users.id, userId));
         const [
-          consentRows, profile, interviews, screenings, plans, planWeeks, scheduled, logs, checkins, pain, decisions, reviews, photo, devices,
+          consentRows, profile, interviews, screenings, plans, planWeeks, scheduled, logs, checkins, pain, decisions, reviews, photo, devices, pauses, lighter,
         ] = await Promise.all([
           tx.select().from(consents).where(eq(consents.userId, userId)),
           tx.select().from(athleteProfiles).where(eq(athleteProfiles.userId, userId)),
@@ -215,6 +217,8 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
             })
             .from(pushSubscriptions)
             .where(eq(pushSubscriptions.userId, userId)),
+          tx.select().from(plannedPauses).where(eq(plannedPauses.userId, userId)),
+          tx.select().from(lighterDayRequests).where(eq(lighterDayRequests.userId, userId)),
         ]);
         return {
           exportedAt: d.now().toISOString(),
@@ -232,6 +236,8 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           engineDecisions: decisions,
           planReviews: reviews,
           reminderDevices: devices,
+          plannedPauses: pauses,
+          lighterDayRequests: lighter,
           profilePhoto: photo[0]
             ? { contentType: photo[0].contentType, updatedAt: photo[0].updatedAt, dataBase64: photo[0].data.toString("base64") }
             : null,

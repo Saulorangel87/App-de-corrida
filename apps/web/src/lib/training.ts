@@ -30,6 +30,8 @@ export type SessionView = {
   status: "pending" | "completed" | "skipped" | string;
   log: { completed: boolean; durationMinutes: number | null; distanceKm: number | null; srpe: number | null; notes: string | null } | null;
   allowed?: boolean;
+  /** Dia dentro de uma pausa planejada: sem treino e sem contar como não feito. */
+  paused?: boolean;
 };
 
 export type DayAction = "manter" | "reduzir" | "regenerativo" | "descanso_ou_mobilidade" | "interromper_e_encaminhar";
@@ -78,6 +80,10 @@ export type DayResponse = {
     dailyPainWalking: number | null;
   } | null;
   decision: DayDecision;
+  /** "Não estou 100%" pedido para este dia. */
+  lighterRequested?: boolean;
+  /** Pausa planejada que contém o dia ou a próxima. */
+  plannedPause?: { startDate: string; endDate: string } | null;
   todayName: Localized | null;
   questions: string[];
 };
