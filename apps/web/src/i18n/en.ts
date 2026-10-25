@@ -886,6 +886,8 @@ export const en: Translation = {
     title: "Workout reminder",
     text: "Get a notice on this device on days with a workout, at the time you choose. It is optional and you can turn it off at any time.",
     time: "Time",
+    hour: "Hour",
+    minute: "Minutes",
     turnOn: "Turn on reminder",
     save: "Save time",
     off: "Turn off",

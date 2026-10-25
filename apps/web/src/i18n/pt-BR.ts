@@ -887,6 +887,8 @@ export const ptBR = {
     title: "Lembrete do treino",
     text: "Receba neste aparelho um aviso nos dias com treino, no horário que você escolher. É opcional e você desliga quando quiser.",
     time: "Horário",
+    hour: "Hora",
+    minute: "Minutos",
     turnOn: "Ligar lembrete",
     save: "Salvar horário",
     off: "Desligar",

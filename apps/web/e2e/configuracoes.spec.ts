@@ -280,7 +280,14 @@ test("lembrete do treino: aparece quando o servidor tem o lembrete e explica o q
   await mockPush(page);
   await page.goto("/configuracoes");
   const card = page.locator("section", { has: page.getByRole("heading", { name: "Lembrete do treino" }) });
-  await expect(card.getByLabel("Horário")).toHaveValue("07:00");
+  // Hora e minutos em listas do app (o relógio nativo do Android cortava o botão de confirmar).
+  await expect(card.getByRole("group", { name: "Horário" })).toBeVisible();
+  await expect(card.getByRole("combobox", { name: "Hora", exact: true })).toHaveValue("07");
+  await expect(card.getByRole("combobox", { name: "Minutos" })).toHaveValue("00");
+  await card.getByRole("combobox", { name: "Hora", exact: true }).selectOption("18");
+  await card.getByRole("combobox", { name: "Minutos" }).selectOption("30");
+  await expect(card.getByRole("combobox", { name: "Hora", exact: true })).toHaveValue("18");
+  await expect(card.locator('input[type="time"]')).toHaveCount(0);
   await expect(card.getByRole("button", { name: "Ligar lembrete" })).toBeVisible();
   await expect(card.getByText(/sem dado de saúde/)).toBeVisible();
 });

@@ -16,6 +16,50 @@ import {
 import { useErrorText } from "../lib/use-error-text";
 
 const DEFAULT_TIME = "07:00";
+const HOURS = Array.from({ length: 24 }, (_, h) => String(h).padStart(2, "0"));
+// O envio roda a cada 5 minutos: escolher de 5 em 5 não promete precisão que o lembrete não tem.
+const MINUTES = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, "0"));
+
+/**
+ * Horário em duas listas (hora e minutos) em vez de `<input type="time">`: no Android o relógio
+ * nativo corta o botão de confirmar em algumas telas e o app não consegue ajustar aquela janela.
+ */
+function TimePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const { t } = useTranslation();
+  const [h = "07", m = "00"] = value.split(":");
+  const minutes = MINUTES.includes(m) ? MINUTES : [...MINUTES, m].sort();
+  const select = "h-11 rounded-xl border border-gray-300 bg-white px-3 text-[15px] text-[#0F172A]";
+  return (
+    <fieldset className="space-y-1">
+      <legend className="mb-1 block text-xs font-semibold text-[#111827]">{t("reminder.time")}</legend>
+      <div className="flex items-center gap-2">
+        <label>
+          <span className="sr-only">{t("reminder.hour")}</span>
+          <select value={h} onChange={(e) => onChange(`${e.target.value}:${m}`)} className={select}>
+            {HOURS.map((x) => (
+              <option key={x} value={x}>
+                {x}
+              </option>
+            ))}
+          </select>
+        </label>
+        <span aria-hidden="true" className="font-semibold text-[#0F172A]">
+          :
+        </span>
+        <label>
+          <span className="sr-only">{t("reminder.minute")}</span>
+          <select value={m} onChange={(e) => onChange(`${h}:${e.target.value}`)} className={select}>
+            {minutes.map((x) => (
+              <option key={x} value={x}>
+                {x}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+    </fieldset>
+  );
+}
 const SUBS_KEY = ["push-subscriptions"] as const;
 
 /** Configurações: lembrete do treino neste aparelho (opcional, no horário escolhido pela pessoa). */
@@ -107,18 +151,13 @@ export function ReminderCard() {
           <>
             {mine && <p className="font-semibold text-[#0F172A]">{t("reminder.on", { time: mine.time })}</p>}
             <div className="flex flex-wrap items-end gap-3">
-              <label className="space-y-1">
-                <span className="block text-xs font-semibold text-[#111827]">{t("reminder.time")}</span>
-                <input
-                  type="time"
-                  value={time}
-                  onChange={(e) => {
-                    setTime(e.target.value);
-                    setSaved(false);
-                  }}
-                  className="h-11 rounded-xl border border-gray-300 px-3 text-[15px] text-[#0F172A]"
-                />
-              </label>
+              <TimePicker
+                value={time}
+                onChange={(v) => {
+                  setTime(v);
+                  setSaved(false);
+                }}
+              />
               {mine ? (
                 <>
                   <button
