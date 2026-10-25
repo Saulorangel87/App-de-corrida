@@ -102,6 +102,7 @@ export const ptBR = {
     generic: "Algo deu errado. Tente de novo em instantes.",
     INVALID_TOKEN: "Link inválido ou expirado.",
     network: "Sem conexão com o servidor. Verifique sua internet.",
+    serverDown: "O servidor não respondeu. Tente de novo em instantes.",
     INVALID_CREDENTIALS: "E-mail ou senha incorretos.",
     EMAIL_NOT_VERIFIED: "Confirme seu e-mail antes de entrar.",
     RATE_LIMITED: "Muitas tentativas. Aguarde um pouco e tente de novo.",

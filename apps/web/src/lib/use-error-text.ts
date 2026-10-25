@@ -6,7 +6,8 @@ export function useErrorText() {
   const { t } = useTranslation();
   return (error: unknown) => {
     if (error instanceof ApiError) {
-      if (error.code === "NETWORK") return t("errors.network");
+      // Com internet, quem não respondeu foi o servidor: não culpar a conexão da pessoa.
+      if (error.code === "NETWORK") return navigator.onLine ? t("errors.serverDown") : t("errors.network");
       return t(`errors.${error.code}`, { defaultValue: t("errors.generic") });
     }
     return t("errors.generic");

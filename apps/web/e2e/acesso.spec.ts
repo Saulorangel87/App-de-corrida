@@ -105,6 +105,17 @@ test("credenciais erradas: mensagem traduzida pelo código", async ({ page }) =>
   await expect(page.getByRole("button", { name: "Reenviar e-mail de confirmação" })).toHaveCount(0);
 });
 
+test("servidor fora do ar com internet: não culpa a conexão da pessoa", async ({ page }) => {
+  await mockApi(page);
+  await page.route(`${API}/auth/login`, (route) => route.abort("connectionrefused"));
+  await page.goto("/entrar");
+  await page.getByLabel("E-mail", { exact: true }).fill("ana@exemplo.com");
+  await page.getByLabel("Senha", { exact: true }).fill("errada-errada");
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "O servidor não respondeu. Tente de novo em instantes." })).toBeVisible();
+  await expect(page.getByText("Verifique sua internet")).toHaveCount(0);
+});
+
 test("login recusado por e-mail não confirmado oferece reenviar a confirmação, sem sair da tela", async ({ page }) => {
   const calls = await mockApi(page, {
     login: { status: 403, body: { error: { code: "EMAIL_NOT_VERIFIED", message: "x" } } },

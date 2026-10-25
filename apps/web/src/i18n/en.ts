@@ -102,6 +102,7 @@ export const en: Translation = {
     generic: "Something went wrong. Please try again shortly.",
     INVALID_TOKEN: "Invalid or expired link.",
     network: "Can't reach the server. Check your internet connection.",
+    serverDown: "The server did not respond. Try again in a moment.",
     INVALID_CREDENTIALS: "Wrong email or password.",
     EMAIL_NOT_VERIFIED: "Confirm your email before signing in.",
     RATE_LIMITED: "Too many attempts. Wait a moment and try again.",
