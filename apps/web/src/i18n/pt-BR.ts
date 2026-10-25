@@ -821,6 +821,16 @@ export const ptBR = {
     referNote: "Pelo que você registrou, procure um profissional de saúde antes de voltar a correr. O app não faz diagnóstico.",
     disclaimer: "O app não faz diagnóstico: se a dor ou o sintoma não passar, procure um profissional de saúde.",
   },
+  install: {
+    title: "Instalar no celular",
+    text: "Instale o Let's Go Run na tela inicial para abrir como um app, sem a barra do navegador.",
+    button: "Instalar o app",
+    ios: "No iPhone ou iPad: toque em Compartilhar, no Safari, e depois em Adicionar à Tela de Início.",
+    other: "No menu do navegador, procure Instalar ou Adicionar à tela inicial.",
+    installed: "O app já está instalado neste aparelho.",
+    offline: "Sem internet o app abre, mas só mostra e salva os seus dados quando a conexão voltar.",
+    offlineNotice: "Sem internet. Nada é salvo até a conexão voltar.",
+  },
   weekSummary: {
     title: "Como foi a semana {{n}}",
     subtitle: "Resumo do que você registrou.",

@@ -217,7 +217,7 @@ test.describe("com movimento", () => {
     const before = await viewTransitions(page);
     await page.getByRole("navigation", { name: "Navegação principal" }).getByRole("link", { name: "Histórico" }).click();
     await expect(page).toHaveURL(/\/historico$/);
-    expect(await viewTransitions(page)).toBeGreaterThan(before);
+    await expect.poll(() => viewTransitions(page)).toBeGreaterThan(before);
   });
 
   test("entrevista: a etapa entra deslizando e o progresso muda de cor com transição", async ({ page }) => {

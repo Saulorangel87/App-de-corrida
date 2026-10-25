@@ -5,9 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { routeTree } from "./routeTree.gen";
 import "@fontsource-variable/inter";
 import i18n from "./i18n";
+import { setupPwa } from "./lib/pwa";
 import "./index.css";
 
 const queryClient = new QueryClient();
+setupPwa();
 
 // Os textos calculados pelo servidor vêm no idioma da tela: trocar o idioma refaz as consultas.
 i18n.on("languageChanged", () => void queryClient.invalidateQueries());

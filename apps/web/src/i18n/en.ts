@@ -820,6 +820,16 @@ export const en: Translation = {
     referNote: "From what you logged, see a health professional before running again. The app does not diagnose.",
     disclaimer: "The app does not diagnose: if the pain or symptom does not go away, see a health professional.",
   },
+  install: {
+    title: "Install on your phone",
+    text: "Install Let's Go Run on your home screen to open it like an app, without the browser bar.",
+    button: "Install the app",
+    ios: "On iPhone or iPad: tap Share in Safari, then Add to Home Screen.",
+    other: "In your browser menu, look for Install or Add to home screen.",
+    installed: "The app is already installed on this device.",
+    offline: "Without internet the app opens, but it only shows and saves your data when the connection is back.",
+    offlineNotice: "No internet. Nothing is saved until the connection is back.",
+  },
   weekSummary: {
     title: "How week {{n}} went",
     subtitle: "A summary of what you logged.",

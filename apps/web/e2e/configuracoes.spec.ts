@@ -242,3 +242,24 @@ test("link do e-mail novo: confirma uma vez e leva ao login; link inválido most
   await page.goto("/confirmar-novo-email#token=" + "invalido-teste-".repeat(3));
   await expect(page.getByRole("heading", { name: "Link inválido ou expirado" })).toBeVisible();
 });
+
+test("instalar no celular: o botão aparece quando o navegador oferece a instalação", async ({ page }) => {
+  await mockApi(page);
+  await page.addInitScript(() => {
+    (window as unknown as { __prompted: boolean }).__prompted = false;
+    window.addEventListener("load", () => {
+      const e = new Event("beforeinstallprompt") as Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
+      e.prompt = async () => {
+        (window as unknown as { __prompted: boolean }).__prompted = true;
+      };
+      e.userChoice = Promise.resolve({ outcome: "accepted" });
+      window.dispatchEvent(e);
+    });
+  });
+  await page.goto("/configuracoes");
+  const card = page.locator("section", { has: page.getByRole("heading", { name: "Instalar no celular" }) });
+  await card.getByRole("button", { name: "Instalar o app" }).click();
+  expect(await page.evaluate(() => (window as unknown as { __prompted: boolean }).__prompted)).toBe(true);
+  await expect(card.getByRole("button", { name: "Instalar o app" })).toHaveCount(0);
+  await expect(card.getByText("No menu do navegador, procure Instalar ou Adicionar à tela inicial.")).toBeVisible();
+});

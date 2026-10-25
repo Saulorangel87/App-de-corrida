@@ -8,6 +8,7 @@ import { ChoiceGroup } from "../components/choice";
 import { CheckField, TextField } from "../components/field";
 import { FlowLayout } from "../components/flow-layout";
 import { HealthChangeCard } from "../components/health-change";
+import { InstallAppCard } from "../components/install-app";
 import { LanguageSwitch } from "../components/language-switch";
 import { ApiError, fetchApi } from "../lib/api";
 import { formatDate, localToday } from "../lib/dates";
@@ -85,6 +86,7 @@ function SettingsPage() {
       <div className="space-y-4">
         <ProfileCard user={user} />
         <DevicesCard />
+        <InstallAppCard />
         {profile.data && <HealthCard profile={profile.data} />}
         <DataCard />
       </div>
