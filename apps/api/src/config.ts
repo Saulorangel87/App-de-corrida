@@ -21,7 +21,7 @@ export const authConfig = {
     passwordResetMs: 60 * MINUTE,
   },
   password: { min: 10, max: 128 },
-  termsVersion: "2026-10-25", // igual a LEGAL_VERSION de apps/web/src/lib/legal.ts
+  termsVersion: "2026-10-25.2", // igual a LEGAL_VERSION de apps/web/src/lib/legal.ts
 } as const;
 
 export type RateLimitConfig = { windowMs: number; limit: number };

@@ -11,9 +11,11 @@ import {
   pushSupported,
   saveReminder,
   type PushConfig,
+  type ReminderDay,
   type ServerSubscription,
 } from "../lib/reminder";
 import { useErrorText } from "../lib/use-error-text";
+import { ChoiceGroup } from "./choice";
 
 const DEFAULT_TIME = "07:00";
 const HOURS = Array.from({ length: 24 }, (_, h) => String(h).padStart(2, "0"));
@@ -62,7 +64,10 @@ function TimePicker({ value, onChange }: { value: string; onChange: (v: string) 
 }
 const SUBS_KEY = ["push-subscriptions"] as const;
 
-/** Configurações: lembrete do treino neste aparelho (opcional, no horário escolhido pela pessoa). */
+const primary =
+  "inline-flex h-11 items-center justify-center rounded-xl bg-[#C2410C] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#9A3412] disabled:opacity-50";
+
+/** Configurações: lembrete do treino neste aparelho (opcional; no dia do treino ou na véspera, no horário escolhido). */
 export function ReminderCard() {
   const { t } = useTranslation();
   const errorText = useErrorText();
@@ -77,6 +82,7 @@ export function ReminderCard() {
   });
   const [endpoint, setEndpoint] = useState<string | null | undefined>(undefined);
   const [time, setTime] = useState(DEFAULT_TIME);
+  const [day, setDay] = useState<ReminderDay>("mesmo_dia");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -87,7 +93,10 @@ export function ReminderCard() {
   }, []);
   const mine = subs.data?.find((s) => s.endpoint === endpoint) ?? null;
   useEffect(() => {
-    if (mine) setTime(mine.time);
+    if (mine) {
+      setTime(mine.time);
+      setDay(mine.day);
+    }
   }, [mine]);
 
   // Sem o lembrete no servidor (chaves não configuradas), a área nem aparece.
@@ -109,17 +118,17 @@ export function ReminderCard() {
 
   const turnOn = () =>
     run(async () => {
-      const result = await enableReminder(config.data!.publicKey!, time);
+      const result = await enableReminder(config.data!.publicKey!, time, day);
       setPermission(result);
       if (result === "granted") {
         setEndpoint((await currentSubscription())?.endpoint ?? null);
         setSaved(true);
       }
     });
-  const changeTime = () =>
+  const save = () =>
     run(async () => {
       const sub = await currentSubscription();
-      if (sub) await saveReminder(sub, time);
+      if (sub) await saveReminder(sub, time, day);
       setSaved(true);
     });
   const turnOff = () =>
@@ -130,15 +139,16 @@ export function ReminderCard() {
 
   const unsupported = !pushSupported();
   const needsInstall = isIos() && !isStandalone();
+  const changed = !mine || mine.time !== time || mine.day !== day;
 
   return (
     <section className="rounded-2xl border border-gray-200 bg-white p-5">
-      <h2 className="mb-3 flex items-center gap-2 text-lg font-bold tracking-tight text-[#0F172A]">
+      <h2 className="mb-2 flex items-center gap-2 text-lg font-bold tracking-tight text-[#0F172A]">
         <Bell size={20} className="text-[#C2410C]" aria-hidden="true" />
         {t("reminder.title")}
       </h2>
-      <div className="space-y-3 text-[15px] leading-relaxed text-gray-700">
-        <p>{t("reminder.text")}</p>
+      <div className="space-y-4 text-[15px] leading-relaxed text-gray-700">
+        <p>{mine ? <span className="font-semibold text-[#0F172A]">{t(`reminder.on.${mine.day}`, { time: mine.time })}</span> : t("reminder.text")}</p>
         {needsInstall ? (
           <p className="text-sm text-gray-600">{t("reminder.iosInstall")}</p>
         ) : unsupported ? (
@@ -149,7 +159,19 @@ export function ReminderCard() {
           </p>
         ) : (
           <>
-            {mine && <p className="font-semibold text-[#0F172A]">{t("reminder.on", { time: mine.time })}</p>}
+            <ChoiceGroup
+              name="reminder-day"
+              legend={t("reminder.day")}
+              options={[
+                { value: "mesmo_dia" as const, label: t("reminder.days.mesmo_dia") },
+                { value: "vespera" as const, label: t("reminder.days.vespera") },
+              ]}
+              value={day}
+              onChange={(v) => {
+                setDay(v);
+                setSaved(false);
+              }}
+            />
             <div className="flex flex-wrap items-end gap-3">
               <TimePicker
                 value={time}
@@ -158,35 +180,9 @@ export function ReminderCard() {
                   setSaved(false);
                 }}
               />
-              {mine ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => void changeTime()}
-                    disabled={busy || !time || time === mine.time}
-                    className="inline-flex h-11 items-center justify-center rounded-xl bg-[#C2410C] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#9A3412] disabled:opacity-50"
-                  >
-                    {t("reminder.save")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => void turnOff()}
-                    disabled={busy}
-                    className="inline-flex h-11 items-center justify-center rounded-xl border border-gray-300 px-5 text-sm font-semibold text-[#0F172A] hover:bg-gray-50"
-                  >
-                    {t("reminder.off")}
-                  </button>
-                </>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => void turnOn()}
-                  disabled={busy || !time}
-                  className="inline-flex h-11 items-center justify-center rounded-xl bg-[#C2410C] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#9A3412] disabled:opacity-50"
-                >
-                  {t("reminder.turnOn")}
-                </button>
-              )}
+              <button type="button" onClick={() => void (mine ? save() : turnOn())} disabled={busy || !changed} className={primary}>
+                {mine ? t("reminder.save") : t("reminder.turnOn")}
+              </button>
             </div>
             {saved && (
               <p role="status" className="text-sm font-semibold text-green-700">
@@ -198,7 +194,19 @@ export function ReminderCard() {
                 {error}
               </p>
             )}
-            <p className="text-sm text-gray-500">{t("reminder.privacy")}</p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs text-gray-500">{t("reminder.privacy")}</p>
+              {mine && (
+                <button
+                  type="button"
+                  onClick={() => void turnOff()}
+                  disabled={busy}
+                  className="text-sm font-semibold text-[#C2410C] underline-offset-2 hover:underline disabled:opacity-50"
+                >
+                  {t("reminder.off")}
+                </button>
+              )}
+            </div>
           </>
         )}
       </div>

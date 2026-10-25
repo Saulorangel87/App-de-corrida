@@ -211,6 +211,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
             .select({
               endpoint: pushSubscriptions.endpoint,
               reminderTime: pushSubscriptions.reminderTime,
+              reminderDay: pushSubscriptions.reminderDay,
               timeZone: pushSubscriptions.timeZone,
               lastSentOn: pushSubscriptions.lastSentOn,
               createdAt: pushSubscriptions.createdAt,

@@ -1,0 +1,2 @@
+ALTER TABLE "push_subscriptions" ADD COLUMN "reminder_day" varchar(10) DEFAULT 'mesmo_dia' NOT NULL;--> statement-breakpoint
+ALTER TABLE "push_subscriptions" ADD CONSTRAINT "push_subscriptions_day" CHECK ("push_subscriptions"."reminder_day" in ('mesmo_dia', 'vespera'));

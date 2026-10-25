@@ -140,15 +140,19 @@ export const historyQuerySchema = z.object({
 const timeZone = z.string().trim().min(1).max(64).regex(/^[A-Za-z_]+(\/[A-Za-z0-9_+-]+)*$/);
 /** Horário do lembrete, "HH:MM" (24 h). */
 export const reminderTime = z.string().regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/);
+/** Quando o lembrete chega: no dia do treino ou na véspera (mesmo horário). */
+export const reminderDay = z.enum(["mesmo_dia", "vespera"]);
+export type ReminderDay = z.infer<typeof reminderDay>;
 /** Endereço de notificação: sempre https (é o serviço de push do navegador). */
 const pushEndpoint = z.string().trim().max(1000).url().startsWith("https://");
 
-/** Lembrete do treino neste aparelho (Web Push): endereço, chaves de cifra, horário e fuso da pessoa. */
+/** Lembrete do treino neste aparelho (Web Push): endereço, chaves de cifra, horário, dia do aviso e fuso da pessoa. */
 export const pushSubscriptionSchema = z
   .object({
     endpoint: pushEndpoint,
     keys: z.object({ p256dh: z.string().min(1).max(200), auth: z.string().min(1).max(100) }).strict(),
     time: reminderTime,
+    day: reminderDay.default("mesmo_dia"),
     timeZone,
   })
   .strict();

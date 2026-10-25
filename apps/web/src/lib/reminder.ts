@@ -4,7 +4,8 @@ import { fetchApi } from "./api";
 // navegador e registro na API com o horário e o fuso da pessoa.
 
 export type PushConfig = { enabled: boolean; publicKey: string | null };
-export type ServerSubscription = { endpoint: string; time: string; timeZone: string };
+export type ReminderDay = "mesmo_dia" | "vespera";
+export type ServerSubscription = { endpoint: string; time: string; day: ReminderDay; timeZone: string };
 
 export const pushSupported = () => "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
 
@@ -24,17 +25,17 @@ export async function currentSubscription(): Promise<PushSubscription | null> {
   return (await reg?.pushManager.getSubscription()) ?? null;
 }
 
-/** Pede a permissão, inscreve o aparelho e grava o horário na API. Devolve a permissão final. */
-export async function enableReminder(publicKey: string, time: string): Promise<NotificationPermission> {
+/** Pede a permissão, inscreve o aparelho e grava o horário e o dia na API. Devolve a permissão final. */
+export async function enableReminder(publicKey: string, time: string, day: ReminderDay): Promise<NotificationPermission> {
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return permission;
   const reg = await navigator.serviceWorker.ready;
   const sub = (await reg.pushManager.getSubscription()) ?? (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(publicKey) }));
-  await saveReminder(sub, time);
+  await saveReminder(sub, time, day);
   return permission;
 }
 
-export async function saveReminder(sub: PushSubscription, time: string) {
+export async function saveReminder(sub: PushSubscription, time: string, day: ReminderDay) {
   const json = sub.toJSON();
   await fetchApi("/push/subscription", {
     method: "PUT",
@@ -42,6 +43,7 @@ export async function saveReminder(sub: PushSubscription, time: string) {
       endpoint: sub.endpoint,
       keys: { p256dh: json.keys?.p256dh ?? "", auth: json.keys?.auth ?? "" },
       time,
+      day,
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }),
   });

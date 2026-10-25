@@ -113,6 +113,13 @@
       "when": 1792937515254,
       "tag": "0015_pedidos_e_pausa",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1792944120735,
+      "tag": "0016_lembrete_na_vespera",
+      "breakpoints": true
     }
   ]
 }

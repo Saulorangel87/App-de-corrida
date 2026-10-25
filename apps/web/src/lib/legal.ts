@@ -3,7 +3,7 @@
 // (novo provedor, novo dado coletado, nova integração) deve atualizar estes textos e LEGAL_VERSION
 // no mesmo commit, e manter `termsVersion` da API (apps/api/src/config.ts) igual a LEGAL_VERSION.
 
-export const LEGAL_VERSION = "2026-10-25";
+export const LEGAL_VERSION = "2026-10-25.2";
 export const LEGAL_UPDATED_LABEL = "25 de outubro de 2026";
 export const LEGAL_CONTACT_EMAIL = "sauloleonardo1987@gmail.com";
 
@@ -50,7 +50,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         "Treinos: plano, sessões, se foram feitas, duração, distância, esforço percebido e comentário, a troca de dia de um treino, os dias em que você pediu um treino mais leve e as pausas planejadas que você marcar (só as datas de início e de volta, sem o motivo).",
         "Decisões do app: para cada ajuste de treino, guardamos a regra aplicada e a versão dela, para que você possa ver por que o treino foi mantido, reduzido ou trocado por descanso.",
         "Registro do aceite: a data e a versão dos Termos de Uso e da Política de Privacidade que você aceitou, o consentimento para tratar dados de saúde e a declaração de que tem 18 anos ou mais.",
-        "Lembrete do treino (opcional): se você ligar, guardamos o endereço de notificação que o navegador dá ao seu aparelho, as chaves para cifrar o aviso, o horário escolhido, o fuso horário e o último dia em que o aviso saiu. Desligar o lembrete ou sair da conta naquele aparelho apaga esses dados.",
+        "Lembrete do treino (opcional): se você ligar, guardamos o endereço de notificação que o navegador dá ao seu aparelho, as chaves para cifrar o aviso, o horário e o dia escolhidos (no dia do treino ou na véspera), o fuso horário e o último dia em que o aviso saiu. Desligar o lembrete ou sair da conta naquele aparelho apaga esses dados.",
         "Dados técnicos: um cookie de sessão; o navegador e o sistema de cada sessão aberta (para você reconhecer seus aparelhos); o idioma, no armazenamento do navegador; e o endereço IP, usado para limitar tentativas de acesso indevido. A rede e o servidor podem registrar IP e horário por segurança.",
       ],
     },

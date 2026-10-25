@@ -73,7 +73,7 @@ describe("lembrete do treino (Web Push)", () => {
     expect((await t.request("PUT", "/push/subscription", d, a.cookie)).status).toBe(200);
     expect((await t.request("PUT", "/push/subscription", { ...d, time: "18:30" }, a.cookie)).status).toBe(200);
     expect((await json(await t.request("GET", "/push/subscriptions", undefined, a.cookie))).subscriptions).toEqual([
-      { endpoint: d.endpoint, time: "18:30", timeZone: "America/Sao_Paulo" },
+      { endpoint: d.endpoint, time: "18:30", day: "mesmo_dia", timeZone: "America/Sao_Paulo" },
     ]);
     expect((await t.request("DELETE", "/push/subscription", { endpoint: d.endpoint }, a.cookie)).status).toBe(204);
     expect((await json(await t.request("GET", "/push/subscriptions", undefined, a.cookie))).subscriptions).toEqual([]);
@@ -86,6 +86,7 @@ describe("lembrete do treino (Web Push)", () => {
       { ...device("x"), time: "25:00" },
       { ...device("x"), timeZone: "Marte/Olimpo" },
       { ...device("x"), userId: "outro" },
+      { ...device("x"), day: "semana_que_vem" },
     ]) {
       expect((await t.request("PUT", "/push/subscription", body, a.cookie)).status).toBe(400);
     }
@@ -106,6 +107,22 @@ describe("lembrete do treino (Web Push)", () => {
 
     await t.app.push.sendDue(at(a.restDay, "08:00"));
     expect(mine()).toHaveLength(1);
+  });
+
+  it("na véspera: avisa no dia anterior ao treino, com o texto de amanhã, e não no dia sem treino seguinte", async () => {
+    const a = await onboard();
+    const d = { ...device("vespera", "20:00"), day: "vespera" };
+    expect(await json(await t.request("PUT", "/push/subscription", d, a.cookie))).toMatchObject({ time: "20:00", day: "vespera" });
+    const mine = () => sent.filter((s) => s.endpoint === d.endpoint);
+    const before = (iso: string) => new Date(Date.parse(`${iso}T00:00:00Z`) - 86_400_000).toISOString().slice(0, 10);
+
+    await t.app.push.sendDue(at(before(a.restDay), "20:01"));
+    expect(mine()).toHaveLength(0);
+    await t.app.push.sendDue(at(before(a.runDay), "19:55"));
+    expect(mine()).toHaveLength(0);
+    await t.app.push.sendDue(at(before(a.runDay), "20:01"));
+    expect(mine()).toHaveLength(1);
+    expect(mine()[0]!.payload).toEqual({ title: "Let's Go Run", body: "Amanhã tem treino. Veja o que o app preparou.", url: "/painel" });
   });
 
   it("muito atrasado (API fora do ar no horário) não envia; pausa por lesão também não", async () => {
@@ -162,7 +179,7 @@ describe("lembrete do treino (Web Push)", () => {
     await t.request("PUT", "/push/subscription", d, a.cookie);
     const exp = await json(await t.request("GET", "/account/export", undefined, a.cookie));
     expect(exp.reminderDevices).toHaveLength(1);
-    expect(exp.reminderDevices[0]).toMatchObject({ endpoint: d.endpoint, reminderTime: "07:00", timeZone: "America/Sao_Paulo" });
+    expect(exp.reminderDevices[0]).toMatchObject({ endpoint: d.endpoint, reminderTime: "07:00", reminderDay: "mesmo_dia", timeZone: "America/Sao_Paulo" });
     expect(JSON.stringify(exp)).not.toContain("segredo");
     await admin`delete from users where id = ${a.userId}`;
     const [{ n }] = await admin`select count(*)::int as n from push_subscriptions where endpoint = ${d.endpoint}`;

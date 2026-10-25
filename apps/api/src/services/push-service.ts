@@ -16,9 +16,17 @@ const LATE_LIMIT_MINUTES = 180;
 // Texto genérico de propósito: a notificação passa pelo serviço de push do navegador (Google,
 // Apple, Mozilla), fora do Brasil. Nada de treino, dor ou saúde vai nela.
 const MESSAGE = {
-  "pt-BR": { title: "Let's Go Run", body: "Veja o que o app preparou para o seu treino de hoje." },
-  en: { title: "Let's Go Run", body: "See what the app has ready for today's workout." },
+  mesmo_dia: {
+    "pt-BR": { title: "Let's Go Run", body: "Veja o que o app preparou para o seu treino de hoje." },
+    en: { title: "Let's Go Run", body: "See what the app has ready for today's workout." },
+  },
+  vespera: {
+    "pt-BR": { title: "Let's Go Run", body: "Amanhã tem treino. Veja o que o app preparou." },
+    en: { title: "Let's Go Run", body: "You have a workout tomorrow. See what the app has ready." },
+  },
 } as const;
+
+const nextDay = (iso: string) => new Date(Date.parse(`${iso}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10);
 
 /** Data e hora locais ("2026-10-24", "07:30") de um instante num fuso IANA. */
 export function localNow(now: Date, timeZone: string): { date: string; time: string } {
@@ -65,8 +73,8 @@ export function webPushSender(vapid: VapidConfig): PushSender {
 
 /**
  * Lembrete do treino (Web Push). O aparelho só é guardado com o horário que a pessoa escolheu;
- * o envio olha cada aparelho no fuso dele e manda no máximo um lembrete por dia, só em dia com
- * treino planejado e sem pausa por dor, lesão ou doença.
+ * o envio olha cada aparelho no fuso dele e manda no máximo um lembrete por dia, só para dia com
+ * treino planejado (o de hoje ou, se a pessoa escolheu a véspera, o de amanhã) e sem pausa por dor, lesão ou doença.
  */
 export function pushService(d: { db: Database; logger: Logger; vapid: VapidConfig | null; sender?: PushSender }) {
   const { db, logger, vapid } = d;
@@ -85,7 +93,12 @@ export function pushService(d: { db: Database; logger: Logger; vapid: VapidConfi
       requireEnabled();
       return withAthlete(db, userId, (tx) =>
         tx
-          .select({ endpoint: pushSubscriptions.endpoint, time: pushSubscriptions.reminderTime, timeZone: pushSubscriptions.timeZone })
+          .select({
+            endpoint: pushSubscriptions.endpoint,
+            time: pushSubscriptions.reminderTime,
+            day: pushSubscriptions.reminderDay,
+            timeZone: pushSubscriptions.timeZone,
+          })
           .from(pushSubscriptions)
           .where(eq(pushSubscriptions.userId, userId)),
       );
@@ -95,7 +108,7 @@ export function pushService(d: { db: Database; logger: Logger; vapid: VapidConfi
     async subscribe(userId: string, input: PushSubscriptionInput) {
       requireEnabled();
       if (!validTimeZone(input.timeZone)) throw errors.validation([{ path: "timeZone", code: "invalid_time_zone" }]);
-      const values = { endpoint: input.endpoint, p256dh: input.keys.p256dh, auth: input.keys.auth, reminderTime: input.time, timeZone: input.timeZone };
+      const values = { endpoint: input.endpoint, p256dh: input.keys.p256dh, auth: input.keys.auth, reminderTime: input.time, reminderDay: input.day, timeZone: input.timeZone };
       await withAthlete(db, userId, (tx) =>
         tx
           .insert(pushSubscriptions)
@@ -106,7 +119,7 @@ export function pushService(d: { db: Database; logger: Logger; vapid: VapidConfi
           }),
       );
       logger.info("push_subscribed", { userId });
-      return { time: input.time, timeZone: input.timeZone };
+      return { time: input.time, day: input.day, timeZone: input.timeZone };
     },
 
     async unsubscribe(userId: string, endpoint: string) {
@@ -140,16 +153,18 @@ export function pushService(d: { db: Database; logger: Logger; vapid: VapidConfi
               if (sub.lastSentOn === local.date) continue;
               const late = minutesOf(local.time) - minutesOf(sub.reminderTime);
               if (late < 0) continue;
+              // O treino que o aviso anuncia: o de hoje ou, na véspera, o de amanhã.
+              const target = sub.reminderDay === "vespera" ? nextDay(local.date) : local.date;
               const [planned] = await tx
                 .select({ id: scheduledWorkouts.id })
                 .from(scheduledWorkouts)
-                .where(and(eq(scheduledWorkouts.userId, userId), eq(scheduledWorkouts.scheduledDate, local.date), eq(scheduledWorkouts.optional, false)))
+                .where(and(eq(scheduledWorkouts.userId, userId), eq(scheduledWorkouts.scheduledDate, target), eq(scheduledWorkouts.optional, false)))
                 .limit(1);
               // Pausa planejada (R-PRG-14): sem treino, sem lembrete.
               const [onBreak] = await tx
                 .select({ id: plannedPauses.id })
                 .from(plannedPauses)
-                .where(and(eq(plannedPauses.userId, userId), lte(plannedPauses.startDate, local.date), gte(plannedPauses.endDate, local.date)))
+                .where(and(eq(plannedPauses.userId, userId), lte(plannedPauses.startDate, target), gte(plannedPauses.endDate, target)))
                 .limit(1);
               out.push({ sub, date: local.date, notify: !!planned && !paused && !onBreak && late <= LATE_LIMIT_MINUTES });
             }
@@ -161,7 +176,7 @@ export function pushService(d: { db: Database; logger: Logger; vapid: VapidConfi
             if (notify) {
               const status = await send(
                 { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-                JSON.stringify({ ...MESSAGE[due.lang], url: "/painel" }),
+                JSON.stringify({ ...MESSAGE[sub.reminderDay === "vespera" ? "vespera" : "mesmo_dia"][due.lang], url: "/painel" }),
               );
               // 404 e 410: o aparelho cancelou a inscrição (desinstalou, limpou dados).
               gone = status === 404 || status === 410;

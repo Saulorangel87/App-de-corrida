@@ -273,7 +273,7 @@ async function mockPush(page: Page) {
   );
 }
 
-test("lembrete do treino: aparece quando o servidor tem o lembrete e explica o que vai no aviso", async ({ page }) => {
+test("lembrete do treino: aparece quando o servidor tem o lembrete, escolhe o dia e o horário e explica o que vai no aviso", async ({ page }) => {
   // O Chromium sem janela sempre responde "bloqueado": simula a permissão ainda não pedida.
   await page.addInitScript(() => Object.defineProperty(Notification, "permission", { get: () => "default" }));
   await mockApi(page);
@@ -288,8 +288,13 @@ test("lembrete do treino: aparece quando o servidor tem o lembrete e explica o q
   await card.getByRole("combobox", { name: "Minutos" }).selectOption("30");
   await expect(card.getByRole("combobox", { name: "Hora", exact: true })).toHaveValue("18");
   await expect(card.locator('input[type="time"]')).toHaveCount(0);
+  // Dia do aviso: no dia do treino (padrão) ou na véspera.
+  const when = card.getByRole("group", { name: "Quando avisar" });
+  await expect(when.getByRole("radio", { name: "No dia do treino" })).toBeChecked();
+  await when.getByText("Na véspera").click();
+  await expect(when.getByRole("radio", { name: "Na véspera" })).toBeChecked();
   await expect(card.getByRole("button", { name: "Ligar lembrete" })).toBeVisible();
-  await expect(card.getByText(/sem dado de saúde/)).toBeVisible();
+  await expect(card.getByText(/não traz dado de saúde/)).toBeVisible();
 });
 
 test("lembrete do treino: sem o lembrete no servidor, a área não aparece", async ({ page }) => {

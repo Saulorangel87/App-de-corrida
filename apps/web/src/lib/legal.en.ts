@@ -32,7 +32,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         "Workouts: plan, sessions, whether they were done, duration, distance, perceived effort and comment, moving a workout to another day, the days you asked for a lighter workout and the planned breaks you set (only the start and return dates, not the reason).",
         "App decisions: for each workout adjustment, we keep the rule applied and its version, so that you can see why the workout was kept, reduced or replaced with rest.",
         "Consent record: the date and version of the Terms of Use and the Privacy Policy you accepted, the consent to process health data and the declaration that you are 18 or older.",
-        "Workout reminder (optional): if you turn it on, we keep the notification address the browser gives your device, the keys to encrypt the notice, the time you chose, the time zone and the last day the notice was sent. Turning the reminder off or logging out on that device deletes this data.",
+        "Workout reminder (optional): if you turn it on, we keep the notification address the browser gives your device, the keys to encrypt the notice, the time and day you chose (on the workout day or the day before), the time zone and the last day the notice was sent. Turning the reminder off or logging out on that device deletes this data.",
         "Technical data: a session cookie; the browser and system of each open session (so you can recognize your devices); the language, in the browser's storage; and the IP address, used to limit attempts at improper access. The network and the server may record IP and time for security.",
       ],
     },
