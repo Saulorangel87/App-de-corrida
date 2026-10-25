@@ -94,6 +94,7 @@ Feito, com OK do dono:
 - Front no Cloudflare Pages com domínio `letsgorun.devsaulo.com.br` e SSL ativo; `letsgorun` e `letsgorun-api` excluídos da regra de cabeçalhos da zona; cabeçalhos, recarga de rotas, CORS e login genérico conferidos pela internet.
 
 - **Atualização de 2026-10-17 (OK do dono):** API refeita na VPS com o ritmo no histórico e as dependências novas (PRs #13 e #14, tsup 9). Sem migração nova. Backup antes, imagem anterior em `app-de-corrida-api:previous`, `/health` 200 e rota nova sem sessão 401. Detalhes e como voltar atrás em `ops/README.md`.
+- **Atualização de 2026-10-24 (OK do dono):** registro rápido, força e mobilidade sem tempo e km, resumo da semana, app instalável, lembrete do treino (migração 0014, chaves VAPID no `.env` da VPS) e mensagens de erro mais claras. Backup `passo_20261025T003019Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front publicado pela branch `producao`.
 
 Falta:
 - ~~Primeiro envio real de e-mail~~: confirmado pelo dono em 2026-10-11.
