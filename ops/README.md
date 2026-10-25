@@ -13,6 +13,7 @@ Pasta na VPS: `~/apps/app-de-corrida` (copie para lá `docker-compose.yml` e os 
 | `FRONTEND_URL` | origem exata do front, com https (`https://letsgorun.devsaulo.com.br`): CORS, verificação de `Origin` e links dos e-mails |
 | `SESSION_SECRET` | 32+ caracteres aleatórios (`openssl rand -hex 32`); troca derruba todas as sessões e invalida os links pendentes |
 | `RESEND_API_KEY`, `EMAIL_FROM` | e-mails de conta; a API não inicia em produção sem a chave; o domínio do remetente precisa estar verificado no Resend (SPF e DKIM) |
+| `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | lembrete do treino (Web Push); par gerado uma vez com `web-push generate-vapid-keys` (2026-10-24, dentro da imagem de build). Trocar o par invalida todos os lembretes ligados (cada aparelho precisa ligar de novo). Sem as chaves, o lembrete fica desligado |
 | `BACKUP_RCLONE_REMOTE` | remote `crypt` do rclone: `corrida-run:` (sobre `cadencia-oos:backups-vps/letsgorun`) |
 
 Gere senhas com `openssl rand -hex 32`.
@@ -55,7 +56,7 @@ O `connect` não sobrevive à recriação do container do túnel: se ele for rec
 
 ## Migrações e seed (do repositório, com o banco acessível)
 
-Migrações atuais: 0000 a 0013 (a 0011 guarda onde o plano começa, a 0012 as avaliações de bloco, a 0013 a foto de perfil e o e-mail novo pendente). O seed grava o catálogo com os textos do atleta em português e inglês; rode depois de migrar.
+Migrações atuais: 0000 a 0014 (a 0011 guarda onde o plano começa, a 0012 as avaliações de bloco, a 0013 a foto de perfil e o e-mail novo pendente, a 0014 o lembrete do treino). Na VPS não há Node: a migração roda na imagem de build da API, na rede interna do banco (`docker build --target build -t app-de-corrida-api:build .` e `docker run --rm --network app-de-corrida_data -e MIGRATION_DATABASE_URL=postgres://passo_migrator:...@app-de-corrida:5432/passo app-de-corrida-api:build pnpm --filter @passo/db db:migrate`; feito assim em 2026-10-24). O seed grava o catálogo com os textos do atleta em português e inglês; rode depois de migrar.
 
 ```
 MIGRATION_DATABASE_URL=postgres://passo_migrator:...@host:5432/passo pnpm --filter @passo/db db:migrate
