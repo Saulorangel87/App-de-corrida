@@ -9,6 +9,10 @@ const schema = z
     SESSION_SECRET: z.string().min(32, "use pelo menos 32 caracteres aleatórios"),
     RESEND_API_KEY: z.string().optional(),
     EMAIL_FROM: z.string().default("Let's Go Run <no-reply@letsgorun.devsaulo.com.br>"),
+    // Lembrete do treino (Web Push). Sem as duas chaves, o lembrete fica desligado.
+    VAPID_PUBLIC_KEY: z.string().optional(),
+    VAPID_PRIVATE_KEY: z.string().optional(),
+    VAPID_SUBJECT: z.string().default("mailto:no-reply@letsgorun.devsaulo.com.br"),
   })
   .superRefine((env, ctx) => {
     if (env.NODE_ENV === "production") {

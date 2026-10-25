@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { ApiError, fetchApi } from "./api";
+import { disableReminder } from "./reminder";
 
 export type AuthUser = {
   id: string;
@@ -38,7 +39,11 @@ export function useLogout() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   return useMutation({
-    mutationFn: () => fetchApi("/auth/logout", { method: "POST" }),
+    // O lembrete deste aparelho sai junto: quem entrar depois nele não recebe o lembrete de outra pessoa.
+    mutationFn: async () => {
+      await disableReminder();
+      await fetchApi("/auth/logout", { method: "POST" });
+    },
     onSettled: () => {
       queryClient.clear();
       queryClient.setQueryData(AUTH_KEY, null);

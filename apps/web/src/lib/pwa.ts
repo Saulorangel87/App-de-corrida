@@ -19,10 +19,10 @@ export function setupPwa() {
     deferred = null;
     notify();
   });
-  // Só no build: em desenvolvimento o cache atrapalharia ver as mudanças.
-  if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  // Em desenvolvimento, sem cache (atrapalharia ver as mudanças), mas com o lembrete.
+  if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("/sw.js").catch(() => {
+      navigator.serviceWorker.register(import.meta.env.PROD ? "/sw.js" : "/sw.js?cache=off").catch(() => {
         /* sem service worker o app funciona igual, só não abre sem internet */
       });
     });

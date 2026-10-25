@@ -14,9 +14,11 @@ import { apiSecureHeaders, limit, originCheck } from "./middleware/security";
 import { authRepository } from "./repositories/auth-repository";
 import { athleteRoutes } from "./routes/athlete";
 import { authRoutes } from "./routes/auth";
+import { pushRoutes } from "./routes/push";
 import { trainingRoutes } from "./routes/training";
 import { athleteService } from "./services/athlete-service";
 import { authService, type BackgroundRunner } from "./services/auth-service";
+import { pushService, type PushSender, type VapidConfig } from "./services/push-service";
 import { trainingService } from "./services/training-service";
 import type { AppEnv } from "./types";
 
@@ -27,6 +29,9 @@ export type AppDeps = {
   production: boolean;
   frontendUrl: string;
   sessionSecret: string;
+  /** Chaves do Web Push; sem elas o lembrete do treino fica desligado. */
+  vapid?: VapidConfig | null;
+  pushSender?: PushSender;
   now?: () => Date;
   background?: BackgroundRunner;
   rateLimits?: typeof rateLimitConfig;
@@ -72,6 +77,7 @@ export function createApp(deps: AppDeps) {
   const session = requireSession(auth, cookie);
   const athlete = athleteService({ db: deps.db, logger, now: deps.now ?? (() => new Date()) });
   const training = trainingService({ db: deps.db, logger, now: deps.now ?? (() => new Date()) });
+  const push = pushService({ db: deps.db, logger, vapid: deps.vapid ?? null, sender: deps.pushSender });
   const rateLimits = deps.rateLimits ?? rateLimitConfig;
 
   const app = new Hono<AppEnv>();
@@ -129,6 +135,7 @@ export function createApp(deps: AppDeps) {
   v1.route("/auth", authRoutes({ auth, cookie, session, production, rateLimits }));
   v1.route("/", athleteRoutes({ athlete, session }));
   v1.route("/", trainingRoutes({ training, session }));
+  v1.route("/", pushRoutes({ push, session }));
   app.route("/api/v1", v1);
 
   app.notFound(() => {
@@ -153,5 +160,5 @@ export function createApp(deps: AppDeps) {
     return c.json({ error: { code: "INTERNAL_ERROR", message: "Erro interno. Tente de novo." } }, 500);
   });
 
-  return app;
+  return Object.assign(app, { push });
 }

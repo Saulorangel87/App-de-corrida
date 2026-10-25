@@ -46,6 +46,7 @@ const FEATURES = {
     interview: "Entrevista, perfil e triagem",
     "parq-text": "Texto oficial do PAR-Q+ (português e inglês original)",
     profile: "Perfil: nome, troca de e-mail e foto",
+    push: "Lembrete do treino por notificação (aparelhos e envio)",
     "legal-version": "Versão dos termos legais",
     rls: "Isolamento de dados por atleta no banco",
     security: "Cabeçalhos de segurança e limites",

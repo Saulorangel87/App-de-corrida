@@ -535,6 +535,34 @@ export const planReviews = pgTable(
   ],
 );
 
+/**
+ * Lembrete do treino por notificação (Web Push), um por aparelho. Guarda o endereço que o serviço
+ * de push do navegador deu ao aparelho, as chaves para cifrar a mensagem, o horário e o fuso da
+ * pessoa e o último dia em que o lembrete saiu (para não repetir no mesmo dia).
+ */
+export const pushSubscriptions = pgTable(
+  "push_subscriptions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    endpoint: text("endpoint").notNull(),
+    p256dh: varchar("p256dh", { length: 200 }).notNull(),
+    auth: varchar("auth", { length: 100 }).notNull(),
+    reminderTime: varchar("reminder_time", { length: 5 }).notNull(),
+    timeZone: varchar("time_zone", { length: 64 }).notNull(),
+    lastSentOn: date("last_sent_on"),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (t) => [
+    // Por atleta: o mesmo aparelho pode ter entrado com outra conta, que este atleta não enxerga (RLS).
+    uniqueIndex("push_subscriptions_user_endpoint_idx").on(t.userId, t.endpoint),
+    check("push_subscriptions_time", sql`${t.reminderTime} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'`),
+  ],
+);
+
 /** Tabelas com dados do atleta: RLS por user_id (ver 0001_rls.sql). */
 export const athleteTables = [
   "consents",
@@ -549,5 +577,6 @@ export const athleteTables = [
   "pain_reports",
   "plan_reviews",
   "user_photos",
+  "push_subscriptions",
   "engine_decisions",
 ] as const;

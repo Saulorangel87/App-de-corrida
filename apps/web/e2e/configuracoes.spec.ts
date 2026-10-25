@@ -263,3 +263,40 @@ test("instalar no celular: o botão aparece quando o navegador oferece a instala
   await expect(card.getByRole("button", { name: "Instalar o app" })).toHaveCount(0);
   await expect(card.getByText("No menu do navegador, procure Instalar ou Adicionar à tela inicial.")).toBeVisible();
 });
+
+async function mockPush(page: Page) {
+  await page.route(`${API}/push/config`, (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ enabled: true, publicKey: "BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U" }) }),
+  );
+  await page.route(`${API}/push/subscriptions`, (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ subscriptions: [] }) }),
+  );
+}
+
+test("lembrete do treino: aparece quando o servidor tem o lembrete e explica o que vai no aviso", async ({ page }) => {
+  // O Chromium sem janela sempre responde "bloqueado": simula a permissão ainda não pedida.
+  await page.addInitScript(() => Object.defineProperty(Notification, "permission", { get: () => "default" }));
+  await mockApi(page);
+  await mockPush(page);
+  await page.goto("/configuracoes");
+  const card = page.locator("section", { has: page.getByRole("heading", { name: "Lembrete do treino" }) });
+  await expect(card.getByLabel("Horário")).toHaveValue("07:00");
+  await expect(card.getByRole("button", { name: "Ligar lembrete" })).toBeVisible();
+  await expect(card.getByText(/sem dado de saúde/)).toBeVisible();
+});
+
+test("lembrete do treino: sem o lembrete no servidor, a área não aparece", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/configuracoes");
+  await expect(page.getByRole("heading", { name: "Instalar no celular" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Lembrete do treino" })).toHaveCount(0);
+});
+
+test("lembrete do treino: notificação bloqueada no navegador explica como liberar", async ({ page }) => {
+  await mockApi(page);
+  await mockPush(page);
+  await page.goto("/configuracoes");
+  const card = page.locator("section", { has: page.getByRole("heading", { name: "Lembrete do treino" }) });
+  await expect(card.getByRole("alert")).toHaveText(/bloqueadas para este site/);
+  await expect(card.getByRole("button", { name: "Ligar lembrete" })).toHaveCount(0);
+});

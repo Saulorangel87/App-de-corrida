@@ -2,13 +2,16 @@
 // Guarda só os arquivos do próprio app (página, scripts, estilos, ícones). Respostas da API
 // (dados de saúde) nunca entram no cache: a API é outra origem e este código só trata a mesma.
 // Mudou a lógica? Suba a versão: o cache antigo é apagado na ativação.
-const VERSION = "v1";
+const VERSION = "v2";
+// Em desenvolvimento o app registra "/sw.js?cache=off": só o lembrete, sem cache (para ver as mudanças).
+const CACHE = new URL(self.location.href).searchParams.get("cache") !== "off";
 const SHELL = `shell-${VERSION}`;
 const ASSETS = `assets-${VERSION}`;
 const MAX_ASSETS = 80;
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(SHELL).then((cache) => cache.addAll(["/", "/manifest.webmanifest", "/favicon.svg", "/icon-192.png"])));
+  if (CACHE)
+    event.waitUntil(caches.open(SHELL).then((cache) => cache.addAll(["/", "/manifest.webmanifest", "/favicon.svg", "/icon-192.png"])));
   self.skipWaiting();
 });
 
@@ -30,7 +33,7 @@ async function trim(cache) {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
-  if (req.method !== "GET" || url.origin !== self.location.origin || url.pathname.startsWith("/.well-known/")) return;
+  if (!CACHE || req.method !== "GET" || url.origin !== self.location.origin || url.pathname.startsWith("/.well-known/")) return;
 
   // Páginas: sempre da rede (versão nova do app); sem internet, a página guardada.
   if (req.mode === "navigate") {
@@ -76,6 +79,32 @@ self.addEventListener("fetch", (event) => {
         })
         .catch(() => hit ?? Response.error());
       return hit ?? fresh;
+    }),
+  );
+});
+
+// Lembrete do treino: o servidor manda só título, texto genérico e a página a abrir.
+self.addEventListener("push", (event) => {
+  let data = { title: "Let's Go Run", body: "", url: "/painel" };
+  try {
+    data = { ...data, ...event.data.json() };
+  } catch {
+    /* sem conteúdo legível: mostra o título do app */
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, { body: data.body, icon: "/icon-192.png", badge: "/icon-192.png", tag: "lembrete-treino", data: { url: data.url } }),
+  );
+});
+
+// Tocar na notificação abre o app (ou traz para a frente a janela que já está aberta).
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const path = typeof event.notification.data?.url === "string" && event.notification.data.url.startsWith("/") ? event.notification.data.url : "/painel";
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
+      const open = list.find((c) => new URL(c.url).origin === self.location.origin);
+      if (open) return open.focus().then((c) => c.navigate(path));
+      return self.clients.openWindow(path);
     }),
   );
 });

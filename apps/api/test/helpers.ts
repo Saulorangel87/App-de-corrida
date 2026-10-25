@@ -4,6 +4,7 @@ import { createApp } from "../src/app";
 import { rateLimitConfig } from "../src/config";
 import { createLogger } from "../src/lib/logger";
 import { memoryMailer } from "../src/lib/mailer";
+import type { PushSender, VapidConfig } from "../src/services/push-service";
 import { API_ROLE_PASSWORD } from "./global-setup";
 
 export const FRONT = "http://localhost:5173";
@@ -27,7 +28,9 @@ const relaxed = {
   emailSending: { windowMs: 60_000, limit: 10_000 },
 } satisfies typeof rateLimitConfig;
 
-export function makeApp(options: { rateLimits?: typeof rateLimitConfig; production?: boolean } = {}) {
+export function makeApp(
+  options: { rateLimits?: typeof rateLimitConfig; production?: boolean; vapid?: VapidConfig; pushSender?: PushSender } = {},
+) {
   const { db, close } = createDb(apiUrl(), { max: 5 });
   const mailer = memoryMailer();
   const pending: Promise<void>[] = [];
@@ -42,6 +45,8 @@ export function makeApp(options: { rateLimits?: typeof rateLimitConfig; producti
     now: () => clock ?? new Date(),
     background: (_name, task) => void pending.push(task()),
     rateLimits: options.rateLimits ?? relaxed,
+    vapid: options.vapid ?? null,
+    pushSender: options.pushSender,
   });
 
   /** Espera as tarefas em segundo plano (envio de e-mail etc.). */

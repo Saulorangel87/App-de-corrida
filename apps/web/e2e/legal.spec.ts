@@ -9,8 +9,8 @@ test("Política de Privacidade abre sem login, com data, versão, índice e link
   });
   await page.goto("/privacidade");
   await expect(page.getByRole("heading", { name: "Política de Privacidade", level: 1 })).toBeVisible();
-  await expect(page.getByText("Última atualização: 12 de outubro de 2026")).toBeVisible();
-  await expect(page.getByText("versão 2026-10-12")).toBeVisible();
+  await expect(page.getByText("Última atualização: 24 de outubro de 2026")).toBeVisible();
+  await expect(page.getByText("versão 2026-10-24")).toBeVisible();
 
   // pontos que o texto precisa afirmar (conferidos no código; docs/textos-legais.md)
   await expect(page.getByText("Nenhuma inteligência artificial gera ou altera seus treinos.")).toBeVisible();
@@ -51,12 +51,12 @@ test("com o app em inglês, o documento aparece traduzido, com o aviso de que va
   await expect(page.getByRole("heading", { name: "Terms of Use", level: 1 })).toBeVisible();
   await expect(page.getByRole("note")).toContainText("the Portuguese version prevails");
   await expect(page.locator("article")).toHaveAttribute("lang", "en");
-  await expect(page.getByText("Last updated: October 12, 2026")).toBeVisible();
+  await expect(page.getByText("Last updated: October 24, 2026")).toBeVisible();
   await expect(page.getByText("No artificial intelligence generates or changes the workouts.")).toBeVisible();
   await expect(page.getByText("call 192 (SAMU)")).toBeVisible();
 
   // a mesma versão, as mesmas seções; o outro documento também em inglês
-  await expect(page.getByText("version 2026-10-12")).toBeVisible();
+  await expect(page.getByText("version 2026-10-24")).toBeVisible();
   await page.getByRole("link", { name: "Privacy Policy", exact: true }).first().click();
   await expect(page).toHaveURL(/\/privacidade$/);
   await expect(page.getByRole("heading", { name: "Privacy Policy", level: 1 })).toBeVisible();

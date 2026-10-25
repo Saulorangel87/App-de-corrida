@@ -120,3 +120,23 @@ export const clearanceSchema = z.object({ date: isoDate }).strict();
 export const historyQuerySchema = z.object({
   days: z.coerce.number().int().min(7).max(180).default(56),
 });
+
+/** Fuso IANA ("America/Sao_Paulo"): só o formato; o servidor confere se o fuso existe. */
+const timeZone = z.string().trim().min(1).max(64).regex(/^[A-Za-z_]+(\/[A-Za-z0-9_+-]+)*$/);
+/** Horário do lembrete, "HH:MM" (24 h). */
+export const reminderTime = z.string().regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/);
+/** Endereço de notificação: sempre https (é o serviço de push do navegador). */
+const pushEndpoint = z.string().trim().max(1000).url().startsWith("https://");
+
+/** Lembrete do treino neste aparelho (Web Push): endereço, chaves de cifra, horário e fuso da pessoa. */
+export const pushSubscriptionSchema = z
+  .object({
+    endpoint: pushEndpoint,
+    keys: z.object({ p256dh: z.string().min(1).max(200), auth: z.string().min(1).max(100) }).strict(),
+    time: reminderTime,
+    timeZone,
+  })
+  .strict();
+export type PushSubscriptionInput = z.infer<typeof pushSubscriptionSchema>;
+
+export const pushUnsubscribeSchema = z.object({ endpoint: pushEndpoint }).strict();

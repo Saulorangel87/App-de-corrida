@@ -2,7 +2,7 @@
 // sync: whoever changes one changes the other in the same commit (and LEGAL_VERSION in legal.ts).
 import { LEGAL_CONTACT_EMAIL, type LegalDocument } from "./legal";
 
-export const LEGAL_UPDATED_LABEL_EN = "October 12, 2026";
+export const LEGAL_UPDATED_LABEL_EN = "October 24, 2026";
 
 export const PRIVACY_POLICY_EN: LegalDocument = {
   kicker: "PRIVACY",
@@ -32,6 +32,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         "Workouts: plan, sessions, whether they were done, duration, distance, perceived effort and comment.",
         "App decisions: for each workout adjustment, we keep the rule applied and its version, so that you can see why the workout was kept, reduced or replaced with rest.",
         "Consent record: the date and version of the Terms of Use and the Privacy Policy you accepted, the consent to process health data and the declaration that you are 18 or older.",
+        "Workout reminder (optional): if you turn it on, we keep the notification address the browser gives your device, the keys to encrypt the notice, the time you chose, the time zone and the last day the notice was sent. Turning the reminder off or logging out on that device deletes this data.",
         "Technical data: a session cookie; the browser and system of each open session (so you can recognize your devices); the language, in the browser's storage; and the IP address, used to limit attempts at improper access. The network and the server may record IP and time for security.",
       ],
     },
@@ -59,10 +60,11 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
       items: [
         "Hosting: a cloud virtual server, where the application and the database are kept, and Cloudflare, which hosts the app's interface and carries traffic between your device and the server.",
         "Transactional email (Resend): receives your email, your name and the text of the email confirmation, password reset and security notice messages.",
+        "Notifications (only if you turn on the workout reminder): your browser's notification service (Google, Apple, Mozilla or Microsoft, depending on the device) receives the encrypted notice to deliver it. The notice has generic text and no health data.",
         "Backup: copies of the database, encrypted before leaving the server, in external Oracle storage. Oracle keeps only the already-encrypted content.",
       ],
       after: [
-        "The database and the backups are kept in Brazil. Cloudflare and Resend may process data outside Brazil. In those cases, the transfer is necessary to provide the service (LGPD, art. 33, IX).",
+        "The database and the backups are kept in Brazil. Cloudflare, Resend and, if you turn on the workout reminder, the browser's notification service may process data outside Brazil. In those cases, the transfer is necessary to provide the service (LGPD, art. 33, IX).",
         "We do not share your data with advertisers or with other users. We only disclose it to authorities when the law requires.",
       ],
     },

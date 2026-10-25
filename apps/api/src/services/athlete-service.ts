@@ -11,6 +11,7 @@ import {
   painReports,
   planReviews,
   planTemplates,
+  pushSubscriptions,
   scheduledWorkouts,
   userPhotos,
   users,
@@ -188,7 +189,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           .from(users)
           .where(eq(users.id, userId));
         const [
-          consentRows, profile, interviews, screenings, plans, planWeeks, scheduled, logs, checkins, pain, decisions, reviews, photo,
+          consentRows, profile, interviews, screenings, plans, planWeeks, scheduled, logs, checkins, pain, decisions, reviews, photo, devices,
         ] = await Promise.all([
           tx.select().from(consents).where(eq(consents.userId, userId)),
           tx.select().from(athleteProfiles).where(eq(athleteProfiles.userId, userId)),
@@ -203,6 +204,17 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           tx.select().from(engineDecisions).where(eq(engineDecisions.userId, userId)),
           tx.select().from(planReviews).where(eq(planReviews.userId, userId)),
           tx.select().from(userPhotos).where(eq(userPhotos.userId, userId)),
+          // Sem as chaves de cifra da notificação (segredo do aparelho, não dado da pessoa).
+          tx
+            .select({
+              endpoint: pushSubscriptions.endpoint,
+              reminderTime: pushSubscriptions.reminderTime,
+              timeZone: pushSubscriptions.timeZone,
+              lastSentOn: pushSubscriptions.lastSentOn,
+              createdAt: pushSubscriptions.createdAt,
+            })
+            .from(pushSubscriptions)
+            .where(eq(pushSubscriptions.userId, userId)),
         ]);
         return {
           exportedAt: d.now().toISOString(),
@@ -219,6 +231,7 @@ export function athleteService(d: { db: Database; logger: Logger; now: () => Dat
           painReports: pain,
           engineDecisions: decisions,
           planReviews: reviews,
+          reminderDevices: devices,
           profilePhoto: photo[0]
             ? { contentType: photo[0].contentType, updatedAt: photo[0].updatedAt, dataBase64: photo[0].data.toString("base64") }
             : null,
