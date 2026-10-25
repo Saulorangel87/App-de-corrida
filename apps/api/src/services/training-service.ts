@@ -22,6 +22,8 @@ import {
 } from "@passo/db";
 import {
   DIA_VERSION,
+  checkMove,
+  moveOptions,
   ESCADA_CAMINHADA_CORRIDA,
   buildAthleteWeek,
   buildPlanTemplate,
@@ -44,6 +46,7 @@ import {
   type PainReport,
   type PlanTemplate,
   type PlannedSession,
+  type MovableSession,
   type SessionKind,
   type WorkoutLog,
   type Zone,
@@ -309,6 +312,34 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
       .where(and(eq(workoutLogs.userId, userId), inArray(workoutLogs.scheduledWorkoutId, ids)));
     return new Map(rows.map((r) => [r.scheduledWorkoutId, r]));
   };
+
+  /** Dados para trocar o dia de uma sessão: a semana dela e as sessões dos dias vizinhos (move.ts). */
+  async function moveInput(tx: Transaction, ctx: Ctx, userId: string, row: SessionRow, today: string) {
+    const [week] = await tx.select().from(athletePlanWeeks).where(eq(athletePlanWeeks.id, row.athletePlanWeekId)).limit(1);
+    if (!week) throw errors.notFound();
+    const near = await sessionsOf(
+      tx,
+      userId,
+      and(gte(scheduledWorkouts.scheduledDate, addDays(week.startDate, -1)), lte(scheduledWorkouts.scheduledDate, addDays(week.startDate, 7))),
+    );
+    const logs = await logsByWorkout(tx, userId, [...near.map((s) => s.id), row.id]);
+    const movable = (s: SessionRow): MovableSession => ({
+      id: s.id,
+      date: s.scheduledDate,
+      kind: s.kind as SessionKind,
+      optional: s.optional,
+      ladder: s.ladder !== null,
+      logged: logs.has(s.id),
+    });
+    return {
+      session: movable(row),
+      today,
+      weekStart: week.startDate,
+      others: near.map(movable),
+      // Mesma condição do agendador (buildAthleteWeek): iniciante nas 8 primeiras semanas do modelo.
+      noConsecutiveRuns: ctx.template?.level === "iniciante" && week.templateWeek <= 8,
+    };
+  }
 
   // ---------------------------------------------------------- semanas do plano
 
@@ -819,7 +850,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
 
   // ---------------------------------------------------------------- API do serviço
 
-  return {
+  const service = {
     /** Decisão e sessões do dia (cria a semana do plano na primeira consulta). */
     async day(userId: string, date: string, lang: Lang = "pt-BR") {
       assertDate(date);
@@ -967,10 +998,13 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
      * Detalhe de um treino agendado do próprio atleta: a sessão, o registro e o recorte do catálogo
      * (razão, intensidade, blocos, limites, evidência) com as referências. De outro atleta: 404.
      */
-    async workout(userId: string, scheduledWorkoutId: string, lang: Lang = "pt-BR") {
+    async workout(userId: string, scheduledWorkoutId: string, lang: Lang = "pt-BR", today?: string) {
+      if (today) assertDate(today);
       return withAthlete(db, userId, async (tx) => {
         const [row] = await sessionsOf(tx, userId, eq(scheduledWorkouts.id, scheduledWorkoutId));
         if (!row) throw errors.notFound();
+        const ctx = await loadContext(tx, userId, lang);
+        const moveTo = moveOptions(await moveInput(tx, ctx, userId, row, today ?? todayUtc()));
         const [catalog] = await tx
           .select({ structure: workouts.structure, version: workouts.version })
           .from(workouts)
@@ -1007,11 +1041,33 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
         return {
           session: view(row, log),
           logPain,
+          moveTo,
           detail: withLadderText(workoutDetail(catalog?.structure, profile?.level ?? "", lang), row, lang),
           catalogVersion: catalog?.version ?? null,
           references: refs,
         };
       });
+    },
+
+    /**
+     * Trocar o dia de um treino dentro da semana do plano (move.ts): só de hoje em diante, sem registro
+     * e respeitando as regras do agendador. Devolve o detalhe atualizado; regra quebrada vira 409 com o motivo.
+     */
+    async moveWorkout(userId: string, scheduledWorkoutId: string, to: string, today: string, lang: Lang = "pt-BR") {
+      assertDate(today);
+      await withAthlete(db, userId, async (tx) => {
+        const [row] = await sessionsOf(tx, userId, eq(scheduledWorkouts.id, scheduledWorkoutId));
+        if (!row) throw errors.notFound();
+        const ctx = await loadContext(tx, userId, lang);
+        const result = checkMove({ ...(await moveInput(tx, ctx, userId, row, today)), to });
+        if (!result.ok) throw new AppError(409, "MOVE_NOT_ALLOWED", "Não dá para mudar o treino para esse dia.", { reason: result.reason });
+        await tx
+          .update(scheduledWorkouts)
+          .set({ scheduledDate: to, updatedAt: d.now() })
+          .where(and(eq(scheduledWorkouts.id, row.id), eq(scheduledWorkouts.userId, userId)));
+        logger.info("workout_moved", { userId, kind: row.kind, from: row.scheduledDate, to });
+      });
+      return service.workout(userId, scheduledWorkoutId, lang, today);
     },
 
     /** Check-in do dia: grava (um por dia) e devolve a decisão recalculada. */
@@ -1182,6 +1238,7 @@ export function trainingService(d: { db: Database; logger: Logger; now: () => Da
       });
     },
   };
+  return service;
 }
 
 export type TrainingService = ReturnType<typeof trainingService>;

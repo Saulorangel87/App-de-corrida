@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { DecisionSources } from "../components/decision-sources";
 import { FlowLayout } from "../components/flow-layout";
 import { Glossary } from "../components/glossary";
+import { MoveWorkout } from "../components/move-workout";
 import { ApiError } from "../lib/api";
 import { formatDate, localToday } from "../lib/dates";
 import { useRequireUser } from "../lib/queries";
@@ -122,6 +123,8 @@ function WorkoutView({ data }: { data: WorkoutDetailResponse }) {
             </Link>
           )}
         </section>
+
+        <MoveWorkout data={data} />
 
         {day.data && (
           <Card title={t("workout.todayTitle")}>

@@ -114,6 +114,10 @@ export const pauseSchema = z
   })
   .strict();
 
+/** Trocar o dia de um treino dentro da semana do plano; `today` é a data local do atleta (hoje ±1 dia). */
+export const workoutMoveSchema = z.object({ date: isoDate, today: isoDate }).strict();
+export type WorkoutMoveInput = z.infer<typeof workoutMoveSchema>;
+
 /** Autodeclaração de avaliação e liberação por profissional de saúde (R-DOR-10, R-PRG-09). */
 export const clearanceSchema = z.object({ date: isoDate }).strict();
 

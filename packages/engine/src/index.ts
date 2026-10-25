@@ -20,4 +20,5 @@ export * from "./plan/ladder-progress";
 export * from "./plan/placement";
 export * from "./plan/schedule";
 export * from "./plan/week";
+export * from "./plan/move";
 export * from "./day/derive";

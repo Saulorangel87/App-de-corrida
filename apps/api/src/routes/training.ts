@@ -8,6 +8,7 @@ import {
   pauseSchema,
   planReviewSchema,
   workoutLogSchema,
+  workoutMoveSchema,
 } from "@passo/shared";
 import { z } from "zod";
 import { errors } from "../lib/errors";
@@ -51,7 +52,17 @@ export function trainingRoutes(opts: { training: TrainingService; session: Middl
   );
 
   // Detalhe de um treino agendado (catálogo, referências, registro): só do próprio atleta
-  r.get("/workouts/:id", session, async (c) => c.json(await training.workout(me(c), idParam(c), requestLang(c))));
+  // `?today=` é a data local do atleta: define os dias para onde o treino ainda pode ir.
+  r.get("/workouts/:id", session, async (c) => {
+    const today = c.req.query("today");
+    if (today !== undefined && !isoDate.safeParse(today).success) throw errors.validation([{ path: "today", code: "invalid_date" }]);
+    return c.json(await training.workout(me(c), idParam(c), requestLang(c), today));
+  });
+
+  // Trocar o dia do treino (mesma semana, de hoje em diante, dentro das regras do agendador)
+  r.put("/workouts/:id/date", session, validate("json", workoutMoveSchema), async (c) =>
+    c.json(await training.moveWorkout(me(c), idParam(c), c.req.valid("json").date, c.req.valid("json").today, requestLang(c))),
+  );
 
   // Check-in diário (um por dia; reenviar substitui)
   r.put("/checkins/:date", session, validate("json", checkinSchema), async (c) =>

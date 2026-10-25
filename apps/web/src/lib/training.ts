@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchApi } from "./api";
+import { localToday } from "./dates";
 
 // Tipos e consultas do acompanhamento diário. O front só exibe o que a API devolve:
 // nenhuma decisão de treino, limite ou classificação é calculada aqui.
@@ -101,6 +102,8 @@ export type WorkoutDetailResponse = {
   session: SessionView & { ladder: { etapa: string; corridaMin: number; caminhadaMin: number; repeticoes: number; continua: boolean } | null };
   /** Dores já registradas neste treino, no formato de entrada: a edição reabre com elas para não apagá-las. */
   logPain?: LoggedPain[];
+  /** Dias (de hoje até o fim da semana do plano) para onde o treino pode ir sem quebrar as regras. */
+  moveTo?: string[];
   detail: {
     summary: string | null;
     intensity: {
@@ -125,7 +128,7 @@ export const workoutKey = (id: string) => ["workout", id] as const;
 export function useWorkout(id: string, enabled = true) {
   return useQuery({
     queryKey: workoutKey(id),
-    queryFn: () => fetchApi<WorkoutDetailResponse>(`/workouts/${id}`),
+    queryFn: () => fetchApi<WorkoutDetailResponse>(`/workouts/${id}?today=${localToday()}`),
     enabled,
     retry: false,
   });

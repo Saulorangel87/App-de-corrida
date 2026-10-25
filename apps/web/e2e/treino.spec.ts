@@ -229,3 +229,46 @@ test("fonte com endereço que não é https não vira link (javascript:, data:, 
   await expect(links.first()).toHaveAttribute("href", "https://exemplo.org/boa");
   await expect(page.getByText("Fonte com javascript.")).toBeVisible(); // a citação continua à mostra
 });
+
+test("trocar o dia: escolhe um dos dias que a API oferece e mostra a data nova", async ({ page }) => {
+  const moved = { ...baseSession, date: plusDays(2) };
+  let sent: Json | null = null;
+  await mockApi(page, { workout: workoutBody({ moveTo: [plusDays(2), plusDays(4)] }) });
+  await page.route(`${API}/workouts/s1/date`, async (route) => {
+    sent = route.request().postDataJSON() as Json;
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(workoutBody({ session: moved, moveTo: [today, plusDays(4)] })) });
+  });
+  await page.goto("/treino/s1");
+  await expect(page.getByRole("heading", { name: "Trocar o dia" })).toBeVisible();
+  await page.getByRole("button", { name: "Escolher outro dia" }).click();
+  const options = page.getByRole("group", { name: "Para qual dia?" }).getByRole("button");
+  await expect(options).toHaveCount(3); // dois dias e Cancelar
+  await options.first().click();
+  await expect(page.getByRole("status").filter({ hasText: "Pronto. O treino passou para" })).toBeVisible();
+  expect(sent).toEqual({ date: plusDays(2), today });
+});
+
+test("trocar o dia: a recusa da API diz o motivo em palavras", async ({ page }) => {
+  await mockApi(page, { workout: workoutBody({ moveTo: [plusDays(2)] }) });
+  await page.route(`${API}/workouts/s1/date`, (route) =>
+    route.fulfill({
+      status: 409, contentType: "application/json",
+      body: JSON.stringify({ error: { code: "MOVE_NOT_ALLOWED", message: "x", details: { reason: "qualidade_seguida" } } }),
+    }),
+  );
+  await page.goto("/treino/s1");
+  await page.getByRole("button", { name: "Escolher outro dia" }).click();
+  await page.getByRole("group", { name: "Para qual dia?" }).getByRole("button").first().click();
+  await expect(page.getByRole("alert").filter({ hasText: "dois treinos fortes seguidos" })).toBeVisible();
+});
+
+test("trocar o dia: sem dia possível explica; treino registrado ou passado não oferece troca", async ({ page }) => {
+  await mockApi(page, { workout: workoutBody({ moveTo: [] }) });
+  await page.goto("/treino/s1");
+  await expect(page.getByText("Nesta semana não há outro dia")).toBeVisible();
+
+  await mockApi(page, { workout: workoutBody({ session: { ...baseSession, log: { completed: false, durationMinutes: null, distanceKm: null, srpe: null, notes: null } }, moveTo: [plusDays(2)] }) });
+  await page.goto("/treino/s1");
+  await expect(page.getByRole("heading", { name: "Caminhada e corrida", level: 1 })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Trocar o dia" })).toHaveCount(0);
+});
