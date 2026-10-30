@@ -159,6 +159,7 @@ O design já existe no Figma: https://www.figma.com/design/5MXW1UlDcv8avuf144pVd
   - `<link rel="apple-touch-icon" href="/apple-touch-icon.png">`
   - `<link rel="manifest" href="/manifest.webmanifest">`
   - `<meta name="theme-color" content="#111827">`
+  - O `notification-badge-96.png` é o badge do lembrete (símbolo pequeno da barra do Android): só o corredor branco em fundo transparente, porque o Android usa apenas a transparência e um ícone opaco vira um quadrado branco.
   - O `manifest.webmanifest` já lista os ícones `any` (192 e 512) e `maskable` (192 e 512). O PWA completo (service worker e offline) continua fora do MVP; o manifest e os ícones entram desde já.
   - Para mudar o ícone, edite e rode `docs/design/gerar_icones.py` (Python + Pillow) e atualize o frame no Figma.
 - Imagens decorativas usam `alt=""`; imagens com significado têm texto alternativo descritivo.

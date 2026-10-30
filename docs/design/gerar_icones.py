@@ -22,14 +22,15 @@ HEAD = (14, 4)
 GLYPH_CENTER = (11, 11.5)
 
 
-def render(size, *, scale_div, stroke, radius_ratio, ss=8):
-    """radius_ratio: 0 = quadrado cheio (full-bleed); >0 = cantos arredondados transparentes."""
+def render(size, *, scale_div, stroke, radius_ratio, ss=8, background=True):
+    """radius_ratio: 0 = quadrado cheio (full-bleed); >0 = cantos arredondados transparentes.
+    background=False: só o corredor branco em fundo transparente."""
     S = size * ss
     img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    if radius_ratio:
+    if background and radius_ratio:
         d.rounded_rectangle([0, 0, S - 1, S - 1], radius=int(S * radius_ratio), fill=ORANGE)
-    else:
+    elif background:
         d.rectangle([0, 0, S, S], fill=ORANGE)
 
     k = S / scale_div
@@ -92,6 +93,10 @@ for s in (192, 512):
 for s in (192, 512):
     render(s, scale_div=42, stroke=2.3, radius_ratio=0, ss=4).convert("RGB").save(OUT / f"icon-maskable-{s}.png", optimize=True)
 
+# Badge da notificação (símbolo pequeno da barra do Android): o sistema usa só a
+# transparência e pinta por cima, então é o corredor branco sem o fundo laranja.
+render(96, scale_div=23, stroke=2.6, radius_ratio=0, ss=4, background=False).save(OUT / "notification-badge-96.png", optimize=True)
+
 manifest = {
     "name": "Let's Go Run — Treino de corrida",
     "short_name": "Let's Go Run",
@@ -123,6 +128,9 @@ items = [
     (Image.open(OUT / "apple-touch-icon.png").convert("RGBA"), "apple 180"),
     (Image.open(OUT / "icon-192.png"), "icon-192 (any)"),
 ]
+badge = Image.new("RGBA", (96, 96), (51, 65, 85, 255))  # fundo escuro só para ver o branco
+badge.alpha_composite(Image.open(OUT / "notification-badge-96.png"))
+items.append((badge, "badge notificação"))
 mk = Image.open(OUT / "icon-maskable-512.png").convert("RGBA").resize((240, 240), Image.LANCZOS)
 mask = Image.new("L", (240, 240), 0)
 ImageDraw.Draw(mask).ellipse([0, 0, 239, 239], fill=255)

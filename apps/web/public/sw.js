@@ -84,6 +84,8 @@ self.addEventListener("fetch", (event) => {
 });
 
 // Lembrete do treino: o servidor manda só título, texto genérico e a página a abrir.
+// O badge é o símbolo pequeno da barra do Android: o sistema usa só a transparência, então
+// é o corredor branco em fundo transparente (o ícone laranja inteiro vira um quadrado branco).
 self.addEventListener("push", (event) => {
   let data = { title: "Let's Go Run", body: "", url: "/painel" };
   try {
@@ -92,7 +94,7 @@ self.addEventListener("push", (event) => {
     /* sem conteúdo legível: mostra o título do app */
   }
   event.waitUntil(
-    self.registration.showNotification(data.title, { body: data.body, icon: "/icon-192.png", badge: "/icon-192.png", tag: "lembrete-treino", data: { url: data.url } }),
+    self.registration.showNotification(data.title, { body: data.body, icon: "/icon-192.png", badge: "/notification-badge-96.png", tag: "lembrete-treino", data: { url: data.url } }),
   );
 });
 
