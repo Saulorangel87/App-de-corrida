@@ -18,10 +18,10 @@
     "@passo/shared": "workspace:*",
     "argon2": "^0.45.1",
     "drizzle-orm": "^0.45.4",
-    "hono": "^4.6.14",
+    "hono": "^4.13.14",
     "hono-rate-limiter": "^0.5.4",
     "postgres": "^3.4.4",
-    "resend": "^6.34.1",
+    "resend": "^6.35.0",
     "web-push": "^3.6.7",
     "zod": "^4.6.7"
   },
