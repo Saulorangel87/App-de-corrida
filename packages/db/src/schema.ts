@@ -49,6 +49,10 @@ export const users = pgTable(
     passwordChangedAt: ts("password_changed_at"),
     // Quando a foto de perfil foi enviada (versão do cache); a imagem fica em user_photos.
     avatarUpdatedAt: ts("avatar_updated_at"),
+    // E-mail único de incentivo para quem confirmou o e-mail e não montou o plano: quando saiu
+    // (nunca repete) e quando a pessoa pediu para não receber (vale também antes do envio).
+    nudgeSentAt: ts("nudge_sent_at"),
+    nudgeOptOutAt: ts("nudge_opt_out_at"),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },

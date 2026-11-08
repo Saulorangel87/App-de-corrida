@@ -18,6 +18,7 @@ import { pushRoutes } from "./routes/push";
 import { trainingRoutes } from "./routes/training";
 import { athleteService } from "./services/athlete-service";
 import { authService, type BackgroundRunner } from "./services/auth-service";
+import { nudgeService } from "./services/nudge-service";
 import { pushService, type PushSender, type VapidConfig } from "./services/push-service";
 import { trainingService } from "./services/training-service";
 import type { AppEnv } from "./types";
@@ -64,14 +65,22 @@ export function createApp(deps: AppDeps) {
       );
     });
 
+  const authRepo = authRepository(deps.db);
   const auth = authService({
-    repo: authRepository(deps.db),
+    repo: authRepo,
     mailer: deps.mailer,
     logger,
     sessionSecret: deps.sessionSecret,
     frontendUrl: frontendOrigin,
     now: deps.now ?? (() => new Date()),
     background,
+  });
+  const nudge = nudgeService({
+    repo: authRepo,
+    mailer: deps.mailer,
+    logger,
+    sessionSecret: deps.sessionSecret,
+    frontendUrl: frontendOrigin,
   });
   const cookie = sessionCookie(production);
   const session = requireSession(auth, cookie);
@@ -132,7 +141,7 @@ export function createApp(deps: AppDeps) {
 
   const v1 = new Hono<AppEnv>();
   v1.use("*", limit("global", rateLimits.global, production));
-  v1.route("/auth", authRoutes({ auth, cookie, session, production, rateLimits }));
+  v1.route("/auth", authRoutes({ auth, nudge, now: deps.now ?? (() => new Date()), cookie, session, production, rateLimits }));
   v1.route("/", athleteRoutes({ athlete, session }));
   v1.route("/", trainingRoutes({ training, session }));
   v1.route("/", pushRoutes({ push, session }));
@@ -160,5 +169,5 @@ export function createApp(deps: AppDeps) {
     return c.json({ error: { code: "INTERNAL_ERROR", message: "Erro interno. Tente de novo." } }, 500);
   });
 
-  return Object.assign(app, { push });
+  return Object.assign(app, { push, nudge });
 }

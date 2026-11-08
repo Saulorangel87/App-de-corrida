@@ -21,7 +21,16 @@ export const authConfig = {
     passwordResetMs: 60 * MINUTE,
   },
   password: { min: 10, max: 128 },
-  termsVersion: "2026-10-25.2", // igual a LEGAL_VERSION de apps/web/src/lib/legal.ts
+  // E-mail único de incentivo para quem não montou o plano depois de confirmar o e-mail.
+  nudge: {
+    afterMs: 3 * DAY, // prazo depois da confirmação do e-mail
+    maxPerRun: 20, // teto por rodada: um acúmulo não vira envio em massa
+    // Só sai de dia (horário de Brasília); fora da janela espera a próxima rodada.
+    timeZone: "America/Sao_Paulo",
+    fromHour: 9,
+    toHour: 20,
+  },
+  termsVersion: "2026-11-08", // igual a LEGAL_VERSION de apps/web/src/lib/legal.ts
 } as const;
 
 export type RateLimitConfig = { windowMs: number; limit: number };

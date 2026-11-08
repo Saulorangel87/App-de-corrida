@@ -3,8 +3,8 @@
 // (novo provedor, novo dado coletado, nova integração) deve atualizar estes textos e LEGAL_VERSION
 // no mesmo commit, e manter `termsVersion` da API (apps/api/src/config.ts) igual a LEGAL_VERSION.
 
-export const LEGAL_VERSION = "2026-10-25.2";
-export const LEGAL_UPDATED_LABEL = "25 de outubro de 2026";
+export const LEGAL_VERSION = "2026-11-08";
+export const LEGAL_UPDATED_LABEL = "8 de novembro de 2026";
 export const LEGAL_CONTACT_EMAIL = "sauloleonardo1987@gmail.com";
 
 export type LegalSection = {
@@ -51,6 +51,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         "Decisões do app: para cada ajuste de treino, guardamos a regra aplicada e a versão dela, para que você possa ver por que o treino foi mantido, reduzido ou trocado por descanso.",
         "Registro do aceite: a data e a versão dos Termos de Uso e da Política de Privacidade que você aceitou, o consentimento para tratar dados de saúde e a declaração de que tem 18 anos ou mais.",
         "Lembrete do treino (opcional): se você ligar, guardamos o endereço de notificação que o navegador dá ao seu aparelho, as chaves para cifrar o aviso, o horário e o dia escolhidos (no dia do treino ou na véspera), o fuso horário e o último dia em que o aviso saiu. Desligar o lembrete ou sair da conta naquele aparelho apaga esses dados.",
+        "E-mail de incentivo: guardamos o dia e a hora em que enviamos um único e-mail a quem confirmou o e-mail e não montou o plano em 3 dias, e se você pediu para não recebê-lo.",
         "Dados técnicos: um cookie de sessão; o navegador e o sistema de cada sessão aberta (para você reconhecer seus aparelhos); o idioma, no armazenamento do navegador; e o endereço IP, usado para limitar tentativas de acesso indevido. A rede e o servidor podem registrar IP e horário por segurança.",
       ],
     },
@@ -61,6 +62,7 @@ export const PRIVACY_POLICY: LegalDocument = {
         "Montar e ajustar seus treinos, registrar sua evolução e mostrar os resultados: execução do serviço que você pediu (LGPD, art. 7º, V).",
         "Tratar seus dados de saúde para tornar os treinos mais seguros (por exemplo, reduzir ou suspender a carga diante de dor ou sono ruim): seu consentimento específico, dado ao criar a conta e ao informar esses dados (art. 11, I). Você pode retirá-lo a qualquer momento encerrando a conta, já que os treinos dependem desses dados.",
         "Manter o serviço seguro, limitar tentativas de acesso indevido e investigar abusos: interesse legítimo (art. 7º, IX).",
+        "Enviar um único e-mail de incentivo a quem confirmou o e-mail e não montou o plano em 3 dias, sem dado de saúde e com link para não receber: interesse legítimo (art. 7º, IX).",
         "Cumprir obrigações legais, quando houver.",
       ],
       after: [
@@ -77,7 +79,7 @@ export const PRIVACY_POLICY: LegalDocument = {
       ],
       items: [
         "Hospedagem: servidor virtual em nuvem, onde ficam o aplicativo e o banco de dados, e a Cloudflare, que hospeda a interface do app e transporta o tráfego entre o seu aparelho e o servidor.",
-        "E-mail transacional (Resend): recebe seu e-mail, seu nome e o texto das mensagens de confirmação de e-mail, de redefinição de senha e de aviso de segurança.",
+        "E-mail transacional (Resend): recebe seu e-mail, seu nome e o texto das mensagens de confirmação de e-mail, de redefinição de senha, de aviso de segurança e do e-mail único de incentivo.",
         "Notificações (só se você ligar o lembrete do treino): o serviço de notificações do seu navegador (Google, Apple, Mozilla ou Microsoft, conforme o aparelho) recebe o aviso cifrado para entregá-lo. O aviso tem texto genérico e nenhum dado de saúde.",
         "Cópia de segurança: cópias do banco de dados, criptografadas antes de sair do servidor, em armazenamento externo da Oracle. A Oracle guarda apenas o conteúdo já criptografado.",
       ],

@@ -6,7 +6,7 @@ const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]!);
 
 /** `lines[0]` é a saudação (vira o título); as demais viram parágrafos. */
-type Content = { subject: string; lines: string[]; link?: { url: string; label: string } };
+type Content = { subject: string; lines: string[]; link?: { url: string; label: string }; optOut?: { url: string; label: string } };
 
 // Identidade do app (apps/web/src/index.css). O botão usa o laranja mais escuro do app (#C2410C)
 // para o texto branco passar de 4,5:1 de contraste; o laranja da marca fica na faixa do topo.
@@ -68,15 +68,21 @@ function render(lang: Lang, to: string, c: Content): Email {
     `<tr><td class="pad" style="padding:8px 32px 8px">` +
     `<h1 class="title" style="margin:0 0 16px;font-size:22px;line-height:1.3;font-weight:700;color:#111827">${escapeHtml(greeting)}</h1>` +
     `${paragraphs}${action}</td></tr>` +
-    `<tr><td class="pad" style="padding:8px 32px 28px"><p class="muted rule" style="margin:0;padding-top:16px;border-top:1px solid #E5E7EB;font-size:12px;line-height:1.5;color:#64748B">${escapeHtml(t.footer)}</p></td></tr>` +
+    `<tr><td class="pad" style="padding:8px 32px 28px"><p class="muted rule" style="margin:0;padding-top:16px;border-top:1px solid #E5E7EB;font-size:12px;line-height:1.5;color:#64748B">${escapeHtml(t.footer)}</p>${c.optOut ? `<p class="muted" style="margin:8px 0 0;font-size:12px;line-height:1.5;color:#64748B"><a href="${escapeHtml(c.optOut.url)}" style="color:#64748B;text-decoration:underline">${escapeHtml(c.optOut.label)}</a></p>` : ""}</td></tr>` +
     `</table></td></tr></table></body></html>`;
-  const text = [...c.lines, ...(c.link ? [`${c.link.label}: ${c.link.url}`] : [])].join("\n\n");
+  const text = [...c.lines, ...(c.link ? [`${c.link.label}: ${c.link.url}`] : []), ...(c.optOut ? [`${c.optOut.label}: ${c.optOut.url}`] : [])].join("\n\n");
   return { to, subject: c.subject, html, text };
 }
 
 const hi = (lang: Lang, name: string) => (lang === "en" ? `Hi, ${name}!` : `Olá, ${name}!`);
 
 export const templates = {
+  /** E-mail único de incentivo (sem dado de saúde) para quem confirmou o e-mail e ainda não montou o plano. */
+  inactiveNudge: (lang: Lang, to: string, name: string, url: string, optOutUrl: string) =>
+    render(lang, to, lang === "en"
+      ? { subject: "Your running plan is waiting – Let's Go Run", lines: [hi(lang, name), "You created your Let's Go Run account, but you haven't built your training plan yet. Just answer the starting interview and the app builds your running plan, week by week.", "You can start whenever suits you. This is the only reminder we will send."], link: { url, label: "Build my plan" }, optOut: { url: optOutUrl, label: "I don't want to receive this reminder" } }
+      : { subject: "Seu plano de corrida está esperando – Let's Go Run", lines: [hi(lang, name), "Você criou sua conta no Let's Go Run, mas ainda não montou seu plano de treino. É só responder à entrevista inicial e o app monta o seu plano de corrida, semana por semana.", "Você pode começar quando for melhor para você. Este é o único lembrete que vamos enviar."], link: { url, label: "Montar meu plano" }, optOut: { url: optOutUrl, label: "Não quero receber este lembrete" } }),
+
   verifyEmail: (lang: Lang, to: string, name: string, url: string) =>
     render(lang, to, lang === "en"
       ? { subject: "Confirm your email – Let's Go Run", lines: [hi(lang, name), "Confirm your email to start using Let's Go Run. The link expires in 24 hours."], link: { url, label: "Confirm email" } }

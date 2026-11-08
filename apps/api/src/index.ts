@@ -37,9 +37,17 @@ const reminders = app.push.config().enabled
   ? setInterval(() => void app.push.sendDue(new Date()).catch((error: unknown) => logger.error("push_reminders_failed", { error: String(error) })), REMINDER_EVERY_MS)
   : null;
 
+// E-mail único de incentivo (quem não montou o plano em 3 dias): confere a cada 15 minutos.
+const NUDGE_EVERY_MS = 15 * 60 * 1000;
+const nudges = setInterval(
+  () => void app.nudge.sendDue(new Date()).catch((error: unknown) => logger.error("nudge_run_failed", { error: String(error) })),
+  NUDGE_EVERY_MS,
+);
+
 const shutdown = () => {
   logger.info("server_stopping");
   if (reminders) clearInterval(reminders);
+  clearInterval(nudges);
   server.close(() => void close().then(() => process.exit(0)));
 };
 process.on("SIGTERM", shutdown);

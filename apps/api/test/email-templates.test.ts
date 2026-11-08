@@ -15,6 +15,7 @@ const all = (lang: Lang, name = "Ana", url = URL_WITH_AMP) => ({
   emailChangeRequested: templates.emailChangeRequested(lang, "ana@exemplo.com", name, "n***@exemplo.com", url),
   emailChanged: templates.emailChanged(lang, "ana@exemplo.com", name, "n***@exemplo.com", url),
   accountLocked: templates.accountLocked(lang, "ana@exemplo.com", name, 15, url),
+  inactiveNudge: templates.inactiveNudge(lang, "ana@exemplo.com", name, url, url),
 });
 
 const luminance = (hex: string) => {

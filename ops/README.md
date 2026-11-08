@@ -56,7 +56,7 @@ O `connect` não sobrevive à recriação do container do túnel: se ele for rec
 
 ## Migrações e seed (do repositório, com o banco acessível)
 
-Migrações atuais: 0000 a 0015 (a 0011 guarda onde o plano começa, a 0012 as avaliações de bloco, a 0013 a foto de perfil e o e-mail novo pendente, a 0014 o lembrete do treino, a 0015 o pedido de dia mais leve e a pausa planejada). Na VPS não há Node: a migração roda na imagem de build da API, na rede interna do banco (`docker build --target build -t app-de-corrida-api:build .` e `docker run --rm --network app-de-corrida_data -e MIGRATION_DATABASE_URL=postgres://passo_migrator:...@app-de-corrida:5432/passo app-de-corrida-api:build pnpm --filter @passo/db db:migrate`; feito assim em 2026-10-24). O seed grava o catálogo com os textos do atleta em português e inglês; rode depois de migrar.
+Migrações atuais: 0000 a 0017 (a 0016 o dia do lembrete, a 0017 o e-mail de incentivo para quem não montou o plano; a 0011 guarda onde o plano começa, a 0012 as avaliações de bloco, a 0013 a foto de perfil e o e-mail novo pendente, a 0014 o lembrete do treino, a 0015 o pedido de dia mais leve e a pausa planejada). Na VPS não há Node: a migração roda na imagem de build da API, na rede interna do banco (`docker build --target build -t app-de-corrida-api:build .` e `docker run --rm --network app-de-corrida_data -e MIGRATION_DATABASE_URL=postgres://passo_migrator:...@app-de-corrida:5432/passo app-de-corrida-api:build pnpm --filter @passo/db db:migrate`; feito assim em 2026-10-24). O seed grava o catálogo com os textos do atleta em português e inglês; rode depois de migrar.
 
 ```
 MIGRATION_DATABASE_URL=postgres://passo_migrator:...@host:5432/passo pnpm --filter @passo/db db:migrate

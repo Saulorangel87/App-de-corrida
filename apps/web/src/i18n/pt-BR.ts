@@ -608,6 +608,13 @@ export const ptBR = {
     failTitle: "Link inválido ou expirado",
     failText: "Este link não vale mais. Peça a troca de e-mail de novo em Configurações.",
   },
+  nudgeOptOut: {
+    workingTitle: "Desligando o lembrete...",
+    doneTitle: "Combinado, sem mais lembretes",
+    doneText: "Você não vai receber esse e-mail de incentivo. Sua conta continua como está e você pode montar seu plano quando quiser.",
+    failTitle: "Link inválido",
+    failText: "Não conseguimos desligar o lembrete com este link. Abra o link do e-mail de novo, sem alterar o endereço.",
+  },
   review: {
     title: "Como foi este bloco de 2 semanas?",
     text: "Sua resposta serve para cuidar melhor de você: ela pode deixar os próximos treinos mais calmos, nunca mais pesados.",

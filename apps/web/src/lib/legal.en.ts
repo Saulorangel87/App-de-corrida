@@ -2,7 +2,7 @@
 // sync: whoever changes one changes the other in the same commit (and LEGAL_VERSION in legal.ts).
 import { LEGAL_CONTACT_EMAIL, type LegalDocument } from "./legal";
 
-export const LEGAL_UPDATED_LABEL_EN = "October 25, 2026";
+export const LEGAL_UPDATED_LABEL_EN = "November 8, 2026";
 
 export const PRIVACY_POLICY_EN: LegalDocument = {
   kicker: "PRIVACY",
@@ -33,6 +33,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         "App decisions: for each workout adjustment, we keep the rule applied and its version, so that you can see why the workout was kept, reduced or replaced with rest.",
         "Consent record: the date and version of the Terms of Use and the Privacy Policy you accepted, the consent to process health data and the declaration that you are 18 or older.",
         "Workout reminder (optional): if you turn it on, we keep the notification address the browser gives your device, the keys to encrypt the notice, the time and day you chose (on the workout day or the day before), the time zone and the last day the notice was sent. Turning the reminder off or logging out on that device deletes this data.",
+        "Encouragement email: we keep the date and time we sent a single email to people who confirmed their email and did not build a plan within 3 days, and whether you asked not to receive it.",
         "Technical data: a session cookie; the browser and system of each open session (so you can recognize your devices); the language, in the browser's storage; and the IP address, used to limit attempts at improper access. The network and the server may record IP and time for security.",
       ],
     },
@@ -43,6 +44,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
         "Building and adjusting your workouts, recording your progress and showing the results: performance of the service you asked for (LGPD, art. 7, V).",
         "Processing your health data to make workouts safer (for example, reducing or suspending the load in the face of pain or poor sleep): your specific consent, given when you create the account and when you provide that data (art. 11, I). You can withdraw it at any time by deleting the account, since the workouts depend on that data.",
         "Keeping the service secure, limiting attempts at improper access and investigating abuse: legitimate interest (art. 7, IX).",
+        "Sending a single encouragement email to people who confirmed their email and did not build a plan within 3 days, with no health data and a link to opt out: legitimate interest (art. 7, IX).",
         "Complying with legal obligations, when applicable.",
       ],
       after: [
@@ -59,7 +61,7 @@ export const PRIVACY_POLICY_EN: LegalDocument = {
       ],
       items: [
         "Hosting: a cloud virtual server, where the application and the database are kept, and Cloudflare, which hosts the app's interface and carries traffic between your device and the server.",
-        "Transactional email (Resend): receives your email, your name and the text of the email confirmation, password reset and security notice messages.",
+        "Transactional email (Resend): receives your email, your name and the text of the email confirmation, password reset, security notice and the single encouragement email messages.",
         "Notifications (only if you turn on the workout reminder): your browser's notification service (Google, Apple, Mozilla or Microsoft, depending on the device) receives the encrypted notice to deliver it. The notice has generic text and no health data.",
         "Backup: copies of the database, encrypted before leaving the server, in external Oracle storage. Oracle keeps only the already-encrypted content.",
       ],

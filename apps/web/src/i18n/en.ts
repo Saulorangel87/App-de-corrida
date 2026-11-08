@@ -607,6 +607,13 @@ export const en: Translation = {
     failTitle: "Invalid or expired link",
     failText: "This link is no longer valid. Request the email change again in Settings.",
   },
+  nudgeOptOut: {
+    workingTitle: "Turning the reminder off...",
+    doneTitle: "Done, no more reminders",
+    doneText: "You won't receive this encouragement email. Your account stays as it is and you can build your plan whenever you want.",
+    failTitle: "Invalid link",
+    failText: "We couldn't turn the reminder off with this link. Open the link from the email again, without changing the address.",
+  },
   review: {
     title: "How was this 2-week block?",
     text: "Your answer helps take better care of you: it can make the next workouts calmer, never heavier.",
