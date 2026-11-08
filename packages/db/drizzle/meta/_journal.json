@@ -120,6 +120,13 @@
       "when": 1792944120735,
       "tag": "0016_lembrete_na_vespera",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794138321999,
+      "tag": "0017_lembrete_para_inativos",
+      "breakpoints": true
     }
   ]
 }

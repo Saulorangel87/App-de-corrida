@@ -23,6 +23,7 @@ import { Route as PlanoRouteImport } from './routes/plano'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as ResultadoRouteImport } from './routes/resultado'
+import { Route as SemLembreteRouteImport } from './routes/sem-lembrete'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as VerificarEmailRouteImport } from './routes/verificar-email'
 import { Route as RegistroIdRouteImport } from './routes/registro.$id'
@@ -98,6 +99,11 @@ const ResultadoRoute = ResultadoRouteImport.update({
   path: '/resultado',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SemLembreteRoute = SemLembreteRouteImport.update({
+  id: '/sem-lembrete',
+  path: '/sem-lembrete',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
@@ -134,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
+  '/sem-lembrete': typeof SemLembreteRoute
   '/termos': typeof TermosRoute
   '/verificar-email': typeof VerificarEmailRoute
   '/registro/$id': typeof RegistroIdRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
+  '/sem-lembrete': typeof SemLembreteRoute
   '/termos': typeof TermosRoute
   '/verificar-email': typeof VerificarEmailRoute
   '/registro/$id': typeof RegistroIdRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/privacidade': typeof PrivacidadeRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/resultado': typeof ResultadoRoute
+  '/sem-lembrete': typeof SemLembreteRoute
   '/termos': typeof TermosRoute
   '/verificar-email': typeof VerificarEmailRoute
   '/registro/$id': typeof RegistroIdRoute
@@ -197,6 +206,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/redefinir-senha'
     | '/resultado'
+    | '/sem-lembrete'
     | '/termos'
     | '/verificar-email'
     | '/registro/$id'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/redefinir-senha'
     | '/resultado'
+    | '/sem-lembrete'
     | '/termos'
     | '/verificar-email'
     | '/registro/$id'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/redefinir-senha'
     | '/resultado'
+    | '/sem-lembrete'
     | '/termos'
     | '/verificar-email'
     | '/registro/$id'
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   PrivacidadeRoute: typeof PrivacidadeRoute
   RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   ResultadoRoute: typeof ResultadoRoute
+  SemLembreteRoute: typeof SemLembreteRoute
   TermosRoute: typeof TermosRoute
   VerificarEmailRoute: typeof VerificarEmailRoute
   RegistroIdRoute: typeof RegistroIdRoute
@@ -364,6 +377,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultadoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sem-lembrete': {
+      id: '/sem-lembrete'
+      path: '/sem-lembrete'
+      fullPath: '/sem-lembrete'
+      preLoaderRoute: typeof SemLembreteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos': {
       id: '/termos'
       path: '/termos'
@@ -410,6 +430,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadeRoute: PrivacidadeRoute,
   RedefinirSenhaRoute: RedefinirSenhaRoute,
   ResultadoRoute: ResultadoRoute,
+  SemLembreteRoute: SemLembreteRoute,
   TermosRoute: TermosRoute,
   VerificarEmailRoute: VerificarEmailRoute,
   RegistroIdRoute: RegistroIdRoute,

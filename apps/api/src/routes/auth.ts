@@ -17,12 +17,15 @@ import { validate } from "../lib/validate";
 import type { SessionCookie } from "../middleware/session";
 import { limit } from "../middleware/security";
 import { toPublicUser, type AuthService } from "../services/auth-service";
+import type { NudgeService } from "../services/nudge-service";
 import type { AppEnv } from "../types";
 
 const GENERIC_EMAIL_SENT = { message: "Se o e-mail puder receber, enviaremos as instruções em instantes." };
 
 export function authRoutes(opts: {
   auth: AuthService;
+  nudge: NudgeService;
+  now: () => Date;
   cookie: SessionCookie;
   session: MiddlewareHandler<AppEnv>;
   production: boolean;
@@ -110,6 +113,12 @@ export function authRoutes(opts: {
     await auth.confirmEmailChange(c.req.valid("json").token);
     cookie.clear(c);
     return c.json({ message: "E-mail alterado. Entre de novo." });
+  });
+
+  // "Não quero receber" do e-mail de incentivo (sem sessão: o link assinado é a prova).
+  r.post("/nudge-opt-out", resetLimit, validate("json", tokenSchema), async (c) => {
+    await opts.nudge.optOut(c.req.valid("json").token, opts.now());
+    return c.json({ message: "Pronto, você não receberá esse lembrete." });
   });
 
   // Exclusão da conta (também oferecida a quem a entrevista barrar por idade).

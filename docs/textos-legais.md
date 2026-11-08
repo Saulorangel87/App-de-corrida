@@ -2,6 +2,8 @@
 
 **Estado: aprovado pelo dono em 2026-10-11 e implementado** (`apps/web/src/lib/legal.ts`, rotas `/privacidade` e `/termos`). Decisões: D1 e-mail mantido; D2 texto mantido ("podem tratar dados fora do Brasil"); D3 frase do cadastro trocada; D4 "Termos de Uso" padronizado; D7 português e inglês (tradução em `legal.en.ts`, com o aviso de que vale a versão em português: cláusula nova, para você conferir). O dono vai ler tudo antes de abrir o app para outras pessoas.
 
+**Acréscimo de 2026-11-08 (aguarda o OK do dono ao deploy):** e-mail único de incentivo para quem confirmou o e-mail e não montou o plano em 3 dias. Em "Quais dados coletamos": o dia e a hora do envio e se a pessoa pediu para não receber. Em "Para que usamos": interesse legítimo (art. 7º, IX), sem dado de saúde e com link para não receber. Em "Com quem compartilhamos": o Resend também envia esse e-mail. Versão `2026-11-08` em `legal.ts` e `termsVersion`, data mostrada "8 de novembro de 2026" (português e inglês).
+
 **Acréscimo de 2026-10-25, segunda versão (aguarda o OK do dono ao deploy):** no item do lembrete, "o horário e o dia escolhidos (no dia do treino ou na véspera)" no lugar de "o horário escolhido". Versão `2026-10-25.2` em `legal.ts` e `termsVersion` (a data mostrada continua 25 de outubro de 2026).
 
 **Acréscimo de 2026-10-25 (publicado em 2026-10-25 com o OK do dono ao deploy):** em "Quais dados coletamos", o item Treinos passou a citar a troca de dia de um treino, os dias com pedido de treino mais leve e as pausas planejadas (só as datas, sem motivo). Versão `2026-10-25` em `legal.ts` e `termsVersion`.

@@ -130,3 +130,25 @@ test("confirmar e-mail: sem token mostra a falha direto, sem chamar a API", asyn
   await expect(page.getByRole("heading", { name: "Não foi possível confirmar" })).toBeVisible();
   expect(calls.filter((c) => c.path === "/auth/verify-email")).toHaveLength(0);
 });
+
+test("link do e-mail de incentivo: desliga o lembrete uma vez e mostra o resultado", async ({ page }) => {
+  const calls = await mockApi(page, { "/auth/nudge-opt-out": { status: 200, body: { message: "ok" } } });
+  // Valor fictício; o token real é "<id da conta>.<assinatura>".
+  await page.goto("/sem-lembrete#token=" + "id-de-teste.".repeat(3) + "assinatura-de-teste");
+  await expect(page.getByRole("heading", { name: "Combinado, sem mais lembretes" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Entrar" })).toBeVisible();
+  expect(calls.filter((c) => c.path === "/auth/nudge-opt-out")).toHaveLength(1);
+  // o token sai da barra de endereço
+  expect(page.url()).not.toContain("token=");
+});
+
+test("link do e-mail de incentivo: link inválido ou sem token mostra o erro, sem chamar a API", async ({ page }) => {
+  const calls = await mockApi(page, { "/auth/nudge-opt-out": { status: 400, body: { error: { code: "INVALID_TOKEN", message: "x" } } } });
+  await page.goto("/sem-lembrete");
+  await expect(page.getByRole("heading", { name: "Link inválido" })).toBeVisible();
+  expect(calls.filter((c) => c.path === "/auth/nudge-opt-out")).toHaveLength(0);
+
+  await page.goto("/sem-lembrete#token=" + "alterado-de-teste-".repeat(2));
+  await expect(page.getByRole("heading", { name: "Link inválido" })).toBeVisible();
+  expect(calls.filter((c) => c.path === "/auth/nudge-opt-out")).toHaveLength(1);
+});

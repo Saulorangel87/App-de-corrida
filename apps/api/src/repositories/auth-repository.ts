@@ -16,6 +16,41 @@ export function authRepository(db: Database) {
     findUserById: async (id: string) =>
       (await db.select().from(users).where(eq(users.id, id)).limit(1))[0],
 
+    // --- E-mail de incentivo para quem não montou o plano (ver services/nudge-service.ts) ---
+
+    /** Ids de quem já passou do prazo sem plano nem treino (função do banco: o plano tem RLS). */
+    async inactiveNudgeCandidates(cutoff: Date, max: number): Promise<string[]> {
+      const rows = (await db.execute<{ id: string }>(
+        sql`select inactive_nudge_candidates(${cutoff.toISOString()}::timestamptz, ${max}) as id`,
+      )) as unknown as { id: string }[];
+      return rows.map((r) => r.id);
+    },
+
+    /** Reserva o envio: só uma rodada ganha (e nunca depois de um pedido de não receber). */
+    async claimNudge(id: string, at: Date): Promise<boolean> {
+      const rows = await db
+        .update(users)
+        .set({ nudgeSentAt: at })
+        .where(and(eq(users.id, id), isNull(users.nudgeSentAt), isNull(users.nudgeOptOutAt)))
+        .returning({ id: users.id });
+      return rows.length > 0;
+    },
+
+    /** O envio falhou: devolve a vez para a próxima rodada. */
+    async releaseNudge(id: string) {
+      await db.update(users).set({ nudgeSentAt: null }).where(eq(users.id, id));
+    },
+
+    /** Pedido de não receber; vale também antes do envio. Devolve false se a conta não existe mais. */
+    async optOutNudge(id: string, at: Date): Promise<boolean> {
+      const rows = await db
+        .update(users)
+        .set({ nudgeOptOutAt: sql`coalesce(${users.nudgeOptOutAt}, ${at.toISOString()}::timestamptz)` })
+        .where(eq(users.id, id))
+        .returning({ id: users.id });
+      return rows.length > 0;
+    },
+
     /** Cria usuário e consentimento juntos. Retorna null se o e-mail já existir. */
     async createUser(input: {
       name: string;
