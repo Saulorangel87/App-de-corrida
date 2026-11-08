@@ -105,6 +105,7 @@ Feito, com OK do dono:
 - **Atualização de 2026-10-17 (OK do dono):** API refeita na VPS com o ritmo no histórico e as dependências novas (PRs #13 e #14, tsup 9). Sem migração nova. Backup antes, imagem anterior em `app-de-corrida-api:previous`, `/health` 200 e rota nova sem sessão 401. Detalhes e como voltar atrás em `ops/README.md`.
 - **Atualização de 2026-10-24 (OK do dono):** registro rápido, força e mobilidade sem tempo e km, resumo da semana, app instalável, lembrete do treino (migração 0014, chaves VAPID no `.env` da VPS) e mensagens de erro mais claras. Backup `passo_20261025T003019Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front publicado pela branch `producao`.
 - **Atualização de 2026-10-25 (OK do dono):** trocar o dia do treino, "não estou 100%" e pausa planejada (migração 0015, Privacidade `2026-10-25`). Backup `passo_20261025T145926Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
+- **Atualização de 2026-11-08 (OK do dono):** só dependências (PRs #19 a #22, com `postgres` 4). Sem migração. Backup `passo_20261108T112202Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
 
 Falta:
 - ~~Primeiro envio real de e-mail~~: confirmado pelo dono em 2026-10-11.
