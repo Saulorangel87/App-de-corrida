@@ -106,6 +106,7 @@ Feito, com OK do dono:
 - **Atualização de 2026-10-24 (OK do dono):** registro rápido, força e mobilidade sem tempo e km, resumo da semana, app instalável, lembrete do treino (migração 0014, chaves VAPID no `.env` da VPS) e mensagens de erro mais claras. Backup `passo_20261025T003019Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front publicado pela branch `producao`.
 - **Atualização de 2026-10-25 (OK do dono):** trocar o dia do treino, "não estou 100%" e pausa planejada (migração 0015, Privacidade `2026-10-25`). Backup `passo_20261025T145926Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
 - **Atualização de 2026-11-08 (OK do dono):** só dependências (PRs #19 a #22, com `postgres` 4). Sem migração. Backup `passo_20261108T112202Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
+- **Atualização de 2026-11-08 (tarde, OK do dono):** e-mail único de incentivo para quem não montou o plano em 3 dias (migração 0017, Privacidade `2026-11-08`, página `/sem-lembrete`). Backup `passo_20261108T120247Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
 
 Falta:
 - ~~Primeiro envio real de e-mail~~: confirmado pelo dono em 2026-10-11.

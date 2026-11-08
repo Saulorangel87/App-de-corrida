@@ -102,4 +102,4 @@ O registro completo da análise (método, limites e cuidados) está em `docs/ana
 2. ~~Redução a pedido (2.2)~~ (entregue em 2026-10-25).
 3. ~~Pausa planejada (2.3)~~ (entregue em 2026-10-25).
 4. Clima (2.4), só se houver interesse e pesquisa (adiado pelo dono em 2026-10-25).
-5. ~~Lembrete para usuários inativos~~ (implementado em 2026-11-08, em PR, aguardando OK do dono para o deploy): e-mail único 3 dias depois da confirmação do e-mail, sem plano nem treino, com link para não receber. Ver `AGENTS.md` ("E-mail único de incentivo") e a prévia aprovada pelo dono.
+5. ~~Lembrete para usuários inativos~~ (implementado e em produção desde 2026-11-08; 3 e-mails enviados na primeira rodada): e-mail único 3 dias depois da confirmação do e-mail, sem plano nem treino, com link para não receber. Ver `AGENTS.md` ("E-mail único de incentivo") e a prévia aprovada pelo dono.
