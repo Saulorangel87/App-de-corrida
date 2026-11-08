@@ -102,3 +102,4 @@ O registro completo da análise (método, limites e cuidados) está em `docs/ana
 2. ~~Redução a pedido (2.2)~~ (entregue em 2026-10-25).
 3. ~~Pausa planejada (2.3)~~ (entregue em 2026-10-25).
 4. Clima (2.4), só se houver interesse e pesquisa (adiado pelo dono em 2026-10-25).
+5. Lembrete para usuários inativos (ideia do dono, 2026-11-08; ainda sem decisão de como): em 2026-11-08 só 1 de 4 usuários usava o app; os outros 3 criaram a conta em 11/10 e nunca montaram plano. Pontos a decidir antes: canal (e-mail, já que eles não têm Web Push ligado), texto sem dado de saúde, frequência baixa (por exemplo uma vez, depois silêncio), opção de não receber mais, e base legal na Política de Privacidade. Não mexer nas contas enquanto isso.
