@@ -11,17 +11,17 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@hono/node-server": "^2.1.5",
+    "@hono/node-server": "^2.1.6",
     "@hono/zod-validator": "^0.9.1",
     "@passo/db": "workspace:*",
     "@passo/engine": "workspace:*",
     "@passo/shared": "workspace:*",
-    "argon2": "^0.45.1",
+    "argon2": "^0.45.2",
     "drizzle-orm": "^0.45.4",
-    "hono": "^4.13.14",
+    "hono": "^4.13.16",
     "hono-rate-limiter": "^0.5.4",
     "postgres": "^3.4.4",
-    "resend": "^6.35.0",
+    "resend": "^6.37.0",
     "web-push": "^3.6.7",
     "zod": "^4.6.7"
   },
@@ -31,6 +31,6 @@
     "tsup": "^9.0.0",
     "tsx": "^4.19.2",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   }
 }
