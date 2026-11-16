@@ -1,5 +1,5 @@
 import { and, eq, gte, lte, sql } from "drizzle-orm";
-import webpush from "web-push";
+import * as webpush from "web-push";
 import { athleteProfiles, plannedPauses, pushSubscriptions, scheduledWorkouts, users, withAthlete, type Database } from "@passo/db";
 import type { PushSubscriptionInput } from "@passo/shared";
 import { errors } from "../lib/errors";
