@@ -108,6 +108,7 @@ Feito, com OK do dono:
 - **Atualização de 2026-11-08 (OK do dono):** só dependências (PRs #19 a #22, com `postgres` 4). Sem migração. Backup `passo_20261108T112202Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
 - **Atualização de 2026-11-08 (tarde, OK do dono):** e-mail único de incentivo para quem não montou o plano em 3 dias (migração 0017, Privacidade `2026-11-08`, página `/sem-lembrete`). Backup `passo_20261108T120247Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
 - **Atualização de 2026-11-16 (OK do dono):** só dependências (PRs #24, #26, #27 e #28; web-push 4 com `import * as`). Sem migração. Backup `passo_20261116T222618Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
+- **Atualização de 2026-11-22 (OK do dono):** só dependências (PR #29, grupo npm minor/patch com 13 pacotes: hono 4.13.19, @hono/node-server 2.1.9, resend 6.39.0, eslint 10.15, vitest 5.1.1 e outros). Sem migração. Backup `passo_20261122T150746Z.dump`, imagem anterior em `app-de-corrida-api:previous`; front pela branch `producao`.
 
 Falta:
 - ~~Primeiro envio real de e-mail~~: confirmado pelo dono em 2026-10-11.
